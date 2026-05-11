@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CinePodma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════
+   TOKENS
+══════════════════════════════════ */
+:root {
+  --white:   #FFFFFF;
+  --black:   #0A0A0A;
+  --slate:   #6B7280;
+  --slate-lt:#9CA3AF;
+  --slate-bg:#F3F4F6;
+  --red:     #DC2626;
+  --red-h:   #B91C1C;
+  --border:  #E5E7EB;
+  --radius:  20px;  /* ~25% round */
+  --font-en: 'Special Elite', 'Courier New', monospace;
+  --font-my: 'Noto Sans Myanmar', sans-serif;
+}
+
+/* ══════════════════════════════════
+   RESET
+══════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-my);
+  background: var(--white);
+  color: var(--black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════
+   NAV
+══════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-family: var(--font-en);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--black);
+  text-decoration: none;
+  line-height: 1.3;
+}
+.brand span {
+  display: block;
+  color: var(--slate);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* ── Burger ── */
+.burger {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  position: relative;
+  z-index: 301;
+}
+
+.burger-line {
+  width: 22px;
+  height: 1px;
+  background: var(--black);
+  border-radius: 1px;
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  transform-origin: left center;
+}
+
+/* Top line only — tilts 45° up-left like a clapper arm */
+.burger.open .burger-line:nth-child(1) {
+  transform: rotate(-45deg);
+}
+/* Bottom line — stays still */
+.burger.open .burger-line:nth-child(2) {
+  transform: none;
+}
+
+/* ══════════════════════════════════
+   FULL-PAGE DROPDOWN MENU
+══════════════════════════════════ */
+.full-menu {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 100vh;
+  background: var(--black);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+
+  /* Drop down from top */
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.45s cubic-bezier(0.77,0,0.18,1);
+  pointer-events: none;
+}
+.full-menu.open {
+  clip-path: inset(0 0 0% 0);
+  pointer-events: all;
+}
+
+.menu-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 360px;
+  padding: 0 32px;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 24px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-family: var(--font-en);
+  font-size: 22px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.18s;
+  border: 1px solid transparent;
+
+  /* Stagger reveal */
+  opacity: 0;
+  transform: translateY(12px);
+  transition: color 0.18s, background 0.18s, border-color 0.18s,
+              opacity 0.35s ease, transform 0.35s ease;
+}
+.full-menu.open .menu-link { opacity: 1; transform: translateY(0); }
+.full-menu.open .menu-link:nth-child(1) { transition-delay: 0.10s; }
+.full-menu.open .menu-link:nth-child(2) { transition-delay: 0.15s; }
+.full-menu.open .menu-link:nth-child(3) { transition-delay: 0.20s; }
+.full-menu.open .menu-link:nth-child(4) { transition-delay: 0.25s; }
+.full-menu.open .menu-link:nth-child(5) { transition-delay: 0.30s; }
+
+.menu-link:hover {
+  color: var(--white);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+}
+.menu-link .icon {
+  font-size: 18px;
+  opacity: 0.5;
+  width: 24px;
+  text-align: center;
+}
+.menu-link:hover .icon { opacity: 1; }
+
+.menu-footer {
+  margin-top: 48px;
+  font-family: var(--font-en);
+  font-size: 10px;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.3s 0.4s;
+}
+.full-menu.open .menu-footer { opacity: 1; }
+
+/* ══════════════════════════════════
+   MAIN — HOME
+══════════════════════════════════ */
+main {
+  flex: 1;
+  padding-top: 65px; /* nav height */
+}
+
+/* Hero */
+.hero {
+  min-height: calc(100vh - 65px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle film grain bg */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(220,38,38,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0,0,0,0.03) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Decorative lines */
+.hero-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-lines::before, .hero-lines::after {
+  content: '';
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  width: 1px;
+  background: var(--border);
+}
+.hero-lines::before { top: 0; height: 60px; }
+.hero-lines::after  { bottom: 0; height: 60px; }
+
+.hero-eyebrow {
+  font-family: var(--font-en);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 24px;
+  animation: fadeUp 0.7s ease both;
+}
+
+.hero-title {
+  font-family: var(--font-en);
+  font-size: clamp(52px, 10vw, 96px);
+  line-height: 1;
+  letter-spacing: -1px;
+  color: var(--black);
+  margin-bottom: 8px;
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+.hero-title span { color: var(--red); }
+
+.hero-sub {
+  font-family: var(--font-en);
+  font-size: clamp(18px, 3vw, 26px);
+  letter-spacing: 4px;
+  color: var(--slate);
+  margin-bottom: 32px;
+  animation: fadeUp 0.7s 0.15s ease both;
+}
+
+.hero-desc {
+  font-family: var(--font-my);
+  font-size: 15px;
+  line-height: 2.0;
+  color: var(--slate);
+  max-width: 480px;
+  margin-bottom: 48px;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+
+/* Auth buttons */
+.auth-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp 0.7s 0.25s ease both;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-my);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  text-decoration: none;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.btn-red {
+  background: var(--red);
+  color: var(--white);
+}
+.btn-red:hover {
+  background: var(--red-h);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(220,38,38,0.25);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid var(--black);
+}
+.btn-outline:hover {
+  background: var(--black);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* Features strip */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 0 24px;
+  max-width: 700px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: fadeUp 0.7s 0.35s ease both;
+}
+.feat-item {
+  flex: 1;
+  padding: 20px 16px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.feat-item:last-child { border-right: none; }
+.feat-icon { font-size: 20px; margin-bottom: 6px; }
+.feat-label {
+  font-family: var(--font-my);
+  font-size: 12px;
+  color: var(--slate);
+  line-height: 1.8;
+}
+
+/* Scroll hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: fadeUp 0.7s 0.5s ease both;
+}
+.scroll-hint span {
+  font-family: var(--font-en);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--slate-lt);
+  text-transform: uppercase;
+}
+.scroll-arrow {
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(to bottom, var(--border), transparent);
+  animation: scrollDown 1.5s ease infinite;
+}
+@keyframes scrollDown {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: top; }
+  51%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ══════════════════════════════════
+   PAGES (hidden by default)
+══════════════════════════════════ */
+.page {
+  display: none;
+  min-height: calc(100vh - 65px);
+  padding: 80px 24px 60px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.page.active { display: block; }
+
+.page-title {
+  font-family: var(--font-en);
+  font-size: 36px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+.page-divider {
+  width: 48px; height: 3px;
+  background: var(--red);
+  border-radius: 3px;
+  margin-bottom: 32px;
+}
+.page-body {
+  font-family: var(--font-my);
+  font-size: 15px;
+  line-height: 2.0;
+  color: var(--slate);
+}
+
+/* Library */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.draft-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.draft-card:hover {
+  border-color: var(--black);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.draft-title {
+  font-family: var(--font-en);
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--black);
+}
+.draft-meta {
+  font-size: 11px;
+  color: var(--slate-lt);
+  line-height: 1.8;
+}
+.draft-tag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 10px;
+  background: var(--slate-bg);
+  border-radius: 99px;
+  font-size: 10px;
+  font-family: var(--font-en);
+  color: var(--slate);
+  letter-spacing: 0.5px;
+}
+
+/* Contact form */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-my);
+  font-size: 14px;
+  color: var(--black);
+  outline: none;
+  transition: border-color 0.15s;
+  background: var(--white);
+  line-height: 1.8;
+}
+.form-input:focus, .form-textarea:focus { border-color: var(--black); }
+.form-textarea { min-height: 120px; resize: vertical; }
+.contact-email {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--slate-bg);
+  border-radius: var(--radius);
+  margin-bottom: 28px;
+}
+.contact-email a {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--black);
+}
+
+/* Support / Donate */
+.donate-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.donate-card {
+  flex: 1;
+  min-width: 160px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.donate-card:hover {
+  border-color: var(--red);
+  transform: translateY(-2px);
+}
+.donate-card.featured {
+  border-color: var(--red);
+  background: rgba(220,38,38,0.03);
+}
+.donate-amount {
+  font-family: var(--font-en);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.donate-label {
+  font-size: 12px;
+  color: var(--slate);
+}
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+footer {
+  background: var(--slate-bg);
+  border-top: 1px solid var(--border);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.footer-text {
+  font-family: var(--font-en);
+  font-size: 11px;
+  color: var(--slate);
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+.footer-dot {
+  width: 3px; height: 3px;
+  background: var(--slate-lt);
+  border-radius: 50%;
+}
+
+/* ══════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media (max-width: 600px) {
+  nav { padding: 16px 20px; }
+  .features { flex-direction: column; border-radius: var(--radius); }
+  .feat-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .feat-item:last-child { border-bottom: none; }
+  .donate-cards { flex-direction: column; }
+  .hero-title { letter-spacing: -0.5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════ NAV ══════ -->
+<nav>
+  <a class="brand" href="#" onclick="showPage('home')">
+    cine<br><span>podma</span>
+  </a>
+
+  <button class="burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Menu">
+    <div class="burger-line"></div>
+    <div class="burger-line"></div>
+  </button>
+</nav>
+
+<!-- ══════ FULL-PAGE MENU ══════ -->
+<div class="full-menu" id="fullMenu">
+  <nav class="menu-nav">
+    <a class="menu-link" href="#" onclick="showPage('write'); closeMenu()">
+      <span class="icon">✍</span> Write
+    </a>
+    <a class="menu-link" href="#" onclick="showPage('library'); closeMenu()">
+      <span class="icon">📚</span> Library
+    </a>
+    <a class="menu-link" href="#" onclick="showPage('about'); closeMenu()">
+      <span class="icon">◎</span> About
+    </a>
+    <a class="menu-link" href="#" onclick="showPage('contact'); closeMenu()">
+      <span class="icon">✉</span> Contact
+    </a>
+    <a class="menu-link" href="#" onclick="showPage('support'); closeMenu()">
+      <span class="icon">♡</span> Support
+    </a>
+  </nav>
+  <div class="menu-footer">© 2025 CinePodma</div>
+</div>
+
+<!-- ══════ MAIN ══════ -->
+<main>
+
+  <!-- HOME -->
+  <section id="page-home" class="active" style="display:flex;">
+    <div class="hero">
+      <div class="hero-lines"></div>
+
+      <p class="hero-eyebrow">Myanmar Screenplay Editor</p>
+
+      <h1 class="hero-title">
+        Cine<span>.</span>
+      </h1>
+      <p class="hero-sub">PODMA</p>
+
+      <p class="hero-desc">
+        မြန်မာဘာသာဖြင့် screenplay ရေးသားနိုင်သော<br>
+        professional script editor
+      </p>
+
+      <div class="auth-row">
+        <button class="btn btn-red" onclick="showSignUp()">အကောင့်ဖွင့်မည်</button>
+        <button class="btn btn-outline" onclick="showSignIn()">အကောင့်ဝင်မည်</button>
+      </div>
+
+      <br><br>
+
+      <div class="features">
+        <div class="feat-item">
+          <div class="feat-icon">🎬</div>
+          <div class="feat-label">Industry Format</div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon">🇲🇲</div>
+          <div class="feat-label">မြန်မာဘာသာ</div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon">📄</div>
+          <div class="feat-label">PDF Export</div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon">☁️</div>
+          <div class="feat-label">Cloud Save</div>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <span>scroll</span>
+        <div class="scroll-arrow"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITE — placeholder -->
+  <section id="page-write" class="page">
+    <h2 class="page-title">Write</h2>
+    <div class="page-divider"></div>
+    <p class="page-body">Screenplay editor — ဒီနေရာတွင် ဆောက်မည်</p>
+  </section>
+
+  <!-- LIBRARY -->
+  <section id="page-library" class="page">
+    <h2 class="page-title">Library</h2>
+    <div class="page-divider"></div>
+    <p class="page-body">သိမ်းဆည်းထားသော screenplay မူကြမ်းများ</p>
+
+    <div class="library-grid">
+      <div class="draft-card">
+        <div class="draft-title">Untitled Script #1</div>
+        <div class="draft-meta">မြင်ကွင်း ၃ ခု · ၁ ရက် သို့မဟုတ် ၂ ရက်</div>
+        <div class="draft-tag">Draft</div>
+      </div>
+      <div class="draft-card" style="border-style:dashed; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:120px; cursor:pointer;" onclick="showPage('write')">
+        <div style="font-size:28px; margin-bottom:8px;">+</div>
+        <div style="font-family:var(--font-en); font-size:13px; color:var(--slate);">New Script</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="page-about" class="page">
+    <h2 class="page-title">About</h2>
+    <div class="page-divider"></div>
+    <div class="page-body">
+      <p style="margin-bottom:16px;">
+        <strong style="color:var(--black); font-family:var(--font-en);">CinePodma</strong> သည် မြန်မာ screenplay ရေးသားသူများအတွက် ဖန်တီးထားသော professional script editor တစ်ခုဖြစ်သည်။
+      </p>
+      <p>
+        Industry standard format — INT/EXT မြင်ကွင်း၊ ဒိုင်ယာလော့ဂ်၊ action line များကို မြန်မာဘာသာဖြင့် လွတ်လပ်စွာ ရေးသားနိုင်ပါသည်။
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="page-contact" class="page">
+    <h2 class="page-title">Contact</h2>
+    <div class="page-divider"></div>
+
+    <div class="contact-email">
+      <span>✉</span>
+      <a href="mailto:hello@cinepodma.com">hello@cinepodma.com</a>
+    </div>
+
+    <form onsubmit="submitContact(event)">
+      <div class="form-group">
+        <label class="form-label">အမည်</label>
+        <input class="form-input" type="text" placeholder="သင့်အမည်" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="email@example.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">မက်ဆေ့ဂျ်</label>
+        <textarea class="form-textarea" placeholder="သင်ပြောချင်သည့်အရာ..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-red">ပို့မည်</button>
+    </form>
+  </section>
+
+  <!-- SUPPORT -->
+  <section id="page-support" class="page">
+    <h2 class="page-title">Support</h2>
+    <div class="page-divider"></div>
+    <p class="page-body" style="margin-bottom:8px;">CinePodma ကို ထောက်ပံ့လိုပါသလား? ကျေးဇူးတင်ပါသည်။</p>
+
+    <div class="donate-cards">
+      <div class="donate-card">
+        <div class="donate-amount">$3</div>
+        <div class="donate-label">Coffee ☕</div>
+      </div>
+      <div class="donate-card featured">
+        <div class="donate-amount">$10</div>
+        <div class="donate-label">Monthly ⭐</div>
+      </div>
+      <div class="donate-card">
+        <div class="donate-amount">$25</div>
+        <div class="donate-label">Patron 🎬</div>
+      </div>
+    </div>
+
+    <br>
+    <button class="btn btn-red" onclick="alert('Payment integration coming soon')">ထောက်ပံ့မည်</button>
+  </section>
+
+</main>
+
+<!-- ══════ FOOTER ══════ -->
+<footer>
+  <span class="footer-text">© 2025 CinePodma. All rights reserved.</span>
+</footer>
+
+<script>
+/* ══════ MENU ══════ */
+function toggleMenu() {
+  const btn  = document.getElementById('burgerBtn');
+  const menu = document.getElementById('fullMenu');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    closeMenu();
+  } else {
+    btn.classList.add('open');
+    menu.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeMenu() {
+  document.getElementById('burgerBtn').classList.remove('open');
+  document.getElementById('fullMenu').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ══════ PAGE ROUTING ══════ */
+const pages = ['home','write','library','about','contact','support'];
+
+function showPage(id) {
+  pages.forEach(p => {
+    const el = document.getElementById('page-' + p);
+    if (!el) return;
+    if (p === id) {
+      el.style.display = p === 'home' ? 'flex' : 'block';
+      el.classList.add('active');
+    } else {
+      el.style.display = 'none';
+      el.classList.remove('active');
+    }
+  });
+  window.scrollTo(0, 0);
+
+  // Write page → link to write.html
+  if (id === 'write') {
+    window.location.href = 'write.html';
+  }
+}
+
+/* ══════ AUTH (UI only) ══════ */
+function showSignUp() {
+  alert('Sign Up — Backend ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
+}
+function showSignIn() {
+  alert('Sign In — Backend ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
+}
+
+/* ══════ CONTACT ══════ */
+function submitContact(e) {
+  e.preventDefault();
+  alert('မက်ဆေ့ဂျ် ပို့ပြီးပါပြီ — Backend ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
+}
+
+/* ══════ KEYBOARD ══════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMenu();
+});
+</script>
+</body>
+</html>
