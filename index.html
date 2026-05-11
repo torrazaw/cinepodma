@@ -45,7 +45,7 @@ body {
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 400;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -74,51 +74,50 @@ nav {
 .burger {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
   cursor: pointer;
   padding: 6px;
   border: none;
   background: transparent;
   position: relative;
-  z-index: 301;
+  z-index: 500;
 }
 
 .burger-line {
-  width: 22px;
-  height: 1px;
+  width: 24px;
+  height: 1.5px;
   background: var(--black);
   border-radius: 1px;
-  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
   transform-origin: left center;
+  transition: transform 0.38s cubic-bezier(0.4,0,0.2,1),
+              background 0.25s ease;
 }
 
-/* Top line only — tilts 45° up-left like a clapper arm */
+/* Open: top line tilts ~45° up-left (film slate clapper), bottom stays flat */
 .burger.open .burger-line:nth-child(1) {
-  transform: rotate(-45deg);
+  transform: rotate(-45deg) translateY(-1px);
+  background: var(--black);
 }
-/* Bottom line — stays still */
 .burger.open .burger-line:nth-child(2) {
   transform: none;
+  background: var(--black);
 }
+
 
 /* ══════════════════════════════════
    FULL-PAGE DROPDOWN MENU
 ══════════════════════════════════ */
 .full-menu {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
   height: 100vh;
-  background: var(--black);
+  background: #F7F7F7;
   z-index: 300;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
 
   /* Drop down from top */
   clip-path: inset(0 0 100% 0);
-  transition: clip-path 0.45s cubic-bezier(0.77,0,0.18,1);
+  transition: clip-path 0.48s cubic-bezier(0.77,0,0.18,1);
   pointer-events: none;
 }
 .full-menu.open {
@@ -127,65 +126,71 @@ nav {
 }
 
 .menu-nav {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  width: 100%;
-  max-width: 360px;
-  padding: 0 32px;
+  gap: 0;
+  width: auto;
+  background: transparent;
 }
 
 .menu-link {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  width: 100%;
-  padding: 18px 24px;
-  border-radius: var(--radius);
+  gap: 10px;
+  width: auto;
+  padding: 10px 24px;
+  border-radius: 8px;
   text-decoration: none;
   font-family: var(--font-en);
-  font-size: 22px;
-  letter-spacing: 2px;
+  font-size: 12px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-  transition: all 0.18s;
+  color: var(--black);
   border: 1px solid transparent;
 
   /* Stagger reveal */
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(10px);
   transition: color 0.18s, background 0.18s, border-color 0.18s,
-              opacity 0.35s ease, transform 0.35s ease;
+              opacity 0.32s ease, transform 0.32s ease;
 }
 .full-menu.open .menu-link { opacity: 1; transform: translateY(0); }
-.full-menu.open .menu-link:nth-child(1) { transition-delay: 0.10s; }
-.full-menu.open .menu-link:nth-child(2) { transition-delay: 0.15s; }
-.full-menu.open .menu-link:nth-child(3) { transition-delay: 0.20s; }
-.full-menu.open .menu-link:nth-child(4) { transition-delay: 0.25s; }
-.full-menu.open .menu-link:nth-child(5) { transition-delay: 0.30s; }
+.full-menu.open .menu-link:nth-child(1) { transition-delay: 0.12s; }
+.full-menu.open .menu-link:nth-child(2) { transition-delay: 0.17s; }
+.full-menu.open .menu-link:nth-child(3) { transition-delay: 0.22s; }
+.full-menu.open .menu-link:nth-child(4) { transition-delay: 0.27s; }
+.full-menu.open .menu-link:nth-child(5) { transition-delay: 0.32s; }
 
 .menu-link:hover {
-  color: var(--white);
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.1);
+  color: var(--black);
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.08);
 }
 .menu-link .icon {
-  font-size: 18px;
-  opacity: 0.5;
-  width: 24px;
+  font-size: 13px;
+  opacity: 0.6;
+  width: 18px;
   text-align: center;
 }
 .menu-link:hover .icon { opacity: 1; }
 
 .menu-footer {
-  margin-top: 48px;
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
   font-family: var(--font-en);
   font-size: 10px;
-  color: rgba(255,255,255,0.2);
+  color: rgba(0,0,0,0.4);
   letter-spacing: 1.5px;
   text-transform: uppercase;
+  white-space: nowrap;
   opacity: 0;
   transition: opacity 0.3s 0.4s;
 }
@@ -196,18 +201,20 @@ nav {
 ══════════════════════════════════ */
 main {
   flex: 1;
-  padding-top: 65px; /* nav height */
+  width: 100%;
+  padding-top: 0;
 }
 
 /* Hero */
 .hero {
-  min-height: calc(100vh - 65px);
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 24px;
+  padding: 80px 24px 60px;
   position: relative;
   overflow: hidden;
 }
@@ -353,33 +360,7 @@ main {
   line-height: 1.8;
 }
 
-/* Scroll hint */
-.scroll-hint {
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  animation: fadeUp 0.7s 0.5s ease both;
-}
-.scroll-hint span {
-  font-family: var(--font-en);
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--slate-lt);
-  text-transform: uppercase;
-}
-.scroll-arrow {
-  width: 1px;
-  height: 28px;
-  background: linear-gradient(to bottom, var(--border), transparent);
-  animation: scrollDown 1.5s ease infinite;
-}
-@keyframes scrollDown {
-  0%   { transform: scaleY(0); transform-origin: top; }
+
   50%  { transform: scaleY(1); transform-origin: top; }
   51%  { transform: scaleY(1); transform-origin: bottom; }
   100% { transform: scaleY(0); transform-origin: bottom; }
@@ -389,13 +370,13 @@ main {
    PAGES (hidden by default)
 ══════════════════════════════════ */
 .page {
-  display: none;
+  display: none !important;
   min-height: calc(100vh - 65px);
   padding: 80px 24px 60px;
   max-width: 800px;
   margin: 0 auto;
 }
-.page.active { display: block; }
+.page.active { display: block !important; }
 
 .page-title {
   font-family: var(--font-en);
@@ -568,15 +549,124 @@ footer {
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — MOBILE FIRST
 ══════════════════════════════════ */
-@media (max-width: 600px) {
-  nav { padding: 16px 20px; }
-  .features { flex-direction: column; border-radius: var(--radius); }
-  .feat-item { border-right: none; border-bottom: 1px solid var(--border); }
+
+/* ── Base mobile (< 480px) ── */
+@media (max-width: 480px) {
+  :root { --radius: 16px; }
+
+  /* Nav */
+  nav { padding: 14px 18px; }
+
+  /* Hero */
+  .hero {
+    padding: 48px 20px 80px;
+    min-height: calc(100vh - 60px);
+  }
+  .hero-eyebrow { font-size: 10px; letter-spacing: 2px; margin-bottom: 16px; }
+  .hero-title   { font-size: clamp(44px, 14vw, 64px); letter-spacing: -0.5px; }
+  .hero-sub     { font-size: clamp(14px, 5vw, 18px); letter-spacing: 2px; margin-bottom: 24px; }
+  .hero-desc    { font-size: 14px; line-height: 1.9; margin-bottom: 36px; }
+
+  /* Buttons */
+  .auth-row     { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; max-width: 320px; }
+  .btn          { justify-content: center; padding: 14px 20px; font-size: 15px; white-space: normal; }
+
+  /* Features strip */
+  .features {
+    flex-direction: column;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 320px;
+  }
+  .feat-item {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
   .feat-item:last-child { border-bottom: none; }
+  .feat-icon  { font-size: 18px; margin-bottom: 0; flex-shrink: 0; }
+  .feat-label { font-size: 13px; }
+
+  /* Scroll hint — hide on short phones */
+  .scroll-hint { display: none; }
+
+  /* Pages */
+  .page { padding: 72px 18px 48px; }
+  .page-title { font-size: 28px; }
+
+  /* Library grid */
+  .library-grid { grid-template-columns: 1fr; }
+
+  /* Donate cards */
   .donate-cards { flex-direction: column; }
-  .hero-title { letter-spacing: -0.5px; }
+  .donate-card  { min-width: unset; }
+
+  /* Contact email */
+  .contact-email { flex-wrap: wrap; word-break: break-all; }
+  .contact-email a { font-size: 12px; }
+
+  /* Full-menu links */
+  .menu-link { font-size: 12px; padding: 10px 24px; }
+}
+
+/* ── Small tablet / large phone (480px – 768px) ── */
+@media (min-width: 480px) and (max-width: 768px) {
+  nav { padding: 16px 24px; }
+
+  .hero { padding: 56px 24px 80px; }
+  .hero-desc { font-size: 14px; }
+
+  .auth-row { gap: 10px; }
+  .btn      { padding: 13px 22px; font-size: 14px; }
+
+  .features { max-width: 480px; }
+  .feat-item { padding: 16px 12px; }
+  .feat-label { font-size: 11px; }
+
+  .page { padding: 76px 24px 52px; }
+
+  .library-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+
+  .donate-cards { flex-direction: row; flex-wrap: wrap; }
+  .donate-card  { min-width: 130px; }
+
+  .menu-link { font-size: 12px; }
+}
+
+/* ── Tablet (768px – 1024px) ── */
+@media (min-width: 768px) and (max-width: 1024px) {
+  nav { padding: 18px 28px; }
+
+  .hero  { padding: 60px 32px; }
+  .features { max-width: 600px; }
+  .feat-item { padding: 18px 14px; }
+
+  .page { padding: 80px 32px 60px; max-width: 720px; }
+
+  .donate-card { min-width: 140px; }
+}
+
+/* ── Touch-device: bigger tap targets ── */
+@media (hover: none) and (pointer: coarse) {
+  .btn          { min-height: 48px; }
+  .menu-link    { min-height: 44px; }
+  .form-input,
+  .form-textarea { font-size: 16px; } /* prevent iOS zoom */
+  .draft-card   { padding: 22px; }
+  .donate-card  { padding: 24px 16px; }
+}
+
+/* ── Wide desktop (> 1280px) ── */
+@media (min-width: 1280px) {
+  .hero { padding: 80px 40px; }
+  .features { max-width: 760px; }
+  .page { max-width: 860px; }
 }
 </style>
 </head>
@@ -596,7 +686,7 @@ footer {
 
 <!-- ══════ FULL-PAGE MENU ══════ -->
 <div class="full-menu" id="fullMenu">
-  <nav class="menu-nav">
+  <div class="menu-nav">
     <a class="menu-link" href="#" onclick="showPage('write'); closeMenu()">
       <span class="icon">✍</span> Write
     </a>
@@ -612,15 +702,15 @@ footer {
     <a class="menu-link" href="#" onclick="showPage('support'); closeMenu()">
       <span class="icon">♡</span> Support
     </a>
-  </nav>
-  <div class="menu-footer">© 2025 CinePodma</div>
+  </div>
+  <div class="menu-footer">By Ra Zaw</div>
 </div>
 
 <!-- ══════ MAIN ══════ -->
 <main>
 
   <!-- HOME -->
-  <section id="page-home" class="active" style="display:flex;">
+  <section id="page-home" class="active" style="display:flex; width:100%;">
     <div class="hero">
       <div class="hero-lines"></div>
 
@@ -662,22 +752,19 @@ footer {
         </div>
       </div>
 
-      <div class="scroll-hint">
-        <span>scroll</span>
-        <div class="scroll-arrow"></div>
-      </div>
+
     </div>
   </section>
 
   <!-- WRITE — placeholder -->
-  <section id="page-write" class="page">
+  <section id="page-write" class="page" style="display:none !important;">
     <h2 class="page-title">Write</h2>
     <div class="page-divider"></div>
     <p class="page-body">Screenplay editor — ဒီနေရာတွင် ဆောက်မည်</p>
   </section>
 
   <!-- LIBRARY -->
-  <section id="page-library" class="page">
+  <section id="page-library" class="page" style="display:none !important;">
     <h2 class="page-title">Library</h2>
     <div class="page-divider"></div>
     <p class="page-body">သိမ်းဆည်းထားသော screenplay မူကြမ်းများ</p>
@@ -696,7 +783,7 @@ footer {
   </section>
 
   <!-- ABOUT -->
-  <section id="page-about" class="page">
+  <section id="page-about" class="page" style="display:none !important;">
     <h2 class="page-title">About</h2>
     <div class="page-divider"></div>
     <div class="page-body">
@@ -710,7 +797,7 @@ footer {
   </section>
 
   <!-- CONTACT -->
-  <section id="page-contact" class="page">
+  <section id="page-contact" class="page" style="display:none !important;">
     <h2 class="page-title">Contact</h2>
     <div class="page-divider"></div>
 
@@ -737,7 +824,7 @@ footer {
   </section>
 
   <!-- SUPPORT -->
-  <section id="page-support" class="page">
+  <section id="page-support" class="page" style="display:none !important;">
     <h2 class="page-title">Support</h2>
     <div class="page-divider"></div>
     <p class="page-body" style="margin-bottom:8px;">CinePodma ကို ထောက်ပံ့လိုပါသလား? ကျေးဇူးတင်ပါသည်။</p>
