@@ -379,26 +379,16 @@ main {
 }
 
 /* ══════════════════════════════════
-   PAGES (centered container, left-aligned text)
+   PAGES (left-aligned, full-width container)
 ══════════════════════════════════ */
 .page {
   display: none !important;
   min-height: calc(100vh - 65px);
-  padding: 80px 40px 60px;
+  padding: 80px 32px 60px;
   width: 100%;
   box-sizing: border-box;
-  
-  /* Center the container */
-  display: flex !important;
-  justify-content: center;
-  align-items: flex-start;
 }
-.page.active { display: flex !important; }
-
-.page-container {
-  width: 100%;
-  max-width: 600px;
-}
+.page.active { display: block !important; }
 
 .page-title {
   font-family: var(--font-en);
@@ -420,6 +410,7 @@ main {
   line-height: 2.0;
   color: var(--slate);
   text-align: left;
+  max-width: 600px;
 }
 
 /* Library */
@@ -428,6 +419,7 @@ main {
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
   margin-top: 24px;
+  max-width: 600px;
 }
 .draft-card {
   border: 1px solid var(--border);
@@ -485,6 +477,7 @@ main {
   transition: border-color 0.15s;
   background: var(--white);
   line-height: 1.8;
+  max-width: 600px;
 }
 .form-input:focus, .form-textarea:focus { border-color: var(--black); }
 .form-textarea { min-height: 120px; resize: vertical; }
@@ -496,6 +489,7 @@ main {
   background: var(--slate-bg);
   border-radius: var(--radius);
   margin-bottom: 28px;
+  max-width: 600px;
 }
 .contact-email a {
   font-family: var(--font-en);
@@ -509,6 +503,7 @@ main {
   gap: 16px;
   flex-wrap: wrap;
   margin-top: 24px;
+  max-width: 600px;
 }
 .donate-card {
   flex: 1;
@@ -784,104 +779,94 @@ footer {
 
   <!-- WRITE — placeholder -->
   <section id="page-write" class="page" style="display:none !important;">
-    <div class="page-container">
-      <h2 class="page-title">Write</h2>
-      <div class="page-divider"></div>
-      <p class="page-body">Screenplay editor — ဒီနေရာတွင် ဆောက်မည်</p>
-    </div>
+    <h2 class="page-title">Write</h2>
+    <div class="page-divider"></div>
+    <p class="page-body">Screenplay editor — ဒီနေရာတွင် ဆောက်မည်</p>
   </section>
 
   <!-- LIBRARY -->
   <section id="page-library" class="page" style="display:none !important;">
-    <div class="page-container">
-      <h2 class="page-title">Library</h2>
-      <div class="page-divider"></div>
-      <p class="page-body">သိမ်းဆည်းထားသော screenplay မူကြမ်းများ</p>
+    <h2 class="page-title">Library</h2>
+    <div class="page-divider"></div>
+    <p class="page-body">သိမ်းဆည်းထားသော screenplay မူကြမ်းများ</p>
 
-      <div class="library-grid">
-        <div class="draft-card">
-          <div class="draft-title">Untitled Script #1</div>
-          <div class="draft-meta">မြင်ကွင်း ၃ ခု · ၁ ရက် သို့မဟုတ် ၂ ရက်</div>
-          <div class="draft-tag">Draft</div>
-        </div>
-        <div class="draft-card" style="border-style:dashed; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:120px; cursor:pointer;" onclick="showPage('write')">
-          <div style="font-size:28px; margin-bottom:8px;">+</div>
-          <div style="font-family:var(--font-en); font-size:13px; color:var(--slate);">New Script</div>
-        </div>
+    <div class="library-grid">
+      <div class="draft-card">
+        <div class="draft-title">Untitled Script #1</div>
+        <div class="draft-meta">မြင်ကွင်း ၃ ခု · ၁ ရက် သို့မဟုတ် ၂ ရက်</div>
+        <div class="draft-tag">Draft</div>
+      </div>
+      <div class="draft-card" style="border-style:dashed; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:120px; cursor:pointer;" onclick="showPage('write')">
+        <div style="font-size:28px; margin-bottom:8px;">+</div>
+        <div style="font-family:var(--font-en); font-size:13px; color:var(--slate);">New Script</div>
       </div>
     </div>
   </section>
 
   <!-- ABOUT -->
   <section id="page-about" class="page" style="display:none !important;">
-    <div class="page-container">
-      <h2 class="page-title">About</h2>
-      <div class="page-divider"></div>
-      <div class="page-body">
-        <p style="margin-bottom:16px;">
-          <strong style="color:var(--black); font-family:var(--font-en);">CinePodma</strong> သည် မြန်မာ screenplay ရေးသားသူများအတွက် ဖန်တီးလုပ်ဆောင်ထားသော professional script editor ဖြစ်သည်။
-        </p>
-        <p>
-          Industry standard format — INT/EXT မြင်ကွင်း၊ ဒိုင်ယာလော့ဂ်၊ action line များကို မြန်မာဘာသာဖြင့် ရေးသားနိုင်သည်။
-        </p>
-      </div>
+    <h2 class="page-title">About</h2>
+    <div class="page-divider"></div>
+    <div class="page-body">
+      <p style="margin-bottom:16px;">
+        <strong style="color:var(--black); font-family:var(--font-en);">CinePodma</strong> သည် မြန်မာ screenplay ရေးသားသူများအတွက် ဖန်တီးလုပ်ဆောင်ထားသော professional script editor ဖြစ်သည်။
+      </p>
+      <p>
+        Industry standard format — INT/EXT မြင်ကွင်း၊ ဒိုင်ယာလော့ဂ်၊ action line များကို မြန်မာဘာသာဖြင့် ရေးသားနိုင်သည်။
+      </p>
     </div>
   </section>
 
   <!-- CONTACT -->
   <section id="page-contact" class="page" style="display:none !important;">
-    <div class="page-container">
-      <h2 class="page-title">Contact</h2>
-      <div class="page-divider"></div>
+    <h2 class="page-title">Contact</h2>
+    <div class="page-divider"></div>
 
-      <div class="contact-email">
-        <span>✉</span>
-        <a href="mailto:hello@cinepodma.com">hello@cinepodma.com</a>
-      </div>
-
-      <form onsubmit="submitContact(event)">
-        <div class="form-group">
-          <label class="form-label">အမည်</label>
-          <input class="form-input" type="text" placeholder="သင့်အမည်" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input class="form-input" type="email" placeholder="email@example.com" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">မက်ဆေ့ဂျ်</label>
-          <textarea class="form-textarea" placeholder="သင်ပြောချင်သည့်အရာ..." required></textarea>
-        </div>
-        <button type="submit" class="btn btn-red">ပို့မည်</button>
-      </form>
+    <div class="contact-email">
+      <span>✉</span>
+      <a href="mailto:hello@cinepodma.com">hello@cinepodma.com</a>
     </div>
+
+    <form onsubmit="submitContact(event)">
+      <div class="form-group">
+        <label class="form-label">အမည်</label>
+        <input class="form-input" type="text" placeholder="သင့်အမည်" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="email@example.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">မက်ဆေ့ဂျ်</label>
+        <textarea class="form-textarea" placeholder="သင်ပြောချင်သည့်အရာ..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-red">ပို့မည်</button>
+    </form>
   </section>
 
   <!-- SUPPORT -->
   <section id="page-support" class="page" style="display:none !important;">
-    <div class="page-container">
-      <h2 class="page-title">Support</h2>
-      <div class="page-divider"></div>
-      <p class="page-body" style="margin-bottom:8px;">CinePodma ကို ထောက်ပံ့လိုပါသလား? ကျေးဇူးတင်ပါသည်။</p>
+    <h2 class="page-title">Support</h2>
+    <div class="page-divider"></div>
+    <p class="page-body" style="margin-bottom:8px;">CinePodma ကို ထောက်ပံ့လိုပါသလား? ကျေးဇူးတင်ပါသည်။</p>
 
-      <div class="donate-cards">
-        <div class="donate-card">
-          <div class="donate-amount">$3</div>
-          <div class="donate-label">Coffee ☕</div>
-        </div>
-        <div class="donate-card featured">
-          <div class="donate-amount">$10</div>
-          <div class="donate-label">Monthly ⭐</div>
-        </div>
-        <div class="donate-card">
-          <div class="donate-amount">$25</div>
-          <div class="donate-label">Patron 🎬</div>
-        </div>
+    <div class="donate-cards">
+      <div class="donate-card">
+        <div class="donate-amount">$3</div>
+        <div class="donate-label">Coffee ☕</div>
       </div>
-
-      <br>
-      <button class="btn btn-red" onclick="alert('Payment integration coming soon')">ထောက်ပံ့မည်</button>
+      <div class="donate-card featured">
+        <div class="donate-amount">$10</div>
+        <div class="donate-label">Monthly ⭐</div>
+      </div>
+      <div class="donate-card">
+        <div class="donate-amount">$25</div>
+        <div class="donate-label">Patron 🎬</div>
+      </div>
     </div>
+
+    <br>
+    <button class="btn btn-red" onclick="alert('Payment integration coming soon')">ထောက်ပံ့မည်</button>
   </section>
 
 </main>
@@ -920,7 +905,7 @@ function showPage(id) {
     const el = document.getElementById('page-' + p);
     if (!el) return;
     if (p === id) {
-      el.style.display = p === 'home' ? 'flex' : 'flex';
+      el.style.display = p === 'home' ? 'flex' : 'block';
       el.classList.add('active');
     } else {
       el.style.display = 'none';
