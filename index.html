@@ -55,6 +55,15 @@ nav {
   border-bottom: 1px solid var(--border);
 }
 
+.nav-inner {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .brand {
   font-family: var(--font-en);
   font-size: 13px;
@@ -372,15 +381,17 @@ main {
 .page {
   display: none !important;
   min-height: calc(100vh - 65px);
-  padding: 80px 24px 60px;
-  max-width: 800px;
+  padding: 80px 40px 60px;
+  max-width: 600px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 .page.active { display: block !important; }
 
 .page-title {
   font-family: var(--font-en);
-  font-size: 36px;
+  font-size: 22px;
   letter-spacing: 1px;
   margin-bottom: 8px;
   color: var(--black);
@@ -393,7 +404,7 @@ main {
 }
 .page-body {
   font-family: var(--font-my);
-  font-size: 15px;
+  font-size: 13px;
   line-height: 2.0;
   color: var(--slate);
 }
@@ -674,14 +685,15 @@ footer {
 
 <!-- ══════ NAV ══════ -->
 <nav>
-  <a class="brand" href="#" onclick="showPage('home')">
-    cine<br><span>podma</span>
-  </a>
-
-  <button class="burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Menu">
-    <div class="burger-line"></div>
-    <div class="burger-line"></div>
-  </button>
+  <div class="nav-inner">
+    <a class="brand" href="#" onclick="showPage('home')">
+      cine<br><span>podma</span>
+    </a>
+    <button class="burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Menu">
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+    </button>
+  </div>
 </nav>
 
 <!-- ══════ FULL-PAGE MENU ══════ -->
