@@ -2,7 +2,7 @@
 <html lang="my">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>CinePodma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -22,6 +22,8 @@
   --radius:  20px;  /* ~25% round */
   --font-en: 'Special Elite', 'Courier New', monospace;
   --font-my: 'Noto Sans Myanmar', sans-serif;
+  /* fixed nav approximate height (two-line brand + burger); used to clear hero underlap */
+  --nav-h:   76px;
 }
 
 /* ══════════════════════════════════
@@ -50,6 +52,7 @@ nav {
   align-items: center;
   justify-content: center;
   padding: 18px 32px;
+  padding-top: calc(18px + env(safe-area-inset-top, 0px));
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
@@ -124,8 +127,11 @@ nav {
   top: 0; left: 0; right: 0; bottom: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
+  min-height: -webkit-fill-available;
   background: #F7F7F7;
   z-index: 300;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 
   /* Drop down from top */
   clip-path: inset(0 0 100% 0);
@@ -194,7 +200,8 @@ nav {
 
 .menu-footer {
   position: absolute;
-  bottom: 32px;
+  /* sit above home indicator / browser chrome */
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-en);
@@ -220,6 +227,7 @@ main {
 /* Hero */
 .hero {
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -227,6 +235,8 @@ main {
   justify-content: center;
   text-align: center;
   padding: 80px 24px 60px;
+  /* clear fixed nav + notch */
+  padding-top: max(80px, calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 20px));
   position: relative;
   overflow: hidden;
 }
@@ -502,41 +512,274 @@ main {
   color: var(--black);
 }
 
-/* Support / Donate */
-.donate-cards {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 24px;
+/* Support — script file → public read on web (upload UI; backend later) */
+.script-publish-section {
+  margin-top: 28px;
   max-width: 600px;
 }
-.donate-card {
-  flex: 1;
-  min-width: 160px;
+.script-publish-heading {
+  font-family: var(--font-my);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 12px;
+}
+.script-publish-note {
+  font-family: var(--font-my);
+  font-size: 13px;
+  line-height: 2;
+  color: var(--slate);
+  margin-bottom: 20px;
+}
+.script-upload-wrap {
+  width: 100%;
+}
+.script-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  min-height: 168px;
+  padding: 28px 20px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  text-align: center;
+}
+.script-dropzone:hover {
+  border-color: var(--black);
+  background: var(--slate-bg);
+}
+.script-dropzone--drag {
+  border-color: var(--red);
+  background: rgba(220,38,38,0.05);
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.12);
+}
+.script-dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 0;
+}
+.script-dropzone-icon {
+  font-size: 32px;
+  line-height: 1;
+  opacity: 0.88;
+  pointer-events: none;
+}
+.script-dropzone-title {
+  font-family: var(--font-my);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black);
+  max-width: 300px;
+  line-height: 1.65;
+  pointer-events: none;
+}
+.script-dropzone-hint {
+  font-family: var(--font-en);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  color: var(--slate-lt);
+  pointer-events: none;
+}
+.script-upload-filename {
+  margin-top: 12px;
+  font-family: var(--font-my);
+  font-size: 12px;
+  color: var(--red-h);
+  word-break: break-all;
+  min-height: 1.5em;
+  line-height: 1.5;
+}
+.script-upload-disclaimer {
+  margin-top: 10px;
+  font-family: var(--font-my);
+  font-size: 11px;
+  color: var(--slate-lt);
+  line-height: 1.75;
+}
+.support-extra {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  max-width: 600px;
+}
+
+/* Support — buy-me-a-coffee style + payment modal */
+.support-coffee-section {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  max-width: 600px;
+}
+.coffee-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (min-width: 520px) {
+  .coffee-tier-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.coffee-tier {
+  font-family: var(--font-my);
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px 20px;
-  text-align: left;
+  padding: 20px 14px;
+  background: var(--white);
   cursor: pointer;
-  transition: all 0.18s;
+  text-align: left;
+  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
 }
-.donate-card:hover {
-  border-color: var(--red);
+.coffee-tier:hover {
+  border-color: var(--black);
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
 }
-.donate-card.featured {
+.coffee-tier.featured {
   border-color: var(--red);
-  background: rgba(220,38,38,0.03);
+  background: rgba(220,38,38,0.04);
 }
-.donate-amount {
+.coffee-tier-amt {
   font-family: var(--font-en);
-  font-size: 28px;
+  font-size: 21px;
   font-weight: 700;
-  margin-bottom: 4px;
+  color: var(--black);
+  margin-bottom: 6px;
+  line-height: 1.2;
 }
-.donate-label {
+.coffee-tier-note {
+  font-size: 11px;
+  color: var(--slate);
+  line-height: 1.55;
+}
+
+.donate-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+}
+.donate-modal.open {
+  display: flex;
+  flex-direction: column;
+}
+.donate-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,10,10,0.48);
+  backdrop-filter: blur(5px);
+}
+.donate-modal-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 360px;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 26px 20px 22px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+  max-height: min(90vh, 620px);
+  overflow-y: auto;
+  text-align: left;
+}
+.donate-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--slate);
+  border-radius: 10px;
+  transition: background 0.15s, color 0.15s;
+}
+.donate-modal-close:hover {
+  background: var(--slate-bg);
+  color: var(--black);
+}
+.donate-modal-lead {
+  font-family: var(--font-my);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 6px;
+  padding-right: 36px;
+}
+.donate-modal-sub {
+  font-family: var(--font-my);
   font-size: 12px;
   color: var(--slate);
+  line-height: 1.75;
+  margin-bottom: 18px;
+}
+.donate-pay-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.donate-pay-grid .btn {
+  justify-content: center;
+  width: 100%;
+}
+.donate-qr-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0 14px;
+  padding: 14px;
+  background: var(--slate-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.donate-qr-wrap img {
+  display: block;
+  width: min(220px, 100%);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+.donate-qr-meta {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--black);
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.donate-qr-hint {
+  font-family: var(--font-my);
+  font-size: 11px;
+  color: var(--slate-lt);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.donate-step-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.donate-step-actions .btn {
+  justify-content: center;
+  width: 100%;
 }
 
 /* ══════════════════════════════════
@@ -580,14 +823,20 @@ footer {
 @media (max-width: 480px) {
   :root { --radius: 16px; }
 
-  /* Nav */
-  nav { padding: 14px 18px; }
+  /* Nav — keep safe-area top (shorthand resets padding-top) */
+  nav {
+    padding: 14px 18px;
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  }
   .nav-inner { gap: 12px; }
 
-  /* Hero */
+  /* Hero — start below fixed nav; avoid vertical center clipping eyebrow */
   .hero {
+    justify-content: flex-start;
     padding: 48px 20px 80px;
-    min-height: calc(100vh - 60px);
+    padding-top: max(28px, calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 32px));
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
   }
   .hero-eyebrow { font-size: 10px; letter-spacing: 2px; margin-bottom: 16px; }
   .hero-title   { font-size: clamp(44px, 14vw, 64px); letter-spacing: -0.5px; }
@@ -628,10 +877,6 @@ footer {
   /* Library grid */
   .library-grid { grid-template-columns: 1fr; }
 
-  /* Donate cards */
-  .donate-cards { flex-direction: column; }
-  .donate-card  { min-width: unset; }
-
   /* Contact email */
   .contact-email { flex-wrap: wrap; word-break: break-all; }
   .contact-email a { font-size: 12px; }
@@ -642,9 +887,15 @@ footer {
 
 /* ── Small tablet / large phone (480px – 768px) ── */
 @media (min-width: 480px) and (max-width: 768px) {
-  nav { padding: 16px 24px; }
+  nav {
+    padding: 16px 24px;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+  }
 
-  .hero { padding: 56px 24px 80px; }
+  .hero {
+    padding: 56px 24px 80px;
+    padding-top: max(56px, calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 24px));
+  }
   .hero-desc { font-size: 14px; }
 
   .auth-row { gap: 10px; }
@@ -658,23 +909,25 @@ footer {
 
   .library-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
 
-  .donate-cards { flex-direction: row; flex-wrap: wrap; }
-  .donate-card  { min-width: 130px; }
-
   .menu-link { font-size: 12px; }
 }
 
 /* ── Tablet (768px – 1024px) ── */
 @media (min-width: 768px) and (max-width: 1024px) {
-  nav { padding: 18px 28px; }
+  nav {
+    padding: 18px 28px;
+    padding-top: calc(18px + env(safe-area-inset-top, 0px));
+  }
 
-  .hero  { padding: 60px 32px; }
+  .hero {
+    padding: 60px 32px;
+    padding-top: max(60px, calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 24px));
+  }
   .features { max-width: 600px; }
   .feat-item { padding: 18px 14px; }
 
   .page { padding: 80px 32px 60px; }
 
-  .donate-card { min-width: 140px; }
 }
 
 /* ── Touch-device: bigger tap targets ── */
@@ -684,12 +937,14 @@ footer {
   .form-input,
   .form-textarea { font-size: 16px; } /* prevent iOS zoom */
   .draft-card   { padding: 22px; }
-  .donate-card  { padding: 24px 16px; }
 }
 
 /* ── Wide desktop (> 1280px) ── */
 @media (min-width: 1280px) {
-  .hero { padding: 80px 40px; }
+  .hero {
+    padding: 80px 40px;
+    padding-top: max(80px, calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 24px));
+  }
   .features { max-width: 760px; }
   .page { padding: 80px 40px 60px; }
 }
@@ -862,25 +1117,52 @@ footer {
     <div class="page-inner">
     <h2 class="page-title">Support</h2>
     <div class="page-divider"></div>
-    <p class="page-body" style="margin-bottom:8px;">CinePodma ကို ထောက်ပံ့လိုပါသလား? ကျေးဇူးတင်ပါသည်။</p>
+    <p class="page-body" style="margin-bottom:8px;">
+      ရိုက်ပြီးသား သို့ အဆင့်သင့်ဖြစ်သော <strong style="color:var(--black);">script ဖိုင်</strong> ကို တင်ပါ။ CinePodma က သင့် ဇာတ်ညွှန်းကို web ပေါ်တွင် <strong style="color:var(--black);">လူအများ ဖတ်ရှုနိုင်အောင်</strong> ပြသပေးမည့် ပုံစံဖြစ်သည် (ဥပမာ — PDF၊ စာသားဖိုင် စသည်)။
+    </p>
 
-    <div class="donate-cards">
-      <div class="donate-card">
-        <div class="donate-amount">$3</div>
-        <div class="donate-label">Coffee ☕</div>
-      </div>
-      <div class="donate-card featured">
-        <div class="donate-amount">$10</div>
-        <div class="donate-label">Monthly ⭐</div>
-      </div>
-      <div class="donate-card">
-        <div class="donate-amount">$25</div>
-        <div class="donate-label">Patron 🎬</div>
-      </div>
-    </div>
+    <section class="script-publish-section" aria-label="Script ဖိုင် တင်ခြင်း">
+      <h3 class="script-publish-heading">ဇာတ်ညွှန်း ဖိုင် တင်ရန်</h3>
+      <p class="script-publish-note">
+        အောက်ပါ အကွက်တွင် ဖိုင်ရွေးပါ။ နောက်ပိုင်းတွင် ဆာဗာသို့ သိမ်းပြီး ဖတ်ရှုစာမျက်နှာနှင့် ချိတ်ဆက်မည်ဖြစ်သည်။ လက်ရှိ UI အမြက်သက်သာဖြစ်သည်။
+      </p>
 
-    <br>
-    <button class="btn btn-red" onclick="alert('Payment integration coming soon')">ထောက်ပံ့မည်</button>
+      <div class="script-upload-wrap">
+        <label class="script-dropzone" id="scriptDropzone">
+          <input type="file" id="supportScriptFile" accept=".pdf,.txt,.fdx,.fountain,.doc,.docx,application/pdf,text/plain" aria-label="Script ဖိုင် ရွေးချယ်ရန်">
+          <span class="script-dropzone-icon" aria-hidden="true">📄</span>
+          <span class="script-dropzone-title">ဖိုင်ဆွဲထည့်ပါ သို့ ဤနေရာကို နှိပ်ပြီး ရွေးပါ</span>
+          <span class="script-dropzone-hint">PDF · TXT · Fountain · Word …</span>
+        </label>
+        <p class="script-upload-filename" id="supportScriptFilename" aria-live="polite"></p>
+        <p class="script-upload-disclaimer">လက်ရှိတွင် ဖိုင်ကို ဆာဗာသို့ မသိမ်းသေးပါ — ရွေးထားသော ဖိုင်အမည်ကို အောက်တွင်ပြသသည်က UI အတွက်သာဖြစ်သည်။</p>
+      </div>
+    </section>
+
+    <section class="support-coffee-section" aria-labelledby="coffeeSectionTitle">
+      <h3 id="coffeeSectionTitle" class="script-publish-heading">☕ ထောက်ပံ့မှုဖြင့် ကူညီပါ</h3>
+      <p class="script-publish-note" style="margin-bottom:16px;">
+        Buy me a coffee ပုံစံ — ပမာဏ ရွေးပြီးနောက် <strong style="color:var(--black);">KPay</strong> သို့မဟုတ် <strong style="color:var(--black);">Wave Money</strong> ဖြင့် ငွေလွှဲရန် QR ကို ပြပါမည်။ လက်ရှိ QR သည် မော်ဒယ်ပုံစံ ဖြစ်ပြီး နောက်ပိုင်းတွင် သင်၏ အမှန်တကယ် လွှဲနံပါတ်နှင့် ချိတ်ဆက်မည်။
+      </p>
+      <div class="coffee-tier-grid">
+        <button type="button" class="coffee-tier" onclick="openDonateCoffee(1000, '1,000 ကျပ်')">
+          <div class="coffee-tier-amt">1,000</div>
+          <div class="coffee-tier-note">ကျပ် · ကော်ဖီတစ်ခွက်</div>
+        </button>
+        <button type="button" class="coffee-tier featured" onclick="openDonateCoffee(3000, '3,000 ကျပ်')">
+          <div class="coffee-tier-amt">3,000</div>
+          <div class="coffee-tier-note">ကျပ် · ကျေးဇူးတင်ပါသည်</div>
+        </button>
+        <button type="button" class="coffee-tier" onclick="openDonateCoffee(5000, '5,000 ကျပ်')">
+          <div class="coffee-tier-amt">5,000</div>
+          <div class="coffee-tier-note">ကျပ် · ထောက်ပံ့မှု အထူး</div>
+        </button>
+        <button type="button" class="coffee-tier" onclick="openDonateCoffeeCustom()">
+          <div class="coffee-tier-amt">…</div>
+          <div class="coffee-tier-note">ကြိုက်သလောက် (ကျပ် ထည့်ပါ)</div>
+        </button>
+      </div>
+    </section>
     </div>
   </section>
 
@@ -890,6 +1172,50 @@ footer {
 <footer>
   <span class="footer-text">© 2025 CinePodma. All rights reserved.</span>
 </footer>
+
+<!-- ══════ DONATE / QR MODAL (Support page) ══════ -->
+<div id="donateModal" class="donate-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="donate-modal-backdrop" onclick="closeDonateModal()" aria-hidden="true"></div>
+  <div class="donate-modal-card" role="document">
+    <button type="button" class="donate-modal-close" onclick="closeDonateModal()" aria-label="ပိတ်မည်">×</button>
+
+    <div id="donateStepCustom" class="donate-step" style="display:none;">
+      <p class="donate-modal-lead" id="donateModalHeadingCustom">ကြိုက်သလောက် — ကျပ်ပမာဏ</p>
+      <p class="donate-modal-sub">ထောက်ပံ့လိုသော ကျပ် အရေအတွက်ကို ထည့်ပါ။</p>
+      <label class="form-label" for="donateCustomAmount">ကျပ်</label>
+      <input type="number" class="form-input" id="donateCustomAmount" min="1" step="1" placeholder="ဥပမာ 2500">
+      <div class="donate-step-actions" style="margin-top:18px;">
+        <button type="button" class="btn btn-red" onclick="donateCustomContinue()">ရှေ့ဆက်မည်</button>
+        <button type="button" class="btn btn-outline" onclick="closeDonateModal()">ပိတ်မည်</button>
+      </div>
+    </div>
+
+    <div id="donateStepMethod" class="donate-step" style="display:none;">
+      <p class="donate-modal-lead" id="donateMethodTitle">ငွေပေးချေမှု</p>
+      <p class="donate-modal-sub">KPay သို့မဟုတ် Wave Money ရွေးပါ။</p>
+      <div class="donate-pay-grid">
+        <button type="button" class="btn btn-outline" onclick="donatePickPay('KPay')">KPay</button>
+        <button type="button" class="btn btn-outline" onclick="donatePickPay('Wave')">Wave Money</button>
+      </div>
+      <div class="donate-step-actions" style="margin-top:16px;">
+        <button type="button" class="btn btn-outline" onclick="donateBackFromMethod()">နောက်ပြန်</button>
+      </div>
+    </div>
+
+    <div id="donateStepQr" class="donate-step" style="display:none;">
+      <p class="donate-modal-lead" id="donateQrHeading">ငွေလွှဲ QR</p>
+      <p class="donate-qr-meta" id="donateQrMeta"></p>
+      <div class="donate-qr-wrap">
+        <img id="donateQrImg" src="" alt="ငွေလွှဲ QR မော်ဒယ်" width="220" height="220">
+      </div>
+      <p class="donate-qr-hint">လက်ရှိသည် မော်ဒယ် QR ဖြစ်သည်။ Wave / KPay အက်ပ်ဖြင့် စကင်ဖတ်လို့ရသော အမှန်နံပါတ်ကို နောက်ပိုင်းတွင် ချိတ်ဆက်မည်။</p>
+      <div class="donate-step-actions">
+        <button type="button" class="btn btn-outline" onclick="donateBackToMethod()">ငွေပေးချေမှု ပြန်ရွေးမည်</button>
+        <button type="button" class="btn btn-red" onclick="closeDonateModal()">ပြီးပါပြီ</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ══════ MENU ══════ */
@@ -909,13 +1235,17 @@ function toggleMenu() {
 function closeMenu() {
   document.getElementById('burgerBtn').classList.remove('open');
   document.getElementById('fullMenu').classList.remove('open');
-  document.body.style.overflow = '';
+  var dm = document.getElementById('donateModal');
+  if (!dm || !dm.classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
 }
 
 /* ══════ PAGE ROUTING ══════ */
 const pages = ['home','write','library','about','contact','support'];
 
 function showPage(id) {
+  closeDonateModal();
   pages.forEach(p => {
     const el = document.getElementById('page-' + p);
     if (!el) return;
@@ -949,9 +1279,159 @@ function submitContact(e) {
   alert('မက်ဆေ့ဂျ် ပို့ပြီးပါပြီ — Backend ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
 }
 
+/* ══════ SUPPORT — script upload box (UI only; no upload) ══════ */
+function supportShowFileName(file) {
+  var el = document.getElementById('supportScriptFilename');
+  if (!el || !file) return;
+  el.textContent = file.name + ' — ဆာဗာတင်ခြင်း နောက်ပိုင်းတွင်';
+}
+
+(function setupSupportScriptDropzone() {
+  var zone = document.getElementById('scriptDropzone');
+  var input = document.getElementById('supportScriptFile');
+  if (!zone || !input) return;
+
+  input.addEventListener('change', function() {
+    if (input.files && input.files[0]) supportShowFileName(input.files[0]);
+    else {
+      var out = document.getElementById('supportScriptFilename');
+      if (out) out.textContent = '';
+    }
+  });
+
+  var dragDepth = 0;
+  zone.addEventListener('dragenter', function(e) {
+    e.preventDefault();
+    dragDepth++;
+    zone.classList.add('script-dropzone--drag');
+  });
+  zone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+  });
+  zone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    dragDepth--;
+    if (dragDepth <= 0) {
+      dragDepth = 0;
+      zone.classList.remove('script-dropzone--drag');
+    }
+  });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dragDepth = 0;
+    zone.classList.remove('script-dropzone--drag');
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) supportShowFileName(f);
+  });
+})();
+
+/* ══════ SUPPORT — donate / KPay / Wave / QR (model UI) ══════ */
+var donateFlow = { amount: 0, label: '', fromCustom: false, method: '' };
+
+function donateModalOpen() {
+  var m = document.getElementById('donateModal');
+  if (!m) return;
+  m.classList.add('open');
+  m.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDonateModal() {
+  var m = document.getElementById('donateModal');
+  if (!m) return;
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden', 'true');
+  var c = document.getElementById('donateStepCustom');
+  var s = document.getElementById('donateStepMethod');
+  var q = document.getElementById('donateStepQr');
+  if (c) c.style.display = 'none';
+  if (s) s.style.display = 'none';
+  if (q) q.style.display = 'none';
+  var img = document.getElementById('donateQrImg');
+  if (img) {
+    img.removeAttribute('src');
+    img.alt = 'ငွေလွှဲ QR မော်ဒယ်';
+  }
+  donateFlow = { amount: 0, label: '', fromCustom: false, method: '' };
+  var menu = document.getElementById('fullMenu');
+  if (!menu || !menu.classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
+}
+
+function openDonateCoffee(amount, label) {
+  donateFlow.amount = amount;
+  donateFlow.label = label;
+  donateFlow.fromCustom = false;
+  donateFlow.method = '';
+  document.getElementById('donateStepCustom').style.display = 'none';
+  document.getElementById('donateStepQr').style.display = 'none';
+  document.getElementById('donateStepMethod').style.display = 'block';
+  document.getElementById('donateMethodTitle').textContent = label + ' — ငွေပေးချေမှု ရွေးပါ';
+  donateModalOpen();
+}
+
+function openDonateCoffeeCustom() {
+  donateFlow.fromCustom = true;
+  donateFlow.method = '';
+  document.getElementById('donateStepMethod').style.display = 'none';
+  document.getElementById('donateStepQr').style.display = 'none';
+  document.getElementById('donateStepCustom').style.display = 'block';
+  var inp = document.getElementById('donateCustomAmount');
+  if (inp) inp.value = '';
+  donateModalOpen();
+}
+
+function donateCustomContinue() {
+  var inp = document.getElementById('donateCustomAmount');
+  var n = parseInt(inp && inp.value, 10);
+  if (!n || n < 1) {
+    alert('ကျပ်ပမာဏကို မှန်ကန်စွာ ထည့်ပါ');
+    return;
+  }
+  donateFlow.amount = n;
+  donateFlow.label = n.toLocaleString('en-US') + ' ကျပ် (ကြိုက်သလောက်)';
+  document.getElementById('donateStepCustom').style.display = 'none';
+  document.getElementById('donateStepQr').style.display = 'none';
+  document.getElementById('donateStepMethod').style.display = 'block';
+  document.getElementById('donateMethodTitle').textContent = donateFlow.label + ' — ငွေပေးချေမှု ရွေးပါ';
+}
+
+function donateBackFromMethod() {
+  if (donateFlow.fromCustom) {
+    document.getElementById('donateStepMethod').style.display = 'none';
+    document.getElementById('donateStepCustom').style.display = 'block';
+  } else {
+    closeDonateModal();
+  }
+}
+
+function donatePickPay(method) {
+  donateFlow.method = method;
+  var payload = 'CinePodma|MMK:' + donateFlow.amount + '|' + method + '|demo-ui';
+  var url = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=2&data=' + encodeURIComponent(payload);
+  var img = document.getElementById('donateQrImg');
+  img.src = url;
+  img.alt = method + ' ငွေလွှဲ QR မော်ဒယ်';
+  document.getElementById('donateQrMeta').textContent = method + ' · ' + donateFlow.label;
+  document.getElementById('donateStepMethod').style.display = 'none';
+  document.getElementById('donateStepQr').style.display = 'block';
+}
+
+function donateBackToMethod() {
+  document.getElementById('donateStepQr').style.display = 'none';
+  document.getElementById('donateStepMethod').style.display = 'block';
+}
+
 /* ══════ KEYBOARD ══════ */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeMenu();
+  if (e.key !== 'Escape') return;
+  var dm = document.getElementById('donateModal');
+  if (dm && dm.classList.contains('open')) {
+    closeDonateModal();
+    return;
+  }
+  closeMenu();
 });
 </script>
 </body>
