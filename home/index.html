@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Home - CinePodma</title>
+
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      cine<br><span>podma</span>
+    </a>
+
+    <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+    </button>
+  </div>
+</nav>
+
+<!-- MENU -->
+<div class="full-menu" id="fullMenu">
+  <div class="menu-nav">
+
+    <a class="menu-link" href="/home/">
+      <span class="icon">⌂</span> Home
+    </a>
+
+    <a class="menu-link" href="/library/">
+      <span class="icon">📚</span> Library
+    </a>
+
+    <a class="menu-link" href="/about/">
+      <span class="icon">◎</span> About
+    </a>
+
+    <a class="menu-link" href="/contact/">
+      <span class="icon">✉</span> Contact
+    </a>
+
+    <a class="menu-link" href="/support/">
+      <span class="icon">♡</span> Support
+    </a>
+
+  </div>
+
+  <div class="menu-footer">By Ra Zaw</div>
+</div>
+
+<!-- HOME SECTION -->
+<section id="page-home" class="active" style="display:flex; width:100%;">
+  <div class="hero">
+
+    <div class="hero-lines"></div>
+
+    <p class="hero-eyebrow">Myanmar Screenplay Editor</p>
+
+    <h1 class="hero-title">
+      Cine<span>.</span>
+    </h1>
+
+    <p class="hero-sub">PODMA</p>
+
+    <p class="hero-desc">
+      မြန်မာဘာသာဖြင့် screenplay ရေးသားနိုင်သော<br>
+      professional script editor
+    </p>
+
+    <div class="auth-row">
+      <button class="btn btn-red" onclick="showSignUp()">အကောင့်ဖွင့်မည်</button>
+
+      <button class="btn btn-outline" onclick="showSignIn()">
+        အကောင့်ဝင်မည်
+      </button>
+    </div>
+
+    <br><br>
+
+    <div class="features">
+
+      <div class="feat-item">
+        <div class="feat-icon">🎬</div>
+        <div class="feat-label">Industry Format</div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-icon">🇲🇲</div>
+        <div class="feat-label">မြန်မာဘာသာ</div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-icon">📄</div>
+        <div class="feat-label">PDF Export</div>
+      </div>
+
+      <div class="feat-item">
+        <div class="feat-icon">☁️</div>
+        <div class="feat-label">Cloud Save</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="/script.js"></script>
+
+</body>
+</html>
