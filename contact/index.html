@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Contact - CinePodma</title>
+
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+
+    <a class="brand" href="/">
+      cine<br><span>podma</span>
+    </a>
+
+    <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+    </button>
+
+  </div>
+</nav>
+
+<!-- MENU -->
+<div class="full-menu" id="fullMenu">
+
+  <div class="menu-nav">
+
+    <a class="menu-link" href="/home/">
+      <span class="icon">⌂</span> Home
+    </a>
+
+    <a class="menu-link" href="/library/">
+      <span class="icon">📚</span> Library
+    </a>
+
+    <a class="menu-link" href="/about/">
+      <span class="icon">◎</span> About
+    </a>
+
+    <a class="menu-link" href="/contact/">
+      <span class="icon">✉</span> Contact
+    </a>
+
+    <a class="menu-link" href="/support/">
+      <span class="icon">♡</span> Support
+    </a>
+
+  </div>
+
+  <div class="menu-footer">
+    By Ra Zaw
+  </div>
+
+</div>
+
+<!-- CONTACT -->
+<section id="page-contact"
+  class="page active"
+  style="display:block !important;">
+
+  <div class="page-inner">
+
+    <h2 class="page-title">
+      Contact
+    </h2>
+
+    <div class="page-divider"></div>
+
+    <!-- EMAIL -->
+    <div class="contact-email">
+
+      <span>✉</span>
+
+      <a href="mailto:hello@cinepodma.com">
+        hello@cinepodma.com
+      </a>
+
+    </div>
+
+    <!-- FORM -->
+    <form onsubmit="submitContact(event)">
+
+      <div class="form-group">
+
+        <label class="form-label">
+          အမည်
+        </label>
+
+        <input
+          class="form-input"
+          type="text"
+          placeholder="သင့်အမည်"
+          required
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Email
+        </label>
+
+        <input
+          class="form-input"
+          type="email"
+          placeholder="email@example.com"
+          required
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label class="form-label">
+          မက်ဆေ့ဂျ်
+        </label>
+
+        <textarea
+          class="form-textarea"
+          placeholder="သင်ပြောချင်သည့်အရာ..."
+          required
+        ></textarea>
+
+      </div>
+
+      <button type="submit" class="btn btn-red">
+        ပို့မည်
+      </button>
+
+    </form>
+
+  </div>
+
+</section>
+
+<script src="/script.js"></script>
+
+</body>
+</html>
