@@ -181,39 +181,37 @@ body {
 }
 
 /* ══════════════════════════════════
-   WORKSPACE
+   WORKSPACE — Google Doc style
 ══════════════════════════════════ */
 .workspace {
   flex: 1;
   overflow-y: auto;
-  padding: 40px 24px 80px;
+  overflow-x: auto;
+  padding: 32px 24px 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  background: #D8D5D0;
 }
 
 /* ══════════════════════════════════
-   A4 PAGE
+   A4 PAGE — exact size
 ══════════════════════════════════ */
 .a4-page {
-  width: var(--a4-w);
-  min-height: var(--a4-h);
-  background: var(--paper);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
-  border-radius: 2px;
+  width: 794px;
+  height: 1123px;
+  min-width: 794px;
+  min-height: 1123px;
+  max-height: 1123px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+  border-radius: 1px;
   position: relative;
   flex-shrink: 0;
-
-  /* Ruled lines */
-  background-image: repeating-linear-gradient(
-    transparent,
-    transparent 27px,
-    var(--paper-ln) 27px,
-    var(--paper-ln) 28px
-  );
+  overflow: hidden;
 }
 
 /* Page number */
@@ -228,18 +226,18 @@ body {
 
 /* ── COVER PAGE ── */
 .cover-page {
-  padding: var(--margin-t) var(--margin-r) var(--margin-b) var(--margin-l);
+  padding: 96px 72px 96px 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: var(--a4-h);
+  width: 100%;
+  height: 100%;
   text-align: center;
-  gap: 0;
 }
 
 .cover-title {
-  font-family: var(--font-mys);
+  font-family: var(--font-my);
   font-size: 28px;
   font-weight: 700;
   color: var(--black);
@@ -292,8 +290,10 @@ body {
 
 /* ── SECTION PAGE ── */
 .section-page {
-  padding: var(--margin-t) var(--margin-r) var(--margin-b) var(--margin-l);
-  min-height: var(--a4-h);
+  padding: 96px 72px 96px 100px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .section-label {
@@ -330,17 +330,16 @@ body {
 
 /* ── SCREENPLAY PAGE ── */
 .screenplay-area {
-  padding: var(--margin-t) var(--margin-r) var(--margin-b) var(--margin-l);
-  min-height: var(--a4-h);
+  padding: 96px 72px 96px 100px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .sp-content { display: flex; flex-direction: column; }
 
 /* Elements */
-.sp-el {
-  position: relative;
-  margin-bottom: 0;
-}
+.sp-el { position: relative; margin-bottom: 0; }
 .sp-el:hover .el-type-tag { opacity: 1; }
 
 .el-type-tag {
@@ -454,44 +453,63 @@ body {
 .sp-fade.right { text-align: right; margin-top: 24px; }
 
 /* ══════════════════════════════════
-   INSERT TOOLBAR
+   BOTTOM TOOLBAR — scrollable
 ══════════════════════════════════ */
-.insert-bar {
+.bottom-toolbar {
   position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--black);
-  border-radius: 14px;
-  padding: 6px 8px;
-  display: flex;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: none;
   align-items: center;
-  gap: 2px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  padding: 0 8px;
+  height: 52px;
   z-index: 200;
-  opacity: 0;
-  transform: translateX(-50%) translateY(20px);
-  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  gap: 2px;
+  flex-shrink: 0;
 }
-.insert-bar.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-.ins-btn {
+.bottom-toolbar::-webkit-scrollbar { display: none; }
+.bottom-toolbar.visible { display: flex; }
+
+.bt-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
   padding: 6px 12px;
-  border-radius: 9px;
+  border-radius: 8px;
   border: none;
   background: transparent;
-  color: rgba(255,255,255,0.6);
-  font-family: var(--font-my);
-  font-size: 11px;
   cursor: pointer;
   transition: all 0.12s;
+  flex-shrink: 0;
   white-space: nowrap;
-  line-height: 1.6;
 }
-.ins-btn:hover { background: rgba(255,255,255,0.12); color: white; }
-.ins-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.1); margin: 0 2px; }
+.bt-btn:hover { background: var(--slate-bg); }
+.bt-btn .bt-tag {
+  font-family: var(--font-en);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--slate-lt);
+  text-transform: uppercase;
+}
+.bt-btn .bt-label {
+  font-family: var(--font-my);
+  font-size: 11px;
+  color: var(--black);
+  line-height: 1.5;
+}
+.bt-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
 
 /* ══════════════════════════════════
    MODALS
@@ -748,17 +766,92 @@ body {
 
 </div><!-- /workspace -->
 
-<!-- ══════ INSERT BAR (Screenplay only) ══════ -->
-<div class="insert-bar" id="insertBar">
-  <button class="ins-btn" onclick="ins('scene')">INT/EXT မြင်ကွင်း</button>
-  <button class="ins-btn" onclick="ins('action')">အကြောင်းအရာ</button>
-  <button class="ins-btn" onclick="ins('char')">ဇာတ်ကောင်</button>
-  <div class="ins-sep"></div>
-  <button class="ins-btn" onclick="ins('paren')">(ကွင်း)</button>
-  <button class="ins-btn" onclick="ins('dial')">ဒိုင်ယာလော့ဂ်</button>
-  <button class="ins-btn" onclick="ins('trans')">ပြောင်းကူး</button>
-  <div class="ins-sep"></div>
-  <button class="ins-btn" onclick="addFadeOut()" style="color:rgba(255,255,255,0.35); font-size:10px;">FADE OUT</button>
+<!-- ══════ BOTTOM TOOLBAR (screenplay only) ══════ -->
+<div class="bottom-toolbar" id="bottomToolbar">
+  <button class="bt-btn" onclick="ins('scene')">
+    <span class="bt-tag">INT/EXT</span>
+    <span class="bt-label">မြင်ကွင်း</span>
+  </button>
+  <button class="bt-btn" onclick="ins('action')">
+    <span class="bt-tag">ACTION</span>
+    <span class="bt-label">အကြောင်းအရာ</span>
+  </button>
+  <button class="bt-btn" onclick="ins('char')">
+    <span class="bt-tag">CHAR</span>
+    <span class="bt-label">ဇာတ်ကောင်</span>
+  </button>
+  <div class="bt-sep"></div>
+  <button class="bt-btn" onclick="ins('paren')">
+    <span class="bt-tag">( )</span>
+    <span class="bt-label">ကွင်းစကား</span>
+  </button>
+  <button class="bt-btn" onclick="ins('dial')">
+    <span class="bt-tag">DIAL</span>
+    <span class="bt-label">ဒိုင်ယာလော့ဂ်</span>
+  </button>
+  <button class="bt-btn" onclick="ins('trans')">
+    <span class="bt-tag">TRANS</span>
+    <span class="bt-label">ပြောင်းကူး</span>
+  </button>
+  <div class="bt-sep"></div>
+  <button class="bt-btn" onclick="addFadeOut()">
+    <span class="bt-tag">F.OUT</span>
+    <span class="bt-label">Fade Out</span>
+  </button>
+</div>
+
+<!-- ══════ SAVE MODAL ══════ -->
+<div class="overlay" id="saveModal">
+  <div class="modal-card">
+    <div class="modal-title">💾 Save & Publish</div>
+    <p class="modal-sub">သိမ်းဆည်းပြီး ဘယ်သူမြင်နိုင်မည်ကို ရွေးပါ</p>
+    <div class="privacy-options">
+      <label class="privacy-opt" onclick="setPrivacyAndSave('private', this)">
+        <input type="radio" name="savePrivacy" value="private" checked>
+        <span class="privacy-icon">🔒</span>
+        <div class="privacy-text">
+          <div>Private</div>
+          <div class="privacy-desc">ကိုယ်ပဲမြင်နိုင်သည် — မည်သူမှ မမြင်ရ</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacyAndSave('logline', this)">
+        <input type="radio" name="savePrivacy" value="logline">
+        <span class="privacy-icon">👁</span>
+        <div class="privacy-text">
+          <div>Logline ထိ</div>
+          <div class="privacy-desc">Title + Logline သာ မြင်နိုင်သည်</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacyAndSave('synopsis', this)">
+        <input type="radio" name="savePrivacy" value="synopsis">
+        <span class="privacy-icon">👁</span>
+        <div class="privacy-text">
+          <div>Synopsis ထိ</div>
+          <div class="privacy-desc">Logline + Synopsis မြင်နိုင်သည်</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacyAndSave('treatment', this)">
+        <input type="radio" name="savePrivacy" value="treatment">
+        <span class="privacy-icon">👁</span>
+        <div class="privacy-text">
+          <div>Treatment ထိ</div>
+          <div class="privacy-desc">Treatment အထိ မြင်နိုင်သည်</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacyAndSave('public', this)">
+        <input type="radio" name="savePrivacy" value="public">
+        <span class="privacy-icon">🌐</span>
+        <div class="privacy-text">
+          <div>Full Public</div>
+          <div class="privacy-desc">Screenplay အပါအဝင် အကုန်မြင်နိုင်သည်</div>
+        </div>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-red" style="flex:1;" onclick="confirmSave()">သိမ်းမည်</button>
+      <button class="btn btn-ghost" onclick="closeModal('saveModal')">ပယ်ဖျက်</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══════ PRIVACY MODAL ══════ -->
@@ -900,12 +993,66 @@ function switchTab(tab, btn) {
     if (el) el.style.display = p === tab ? '' : 'none';
   });
 
-  var bar = document.getElementById('insertBar');
+  var toolbar = document.getElementById('bottomToolbar');
   if (tab === 'screenplay') {
-    setTimeout(function() { bar.classList.add('visible'); }, 100);
+    toolbar.classList.add('visible');
+    document.getElementById('workspace').style.paddingBottom = '80px';
   } else {
-    bar.classList.remove('visible');
+    toolbar.classList.remove('visible');
+    document.getElementById('workspace').style.paddingBottom = '80px';
   }
+}
+
+/* ══ SAVE MODAL ══ */
+var pendingPrivacy = 'private';
+
+function saveDoc() {
+  // Pre-select current privacy
+  document.querySelectorAll('#saveModal .privacy-opt').forEach(function(opt) {
+    opt.classList.remove('selected');
+    if (opt.querySelector('input').value === privacyLevel) {
+      opt.classList.add('selected');
+    }
+  });
+  pendingPrivacy = privacyLevel;
+  openModal('saveModal');
+}
+
+function setPrivacyAndSave(level, el) {
+  pendingPrivacy = level;
+  document.querySelectorAll('#saveModal .privacy-opt').forEach(function(o) { o.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function confirmSave() {
+  privacyLevel = pendingPrivacy;
+  closeModal('saveModal');
+  doSave();
+}
+
+function doSave() {
+  var data = collectData();
+  try {
+    localStorage.setItem('cp_doc_' + docId, JSON.stringify(data));
+    var scripts = JSON.parse(localStorage.getItem('cp_scripts') || '[]');
+    var idx = scripts.findIndex(function(s) { return s.id === docId; });
+    var entry = {
+      id: docId,
+      title: data.title || 'Untitled',
+      scenes: elements.filter(function(e){ return e.type === 'scene'; }).length,
+      updated: 'ယခုတွင်',
+      status: 'draft'
+    };
+    if (idx >= 0) scripts[idx] = entry; else scripts.unshift(entry);
+    localStorage.setItem('cp_scripts', JSON.stringify(scripts));
+    updateSaveStatus('saved');
+    toast('💾 သိမ်းပြီးပါပြီ · ' + privacyLabel(privacyLevel));
+  } catch(e) { toast('❌ သိမ်းမရပါ'); }
+}
+
+function privacyLabel(level) {
+  var map = { private: '🔒 Private', logline: '👁 Logline', synopsis: '👁 Synopsis', treatment: '👁 Treatment', public: '🌐 Public' };
+  return map[level] || level;
 }
 
 /* ══ MARK HAS CONTENT ══ */
@@ -1188,7 +1335,7 @@ function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 document.addEventListener('click', function(e) {
-  ['privacyModal','shareModal','collabModal'].forEach(function(id) {
+  ['saveModal','privacyModal','shareModal','collabModal'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el && e.target === el) closeModal(id);
   });
@@ -1206,7 +1353,7 @@ function toast(msg) {
 document.addEventListener('keydown', function(e) {
   if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveDoc(); }
   if (e.key === 'Escape') {
-    ['privacyModal','shareModal','collabModal'].forEach(closeModal);
+    ['saveModal','privacyModal','shareModal','collabModal'].forEach(closeModal);
   }
 });
 </script>
