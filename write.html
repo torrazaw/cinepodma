@@ -180,60 +180,115 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* ══════════════════════════════════
-   WORKSPACE — Google Doc style
-══════════════════════════════════ */
-.workspace {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: auto;
-  padding: 32px 24px 80px;
+/* Zoom controls */
+.zoom-controls {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 20px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-  background: #D8D5D0;
+  gap: 2px;
+  background: var(--slate-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+.zoom-btn {
+  width: 24px; height: 24px;
+  border: none; background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--black);
+  transition: background 0.12s;
+  line-height: 1;
+}
+.zoom-btn:hover { background: var(--border); }
+.zoom-label {
+  font-family: var(--font-en);
+  font-size: 11px;
+  color: var(--slate);
+  min-width: 36px;
+  text-align: center;
 }
 
 /* ══════════════════════════════════
-   A4 PAGE — exact size
+   WORKSPACE
+══════════════════════════════════ */
+.workspace {
+  flex: 1;
+  overflow: auto;
+  background: #C8C5C0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 24px 80px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* page-scaler: transform: scale() applied here via JS */
+.page-scaler {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  transform-origin: top center;
+  transition: transform 0.15s ease;
+  /* prevent scaler from collapsing workspace */
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════
+   A4 PAGE
+   794 × 1123 px  =  210 × 297 mm at 96dpi
+   padding 96px   =  1 inch all sides
 ══════════════════════════════════ */
 .a4-page {
   width: 794px;
   height: 1123px;
-  min-width: 794px;
-  min-height: 1123px;
-  max-height: 1123px;
   background: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
-  border-radius: 1px;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.15),
+    0 8px 32px rgba(0,0,0,0.18);
   position: relative;
   flex-shrink: 0;
   overflow: hidden;
 }
 
-/* Page number */
 .a4-page-num {
   position: absolute;
-  top: 32px; right: 48px;
+  top: 20px; right: 36px;
   font-family: var(--font-en);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--slate-lt);
   letter-spacing: 0.5px;
 }
 
 /* ── COVER PAGE ── */
 .cover-page {
-  padding: 96px 72px 96px 100px;
+  box-sizing: border-box;
+  width: 100%; height: 100%;
+  padding: 96px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
   text-align: center;
+}
+
+/* ── SECTION PAGE ── */
+.section-page {
+  box-sizing: border-box;
+  width: 100%; height: 100%;
+  padding: 96px;
+  overflow: hidden;
+}
+
+/* ── SCREENPLAY AREA ── */
+.screenplay-area {
+  box-sizing: border-box;
+  width: 100%; height: 100%;
+  padding: 96px;
+  overflow: hidden;
 }
 
 .cover-title {
@@ -256,7 +311,6 @@ body {
   background: var(--black);
   margin: 0 auto 32px;
 }
-
 .cover-written {
   font-family: var(--font-en);
   font-size: 12px;
@@ -264,7 +318,6 @@ body {
   letter-spacing: 1px;
   margin-bottom: 8px;
 }
-
 .cover-author {
   font-family: var(--font-my);
   font-size: 16px;
@@ -276,7 +329,6 @@ body {
   line-height: 1.8;
 }
 .cover-author::placeholder { color: var(--slate-lt); font-weight: 400; }
-
 .cover-draft {
   font-family: var(--font-en);
   font-size: 10px;
@@ -287,14 +339,6 @@ body {
   text-align: center;
 }
 .cover-draft::placeholder { color: var(--slate-lt); }
-
-/* ── SECTION PAGE ── */
-.section-page {
-  padding: 96px 72px 96px 100px;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
 
 .section-label {
   font-family: var(--font-en);
@@ -313,10 +357,10 @@ body {
   height: 1px;
   background: var(--border);
 }
-
 .section-textarea {
+  display: block;
   width: 100%;
-  min-height: 120px;
+  height: calc(100% - 48px);
   border: none; outline: none;
   background: transparent;
   font-family: var(--font-my);
@@ -324,17 +368,9 @@ body {
   line-height: 2.0;
   color: var(--black);
   resize: none;
-  overflow: hidden;
+  overflow: auto;
 }
 .section-textarea::placeholder { color: var(--slate-lt); font-style: italic; }
-
-/* ── SCREENPLAY PAGE ── */
-.screenplay-area {
-  padding: 96px 72px 96px 100px;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
 
 .sp-content { display: flex; flex-direction: column; }
 
@@ -701,7 +737,13 @@ body {
     <span class="tab-dot"></span> Screenplay
   </button>
   <div class="tabs-right">
-    <span class="page-count" id="pageCount">p. 1</span>
+    <div class="zoom-controls">
+      <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+      <span class="zoom-label" id="zoomLabel">100%</span>
+      <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+      <button class="zoom-btn" onclick="resetZoom()" title="Reset">⊙</button>
+    </div>
+    <div style="width:1px;height:16px;background:var(--border);margin:0 6px;"></div>
     <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="window.print()">🖨 Print</button>
     <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="exportPDF()">⬇ PDF</button>
   </div>
@@ -709,6 +751,7 @@ body {
 
 <!-- ══════ WORKSPACE ══════ -->
 <div class="workspace" id="workspace">
+  <div class="page-scaler" id="pageScaler">
 
   <!-- ── COVER PAGE ── -->
   <div class="a4-page" id="pg-cover">
@@ -764,6 +807,7 @@ body {
     </div>
   </div>
 
+  </div><!-- /page-scaler -->
 </div><!-- /workspace -->
 
 <!-- ══════ BOTTOM TOOLBAR (screenplay only) ══════ -->
@@ -967,6 +1011,8 @@ var docId = 'doc_' + Date.now();
 window.addEventListener('DOMContentLoaded', function() {
   loadDoc();
   updateSaveStatus('unsaved');
+  autoFitZoom();
+  window.addEventListener('resize', autoFitZoom);
 
   // Title sync
   document.getElementById('docTitle').addEventListener('input', function() {
@@ -981,7 +1027,41 @@ window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('coverDraft').addEventListener('input', autoSave);
 });
 
-/* ══ TABS ══ */
+/* ══ ZOOM ══ */
+var zoomLevel = 100;
+
+function applyZoom() {
+  var scaler = document.getElementById('pageScaler');
+  var scale = zoomLevel / 100;
+  scaler.style.transform = 'scale(' + scale + ')';
+  // adjust wrapper height so scrolling works
+  scaler.style.marginBottom = ((scale - 1) * 1123) + 'px';
+  document.getElementById('zoomLabel').textContent = zoomLevel + '%';
+}
+
+function changeZoom(delta) {
+  zoomLevel = Math.min(200, Math.max(25, zoomLevel + delta));
+  applyZoom();
+}
+
+function resetZoom() {
+  zoomLevel = 100;
+  applyZoom();
+}
+
+/* auto fit on load */
+function autoFitZoom() {
+  var ws = document.getElementById('workspace');
+  var available = ws.clientWidth - 80;
+  var pageW = 794;
+  if (available < pageW) {
+    zoomLevel = Math.floor((available / pageW) * 100);
+    zoomLevel = Math.max(25, Math.min(100, zoomLevel));
+  } else {
+    zoomLevel = 100;
+  }
+  applyZoom();
+}
 function switchTab(tab, btn) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
