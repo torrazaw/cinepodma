@@ -797,16 +797,6 @@ body {
     </div>
   </div>
 
-  <!-- ── SCREENPLAY PAGE ── -->
-  <div class="a4-page" id="pg-screenplay" style="display:none;">
-    <div class="a4-page-num" id="spPageNum">p. 1</div>
-    <div class="screenplay-area">
-      <div class="sp-fade">FADE IN:</div>
-      <div class="sp-content" id="spContent"></div>
-      <div class="sp-fade right" id="fadeOut" style="display:none;">FADE OUT.</div>
-    </div>
-  </div>
-
   </div><!-- /page-scaler -->
 </div><!-- /workspace -->
 
@@ -1067,20 +1057,35 @@ function switchTab(tab, btn) {
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
 
-  var pages = ['cover','logline','synopsis','treatment','screenplay'];
+  var pages = ['cover','logline','synopsis','treatment'];
   pages.forEach(function(p) {
     var el = document.getElementById('pg-' + p);
     if (el) el.style.display = p === tab ? '' : 'none';
   });
 
-  var toolbar = document.getElementById('bottomToolbar');
+  /* hide/show all sp-page- pages */
+  document.querySelectorAll('.a4-page[id^="sp-page-"]').forEach(function(pg) {
+    pg.style.display = tab === 'screenplay' ? '' : 'none';
+  });
+
+  /* ensure page 1 exists for screenplay */
   if (tab === 'screenplay') {
-    toolbar.classList.add('visible');
-    document.getElementById('workspace').style.paddingBottom = '80px';
+    spPageNum = 1;
+    getOrCreateSpPage(1);
+    /* if sp-area-1 is empty, add FADE IN */
+    var area1 = document.getElementById('sp-area-1');
+    if (area1 && !area1.querySelector('.sp-fade')) {
+      var fi = document.createElement('div');
+      fi.className   = 'sp-fade';
+      fi.textContent = 'FADE IN:';
+      area1.insertBefore(fi, area1.firstChild);
+    }
+    document.getElementById('bottomToolbar').classList.add('visible');
   } else {
-    toolbar.classList.remove('visible');
-    document.getElementById('workspace').style.paddingBottom = '80px';
+    document.getElementById('bottomToolbar').classList.remove('visible');
   }
+
+  updatePageCount();
 }
 
 /* ══ SAVE MODAL ══ */
@@ -1160,35 +1165,76 @@ function syncTitle(el) {
 
 /* ══ SCREENPLAY ELEMENTS ══ */
 var elConfig = {
-  scene:  { css: 'el-scene',  ph: 'INT. နေရာ — နေ့ / ည',    tag: 'SCENE',    next: 'action' },
-  action: { css: 'el-action', ph: 'ဖြစ်ပျက်မှု ဖော်ပြပါ...',    tag: 'ACTION',   next: 'action' },
-  char:   { css: 'el-char',   ph: 'ဇာတ်ကောင်အမည်',          tag: 'CHAR',     next: 'dial' },
-  paren:  { css: 'el-paren',  ph: 'ခံစားချက် / ညွှန်ကြားချက်', tag: '( )',      next: 'dial' },
-  dial:   { css: 'el-dial',   ph: 'ပြောစကား...',              tag: 'DIALOGUE', next: 'char' },
-  trans:  { css: 'el-trans',  ph: 'CUT TO: / FADE TO:',       tag: 'TRANS',    next: 'scene' }
+  scene:  { css: 'el-scene',  ph: 'INT. နေရာ — နေ့ / ည',     tag: 'SCENE',    next: 'action' },
+  action: { css: 'el-action', ph: 'ဖြစ်ပျက်မှု ဖော်ပြပါ...',     tag: 'ACTION',   next: 'action' },
+  char:   { css: 'el-char',   ph: 'ဇာတ်ကောင်အမည်',           tag: 'CHAR',     next: 'dial'   },
+  paren:  { css: 'el-paren',  ph: 'ခံစားချက် / ညွှန်ကြားချက်',  tag: '( )',      next: 'dial'   },
+  dial:   { css: 'el-dial',   ph: 'ပြောစကား...',               tag: 'DIALOGUE', next: 'char'   },
+  trans:  { css: 'el-trans',  ph: 'CUT TO: / FADE TO:',        tag: 'TRANS',    next: 'scene'  }
 };
+
+/* Page height constants (px) */
+var PAGE_H    = 1123;
+var PAGE_W    = 794;
+var PAGE_PAD  = 96;   /* 1 inch */
+var spPageNum = 1;
+
+function getOrCreateSpPage(pageNum) {
+  var id = 'sp-page-' + pageNum;
+  var existing = document.getElementById(id);
+  if (existing) return existing;
+
+  /* build new a4 page */
+  var page = document.createElement('div');
+  page.className = 'a4-page';
+  page.id = id;
+
+  var num = document.createElement('div');
+  num.className = 'a4-page-num';
+  num.textContent = 'p. ' + pageNum;
+  page.appendChild(num);
+
+  var area = document.createElement('div');
+  area.className = 'screenplay-area';
+  area.id = 'sp-area-' + pageNum;
+  page.appendChild(area);
+
+  document.getElementById('pageScaler').appendChild(page);
+  return page;
+}
+
+function getCurrentSpContent() {
+  /* find the last sp-area that isn't overflowing */
+  var pageNum = spPageNum;
+  var area = document.getElementById('sp-area-' + pageNum);
+  if (!area) {
+    getOrCreateSpPage(pageNum);
+    area = document.getElementById('sp-area-' + pageNum);
+  }
+  return area;
+}
 
 function ins(type) {
   var cfg = elConfig[type];
-  var id = 'el_' + Date.now();
+  var id  = 'el_' + Date.now();
 
   var wrap = document.createElement('div');
-  wrap.className = 'sp-el';
-  wrap.dataset.id = id;
+  wrap.className   = 'sp-el';
+  wrap.dataset.id  = id;
   wrap.dataset.type = type;
 
   var tag = document.createElement('span');
-  tag.className = 'el-type-tag';
+  tag.className   = 'el-type-tag';
   tag.textContent = cfg.tag;
 
   var div = document.createElement('div');
-  div.className = cfg.css;
+  div.className       = cfg.css;
   div.contentEditable = 'true';
   div.setAttribute('data-ph', cfg.ph);
 
   div.addEventListener('input', function() {
     autoSave();
-    updatePageCount();
+    checkPageOverflow(wrap);
   });
   div.addEventListener('focus', function() { lastFocused = wrap; });
   div.addEventListener('keydown', function(e) {
@@ -1201,7 +1247,8 @@ function ins(type) {
   wrap.appendChild(tag);
   wrap.appendChild(div);
 
-  var content = document.getElementById('spContent');
+  /* insert after lastFocused or append to current page */
+  var content = getCurrentSpContent();
   if (lastFocused && lastFocused.parentNode === content) {
     lastFocused.after(wrap);
   } else {
@@ -1210,26 +1257,99 @@ function ins(type) {
 
   elements.push({ id: id, type: type, wrap: wrap, div: div });
   lastFocused = wrap;
-  setTimeout(function() { div.focus(); }, 30);
-  updatePageCount();
+  setTimeout(function() {
+    div.focus();
+    checkPageOverflow(wrap);
+  }, 30);
   autoSave();
 }
 
 function addFadeOut() {
-  document.getElementById('fadeOut').style.display = 'block';
+  /* add FADE OUT to last screenplay page */
+  var area = document.getElementById('sp-area-' + spPageNum);
+  if (!area) return;
+  var fo = document.createElement('div');
+  fo.className   = 'sp-fade right';
+  fo.textContent = 'FADE OUT.';
+  area.appendChild(fo);
   toast('FADE OUT. ထည့်ပြီးပါပြီ');
 }
 
-/* ══ PAGE COUNT ══ */
-function updatePageCount() {
-  var page = document.getElementById('pg-screenplay');
-  if (!page) return;
-  var h = page.scrollHeight;
-  var a4h = 1123;
-  var pages = Math.max(1, Math.ceil(h / a4h));
-  document.getElementById('pageCount').textContent = 'p. ' + pages;
-  document.getElementById('spPageNum').textContent = 'p. 1';
+/* check if current page overflows → move element to next page */
+function checkPageOverflow(wrap) {
+  var area = wrap.parentNode;
+  if (!area || !area.classList.contains('screenplay-area')) return;
+
+  var pageId   = area.id.replace('sp-area-', '');
+  var pageEl   = document.getElementById('sp-page-' + pageId);
+  if (!pageEl) return;
+
+  /* available height = PAGE_H - 2*padding */
+  var maxH = PAGE_H - PAGE_PAD * 2;
+
+  if (area.scrollHeight > maxH) {
+    /* overflow — move wrap to next page */
+    var nextNum = parseInt(pageId) + 1;
+    spPageNum   = nextNum;
+    var nextPage = getOrCreateSpPage(nextNum);
+    var nextArea = document.getElementById('sp-area-' + nextNum);
+
+    /* add FADE IN label if first element on new page */
+    if (!nextArea.firstChild) {
+      var fi = document.createElement('div');
+      fi.className   = 'sp-fade';
+      fi.textContent = 'CONTINUED:';
+      nextArea.insertBefore(fi, nextArea.firstChild);
+    }
+
+    nextArea.appendChild(wrap);
+    lastFocused = wrap;
+    wrap.querySelector('[contenteditable]').focus();
+  }
+
+  updatePageCount();
 }
+
+function updatePageCount() {
+  var count = document.querySelectorAll('.a4-page[id^="sp-page-"]').length || 1;
+  var label = document.getElementById('pageCount');
+  if (label) label.textContent = 'p. ' + count;
+}
+
+/* ══ PINCH-TO-ZOOM (touch) ══ */
+(function() {
+  var ws = null;
+  var startDist = 0;
+  var startZoom = 100;
+
+  function dist(touches) {
+    var dx = touches[0].clientX - touches[1].clientX;
+    var dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    ws = document.getElementById('workspace');
+
+    ws.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        startDist = dist(e.touches);
+        startZoom = zoomLevel;
+      }
+    }, { passive: false });
+
+    ws.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        var d = dist(e.touches);
+        var ratio = d / startDist;
+        zoomLevel = Math.min(200, Math.max(25, Math.round(startZoom * ratio)));
+        applyZoom();
+      }
+    }, { passive: false });
+  });
+})();
 
 /* ══ PRIVACY ══ */
 var selectedPrivacy = 'private';
