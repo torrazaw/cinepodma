@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Write — CinePodma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&family=Noto+Serif+Myanmar:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════
+   TOKENS
+══════════════════════════════════ */
+:root {
+  --white:    #FFFFFF;
+  --black:    #0A0A0A;
+  --slate:    #6B7280;
+  --slate-lt: #9CA3AF;
+  --slate-bg: #F3F4F6;
+  --border:   #E5E7EB;
+  --red:      #DC2626;
+  --red-h:    #B91C1C;
+  --paper:    #FDFCFA;
+  --paper-ln: rgba(0,0,0,0.04);
+  --radius:   20px;
+  --font-en:  'Special Elite', 'Courier New', monospace;
+  --font-my:  'Noto Sans Myanmar', sans-serif;
+  --font-mys: 'Noto Serif Myanmar', serif;
+  --a4-w:     794px;   /* A4 at 96dpi */
+  --a4-h:     1123px;
+  --margin-t: 96px;
+  --margin-b: 96px;
+  --margin-l: 100px;
+  --margin-r: 72px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+font-family: var(–font-my);
+background: #ECEAE6;
+color: var(–black);
+height: 100%;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+-webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════
+TOP BAR
+══════════════════════════════════ */
+.topbar {
+height: 52px;
+background: var(–white);
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 16px;
+flex-shrink: 0;
+z-index: 100;
+gap: 12px;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.topbar-center { flex: 1; display: flex; justify-content: center; }
+.topbar-right { display: flex; align-items: center; gap: 6px; }
+
+.back-btn {
+display: flex; align-items: center; gap: 5px;
+padding: 5px 10px;
+border-radius: 8px;
+border: 1px solid var(–border);
+background: transparent;
+font-family: var(–font-my);
+font-size: 12px;
+color: var(–slate);
+cursor: pointer;
+text-decoration: none;
+transition: all 0.15s;
+line-height: 1.6;
+}
+.back-btn:hover { background: var(–slate-bg); color: var(–black); }
+
+.doc-title-input {
+font-family: var(–font-my);
+font-size: 14px;
+font-weight: 600;
+color: var(–black);
+border: none;
+outline: none;
+background: transparent;
+text-align: center;
+min-width: 200px;
+max-width: 360px;
+width: 100%;
+}
+.doc-title-input::placeholder { color: var(–slate-lt); font-weight: 400; }
+
+.save-status {
+font-family: var(–font-en);
+font-size: 10px;
+color: var(–slate-lt);
+letter-spacing: 0.5px;
+white-space: nowrap;
+}
+.save-status.saved { color: #16A34A; }
+
+.btn {
+display: inline-flex; align-items: center; gap: 5px;
+padding: 6px 14px;
+border-radius: 10px;
+border: none; cursor: pointer;
+font-family: var(–font-my);
+font-size: 12px; font-weight: 600;
+line-height: 1.6;
+transition: all 0.15s;
+white-space: nowrap;
+}
+.btn-red { background: var(–red); color: var(–white); }
+.btn-red:hover { background: var(–red-h); }
+.btn-outline { background: transparent; color: var(–black); border: 1.5px solid var(–black); }
+.btn-outline:hover { background: var(–black); color: var(–white); }
+.btn-ghost { background: transparent; color: var(–slate); border: 1px solid var(–border); }
+.btn-ghost:hover { background: var(–slate-bg); color: var(–black); }
+
+/* ══════════════════════════════════
+SECTION TABS
+══════════════════════════════════ */
+.section-tabs {
+background: var(–white);
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: center;
+padding: 0 24px;
+gap: 0;
+flex-shrink: 0;
+overflow-x: auto;
+scrollbar-width: none;
+}
+.section-tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+display: flex; align-items: center; gap: 6px;
+padding: 12px 16px;
+border: none; background: transparent;
+font-family: var(–font-my);
+font-size: 13px;
+color: var(–slate);
+cursor: pointer;
+border-bottom: 2px solid transparent;
+transition: all 0.15s;
+white-space: nowrap;
+line-height: 1.6;
+position: relative;
+}
+.tab-btn:hover { color: var(–black); }
+.tab-btn.active { color: var(–black); border-bottom-color: var(–black); font-weight: 600; }
+.tab-dot {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: var(–border);
+transition: background 0.15s;
+}
+.tab-btn.has-content .tab-dot { background: var(–red); }
+.tab-btn.active .tab-dot { background: var(–black); }
+
+.tabs-right {
+margin-left: auto;
+display: flex;
+align-items: center;
+gap: 8px;
+padding-left: 16px;
+flex-shrink: 0;
+}
+.page-count {
+font-family: var(–font-en);
+font-size: 10px;
+color: var(–slate-lt);
+letter-spacing: 0.5px;
+}
+
+/* ══════════════════════════════════
+WORKSPACE
+══════════════════════════════════ */
+.workspace {
+flex: 1;
+overflow-y: auto;
+padding: 40px 24px 80px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 24px;
+scrollbar-width: thin;
+scrollbar-color: var(–border) transparent;
+}
+
+/* ══════════════════════════════════
+A4 PAGE
+══════════════════════════════════ */
+.a4-page {
+width: var(–a4-w);
+min-height: var(–a4-h);
+background: var(–paper);
+box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+border-radius: 2px;
+position: relative;
+flex-shrink: 0;
+
+/* Ruled lines */
+background-image: repeating-linear-gradient(
+transparent,
+transparent 27px,
+var(–paper-ln) 27px,
+var(–paper-ln) 28px
+);
+}
+
+/* Page number */
+.a4-page-num {
+position: absolute;
+top: 32px; right: 48px;
+font-family: var(–font-en);
+font-size: 10px;
+color: var(–slate-lt);
+letter-spacing: 0.5px;
+}
+
+/* ── COVER PAGE ── */
+.cover-page {
+padding: var(–margin-t) var(–margin-r) var(–margin-b) var(–margin-l);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+min-height: var(–a4-h);
+text-align: center;
+gap: 0;
+}
+
+.cover-title {
+font-family: var(–font-mys);
+font-size: 28px;
+font-weight: 700;
+color: var(–black);
+line-height: 1.8;
+margin-bottom: 32px;
+width: 100%;
+border: none; outline: none; background: transparent;
+text-align: center;
+resize: none;
+overflow: hidden;
+}
+.cover-title::placeholder { color: var(–slate-lt); font-weight: 400; }
+
+.cover-divider {
+width: 60px; height: 1px;
+background: var(–black);
+margin: 0 auto 32px;
+}
+
+.cover-written {
+font-family: var(–font-en);
+font-size: 12px;
+color: var(–slate);
+letter-spacing: 1px;
+margin-bottom: 8px;
+}
+
+.cover-author {
+font-family: var(–font-my);
+font-size: 16px;
+font-weight: 600;
+color: var(–black);
+border: none; outline: none; background: transparent;
+text-align: center;
+width: 100%;
+line-height: 1.8;
+}
+.cover-author::placeholder { color: var(–slate-lt); font-weight: 400; }
+
+.cover-draft {
+font-family: var(–font-en);
+font-size: 10px;
+color: var(–slate-lt);
+letter-spacing: 1px;
+margin-top: 48px;
+border: none; outline: none; background: transparent;
+text-align: center;
+}
+.cover-draft::placeholder { color: var(–slate-lt); }
+
+/* ── SECTION PAGE ── */
+.section-page {
+padding: var(–margin-t) var(–margin-r) var(–margin-b) var(–margin-l);
+min-height: var(–a4-h);
+}
+
+.section-label {
+font-family: var(–font-en);
+font-size: 10px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–slate-lt);
+margin-bottom: 24px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.section-label::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: var(–border);
+}
+
+.section-textarea {
+width: 100%;
+min-height: 120px;
+border: none; outline: none;
+background: transparent;
+font-family: var(–font-my);
+font-size: 14px;
+line-height: 2.0;
+color: var(–black);
+resize: none;
+overflow: hidden;
+}
+.section-textarea::placeholder { color: var(–slate-lt); font-style: italic; }
+
+/* ── SCREENPLAY PAGE ── */
+.screenplay-area {
+padding: var(–margin-t) var(–margin-r) var(–margin-b) var(–margin-l);
+min-height: var(–a4-h);
+}
+
+.sp-content { display: flex; flex-direction: column; }
+
+/* Elements */
+.sp-el {
+position: relative;
+margin-bottom: 0;
+}
+.sp-el:hover .el-type-tag { opacity: 1; }
+
+.el-type-tag {
+position: absolute;
+left: -72px; top: 4px;
+font-family: var(–font-en);
+font-size: 8px;
+letter-spacing: 1px;
+color: var(–slate-lt);
+text-transform: uppercase;
+opacity: 0;
+transition: opacity 0.15s;
+white-space: nowrap;
+}
+
+[contenteditable] {
+outline: none;
+min-height: 1.4em;
+transition: background 0.1s;
+-webkit-user-modify: read-write-plaintext-only;
+}
+[contenteditable]:focus { background: rgba(220,38,38,0.03); border-radius: 2px; }
+[contenteditable][data-ph]:empty::before {
+content: attr(data-ph);
+color: #C8C5BF;
+pointer-events: none;
+font-style: italic;
+}
+
+/* Scene heading */
+.el-scene {
+font-family: var(–font-my);
+font-size: 13px;
+font-weight: 700;
+line-height: 2.0;
+color: var(–black);
+margin-top: 28px;
+margin-bottom: 4px;
+padding: 4px 10px;
+background: rgba(0,0,0,0.03);
+border-left: 2px solid var(–black);
+border-radius: 0 3px 3px 0;
+}
+
+/* Action */
+.el-action {
+font-family: var(–font-my);
+font-size: 13px;
+line-height: 2.0;
+color: var(–black);
+padding: 2px 0;
+margin-bottom: 4px;
+}
+
+/* Character */
+.el-char {
+font-family: var(–font-my);
+font-size: 13px;
+font-weight: 700;
+line-height: 2.0;
+color: var(–black);
+margin-top: 14px;
+margin-bottom: 0;
+padding-left: 34%;
+}
+
+/* Parenthetical */
+.el-paren {
+font-family: var(–font-my);
+font-size: 12px;
+font-style: italic;
+line-height: 1.8;
+color: var(–slate);
+padding-left: 26%;
+padding-right: 26%;
+margin-bottom: 0;
+}
+
+/* Dialogue */
+.el-dial {
+font-family: var(–font-my);
+font-size: 13px;
+line-height: 2.0;
+color: var(–black);
+padding-left: 20%;
+padding-right: 20%;
+margin-bottom: 4px;
+}
+
+/* Transition */
+.el-trans {
+font-family: var(–font-my);
+font-size: 12px;
+font-weight: 700;
+line-height: 2.0;
+color: var(–slate);
+text-align: right;
+margin-top: 14px;
+margin-bottom: 4px;
+}
+
+/* Fade labels */
+.sp-fade {
+font-family: var(–font-en);
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.5px;
+color: var(–black);
+padding: 4px 0;
+}
+.sp-fade.right { text-align: right; margin-top: 24px; }
+
+/* ══════════════════════════════════
+INSERT TOOLBAR
+══════════════════════════════════ */
+.insert-bar {
+position: fixed;
+bottom: 24px;
+left: 50%;
+transform: translateX(-50%);
+background: var(–black);
+border-radius: 14px;
+padding: 6px 8px;
+display: flex;
+align-items: center;
+gap: 2px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+z-index: 200;
+opacity: 0;
+transform: translateX(-50%) translateY(20px);
+transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.insert-bar.visible {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
+.ins-btn {
+padding: 6px 12px;
+border-radius: 9px;
+border: none;
+background: transparent;
+color: rgba(255,255,255,0.6);
+font-family: var(–font-my);
+font-size: 11px;
+cursor: pointer;
+transition: all 0.12s;
+white-space: nowrap;
+line-height: 1.6;
+}
+.ins-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+.ins-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.1); margin: 0 2px; }
+
+/* ══════════════════════════════════
+MODALS
+══════════════════════════════════ */
+.overlay {
+display: none;
+position: fixed; inset: 0;
+background: rgba(0,0,0,0.45);
+backdrop-filter: blur(4px);
+z-index: 500;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+.overlay.open { display: flex; }
+.modal-card {
+background: var(–white);
+border-radius: var(–radius);
+padding: 28px 24px;
+width: 100%;
+max-width: 420px;
+box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn {
+from { opacity:0; transform:scale(0.95) translateY(12px); }
+to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.modal-title { font-family: var(–font-en); font-size:16px; letter-spacing:0.5px; margin-bottom:20px; }
+.modal-sub { font-size:13px; color:var(–slate); line-height:1.8; margin-bottom:16px; }
+.modal-actions { display:flex; gap:8px; margin-top:20px; flex-wrap:wrap; }
+
+/* Privacy */
+.privacy-options { display:flex; flex-direction:column; gap:6px; }
+.privacy-opt {
+display: flex; align-items: center; gap: 12px;
+padding: 12px 14px;
+border: 1.5px solid var(–border);
+border-radius: 12px;
+cursor: pointer;
+transition: all 0.15s;
+font-family: var(–font-my);
+font-size: 13px;
+line-height: 1.8;
+}
+.privacy-opt:hover { border-color: var(–black); }
+.privacy-opt.selected { border-color: var(–black); background: var(–slate-bg); }
+.privacy-opt input { display: none; }
+.privacy-icon { font-size: 16px; flex-shrink: 0; }
+.privacy-text { flex: 1; }
+.privacy-desc { font-size: 11px; color: var(–slate); line-height: 1.6; }
+
+/* Share */
+.share-link-box {
+display: flex;
+gap: 8px;
+align-items: center;
+padding: 10px 14px;
+background: var(–slate-bg);
+border-radius: 10px;
+margin-bottom: 16px;
+}
+.share-link-box span {
+flex: 1; font-family: var(–font-en); font-size: 11px; color: var(–slate);
+overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Collab */
+.collab-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.collab-item {
+display: flex; align-items: center; gap: 10px;
+padding: 10px 12px;
+border: 1px solid var(–border);
+border-radius: 10px;
+font-size: 13px;
+}
+.collab-avatar {
+width: 30px; height: 30px;
+border-radius: 50%;
+background: var(–slate-bg);
+display: flex; align-items: center; justify-content: center;
+font-size: 14px; flex-shrink: 0;
+}
+.collab-role {
+margin-left: auto;
+font-family: var(–font-en);
+font-size: 10px;
+color: var(–slate);
+letter-spacing: 0.5px;
+}
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+.form-input {
+width: 100%;
+padding: 10px 14px;
+border: 1.5px solid var(–border);
+border-radius: 12px;
+font-family: var(–font-my);
+font-size: 14px;
+color: var(–black);
+outline: none;
+transition: border-color 0.15s;
+line-height: 1.8;
+}
+.form-input:focus { border-color: var(–black); }
+
+/* ══════════════════════════════════
+TOAST
+══════════════════════════════════ */
+.toast {
+position: fixed;
+bottom: 80px; right: 24px;
+background: var(–black);
+color: var(–white);
+font-family: var(–font-my);
+font-size: 13px;
+line-height: 1.8;
+padding: 10px 18px;
+border-radius: 10px;
+transform: translateY(40px);
+opacity: 0;
+transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+z-index: 9999;
+pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ══════════════════════════════════
+RESPONSIVE
+══════════════════════════════════ */
+@media (max-width: 860px) {
+:root { –a4-w: 100%; –margin-l: 32px; –margin-r: 24px; –margin-t: 56px; –margin-b: 56px; }
+.workspace { padding: 20px 12px 100px; }
+.el-type-tag { display: none; }
+.topbar-center { display: none; }
+}
+@media (max-width: 500px) {
+.ins-btn { padding: 5px 8px; font-size: 10px; }
+.topbar-right .btn-ghost { display: none; }
+}
+
+/* ══════════════════════════════════
+PRINT
+══════════════════════════════════ */
+@media print {
+body { background: white; overflow: visible; }
+.topbar, .section-tabs, .insert-bar { display: none !important; }
+.workspace { padding: 0; overflow: visible; background: white; }
+.a4-page { box-shadow: none; width: 100%; min-height: auto; break-after: page; }
+[contenteditable]:focus { background: transparent; }
+.el-type-tag { display: none; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- ══════ TOP BAR ══════ -->
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="back-btn" href="index.html">← Home</a>
+    <span class="save-status" id="saveStatus">—</span>
+  </div>
+  <div class="topbar-center">
+    <input class="doc-title-input" id="docTitle" type="text" placeholder="ဇာတ်ကားနာမည်" autocomplete="off">
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-ghost" onclick="openCollab()">👥 Collab</button>
+    <button class="btn btn-ghost" onclick="openShare()">🔗 Share</button>
+    <button class="btn btn-ghost" onclick="openPrivacy()">🔒 Privacy</button>
+    <button class="btn btn-red" onclick="saveDoc()">💾 Save</button>
+  </div>
+</div>
+
+<!-- ══════ SECTION TABS ══════ -->
+
+<div class="section-tabs">
+  <button class="tab-btn active" data-tab="cover" onclick="switchTab('cover', this)">
+    <span class="tab-dot"></span> Cover
+  </button>
+  <button class="tab-btn" data-tab="logline" onclick="switchTab('logline', this)" id="tab-logline">
+    <span class="tab-dot"></span> Logline
+  </button>
+  <button class="tab-btn" data-tab="synopsis" onclick="switchTab('synopsis', this)" id="tab-synopsis">
+    <span class="tab-dot"></span> Synopsis
+  </button>
+  <button class="tab-btn" data-tab="treatment" onclick="switchTab('treatment', this)" id="tab-treatment">
+    <span class="tab-dot"></span> Treatment
+  </button>
+  <button class="tab-btn" data-tab="screenplay" onclick="switchTab('screenplay', this)" id="tab-screenplay">
+    <span class="tab-dot"></span> Screenplay
+  </button>
+  <div class="tabs-right">
+    <span class="page-count" id="pageCount">p. 1</span>
+    <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="window.print()">🖨 Print</button>
+    <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="exportPDF()">⬇ PDF</button>
+  </div>
+</div>
+
+<!-- ══════ WORKSPACE ══════ -->
+
+<div class="workspace" id="workspace">
+
+  <!-- ── COVER PAGE ── -->
+
+  <div class="a4-page" id="pg-cover">
+    <div class="cover-page">
+      <textarea class="cover-title" id="coverTitle" placeholder="ဇာတ်ကားနာမည်" rows="1" oninput="syncTitle(this); autoResize(this)"></textarea>
+      <div class="cover-divider"></div>
+      <div class="cover-written">Written by</div>
+      <input class="cover-author" id="coverAuthor" type="text" placeholder="သင့်နာမည်" autocomplete="off">
+      <input class="cover-draft" id="coverDraft" type="text" placeholder="Draft 1 · 2026" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ── LOGLINE PAGE ── -->
+
+  <div class="a4-page" id="pg-logline" style="display:none;">
+    <div class="a4-page-num">Logline</div>
+    <div class="section-page">
+      <div class="section-label">Logline</div>
+      <textarea class="section-textarea" id="loglineText"
+        placeholder="ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ..."
+        oninput="autoResize(this); markHasContent('logline', this); autoSave()"></textarea>
+    </div>
+  </div>
+
+  <!-- ── SYNOPSIS PAGE ── -->
+
+  <div class="a4-page" id="pg-synopsis" style="display:none;">
+    <div class="a4-page-num">Synopsis</div>
+    <div class="section-page">
+      <div class="section-label">Synopsis</div>
+      <textarea class="section-textarea" id="synopsisText"
+        placeholder="ဇာတ်ကားဇာတ်လမ်း အကျဉ်းချုပ် — ဇာတ်ဆုံးပါမှ..."
+        oninput="autoResize(this); markHasContent('synopsis', this); autoSave()"></textarea>
+    </div>
+  </div>
+
+  <!-- ── TREATMENT PAGE ── -->
+
+  <div class="a4-page" id="pg-treatment" style="display:none;">
+    <div class="a4-page-num">Treatment</div>
+    <div class="section-page">
+      <div class="section-label">Treatment</div>
+      <textarea class="section-textarea" id="treatmentText"
+        placeholder="မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ..."
+        oninput="autoResize(this); markHasContent('treatment', this); autoSave()"></textarea>
+    </div>
+  </div>
+
+  <!-- ── SCREENPLAY PAGE ── -->
+
+  <div class="a4-page" id="pg-screenplay" style="display:none;">
+    <div class="a4-page-num" id="spPageNum">p. 1</div>
+    <div class="screenplay-area">
+      <div class="sp-fade">FADE IN:</div>
+      <div class="sp-content" id="spContent"></div>
+      <div class="sp-fade right" id="fadeOut" style="display:none;">FADE OUT.</div>
+    </div>
+  </div>
+
+</div><!-- /workspace -->
+
+<!-- ══════ INSERT BAR (Screenplay only) ══════ -->
+
+<div class="insert-bar" id="insertBar">
+  <button class="ins-btn" onclick="ins('scene')">INT/EXT မြင်ကွင်း</button>
+  <button class="ins-btn" onclick="ins('action')">အကြောင်းအရာ</button>
+  <button class="ins-btn" onclick="ins('char')">ဇာတ်ကောင်</button>
+  <div class="ins-sep"></div>
+  <button class="ins-btn" onclick="ins('paren')">(ကွင်း)</button>
+  <button class="ins-btn" onclick="ins('dial')">ဒိုင်ယာလော့ဂ်</button>
+  <button class="ins-btn" onclick="ins('trans')">ပြောင်းကူး</button>
+  <div class="ins-sep"></div>
+  <button class="ins-btn" onclick="addFadeOut()" style="color:rgba(255,255,255,0.35); font-size:10px;">FADE OUT</button>
+</div>
+
+<!-- ══════ PRIVACY MODAL ══════ -->
+
+<div class="overlay" id="privacyModal">
+  <div class="modal-card">
+    <div class="modal-title">Privacy Settings</div>
+    <p class="modal-sub">ဘယ်သူမြင်နိုင်မည်ကို ရွေးပါ</p>
+    <div class="privacy-options">
+      <label class="privacy-opt" onclick="setPrivacy('private', this)">
+        <input type="radio" name="privacy" value="private">
+        <span class="privacy-icon">🔒</span>
+        <div class="privacy-text">
+          <div>Private</div>
+          <div class="privacy-desc">ကိုယ်ပဲမြင်နိုင်သည်</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacy('logline', this)">
+        <input type="radio" name="privacy" value="logline">
+        <span class="privacy-icon">👁</span>
+        <div class="privacy-text">
+          <div>Logline ထိ</div>
+          <div class="privacy-desc">Title + Logline သာ မြင်နိုင်သည်</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacy('synopsis', this)">
+        <input type="radio" name="privacy" value="synopsis">
+        <span class="privacy-icon">👁</span>
+        <div class="privacy-text">
+          <div>Synopsis ထိ</div>
+          <div class="privacy-desc">Logline + Synopsis မြင်နိုင်သည်</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacy('treatment', this)">
+        <input type="radio" name="privacy" value="treatment">
+        <span class="privacy-icon">👁</span>
+        <div class="privacy-text">
+          <div>Treatment ထိ</div>
+          <div class="privacy-desc">Treatment အထိ မြင်နိုင်သည်</div>
+        </div>
+      </label>
+      <label class="privacy-opt" onclick="setPrivacy('public', this)">
+        <input type="radio" name="privacy" value="public">
+        <span class="privacy-icon">🌐</span>
+        <div class="privacy-text">
+          <div>Full Public</div>
+          <div class="privacy-desc">Screenplay အပါအဝင် အကုန်မြင်နိုင်သည်</div>
+        </div>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-red" style="flex:1;" onclick="savePrivacy()">သိမ်းမည်</button>
+      <button class="btn btn-ghost" onclick="closeModal('privacyModal')">ပိတ်မည်</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SHARE MODAL ══════ -->
+
+<div class="overlay" id="shareModal">
+  <div class="modal-card">
+    <div class="modal-title">Share</div>
+    <p class="modal-sub">Link ကို မိတ်ဆွေများနှင့် မျှဝေပါ</p>
+    <div class="share-link-box">
+      <span id="shareLink">cinepodma.com/view/—</span>
+      <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="copyLink()">Copy</button>
+    </div>
+    <p style="font-size:11px; color:var(--slate); line-height:1.8;">
+      Privacy setting အပေါ်မူတည်ပြီး မည်မျှထိ မြင်နိုင်မည်ကို သတ်မှတ်ထားသည်။
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('shareModal')">ပိတ်မည်</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ COLLAB MODAL ══════ -->
+
+<div class="overlay" id="collabModal">
+  <div class="modal-card">
+    <div class="modal-title">Collaboration</div>
+    <div class="collab-list" id="collabList">
+      <div class="collab-item">
+        <div class="collab-avatar">👤</div>
+        <div style="flex:1; font-size:13px; line-height:1.6;">သင် (Owner)</div>
+        <span class="collab-role">OWNER</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email ဖြင့် ဖိတ်မည်</label>
+      <input class="form-input" id="collabEmail" type="email" placeholder="friend@example.com">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-red" style="flex:1;" onclick="inviteCollab()">ဖိတ်မည်</button>
+      <button class="btn btn-ghost" onclick="closeModal('collabModal')">ပိတ်မည်</button>
+    </div>
+    <p style="font-size:11px; color:var(--slate); margin-top:12px; line-height:1.8;">
+      Real-time collaboration — Firebase ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်
+    </p>
+  </div>
+</div>
+
+<!-- ══════ TOAST ══════ -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══ STATE ══ */
+var currentTab = 'cover';
+var privacyLevel = 'private';
+var elements = [];
+var lastFocused = null;
+var autoSaveTimer = null;
+var docId = 'doc_' + Date.now();
+
+/* ══ INIT ══ */
+window.addEventListener('DOMContentLoaded', function() {
+  loadDoc();
+  updateSaveStatus('unsaved');
+
+  // Title sync
+  document.getElementById('docTitle').addEventListener('input', function() {
+    document.getElementById('coverTitle').value = this.value;
+    autoSave();
+  });
+  document.getElementById('coverTitle').addEventListener('input', function() {
+    document.getElementById('docTitle').value = this.value;
+    autoSave();
+  });
+  document.getElementById('coverAuthor').addEventListener('input', autoSave);
+  document.getElementById('coverDraft').addEventListener('input', autoSave);
+});
+
+/* ══ TABS ══ */
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+
+  var pages = ['cover','logline','synopsis','treatment','screenplay'];
+  pages.forEach(function(p) {
+    var el = document.getElementById('pg-' + p);
+    if (el) el.style.display = p === tab ? '' : 'none';
+  });
+
+  var bar = document.getElementById('insertBar');
+  if (tab === 'screenplay') {
+    setTimeout(function() { bar.classList.add('visible'); }, 100);
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+/* ══ MARK HAS CONTENT ══ */
+function markHasContent(section, el) {
+  var tab = document.getElementById('tab-' + section);
+  if (!tab) return;
+  if (el.value.trim()) {
+    tab.classList.add('has-content');
+  } else {
+    tab.classList.remove('has-content');
+  }
+}
+
+/* ══ AUTO RESIZE TEXTAREA ══ */
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+/* ══ SYNC TITLE ══ */
+function syncTitle(el) {
+  document.getElementById('docTitle').value = el.value;
+  autoSave();
+}
+
+/* ══ SCREENPLAY ELEMENTS ══ */
+var elConfig = {
+  scene:  { css: 'el-scene',  ph: 'INT. နေရာ — နေ့ / ည',    tag: 'SCENE',    next: 'action' },
+  action: { css: 'el-action', ph: 'ဖြစ်ပျက်မှု ဖော်ပြပါ...',    tag: 'ACTION',   next: 'action' },
+  char:   { css: 'el-char',   ph: 'ဇာတ်ကောင်အမည်',          tag: 'CHAR',     next: 'dial' },
+  paren:  { css: 'el-paren',  ph: 'ခံစားချက် / ညွှန်ကြားချက်', tag: '( )',      next: 'dial' },
+  dial:   { css: 'el-dial',   ph: 'ပြောစကား...',              tag: 'DIALOGUE', next: 'char' },
+  trans:  { css: 'el-trans',  ph: 'CUT TO: / FADE TO:',       tag: 'TRANS',    next: 'scene' }
+};
+
+function ins(type) {
+  var cfg = elConfig[type];
+  var id = 'el_' + Date.now();
+
+  var wrap = document.createElement('div');
+  wrap.className = 'sp-el';
+  wrap.dataset.id = id;
+  wrap.dataset.type = type;
+
+  var tag = document.createElement('span');
+  tag.className = 'el-type-tag';
+  tag.textContent = cfg.tag;
+
+  var div = document.createElement('div');
+  div.className = cfg.css;
+  div.contentEditable = 'true';
+  div.setAttribute('data-ph', cfg.ph);
+
+  div.addEventListener('input', function() {
+    autoSave();
+    updatePageCount();
+  });
+  div.addEventListener('focus', function() { lastFocused = wrap; });
+  div.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      ins(cfg.next);
+    }
+  });
+
+  wrap.appendChild(tag);
+  wrap.appendChild(div);
+
+  var content = document.getElementById('spContent');
+  if (lastFocused && lastFocused.parentNode === content) {
+    lastFocused.after(wrap);
+  } else {
+    content.appendChild(wrap);
+  }
+
+  elements.push({ id: id, type: type, wrap: wrap, div: div });
+  lastFocused = wrap;
+  setTimeout(function() { div.focus(); }, 30);
+  updatePageCount();
+  autoSave();
+}
+
+function addFadeOut() {
+  document.getElementById('fadeOut').style.display = 'block';
+  toast('FADE OUT. ထည့်ပြီးပါပြီ');
+}
+
+/* ══ PAGE COUNT ══ */
+function updatePageCount() {
+  var page = document.getElementById('pg-screenplay');
+  if (!page) return;
+  var h = page.scrollHeight;
+  var a4h = 1123;
+  var pages = Math.max(1, Math.ceil(h / a4h));
+  document.getElementById('pageCount').textContent = 'p. ' + pages;
+  document.getElementById('spPageNum').textContent = 'p. 1';
+}
+
+/* ══ PRIVACY ══ */
+var selectedPrivacy = 'private';
+
+function openPrivacy() {
+  document.querySelectorAll('.privacy-opt').forEach(function(opt) {
+    opt.classList.remove('selected');
+    if (opt.querySelector('input').value === privacyLevel) {
+      opt.classList.add('selected');
+    }
+  });
+  openModal('privacyModal');
+}
+
+function setPrivacy(level, el) {
+  selectedPrivacy = level;
+  document.querySelectorAll('.privacy-opt').forEach(function(o) { o.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function savePrivacy() {
+  privacyLevel = selectedPrivacy;
+  closeModal('privacyModal');
+  toast('🔒 Privacy သိမ်းပြီးပါပြီ');
+  autoSave();
+}
+
+/* ══ SHARE ══ */
+function openShare() {
+  var title = document.getElementById('docTitle').value || 'untitled';
+  var slug = title.replace(/\s+/g, '-').toLowerCase();
+  document.getElementById('shareLink').textContent = 'cinepodma.com/view/' + slug;
+  openModal('shareModal');
+}
+
+function copyLink() {
+  var link = document.getElementById('shareLink').textContent;
+  navigator.clipboard.writeText(link).then(function() {
+    toast('🔗 Link ကူးပြီးပါပြီ');
+  });
+}
+
+/* ══ COLLAB ══ */
+function openCollab() { openModal('collabModal'); }
+
+function inviteCollab() {
+  var email = document.getElementById('collabEmail').value.trim();
+  if (!email) return;
+  var list = document.getElementById('collabList');
+  var item = document.createElement('div');
+  item.className = 'collab-item';
+  item.innerHTML = '<div class="collab-avatar">✉</div><div style="flex:1;font-size:13px;line-height:1.6;">' + email + '</div><span class="collab-role">INVITED</span>';
+  list.appendChild(item);
+  document.getElementById('collabEmail').value = '';
+  toast('✅ ဖိတ်ကြားချက် ပို့ပြီးပါပြီ — Firebase ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
+}
+
+/* ══ SAVE / LOAD ══ */
+function collectData() {
+  var spEls = [];
+  elements.forEach(function(e) {
+    spEls.push({ type: e.type, text: e.div.textContent });
+  });
+  return {
+    id:         docId,
+    title:      document.getElementById('docTitle').value,
+    author:     document.getElementById('coverAuthor').value,
+    draft:      document.getElementById('coverDraft').value,
+    logline:    document.getElementById('loglineText').value,
+    synopsis:   document.getElementById('synopsisText').value,
+    treatment:  document.getElementById('treatmentText').value,
+    screenplay: spEls,
+    privacy:    privacyLevel,
+    fadeOut:    document.getElementById('fadeOut').style.display !== 'none',
+    saved:      new Date().toISOString()
+  };
+}
+
+function saveDoc() {
+  var data = collectData();
+  try {
+    localStorage.setItem('cp_doc_' + docId, JSON.stringify(data));
+    // Update script list in profile
+    var scripts = JSON.parse(localStorage.getItem('cp_scripts') || '[]');
+    var idx = scripts.findIndex(function(s) { return s.id === docId; });
+    var entry = { id: docId, title: data.title || 'Untitled', scenes: elements.filter(function(e){return e.type==='scene';}).length, updated: 'ယခုတွင်', status: 'draft' };
+    if (idx >= 0) scripts[idx] = entry; else scripts.unshift(entry);
+    localStorage.setItem('cp_scripts', JSON.stringify(scripts));
+    updateSaveStatus('saved');
+    toast('💾 သိမ်းပြီးပါပြီ');
+  } catch(e) { toast('❌ သိမ်းမရပါ'); }
+}
+
+function autoSave() {
+  updateSaveStatus('unsaved');
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(function() {
+    var data = collectData();
+    try {
+      localStorage.setItem('cp_doc_' + docId, JSON.stringify(data));
+      updateSaveStatus('saved');
+    } catch(e) {}
+  }, 1500);
+}
+
+function loadDoc() {
+  // Check URL param ?id=
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('id');
+  if (id) {
+    docId = id;
+    var raw = localStorage.getItem('cp_doc_' + id);
+    if (raw) {
+      try {
+        var data = JSON.parse(raw);
+        document.getElementById('docTitle').value      = data.title || '';
+        document.getElementById('coverTitle').value    = data.title || '';
+        document.getElementById('coverAuthor').value   = data.author || '';
+        document.getElementById('coverDraft').value    = data.draft || '';
+        document.getElementById('loglineText').value   = data.logline || '';
+        document.getElementById('synopsisText').value  = data.synopsis || '';
+        document.getElementById('treatmentText').value = data.treatment || '';
+        privacyLevel = data.privacy || 'private';
+        if (data.fadeOut) document.getElementById('fadeOut').style.display = 'block';
+
+        // Mark tabs with content
+        ['logline','synopsis','treatment'].forEach(function(s) {
+          var ta = document.getElementById(s + 'Text');
+          if (ta && ta.value.trim()) {
+            autoResize(ta);
+            var tab = document.getElementById('tab-' + s);
+            if (tab) tab.classList.add('has-content');
+          }
+        });
+
+        // Restore screenplay elements
+        if (data.screenplay) {
+          data.screenplay.forEach(function(el) { ins(el.type); });
+          // Re-populate text after insert
+          var els = document.getElementById('spContent').querySelectorAll('[contenteditable]');
+          data.screenplay.forEach(function(el, i) {
+            if (els[i]) els[i].textContent = el.text;
+          });
+        }
+
+        updateSaveStatus('saved');
+      } catch(e) {}
+    }
+  } else {
+    // New doc — set today date
+    var today = new Date();
+    var y = today.getFullYear();
+    var m = String(today.getMonth()+1).padStart(2,'0');
+    var d = String(today.getDate()).padStart(2,'0');
+    document.getElementById('coverDraft').value = 'Draft 1 · ' + y + '.' + m + '.' + d;
+    // Try load profile author
+    try {
+      var prof = JSON.parse(localStorage.getItem('cp_profile') || '{}');
+      if (prof.name) document.getElementById('coverAuthor').value = prof.name;
+    } catch(e) {}
+  }
+}
+
+function updateSaveStatus(state) {
+  var el = document.getElementById('saveStatus');
+  if (state === 'saved') {
+    el.textContent = 'Saved ✓';
+    el.className = 'save-status saved';
+  } else {
+    el.textContent = 'Unsaved…';
+    el.className = 'save-status';
+  }
+}
+
+/* ══ EXPORT PDF ══ */
+function exportPDF() {
+  toast('🖨 Print dialog မှ "Save as PDF" ရွေးပါ');
+  setTimeout(function() { window.print(); }, 800);
+}
+
+/* ══ MODAL HELPERS ══ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.addEventListener('click', function(e) {
+  ['privacyModal','shareModal','collabModal'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && e.target === el) closeModal(id);
+  });
+});
+
+/* ══ TOAST ══ */
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+/* ══ KEYBOARD ══ */
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveDoc(); }
+  if (e.key === 'Escape') {
+    ['privacyModal','shareModal','collabModal'].forEach(closeModal);
+  }
+});
+</script>
+
+</body>
+</html>
