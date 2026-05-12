@@ -453,10 +453,46 @@ main {
   border-color: var(--black);
   color: var(--white);
 }
+/* Search bar */
+.lib-search-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+.lib-search {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  font-family: var(--font-my);
+  font-size: 13px;
+  color: var(--black);
+  outline: none;
+  transition: border-color 0.15s;
+  background: var(--white);
+  line-height: 1.8;
+}
+.lib-search:focus { border-color: var(--black); }
+.lib-search-icon {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: var(--slate-lt);
+  pointer-events: none;
+}
+.lib-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: var(--slate-lt);
+  font-size: 13px;
+  line-height: 2;
+}
+
 .lib-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 .lib-card {
   border: 1px solid var(--border);
@@ -465,6 +501,8 @@ main {
   cursor: pointer;
   transition: all 0.18s;
   background: var(--white);
+  display: flex;
+  flex-direction: column;
 }
 .lib-card:hover {
   border-color: var(--black);
@@ -473,13 +511,14 @@ main {
 }
 .lib-card-poster {
   width: 100%;
-  aspect-ratio: 2/3;
+  aspect-ratio: 3/2;
   background: var(--slate-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 32px;
   position: relative;
+  flex-shrink: 0;
 }
 .lib-card-badge {
   position: absolute;
@@ -1180,7 +1219,15 @@ footer {
     <div class="page-inner">
       <h2 class="page-title">Library</h2>
       <div class="page-divider"></div>
-      <p class="page-body" style="margin-bottom:20px;">ပြည်တွင်း · ပြည်ပ ရုပ်ရှင်ဇာတ်ညွှန်းများ — အားလုံး အခမဲ့ဖတ်ရှုနိုင်သည်</p>
+      <p class="page-body" style="margin-bottom:16px;">ပြည်တွင်း · ပြည်ပ ရုပ်ရှင်ဇာတ်ညွှန်းများ — အားလုံး အခမဲ့ဖတ်ရှုနိုင်သည်</p>
+
+      <!-- Search -->
+      <div class="lib-search-wrap">
+        <span class="lib-search-icon">🔍</span>
+        <input class="lib-search" id="libSearch" type="text"
+          placeholder="ကားနာမည်၊ ဒါရိုက်တာ ရှာပါ..."
+          oninput="searchLib(this.value)">
+      </div>
 
       <!-- Filters -->
       <div class="lib-filter-row">
@@ -1192,11 +1239,8 @@ footer {
       <!-- Cards -->
       <div class="lib-grid" id="libGrid">
 
-        <div class="lib-card" data-cat="mm" onclick="openPdf('ချစ်ရသောမြို့တော်', null)">
-          <div class="lib-card-poster">
-            🎬
-            <span class="lib-card-badge badge-mm">မြန်မာ</span>
-          </div>
+        <div class="lib-card" data-cat="mm" data-title="ချစ်ရသောမြို့တော် the beloved city" onclick="openPdf('ချစ်ရသောမြို့တော်', null)">
+          <div class="lib-card-poster">🎬<span class="lib-card-badge badge-mm">မြန်မာ</span></div>
           <div class="lib-card-body">
             <div class="lib-card-title">ချစ်ရသောမြို့တော်</div>
             <div class="lib-card-en">The Beloved City</div>
@@ -1205,11 +1249,8 @@ footer {
           </div>
         </div>
 
-        <div class="lib-card" data-cat="int" onclick="openPdf('Parasite', null)">
-          <div class="lib-card-poster">
-            🎬
-            <span class="lib-card-badge badge-int">INT</span>
-          </div>
+        <div class="lib-card" data-cat="int" data-title="parasite bong joon-ho" onclick="openPdf('Parasite', null)">
+          <div class="lib-card-poster">🎬<span class="lib-card-badge badge-int">INT</span></div>
           <div class="lib-card-body">
             <div class="lib-card-title">Parasite</div>
             <div class="lib-card-en">Bong Joon-ho · 2019</div>
@@ -1218,11 +1259,8 @@ footer {
           </div>
         </div>
 
-        <div class="lib-card" data-cat="int" onclick="openPdf('Pulp Fiction', null)">
-          <div class="lib-card-poster">
-            🎬
-            <span class="lib-card-badge badge-int">INT</span>
-          </div>
+        <div class="lib-card" data-cat="int" data-title="pulp fiction quentin tarantino" onclick="openPdf('Pulp Fiction', null)">
+          <div class="lib-card-poster">🎬<span class="lib-card-badge badge-int">INT</span></div>
           <div class="lib-card-body">
             <div class="lib-card-title">Pulp Fiction</div>
             <div class="lib-card-en">Quentin Tarantino · 1994</div>
@@ -1231,11 +1269,8 @@ footer {
           </div>
         </div>
 
-        <div class="lib-card" data-cat="mm" onclick="openPdf('မြန်မာဇာတ်ကားနမူနာ', null)">
-          <div class="lib-card-poster">
-            🎬
-            <span class="lib-card-badge badge-mm">မြန်မာ</span>
-          </div>
+        <div class="lib-card" data-cat="mm" data-title="နမူနာဇာတ်ညွှန်း sample script" onclick="openPdf('နမူနာဇာတ်ညွှန်း', null)">
+          <div class="lib-card-poster">🎬<span class="lib-card-badge badge-mm">မြန်မာ</span></div>
           <div class="lib-card-body">
             <div class="lib-card-title">နမူနာဇာတ်ညွှန်း</div>
             <div class="lib-card-en">Sample Script</div>
@@ -1640,17 +1675,39 @@ function donateBackToMethod() {
   document.getElementById('donateStepMethod').style.display = 'block';
 }
 
-/* ══════ LIBRARY — filter ══════ */
-function filterLib(btn, cat) {
-  document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('#libGrid .lib-card').forEach(card => {
-    if (cat === 'all' || card.dataset.cat === cat) {
-      card.style.display = '';
-    } else {
-      card.style.display = 'none';
-    }
+/* ══════ LIBRARY — search ══════ */
+var libActiveCat = 'all';
+
+function searchLib(q) {
+  var query = q.toLowerCase().trim();
+  document.querySelectorAll('#libGrid .lib-card').forEach(function(card) {
+    var title = (card.dataset.title || '').toLowerCase();
+    var catOk = libActiveCat === 'all' || card.dataset.cat === libActiveCat;
+    var searchOk = !query || title.includes(query);
+    card.style.display = (catOk && searchOk) ? '' : 'none';
   });
+  showLibEmpty();
+}
+
+function filterLib(btn, cat) {
+  libActiveCat = cat;
+  document.querySelectorAll('.lib-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var query = (document.getElementById('libSearch') || {}).value || '';
+  searchLib(query);
+}
+
+function showLibEmpty() {
+  var grid = document.getElementById('libGrid');
+  var existing = grid.querySelector('.lib-empty');
+  if (existing) existing.remove();
+  var visible = Array.from(grid.querySelectorAll('.lib-card')).filter(function(c) { return c.style.display !== 'none'; });
+  if (visible.length === 0) {
+    var empty = document.createElement('div');
+    empty.className = 'lib-empty';
+    empty.textContent = 'ရှာမတွေ့ပါ';
+    grid.appendChild(empty);
+  }
 }
 
 /* ══════ PDF VIEWER ══════ */
