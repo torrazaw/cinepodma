@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — CinePodma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:    #FFFFFF;
+  --black:    #0A0A0A;
+  --slate:    #6B7280;
+  --slate-lt: #9CA3AF;
+  --slate-bg: #F3F4F6;
+  --red:      #DC2626;
+  --red-h:    #B91C1C;
+  --border:   #E5E7EB;
+  --radius:   20px;
+  --font-en:  'Special Elite', 'Courier New', monospace;
+  --font-my:  'Noto Sans Myanmar', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-my);
+  background: var(--white);
+  color: var(--black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--black);
+  text-decoration: none;
+  line-height: 1.3;
+}
+.brand span { display: block; color: var(--slate); font-size: 11px; letter-spacing: 1px; }
+
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--radius);
+  border: none; cursor: pointer;
+  font-family: var(--font-my);
+  font-size: 13px; font-weight: 600;
+  line-height: 1.6;
+  text-decoration: none;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.btn-outline {
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid var(--black);
+}
+.btn-outline:hover { background: var(--black); color: var(--white); }
+.btn-red { background: var(--red); color: var(--white); }
+.btn-red:hover { background: var(--red-h); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: var(--slate);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--slate-bg); color: var(--black); }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* ── MAIN ── */
+main {
+  flex: 1;
+  padding-top: 73px;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 80px;
+}
+
+/* ── PROFILE HEADER ── */
+.profile-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+/* Avatar */
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.avatar {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: var(--slate-bg);
+  border: 2px solid var(--border);
+  object-fit: cover;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.18s;
+}
+.avatar:hover { border-color: var(--black); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-edit-hint {
+  position: absolute;
+  bottom: 2px; right: 2px;
+  width: 26px; height: 26px;
+  background: var(--black);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  border: 2px solid var(--white);
+}
+#avatarInput { display: none; }
+
+/* Profile info */
+.profile-info { flex: 1; min-width: 200px; }
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.profile-name {
+  font-family: var(--font-my);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.5;
+}
+.profile-username {
+  font-family: var(--font-en);
+  font-size: 13px;
+  color: var(--slate);
+  letter-spacing: 0.3px;
+}
+.profile-bio {
+  font-size: 14px;
+  line-height: 2.0;
+  color: var(--slate);
+  margin-top: 8px;
+  max-width: 480px;
+}
+.profile-bio:empty::before {
+  content: 'Bio မရှိသေးပါ — Edit နှိပ်ပြီး ထည့်နိုင်သည်';
+  color: var(--slate-lt);
+  font-style: italic;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--font-en);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--black);
+  display: block;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--slate-lt);
+  line-height: 1.6;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* ── EDIT MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-title {
+  font-family: var(--font-en);
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+  color: var(--black);
+}
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 12px; font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--black);
+}
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-my);
+  font-size: 14px;
+  color: var(--black);
+  outline: none;
+  transition: border-color 0.15s;
+  background: var(--white);
+  line-height: 1.8;
+}
+.form-input:focus, .form-textarea:focus { border-color: var(--black); }
+.form-textarea { min-height: 90px; resize: vertical; }
+.modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+
+/* ── SCRIPTS SECTION ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 36px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.section-title {
+  font-family: var(--font-en);
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: var(--black);
+  display: flex; align-items: center; gap: 8px;
+}
+.section-divider {
+  width: 32px; height: 2px;
+  background: var(--red);
+  border-radius: 2px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+/* Scripts grid */
+.scripts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.script-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  transition: all 0.18s;
+  position: relative;
+  background: var(--white);
+}
+.script-card:hover {
+  border-color: var(--black);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+}
+.script-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.script-card-title {
+  font-family: var(--font-my);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black);
+  line-height: 1.6;
+}
+.script-card-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+.script-menu-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--slate-lt);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.script-menu-btn:hover { background: var(--slate-bg); border-color: var(--border); color: var(--black); }
+
+.script-dropdown {
+  display: none;
+  position: absolute;
+  right: 0; top: 32px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  z-index: 50;
+  min-width: 130px;
+  overflow: hidden;
+}
+.script-dropdown.open { display: block; }
+.script-dd-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-my);
+  font-size: 12px;
+  color: var(--black);
+  cursor: pointer;
+  transition: background 0.12s;
+  line-height: 1.6;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.script-dd-item:hover { background: var(--slate-bg); }
+.script-dd-item.danger { color: var(--red); }
+.script-dd-item.danger:hover { background: rgba(220,38,38,0.06); }
+
+.script-card-meta {
+  font-size: 11px;
+  color: var(--slate-lt);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+.script-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-family: var(--font-en);
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  border: 1px solid var(--border);
+  color: var(--slate);
+  margin-right: 4px;
+}
+.script-tag.draft { border-color: var(--slate-lt); }
+.script-tag.complete { background: var(--black); color: var(--white); border-color: var(--black); }
+
+.script-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+.script-act-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-family: var(--font-my);
+  font-size: 11px;
+  color: var(--black);
+  cursor: pointer;
+  transition: all 0.12s;
+  text-align: center;
+  line-height: 1.6;
+}
+.script-act-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+.script-act-btn.primary { background: var(--black); color: var(--white); border-color: var(--black); }
+.script-act-btn.primary:hover { background: var(--red); border-color: var(--red); }
+
+/* New script card */
+.script-card-new {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  cursor: pointer;
+  transition: all 0.18s;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--slate);
+}
+.script-card-new:hover { border-color: var(--black); background: var(--slate-bg); color: var(--black); }
+.script-card-new .plus { font-size: 28px; line-height: 1; }
+.script-card-new .new-label { font-family: var(--font-en); font-size: 12px; letter-spacing: 0.5px; }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--slate-lt);
+  font-size: 14px;
+  line-height: 2;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+}
+.empty-state .icon { font-size: 36px; display: block; margin-bottom: 10px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--slate-bg);
+  border-top: 1px solid var(--border);
+  padding: 18px 32px;
+  text-align: center;
+}
+.footer-text {
+  font-family: var(--font-en);
+  font-size: 11px;
+  color: var(--slate);
+  letter-spacing: 0.5px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-my);
+  font-size: 13px;
+  line-height: 1.8;
+  padding: 10px 18px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 9999;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  nav { padding: 14px 18px; }
+  main { padding-left: 16px; padding-right: 16px; }
+  .profile-header { gap: 18px; }
+  .avatar { width: 80px; height: 80px; font-size: 32px; }
+  .profile-name { font-size: 18px; }
+  .scripts-grid { grid-template-columns: 1fr; }
+  .profile-stats { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="brand" href="index.html">
+    cine<br><span>podma</span>
+  </a>
+  <div class="nav-right">
+    <a class="btn btn-ghost btn-sm" href="index.html">← Home</a>
+    <button class="btn btn-red btn-sm" onclick="openEdit()">✏ Edit Profile</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- PROFILE HEADER -->
+  <div class="profile-header">
+
+    <!-- Avatar -->
+    <div class="avatar-wrap">
+      <div class="avatar" onclick="document.getElementById('avatarInput').click()" title="Profile ဓာတ်ပုံ ပြောင်းရန်">
+        <span id="avatarEmoji">👤</span>
+        <img id="avatarImg" src="" alt="" style="display:none;">
+      </div>
+      <div class="avatar-edit-hint" onclick="document.getElementById('avatarInput').click()">✏</div>
+      <input type="file" id="avatarInput" accept="image/*" onchange="changeAvatar(this)">
+    </div>
+
+    <!-- Info -->
+    <div class="profile-info">
+      <div class="profile-name-row">
+        <span class="profile-name" id="dispName">Ra Zaw</span>
+        <span class="profile-username" id="dispUsername">@razaw</span>
+      </div>
+      <p class="profile-bio" id="dispBio">မြန်မာ screenwriter · CinePodma ဖန်တီးသူ</p>
+
+      <div class="profile-stats">
+        <div class="stat-item">
+          <span class="stat-num" id="statScripts">3</span>
+          <span class="stat-label">Screenplays</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statDrafts">2</span>
+          <span class="stat-label">Drafts</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statComplete">1</span>
+          <span class="stat-label">Complete</span>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn btn-outline btn-sm" onclick="openEdit()">✏ Edit Profile</button>
+        <button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <div class="section-header">
+    <div class="section-title">
+      My Screenplays
+      <span class="section-divider"></span>
+    </div>
+    <a class="btn btn-red btn-sm" href="write.html">+ New Script</a>
+  </div>
+
+  <div class="scripts-grid" id="scriptsGrid">
+    <!-- populated by JS -->
+  </div>
+
+</main>
+
+<footer>
+  <span class="footer-text">© 2026 CinePodma. All rights reserved.</span>
+</footer>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-card">
+    <div class="modal-title">Edit Profile</div>
+    <div class="form-group">
+      <label class="form-label">အမည်</label>
+      <input class="form-input" id="editName" type="text" placeholder="သင့်နာမည်">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" id="editUsername" type="text" placeholder="@username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Bio</label>
+      <textarea class="form-textarea" id="editBio" placeholder="သင့်အကြောင်း တိုတိုလေး..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-red" style="flex:1;" onclick="saveProfile()">သိမ်းဆည်းမည်</button>
+      <button class="btn btn-ghost" onclick="closeEdit()">ပယ်ဖျက်</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════ PROFILE DATA ══════ */
+var profile = JSON.parse(localStorage.getItem('cp_profile') || 'null') || {
+  name: 'Ra Zaw',
+  username: '@razaw',
+  bio: 'မြန်မာ screenwriter · CinePodma ဖန်တီးသူ',
+  avatar: ''
+};
+
+var scripts = JSON.parse(localStorage.getItem('cp_scripts') || 'null') || [
+  { id: 1, title: 'မိုးမခ', scenes: 12, updated: '၂ ရက်', status: 'draft' },
+  { id: 2, title: 'နေဆည်းနေ့', scenes: 8,  updated: '၅ ရက်', status: 'draft' },
+  { id: 3, title: 'ရွာငံ့ကြိုဆိုခြင်း', scenes: 24, updated: '၁ ရက်', status: 'complete' }
+];
+
+/* ══════ RENDER PROFILE ══════ */
+function renderProfile() {
+  document.getElementById('dispName').textContent     = profile.name;
+  document.getElementById('dispUsername').textContent = profile.username;
+  document.getElementById('dispBio').textContent      = profile.bio;
+
+  if (profile.avatar) {
+    document.getElementById('avatarEmoji').style.display = 'none';
+    var img = document.getElementById('avatarImg');
+    img.src = profile.avatar;
+    img.style.display = 'block';
+  } else {
+    document.getElementById('avatarEmoji').style.display = 'block';
+    document.getElementById('avatarImg').style.display   = 'none';
+  }
+}
+
+/* ══════ RENDER SCRIPTS ══════ */
+function renderScripts() {
+  var grid = document.getElementById('scriptsGrid');
+  var drafts   = scripts.filter(s => s.status === 'draft').length;
+  var complete = scripts.filter(s => s.status === 'complete').length;
+  document.getElementById('statScripts').textContent  = scripts.length;
+  document.getElementById('statDrafts').textContent   = drafts;
+  document.getElementById('statComplete').textContent = complete;
+
+  if (scripts.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><span class="icon">📝</span>Screenplay မရှိသေးပါ<br><small>+ New Script နှိပ်ပြီး စတင်ပါ</small></div>';
+    return;
+  }
+
+  var html = scripts.map(s => `
+    <div class="script-card" id="sc-${s.id}">
+      <div class="script-card-top">
+        <div class="script-card-title">${s.title}</div>
+        <div class="script-card-menu">
+          <button class="script-menu-btn" onclick="toggleMenu(${s.id}, event)">⋯</button>
+          <div class="script-dropdown" id="menu-${s.id}">
+            <button class="script-dd-item" onclick="editScript(${s.id})">✏ ဖွင့်မည်</button>
+            <button class="script-dd-item" onclick="renameScript(${s.id})">✎ နာမည်ပြောင်း</button>
+            <button class="script-dd-item" onclick="toggleStatus(${s.id})">${s.status === 'draft' ? '✅ Complete မှတ်မည်' : '📝 Draft ပြန်မည်'}</button>
+            <button class="script-dd-item danger" onclick="deleteScript(${s.id})">🗑 ဖျက်မည်</button>
+          </div>
+        </div>
+      </div>
+      <div class="script-card-meta">မြင်ကွင်း ${s.scenes} ခု · ${s.updated} ကတည်းက</div>
+      <div>
+        <span class="script-tag ${s.status}">${s.status === 'draft' ? 'Draft' : 'Complete'}</span>
+      </div>
+      <div class="script-card-actions">
+        <button class="script-act-btn primary" onclick="editScript(${s.id})">✍ ဆက်ရေးမည်</button>
+        <button class="script-act-btn" onclick="exportScript(${s.id})">⬇ Export</button>
+      </div>
+    </div>
+  `).join('');
+
+  html += `
+    <a class="script-card-new" href="write.html">
+      <span class="plus">+</span>
+      <span class="new-label">New Script</span>
+    </a>
+  `;
+
+  grid.innerHTML = html;
+}
+
+/* ══════ AVATAR ══════ */
+function changeAvatar(input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    profile.avatar = e.target.result;
+    saveToStorage();
+    renderProfile();
+    toast('✅ Profile ဓာတ်ပုံ ပြောင်းပြီးပါပြီ');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+/* ══════ EDIT MODAL ══════ */
+function openEdit() {
+  document.getElementById('editName').value     = profile.name;
+  document.getElementById('editUsername').value = profile.username;
+  document.getElementById('editBio').value      = profile.bio;
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit() {
+  document.getElementById('editModal').classList.remove('open');
+}
+function saveProfile() {
+  var name = document.getElementById('editName').value.trim();
+  var user = document.getElementById('editUsername').value.trim();
+  var bio  = document.getElementById('editBio').value.trim();
+  if (!name) { alert('အမည် ထည့်ပါ'); return; }
+  profile.name     = name;
+  profile.username = user.startsWith('@') ? user : '@' + user;
+  profile.bio      = bio;
+  saveToStorage();
+  renderProfile();
+  closeEdit();
+  toast('✅ Profile သိမ်းပြီးပါပြီ');
+}
+
+/* ══════ SCRIPT ACTIONS ══════ */
+function toggleMenu(id, e) {
+  e.stopPropagation();
+  document.querySelectorAll('.script-dropdown').forEach(d => {
+    if (d.id !== 'menu-' + id) d.classList.remove('open');
+  });
+  document.getElementById('menu-' + id).classList.toggle('open');
+}
+
+document.addEventListener('click', function() {
+  document.querySelectorAll('.script-dropdown').forEach(d => d.classList.remove('open'));
+});
+
+function editScript(id) {
+  window.location.href = 'write.html?id=' + id;
+}
+
+function renameScript(id) {
+  var s = scripts.find(x => x.id === id);
+  if (!s) return;
+  var name = prompt('နာမည်သစ်', s.title);
+  if (name && name.trim()) {
+    s.title = name.trim();
+    saveToStorage();
+    renderScripts();
+    toast('✅ နာမည် ပြောင်းပြီးပါပြီ');
+  }
+}
+
+function toggleStatus(id) {
+  var s = scripts.find(x => x.id === id);
+  if (!s) return;
+  s.status = s.status === 'draft' ? 'complete' : 'draft';
+  saveToStorage();
+  renderScripts();
+  toast('✅ Status ပြောင်းပြီးပါပြီ');
+}
+
+function deleteScript(id) {
+  var s = scripts.find(x => x.id === id);
+  if (!s) return;
+  if (!confirm('"' + s.title + '" ကို ဖျက်မည်နှင့် သေချာပါသလား?')) return;
+  scripts = scripts.filter(x => x.id !== id);
+  saveToStorage();
+  renderScripts();
+  toast('🗑 ဖျက်ပြီးပါပြီ');
+}
+
+function exportScript(id) {
+  var s = scripts.find(x => x.id === id);
+  if (!s) return;
+  toast('⬇ Export — write.html မှ ဒေါင်းလုဒ်ဆွဲနိုင်သည်');
+}
+
+/* ══════ SHARE ══════ */
+function copyProfileLink() {
+  var url = window.location.href;
+  navigator.clipboard.writeText(url).then(function() {
+    toast('🔗 Link ကူးပြီးပါပြီ');
+  }).catch(function() {
+    toast('🔗 ' + url);
+  });
+}
+
+/* ══════ STORAGE ══════ */
+function saveToStorage() {
+  try {
+    localStorage.setItem('cp_profile', JSON.stringify(profile));
+    localStorage.setItem('cp_scripts', JSON.stringify(scripts));
+  } catch(e) {}
+}
+
+/* ══════ TOAST ══════ */
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+/* ══════ KEYBOARD ══════ */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeEdit();
+});
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeEdit();
+});
+
+/* ══════ INIT ══════ */
+renderProfile();
+renderScripts();
+</script>
+</body>
+</html>
