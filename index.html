@@ -1324,9 +1324,8 @@ footer {
       <p class="hero-sub">PODMA</p>
 
       <p class="hero-desc">
-        မြန်မာဘာသာဖြင့် ရေးသားနိုင်သော<br>
-        Professional Script Editor<br>
-        စီနီပုဒ်မ — CinePodma
+        မြန်မာဘာသာဖြင့် screenplay ရေးသားနိုင်သော<br>
+        professional script editor
       </p>
 
       <div class="auth-row" id="heroAuthRow">
@@ -1480,7 +1479,7 @@ footer {
 
     <div class="contact-email">
       <span>✉</span>
-      <a href="mailto:razaw@cinepodma.com">razaw@cinepodma.com</a>
+      <a href="mailto:hello@cinepodma.com">hello@cinepodma.com</a>
     </div>
 
     <form onsubmit="submitContact(event)">
@@ -2018,18 +2017,13 @@ onAuthStateChanged(auth, async function(user) {
     var initial  = (user.displayName || user.email || '?')[0].toUpperCase();
     var photoUrl = user.photoURL || '';
 
-    /* nav: avatar + sign out only */
+    /* nav: avatar only — no sign out */
     area.innerHTML =
       '<a class="nav-user" href="profile.html">' +
         '<div class="nav-avatar">' +
           (photoUrl ? '<img src="' + photoUrl + '" alt="">' : initial) +
         '</div>' +
-        '<span class="nav-user-name">' +
-          (user.displayName || user.email.split('@')[0]) +
-        '</span>' +
-      '</a>' +
-      '<button class="btn btn-ghost btn-sm" onclick="window._signOut()" ' +
-        'style="font-size:11px;padding:5px 10px;">ထွက်</button>';
+      '</a>';
 
     /* hero: write + profile */
     if (heroRow) {
@@ -2092,10 +2086,12 @@ window.submitAuth = async function() {
       await updateProfile(cred.user, { displayName: name });
       await setDoc(doc(db, 'users', cred.user.uid), {
         name: name, email: email,
-        username: '@' + email.split('@')[0],
-        bio: '', avatar: '',
+        username: '', role: '', contactEmail: '',
+        avatar: '', onboarded: false,
         created: new Date().toISOString()
       });
+      closeAuthModal();
+      window.location.href = 'onboarding.html';
     } else {
       await signInWithEmailAndPassword(auth, email, password);
     }
@@ -2118,8 +2114,14 @@ window.submitAuth = async function() {
 /* ── Google sign in ── */
 window.signInWithGoogle = async function() {
   try {
-    await signInWithPopup(auth, provider);
+    var result = await signInWithPopup(auth, provider);
+    var user   = result.user;
     closeAuthModal();
+    /* check onboarded */
+    var snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists() || snap.data().onboarded !== true) {
+      window.location.href = 'onboarding.html';
+    }
   } catch(e) {
     document.getElementById('authError').textContent = 'Google sign in မအောင်မြင်ပါ';
   }

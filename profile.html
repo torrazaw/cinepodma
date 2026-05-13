@@ -485,9 +485,9 @@ footer {
   <a class="brand" href="index.html">
     cine<br><span>podma</span>
   </a>
-  <div class="nav-right">
+  <div class="nav-right" id="navRight">
     <a class="btn btn-ghost btn-sm" href="index.html">← Home</a>
-    <button class="btn btn-red btn-sm" onclick="openEdit()">✏ Edit Profile</button>
+    <!-- JS က owner/public အလိုက် ဖြည့်မည် -->
   </div>
 </nav>
 
@@ -509,40 +509,42 @@ footer {
     <!-- Info -->
     <div class="profile-info">
       <div class="profile-name-row">
-        <span class="profile-name" id="dispName">Ra Zaw</span>
-        <span class="profile-username" id="dispUsername">@razaw</span>
+        <span class="profile-name" id="dispName">—</span>
+        <span class="profile-username" id="dispUsername"></span>
       </div>
-      <p class="profile-bio" id="dispBio">မြန်မာ screenwriter · CinePodma ဖန်တီးသူ</p>
+      <div id="dispRole" style="margin:4px 0 6px;"></div>
+      <p id="dispEmail" style="font-size:12px;color:var(--slate);margin-bottom:6px;line-height:1.8;"></p>
 
       <div class="profile-stats">
         <div class="stat-item">
-          <span class="stat-num" id="statScripts">3</span>
+          <span class="stat-num" id="statScripts">0</span>
           <span class="stat-label">Screenplays</span>
         </div>
         <div class="stat-item">
-          <span class="stat-num" id="statDrafts">2</span>
+          <span class="stat-num" id="statDrafts">0</span>
           <span class="stat-label">Drafts</span>
         </div>
         <div class="stat-item">
-          <span class="stat-num" id="statComplete">1</span>
+          <span class="stat-num" id="statComplete">0</span>
           <span class="stat-label">Complete</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statClappers">0</span>
+          <span class="stat-label">👏 Clappers</span>
         </div>
       </div>
 
-      <div class="profile-actions">
-        <button class="btn btn-outline btn-sm" onclick="openEdit()">✏ Edit Profile</button>
-        <button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>
-      </div>
+      <div class="profile-actions" id="profileActions"></div>
     </div>
   </div>
 
-  <!-- SCRIPTS -->
+  <!-- SCRIPTS HEADER — JS က owner/public အလိုက် ပြောင်းမည် -->
   <div class="section-header">
-    <div class="section-title">
-      My Screenplays
+    <div class="section-title" id="scriptsHeader">
+      Screenplays
       <span class="section-divider"></span>
     </div>
-    <a class="btn btn-red btn-sm" href="write.html">+ New Script</a>
+    <div id="newScriptBtn"></div>
   </div>
 
   <div class="scripts-grid" id="scriptsGrid">
@@ -581,215 +583,584 @@ footer {
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-/* ══════ PROFILE DATA ══════ */
-var profile = JSON.parse(localStorage.getItem('cp_profile') || 'null') || {
-  name: 'Ra Zaw',
-  username: '@razaw',
-  bio: 'မြန်မာ screenwriter · CinePodma ဖန်တီးသူ',
-  avatar: ''
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut, updateProfile }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
+         collection, query, where, getDocs, getCountFromServer }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain:        "cinepodma.firebaseapp.com",
+  projectId:         "cinepodma",
+  storageBucket:     "cinepodma.firebasestorage.app",
+  messagingSenderId: "587916526322",
+  appId:             "1:587916526322:web:d00775311fb92fa1c8466b"
 };
 
-var scripts = JSON.parse(localStorage.getItem('cp_scripts') || 'null') || [
-  { id: 1, title: 'မိုးမခ', scenes: 12, updated: '၂ ရက်', status: 'draft' },
-  { id: 2, title: 'နေဆည်းနေ့', scenes: 8,  updated: '၅ ရက်', status: 'draft' },
-  { id: 3, title: 'ရွာငံ့ကြိုဆိုခြင်း', scenes: 24, updated: '၁ ရက်', status: 'complete' }
-];
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
-/* ══════ RENDER PROFILE ══════ */
-function renderProfile() {
-  document.getElementById('dispName').textContent     = profile.name;
-  document.getElementById('dispUsername').textContent = profile.username;
-  document.getElementById('dispBio').textContent      = profile.bio;
+var currentUser     = null;
+var profileUid      = null;
+var isOwner         = false;
+var currentProfile  = {};
+var scripts         = [];
 
-  if (profile.avatar) {
+/* ══ INIT ══ */
+/* get uid from URL ?uid=xxx or load own profile */
+var urlParams = new URLSearchParams(window.location.search);
+var uidParam  = urlParams.get('uid');
+
+onAuthStateChanged(auth, async function(user) {
+  currentUser = user;
+  profileUid  = uidParam || (user ? user.uid : null);
+
+  if (!profileUid) {
+    /* no uid and not logged in → home */
+    window.location.href = 'index.html';
+    return;
+  }
+
+  isOwner = user && user.uid === profileUid;
+  await loadProfile();
+  await loadScripts();
+  await loadClappers();
+  renderNav();
+  renderActions();
+});
+
+/* ══ LOAD PROFILE ══ */
+async function loadProfile() {
+  var snap = await getDoc(doc(db, 'users', profileUid));
+  if (!snap.exists()) { window.location.href = '/'; return; }
+  currentProfile = snap.data();
+
+  document.getElementById('dispName').textContent     = currentProfile.name || '—';
+  document.getElementById('dispUsername').textContent = currentProfile.username || '';
+
+  /* role badge */
+  if (currentProfile.role) {
+    var roleIcons = { Producer:'🎬', Director:'🎥', Writer:'✍️', Filmmaker:'🎞️', Cinephile:'🍿' };
+    var icon = roleIcons[currentProfile.role] || '';
+    document.getElementById('dispRole').innerHTML =
+      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;' +
+      'background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">' +
+      icon + ' ' + currentProfile.role + '</span>';
+  }
+
+  /* contact email — only show if set */
+  if (currentProfile.contactEmail) {
+    document.getElementById('dispEmail').innerHTML =
+      '✉ <a href="mailto:' + currentProfile.contactEmail + '" style="color:var(--black)">' +
+      currentProfile.contactEmail + '</a>';
+  }
+
+  /* avatar */
+  if (currentProfile.avatar) {
     document.getElementById('avatarEmoji').style.display = 'none';
     var img = document.getElementById('avatarImg');
-    img.src = profile.avatar;
+    img.src = currentProfile.avatar;
     img.style.display = 'block';
-  } else {
-    document.getElementById('avatarEmoji').style.display = 'block';
-    document.getElementById('avatarImg').style.display   = 'none';
   }
 }
 
-/* ══════ RENDER SCRIPTS ══════ */
+/* ══ LOAD SCRIPTS ══ */
+async function loadScripts() {
+  try {
+    var q = query(collection(db, 'scripts'), where('uid', '==', profileUid));
+    var snap = await getDocs(q);
+    scripts = [];
+    snap.forEach(function(d) { scripts.push({ id: d.id, ...d.data() }); });
+
+    /* public view — only show public scripts */
+    if (!isOwner) {
+      scripts = scripts.filter(function(s) { return s.privacy === 'public'; });
+    }
+    renderScripts();
+  } catch(e) {
+    scripts = [];
+    renderScripts();
+  }
+}
+
+/* ══ LOAD CLAPPERS ══ */
+async function loadClappers() {
+  try {
+    var coll = collection(db, 'clappers', profileUid, 'users');
+    var snap = await getCountFromServer(coll);
+    var count = snap.data().count;
+    document.getElementById('statClappers').textContent =
+      count >= 1000 ? (count / 1000).toFixed(1) + 'K' : count;
+  } catch(e) {
+    document.getElementById('statClappers').textContent = '0';
+  }
+}
+
+/* ══ RENDER NAV ══ */
+function renderNav() {
+  var navRight = document.getElementById('navRight');
+  if (isOwner) {
+    navRight.innerHTML =
+      '<a class="btn btn-ghost btn-sm" href="index.html">← Home</a>' +
+      '<button class="btn btn-ghost btn-sm" onclick="window._signOut()">ထွက်မည်</button>' +
+      '<button class="btn btn-red btn-sm" onclick="openEdit()">✏ Edit</button>';
+  } else {
+    navRight.innerHTML =
+      '<a class="btn btn-ghost btn-sm" href="index.html">← Home</a>';
+  }
+}
+
+/* ══ RENDER ACTIONS ══ */
+async function renderActions() {
+  var el = document.getElementById('profileActions');
+  var newBtn = document.getElementById('newScriptBtn');
+
+  if (isOwner) {
+    el.innerHTML =
+      '<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
+    newBtn.innerHTML = '<a class="btn btn-red btn-sm" href="write.html">+ New Script</a>';
+  } else {
+    /* check if already clapped */
+    var clapped = false;
+    if (currentUser) {
+      var cSnap = await getDoc(doc(db, 'clappers', profileUid, 'users', currentUser.uid));
+      clapped = cSnap.exists();
+    }
+    el.innerHTML =
+      '<button class="btn btn-red btn-sm" id="clapBtn" onclick="toggleClap()">' +
+        (clapped ? '👏 Clapped' : '👏 Clap') +
+      '</button>' +
+      '<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
+    newBtn.innerHTML = '';
+  }
+}
+
+/* ══ CLAP ══ */
+window.toggleClap = async function() {
+  if (!currentUser) {
+    window.location.href = 'index.html';
+    return;
+  }
+  var btn   = document.getElementById('clapBtn');
+  var ref   = doc(db, 'clappers', profileUid, 'users', currentUser.uid);
+  var snap  = await getDoc(ref);
+  var count = parseInt(document.getElementById('statClappers').textContent.replace('K','')) || 0;
+
+  if (snap.exists()) {
+    await deleteDoc(ref);
+    btn.textContent = '👏 Clap';
+    document.getElementById('statClappers').textContent = Math.max(0, count - 1);
+  } else {
+    await setDoc(ref, { clappedAt: new Date().toISOString() });
+    btn.textContent = '👏 Clapped';
+    document.getElementById('statClappers').textContent = count + 1;
+  }
+};
+
+/* ══ RENDER SCRIPTS ══ */
 function renderScripts() {
-  var grid = document.getElementById('scriptsGrid');
-  var drafts   = scripts.filter(s => s.status === 'draft').length;
-  var complete = scripts.filter(s => s.status === 'complete').length;
+  var grid     = document.getElementById('scriptsGrid');
+  var drafts   = scripts.filter(function(s) { return s.status === 'draft'; }).length;
+  var complete = scripts.filter(function(s) { return s.status === 'complete'; }).length;
   document.getElementById('statScripts').textContent  = scripts.length;
   document.getElementById('statDrafts').textContent   = drafts;
   document.getElementById('statComplete').textContent = complete;
 
   if (scripts.length === 0) {
-    grid.innerHTML = '<div class="empty-state"><span class="icon">📝</span>Screenplay မရှိသေးပါ<br><small>+ New Script နှိပ်ပြီး စတင်ပါ</small></div>';
+    grid.innerHTML =
+      '<div class="empty-state"><span class="icon">📝</span>' +
+      (isOwner ? 'Screenplay မရှိသေးပါ<br><small>+ New Script နှိပ်ပြီး စတင်ပါ</small>'
+               : 'Public screenplay မရှိသေးပါ') +
+      '</div>';
     return;
   }
 
-  var html = scripts.map(s => `
-    <div class="script-card" id="sc-${s.id}">
-      <div class="script-card-top">
-        <div class="script-card-title">${s.title}</div>
-        <div class="script-card-menu">
-          <button class="script-menu-btn" onclick="toggleMenu(${s.id}, event)">⋯</button>
-          <div class="script-dropdown" id="menu-${s.id}">
-            <button class="script-dd-item" onclick="editScript(${s.id})">✏ ဖွင့်မည်</button>
-            <button class="script-dd-item" onclick="renameScript(${s.id})">✎ နာမည်ပြောင်း</button>
-            <button class="script-dd-item" onclick="toggleStatus(${s.id})">${s.status === 'draft' ? '✅ Complete မှတ်မည်' : '📝 Draft ပြန်မည်'}</button>
-            <button class="script-dd-item danger" onclick="deleteScript(${s.id})">🗑 ဖျက်မည်</button>
-          </div>
-        </div>
-      </div>
-      <div class="script-card-meta">မြင်ကွင်း ${s.scenes} ခု · ${s.updated} ကတည်းက</div>
-      <div>
-        <span class="script-tag ${s.status}">${s.status === 'draft' ? 'Draft' : 'Complete'}</span>
-      </div>
-      <div class="script-card-actions">
-        <button class="script-act-btn primary" onclick="editScript(${s.id})">✍ ဆက်ရေးမည်</button>
-        <button class="script-act-btn" onclick="exportScript(${s.id})">⬇ Export</button>
-      </div>
-    </div>
-  `).join('');
+  var html = scripts.map(function(s) {
+    var ownerBtns = isOwner ?
+      '<button class="script-menu-btn" onclick="window._toggleMenu(\'' + s.id + '\', event)">⋯</button>' +
+      '<div class="script-dropdown" id="menu-' + s.id + '">' +
+        '<button class="script-dd-item" onclick="window._editScript(\'' + s.id + '\')">✏ ဖွင့်မည်</button>' +
+        '<button class="script-dd-item" onclick="window._renameScript(\'' + s.id + '\')">✎ နာမည်ပြောင်း</button>' +
+        '<button class="script-dd-item" onclick="window._toggleStatus(\'' + s.id + '\')">' +
+          (s.status === 'draft' ? '✅ Complete မှတ်မည်' : '📝 Draft ပြန်မည်') +
+        '</button>' +
+        '<button class="script-dd-item danger" onclick="window._deleteScript(\'' + s.id + '\')">🗑 ဖျက်မည်</button>' +
+      '</div>' : '';
 
-  html += `
-    <a class="script-card-new" href="write.html">
-      <span class="plus">+</span>
-      <span class="new-label">New Script</span>
-    </a>
-  `;
+    var ownerActions = isOwner ?
+      '<button class="script-act-btn primary" onclick="window._editScript(\'' + s.id + '\')">✍ ဆက်ရေးမည်</button>' +
+      '<button class="script-act-btn" onclick="window._exportScript(\'' + s.id + '\')">⬇ Export</button>'
+      : '<button class="script-act-btn" onclick="window.location.href=\'write.html?id=' + s.id + '&view=1\'">📖 ဖတ်မည်</button>';
 
+    return (
+      '<div class="script-card">' +
+        '<div class="script-card-top">' +
+          '<div class="script-card-title">' + (s.title || 'Untitled') + '</div>' +
+          '<div class="script-card-menu">' + ownerBtns + '</div>' +
+        '</div>' +
+        '<div class="script-card-meta">မြင်ကွင်း ' + (s.scenes || 0) + ' ခု · ' + (s.updated || '—') + '</div>' +
+        '<div><span class="script-tag ' + s.status + '">' + (s.status === 'draft' ? 'Draft' : 'Complete') + '</span></div>' +
+        '<div class="script-card-actions">' + ownerActions + '</div>' +
+      '</div>'
+    );
+  }).join('');
+
+  if (isOwner) {
+    html += '<a class="script-card-new" href="write.html"><span class="plus">+</span><span class="new-label">New Script</span></a>';
+  }
+  grid.innerHTML = html;
+}
+
+/* ══ AVATAR (owner only) ══ */
+document.getElementById('avatarInput').addEventListener('change', async function() {
+  if (!isOwner || !this.files[0]) return;
+  toast('Avatar upload — Firebase Storage လိုအပ်သည်');
+});
+
+/* ══ EDIT PROFILE ══ */
+window.openEdit = function() {
+  document.getElementById('editName').value     = currentProfile.name     || '';
+  document.getElementById('editUsername').value = (currentProfile.username || '').replace('@','');
+  document.getElementById('editBio').value      = currentProfile.bio       || '';
+  document.getElementById('editModal').classList.add('open');
+};
+window.closeEdit = function() {
+  document.getElementById('editModal').classList.remove('open');
+};
+window.saveProfile = async function() {
+  var name = document.getElementById('editName').value.trim();
+  var bio  = document.getElementById('editBio').value.trim();
+  if (!name) { alert('အမည် ထည့်ပါ'); return; }
+  try {
+    await updateDoc(doc(db, 'users', currentUser.uid), { name, bio });
+    await updateProfile(currentUser, { displayName: name });
+    currentProfile.name = name;
+    currentProfile.bio  = bio;
+    document.getElementById('dispName').textContent = name;
+    window.closeEdit();
+    toast('✅ Profile သိမ်းပြီးပါပြီ');
+  } catch(e) { toast('❌ သိမ်းမရပါ'); }
+};
+
+/* ══ SCRIPT ACTIONS ══ */
+window._toggleMenu = function(id, e) {
+  e.stopPropagation();
+  document.querySelectorAll('.script-dropdown').forEach(function(d) {
+    if (d.id !== 'menu-' + id) d.classList.remove('open');
+  });
+  document.getElementById('menu-' + id).classList.toggle('open');
+};
+document.addEventListener('click', function() {
+  document.querySelectorAll('.script-dropdown').forEach(function(d) { d.classList.remove('open'); });
+});
+window._editScript   = function(id) { window.location.href = 'write.html?id=' + id; };
+window._exportScript = function(id) { window.location.href = 'write.html?id=' + id + '&export=1'; };
+window._renameScript = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
+  if (!s) return;
+  var name = prompt('နာမည်သစ်', s.title);
+  if (!name || !name.trim()) return;
+  s.title = name.trim();
+  await updateDoc(doc(db, 'scripts', id), { title: s.title });
+  renderScripts();
+  toast('✅ နာမည် ပြောင်းပြီး');
+};
+window._toggleStatus = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
+  if (!s) return;
+  s.status = s.status === 'draft' ? 'complete' : 'draft';
+  await updateDoc(doc(db, 'scripts', id), { status: s.status });
+  renderScripts();
+  toast('✅ Status ပြောင်းပြီး');
+};
+window._deleteScript = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
+  if (!s || !confirm('"' + s.title + '" ဖျက်မည်?')) return;
+  await deleteDoc(doc(db, 'scripts', id));
+  scripts = scripts.filter(function(x) { return x.id !== id; });
+  renderScripts();
+  toast('🗑 ဖျက်ပြီး');
+};
+
+/* ══ SHARE ══ */
+window.copyProfileLink = function() {
+  var username = (currentProfile.usernameRaw || currentProfile.username || '').replace('@','');
+  var url = window.location.origin + '/@' + username;
+  navigator.clipboard.writeText(url).then(function() { toast('🔗 Link ကူးပြီး — ' + url); });
+};
+
+/* ══ SIGN OUT ══ */
+window._signOut = async function() {
+  await signOut(auth);
+  window.location.href = 'index.html';
+};
+
+/* ══ KEYBOARD ══ */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') window.closeEdit();
+});
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) window.closeEdit();
+});
+</script>
+</body>
+</html>
+
+<!-- ══════ FIREBASE ══════ -->
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut, updateProfile }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc,
+         collection, query, where, getDocs, deleteDoc }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain:        "cinepodma.firebaseapp.com",
+  projectId:         "cinepodma",
+  storageBucket:     "cinepodma.firebasestorage.app",
+  messagingSenderId: "587916526322",
+  appId:             "1:587916526322:web:d00775311fb92fa1c8466b"
+};
+
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+var currentUser   = null;
+var currentProfile = {};
+var scripts        = [];
+
+/* ══════ AUTH STATE ══════ */
+onAuthStateChanged(auth, async function(user) {
+  if (!user) {
+    /* not logged in — redirect home */
+    window.location.href = 'index.html';
+    return;
+  }
+  currentUser = user;
+  await loadProfile(user);
+  await loadScripts(user.uid);
+});
+
+/* ══════ LOAD PROFILE ══════ */
+async function loadProfile(user) {
+  try {
+    var ref  = doc(db, 'users', user.uid);
+    var snap = await getDoc(ref);
+    if (snap.exists()) {
+      currentProfile = snap.data();
+    } else {
+      currentProfile = {
+        name:     user.displayName || '',
+        email:    user.email,
+        username: '@' + user.email.split('@')[0],
+        bio:      '',
+        avatar:   user.photoURL || ''
+      };
+      await setDoc(ref, currentProfile);
+    }
+    renderProfile();
+  } catch(e) {
+    toast('❌ Profile ဖတ်မရပါ');
+  }
+}
+
+/* ══════ RENDER PROFILE ══════ */
+function renderProfile() {
+  document.getElementById('dispName').textContent     = currentProfile.name     || '—';
+  document.getElementById('dispUsername').textContent = currentProfile.username  || '';
+  document.getElementById('dispBio').textContent      = currentProfile.bio       || '';
+
+  var avatar   = currentProfile.avatar || '';
+  var emojiEl  = document.getElementById('avatarEmoji');
+  var imgEl    = document.getElementById('avatarImg');
+  if (avatar) {
+    emojiEl.style.display = 'none';
+    imgEl.src             = avatar;
+    imgEl.style.display   = 'block';
+  } else {
+    emojiEl.style.display = 'block';
+    imgEl.style.display   = 'none';
+  }
+}
+
+/* ══════ LOAD SCRIPTS ══════ */
+async function loadScripts(uid) {
+  try {
+    var q    = query(collection(db, 'scripts'), where('uid', '==', uid));
+    var snap = await getDocs(q);
+    scripts  = [];
+    snap.forEach(function(d) { scripts.push({ id: d.id, ...d.data() }); });
+    renderScripts();
+  } catch(e) {
+    /* fallback to localStorage */
+    scripts = JSON.parse(localStorage.getItem('cp_scripts') || '[]');
+    renderScripts();
+  }
+}
+
+/* ══════ RENDER SCRIPTS ══════ */
+function renderScripts() {
+  var grid     = document.getElementById('scriptsGrid');
+  var drafts   = scripts.filter(function(s) { return s.status === 'draft'; }).length;
+  var complete = scripts.filter(function(s) { return s.status === 'complete'; }).length;
+  document.getElementById('statScripts').textContent  = scripts.length;
+  document.getElementById('statDrafts').textContent   = drafts;
+  document.getElementById('statComplete').textContent = complete;
+
+  if (scripts.length === 0) {
+    grid.innerHTML =
+      '<div class="empty-state">' +
+        '<span class="icon">📝</span>' +
+        'Screenplay မရှိသေးပါ<br>' +
+        '<small>+ New Script နှိပ်ပြီး စတင်ပါ</small>' +
+      '</div>';
+    return;
+  }
+
+  var html = scripts.map(function(s) {
+    return (
+      '<div class="script-card" id="sc-' + s.id + '">' +
+        '<div class="script-card-top">' +
+          '<div class="script-card-title">' + (s.title || 'Untitled') + '</div>' +
+          '<div class="script-card-menu">' +
+            '<button class="script-menu-btn" onclick="toggleMenu(\'' + s.id + '\', event)">⋯</button>' +
+            '<div class="script-dropdown" id="menu-' + s.id + '">' +
+              '<button class="script-dd-item" onclick="editScript(\'' + s.id + '\')">✏ ဖွင့်မည်</button>' +
+              '<button class="script-dd-item" onclick="renameScript(\'' + s.id + '\')">✎ နာမည်ပြောင်း</button>' +
+              '<button class="script-dd-item" onclick="toggleStatus(\'' + s.id + '\')">' +
+                (s.status === 'draft' ? '✅ Complete မှတ်မည်' : '📝 Draft ပြန်မည်') +
+              '</button>' +
+              '<button class="script-dd-item danger" onclick="deleteScript(\'' + s.id + '\')">🗑 ဖျက်မည်</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="script-card-meta">မြင်ကွင်း ' + (s.scenes || 0) + ' ခု · ' + (s.updated || '—') + '</div>' +
+        '<div><span class="script-tag ' + s.status + '">' + (s.status === 'draft' ? 'Draft' : 'Complete') + '</span></div>' +
+        '<div class="script-card-actions">' +
+          '<button class="script-act-btn primary" onclick="editScript(\'' + s.id + '\')">✍ ဆက်ရေးမည်</button>' +
+          '<button class="script-act-btn" onclick="exportScript(\'' + s.id + '\')">⬇ Export</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join('');
+
+  html += '<a class="script-card-new" href="write.html"><span class="plus">+</span><span class="new-label">New Script</span></a>';
   grid.innerHTML = html;
 }
 
 /* ══════ AVATAR ══════ */
-function changeAvatar(input) {
-  if (!input.files || !input.files[0]) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    profile.avatar = e.target.result;
-    saveToStorage();
+document.getElementById('avatarInput').addEventListener('change', async function() {
+  var file = this.files[0];
+  if (!file || !currentUser) return;
+  try {
+    var storageRef = ref(storage, 'avatars/' + currentUser.uid);
+    await uploadBytes(storageRef, file);
+    var url = await getDownloadURL(storageRef);
+    await updateDoc(doc(db, 'users', currentUser.uid), { avatar: url });
+    await updateProfile(currentUser, { photoURL: url });
+    currentProfile.avatar = url;
     renderProfile();
     toast('✅ Profile ဓာတ်ပုံ ပြောင်းပြီးပါပြီ');
-  };
-  reader.readAsDataURL(input.files[0]);
-}
+  } catch(e) {
+    toast('❌ ဓာတ်ပုံ တင်မရပါ — Storage enable လိုအပ်သည်');
+  }
+});
 
-/* ══════ EDIT MODAL ══════ */
-function openEdit() {
-  document.getElementById('editName').value     = profile.name;
-  document.getElementById('editUsername').value = profile.username;
-  document.getElementById('editBio').value      = profile.bio;
+/* ══════ EDIT PROFILE ══════ */
+window.openEdit = function() {
+  document.getElementById('editName').value     = currentProfile.name     || '';
+  document.getElementById('editUsername').value = currentProfile.username  || '';
+  document.getElementById('editBio').value      = currentProfile.bio       || '';
   document.getElementById('editModal').classList.add('open');
-}
-function closeEdit() {
+};
+window.closeEdit = function() {
   document.getElementById('editModal').classList.remove('open');
-}
-function saveProfile() {
+};
+
+window.saveProfile = async function() {
   var name = document.getElementById('editName').value.trim();
   var user = document.getElementById('editUsername').value.trim();
   var bio  = document.getElementById('editBio').value.trim();
   if (!name) { alert('အမည် ထည့်ပါ'); return; }
-  profile.name     = name;
-  profile.username = user.startsWith('@') ? user : '@' + user;
-  profile.bio      = bio;
-  saveToStorage();
-  renderProfile();
-  closeEdit();
-  toast('✅ Profile သိမ်းပြီးပါပြီ');
-}
+
+  var username = user.startsWith('@') ? user : '@' + user;
+  currentProfile.name     = name;
+  currentProfile.username = username;
+  currentProfile.bio      = bio;
+
+  try {
+    await updateDoc(doc(db, 'users', currentUser.uid), {
+      name: name, username: username, bio: bio
+    });
+    await updateProfile(currentUser, { displayName: name });
+    renderProfile();
+    window.closeEdit();
+    toast('✅ Profile သိမ်းပြီးပါပြီ');
+  } catch(e) {
+    toast('❌ သိမ်းမရပါ — ' + e.message);
+  }
+};
 
 /* ══════ SCRIPT ACTIONS ══════ */
-function toggleMenu(id, e) {
-  e.stopPropagation();
-  document.querySelectorAll('.script-dropdown').forEach(d => {
-    if (d.id !== 'menu-' + id) d.classList.remove('open');
-  });
-  document.getElementById('menu-' + id).classList.toggle('open');
-}
-
-document.addEventListener('click', function() {
-  document.querySelectorAll('.script-dropdown').forEach(d => d.classList.remove('open'));
-});
-
-function editScript(id) {
+window.editScript = function(id) {
   window.location.href = 'write.html?id=' + id;
-}
+};
 
-function renameScript(id) {
-  var s = scripts.find(x => x.id === id);
+window.renameScript = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
   if (!s) return;
   var name = prompt('နာမည်သစ်', s.title);
-  if (name && name.trim()) {
-    s.title = name.trim();
-    saveToStorage();
+  if (!name || !name.trim()) return;
+  s.title = name.trim();
+  try {
+    await updateDoc(doc(db, 'scripts', id), { title: s.title });
     renderScripts();
     toast('✅ နာမည် ပြောင်းပြီးပါပြီ');
-  }
-}
+  } catch(e) { toast('❌ ပြောင်းမရပါ'); }
+};
 
-function toggleStatus(id) {
-  var s = scripts.find(x => x.id === id);
+window.toggleStatus = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
   if (!s) return;
   s.status = s.status === 'draft' ? 'complete' : 'draft';
-  saveToStorage();
-  renderScripts();
-  toast('✅ Status ပြောင်းပြီးပါပြီ');
-}
+  try {
+    await updateDoc(doc(db, 'scripts', id), { status: s.status });
+    renderScripts();
+    toast('✅ Status ပြောင်းပြီးပါပြီ');
+  } catch(e) { renderScripts(); }
+};
 
-function deleteScript(id) {
-  var s = scripts.find(x => x.id === id);
+window.deleteScript = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
   if (!s) return;
   if (!confirm('"' + s.title + '" ကို ဖျက်မည်နှင့် သေချာပါသလား?')) return;
-  scripts = scripts.filter(x => x.id !== id);
-  saveToStorage();
-  renderScripts();
-  toast('🗑 ဖျက်ပြီးပါပြီ');
-}
-
-function exportScript(id) {
-  var s = scripts.find(x => x.id === id);
-  if (!s) return;
-  toast('⬇ Export — write.html မှ ဒေါင်းလုဒ်ဆွဲနိုင်သည်');
-}
-
-/* ══════ SHARE ══════ */
-function copyProfileLink() {
-  var url = window.location.href;
-  navigator.clipboard.writeText(url).then(function() {
-    toast('🔗 Link ကူးပြီးပါပြီ');
-  }).catch(function() {
-    toast('🔗 ' + url);
-  });
-}
-
-/* ══════ STORAGE ══════ */
-function saveToStorage() {
   try {
-    localStorage.setItem('cp_profile', JSON.stringify(profile));
-    localStorage.setItem('cp_scripts', JSON.stringify(scripts));
-  } catch(e) {}
-}
+    await deleteDoc(doc(db, 'scripts', id));
+    scripts = scripts.filter(function(x) { return x.id !== id; });
+    renderScripts();
+    toast('🗑 ဖျက်ပြီးပါပြီ');
+  } catch(e) { toast('❌ ဖျက်မရပါ'); }
+};
 
-/* ══════ TOAST ══════ */
-function toast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2800);
-}
+window.exportScript = function(id) {
+  window.location.href = 'write.html?id=' + id + '&export=1';
+};
 
-/* ══════ KEYBOARD ══════ */
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeEdit();
-});
-document.getElementById('editModal').addEventListener('click', function(e) {
-  if (e.target === this) closeEdit();
-});
-
-/* ══════ INIT ══════ */
-renderProfile();
-renderScripts();
+/* ══════ SIGN OUT ══════ */
+window.signOutUser = async function() {
+  await signOut(auth);
+  window.location.href = 'index.html';
+};
 </script>
 </body>
 </html>
