@@ -312,7 +312,7 @@ main {
 /* Auth buttons */
 .auth-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
   animation: fadeUp 0.7s 0.25s ease both;
@@ -1053,7 +1053,157 @@ footer {
   .menu-link { font-size: 12px; padding: 10px 24px; }
 }
 
-/* ── Small tablet / large phone (480px – 768px) ── */
+/* ══════ OVERLAY / MODAL BASE ══════ */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.overlay.open { display: flex; }
+
+/* ══════ AUTH MODAL ══════ */
+.auth-modal-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+@keyframes popIn {
+  from { opacity:0; transform:scale(0.95) translateY(12px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.auth-modal-title {
+  font-family: var(--font-en);
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  color: var(--black);
+}
+.auth-modal-sub {
+  font-size: 13px;
+  color: var(--slate);
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+.auth-form-group { margin-bottom: 14px; }
+.auth-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--black);
+}
+.auth-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-my);
+  font-size: 14px;
+  color: var(--black);
+  outline: none;
+  transition: border-color 0.15s;
+  line-height: 1.8;
+  background: var(--white);
+}
+.auth-input:focus { border-color: var(--black); }
+.auth-error {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.8;
+  min-height: 20px;
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  color: var(--slate-lt);
+  font-size: 11px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+  font-family: var(--font-my);
+  font-size: 13px;
+  color: var(--black);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 16px;
+}
+.btn-google:hover { background: var(--slate-bg); border-color: var(--black); }
+.auth-switch {
+  text-align: center;
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 14px;
+  line-height: 1.8;
+}
+.auth-switch a {
+  color: var(--black);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Nav user avatar */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.nav-user:hover { background: var(--slate-bg); }
+.nav-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--black);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.nav-user-name {
+  font-family: var(--font-my);
+  font-size: 12px;
+  color: var(--black);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 @media (min-width: 480px) and (max-width: 768px) {
   nav {
     padding: 16px 24px;
@@ -1126,10 +1276,13 @@ footer {
     <a class="brand" href="#" onclick="showPage('home')">
       cine<br><span>podma</span>
     </a>
-    <button class="burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Menu">
-      <div class="burger-line"></div>
-      <div class="burger-line"></div>
-    </button>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <div id="navAuthArea"><!-- user state JS က ဖြည့်မည် --></div>
+      <button class="burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Menu">
+        <div class="burger-line"></div>
+        <div class="burger-line"></div>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -1175,10 +1328,14 @@ footer {
         professional script editor
       </p>
 
-      <div class="auth-row">
-        <button class="btn btn-red" onclick="showSignUp()">အကောင့်ဖွင့်မည်</button>
-        <button class="btn btn-outline" onclick="showSignIn()">အကောင့်ဝင်မည်</button>
+      <div class="auth-row" id="heroAuthRow">
+        <a class="btn btn-red" href="write.html">✍ ဇာတ်လမ်းရေးမည်</a>
+        <button class="btn btn-outline" onclick="openAuthModal('signup')">အကောင့်ဖွင့်မည်</button>
+        <button class="btn btn-ghost" onclick="openAuthModal('signin')">အကောင့်ဝင်မည်</button>
       </div>
+      <p style="font-size:11px; color:var(--slate-lt); margin-top:12px; line-height:1.8;">
+        ✍ Guest mode — ရေးပြီး download ဆွဲနိုင်သည် · Cloud save အတွက် အကောင့်ဖွင့်ပါ
+      </p>
 
       <br><br>
 
@@ -1517,14 +1674,6 @@ function showPage(id) {
   }
 }
 
-/* ══════ AUTH (UI only) ══════ */
-function showSignUp() {
-  alert('Sign Up — Backend ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
-}
-function showSignIn() {
-  alert('Sign In — Backend ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
-}
-
 /* ══════ CONTACT ══════ */
 function submitContact(e) {
   e.preventDefault();
@@ -1738,6 +1887,41 @@ function submitScript(e) {
   if (fname) fname.textContent = '';
 }
 
+/* ══════ AUTH MODAL CONTROLS ══════ */
+window._authMode = 'signup';
+
+function openAuthModal(mode) {
+  window._authMode = mode || 'signup';
+  switchAuthMode(window._authMode);
+  document.getElementById('authEmail').value    = '';
+  document.getElementById('authPassword').value = '';
+  document.getElementById('authError').textContent = '';
+  document.getElementById('authModal').classList.add('open');
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('open');
+}
+
+function switchAuthMode(mode) {
+  window._authMode = mode;
+  var isSignup = mode === 'signup';
+  document.getElementById('authModalTitle').textContent = isSignup ? 'Sign Up' : 'Sign In';
+  document.getElementById('authModalSub').textContent   = isSignup
+    ? 'CinePodma တွင် အကောင့်ဖွင့်ပါ'
+    : 'CinePodma သို့ ဝင်ရောက်ပါ';
+  document.getElementById('authSignupFields').style.display = isSignup ? '' : 'none';
+  document.getElementById('authSubmitBtn').textContent = isSignup ? 'အကောင့်ဖွင့်မည်' : 'ဝင်ရောက်မည်';
+  document.getElementById('authSwitch').innerHTML = isSignup
+    ? 'အကောင့်ရှိပြီးသားလား? <a onclick="switchAuthMode(\'signin\')">ဝင်ရောက်မည်</a>'
+    : 'အကောင့်မရှိသေးဘူးလား? <a onclick="switchAuthMode(\'signup\')">အကောင့်ဖွင့်မည်</a>';
+}
+
+/* close on overlay click */
+document.getElementById('authModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAuthModal();
+});
+
 /* ══════ KEYBOARD ══════ */
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -1745,8 +1929,200 @@ document.addEventListener('keydown', e => {
   if (pv && pv.classList.contains('open')) { closePdf(); return; }
   var dm = document.getElementById('donateModal');
   if (dm && dm.classList.contains('open')) { closeDonateModal(); return; }
+  var am = document.getElementById('authModal');
+  if (am && am.classList.contains('open')) { closeAuthModal(); return; }
   closeMenu();
 });
+</script>
+
+<!-- ══════ AUTH MODAL ══════ -->
+<div class="overlay" id="authModal">
+  <div class="auth-modal-card">
+    <div class="auth-modal-title" id="authModalTitle">Sign Up</div>
+    <div class="auth-modal-sub" id="authModalSub">CinePodma တွင် အကောင့်ဖွင့်ပါ</div>
+
+    <!-- Google -->
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.96 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Google နဲ့ ဝင်မည်
+    </button>
+
+    <div class="auth-divider">သို့မဟုတ်</div>
+
+    <div id="authSignupFields">
+      <div class="auth-form-group">
+        <label class="auth-label">အမည်</label>
+        <input class="auth-input" id="authName" type="text" placeholder="သင့်နာမည်">
+      </div>
+    </div>
+
+    <div class="auth-form-group">
+      <label class="auth-label">Email</label>
+      <input class="auth-input" id="authEmail" type="email" placeholder="email@example.com">
+    </div>
+    <div class="auth-form-group">
+      <label class="auth-label">Password</label>
+      <input class="auth-input" id="authPassword" type="password" placeholder="အနည်းဆုံး ၆ လုံး">
+    </div>
+
+    <div class="auth-error" id="authError"></div>
+
+    <button class="btn btn-red" style="width:100%; margin-top:4px;" id="authSubmitBtn" onclick="submitAuth()">
+      အကောင့်ဖွင့်မည်
+    </button>
+
+    <div class="auth-switch" id="authSwitch">
+      အကောင့်ရှိပြီးသားလား? <a onclick="switchAuthMode('signin')">ဝင်ရောက်မည်</a>
+    </div>
+
+    <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate);">✕</button>
+  </div>
+</div>
+
+<!-- ══════ FIREBASE ══════ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
+         updateProfile } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain: "cinepodma.firebaseapp.com",
+  projectId: "cinepodma",
+  storageBucket: "cinepodma.firebasestorage.app",
+  messagingSenderId: "587916526322",
+  appId: "1:587916526322:web:d00775311fb92fa1c8466b"
+};
+
+const app      = initializeApp(firebaseConfig);
+const auth     = getAuth(app);
+const db       = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+/* expose to window for onclick handlers */
+window._auth = auth;
+window._db   = db;
+
+/* ── Auth state ── */
+onAuthStateChanged(auth, async function(user) {
+  var area     = document.getElementById('navAuthArea');
+  var heroRow  = document.getElementById('heroAuthRow');
+  var guestNote = heroRow ? heroRow.nextElementSibling : null;
+
+  if (user) {
+    /* ── logged in ── */
+    var initial  = (user.displayName || user.email || '?')[0].toUpperCase();
+    var photoUrl = user.photoURL || '';
+
+    /* nav: avatar + sign out only */
+    area.innerHTML =
+      '<a class="nav-user" href="profile.html">' +
+        '<div class="nav-avatar">' +
+          (photoUrl ? '<img src="' + photoUrl + '" alt="">' : initial) +
+        '</div>' +
+        '<span class="nav-user-name">' +
+          (user.displayName || user.email.split('@')[0]) +
+        '</span>' +
+      '</a>' +
+      '<button class="btn btn-ghost btn-sm" onclick="window._signOut()" ' +
+        'style="font-size:11px;padding:5px 10px;">ထွက်</button>';
+
+    /* hero: write + profile */
+    if (heroRow) {
+      heroRow.innerHTML =
+        '<a class="btn btn-red" href="write.html">✍ ဇာတ်လမ်းရေးမည်</a>' +
+        '<a class="btn btn-outline" href="profile.html">👤 Profile</a>';
+    }
+    if (guestNote) guestNote.style.display = 'none';
+
+    /* ensure Firestore profile */
+    var ref  = doc(db, 'users', user.uid);
+    var snap = await getDoc(ref);
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        name:     user.displayName || '',
+        email:    user.email,
+        username: '@' + user.email.split('@')[0],
+        bio:      '',
+        avatar:   user.photoURL || '',
+        created:  new Date().toISOString()
+      });
+    }
+
+  } else {
+    /* ── logged out — nav empty, hero 3 buttons ── */
+    area.innerHTML = '';
+
+    if (heroRow) {
+      heroRow.innerHTML =
+        '<a class="btn btn-red" href="write.html">✍ ဇာတ်လမ်းရေးမည်</a>' +
+        '<button class="btn btn-outline" onclick="openAuthModal(\'signup\')">အကောင့်ဖွင့်မည်</button>' +
+        '<button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်ဝင်မည်</button>';
+    }
+    if (guestNote) guestNote.style.display = '';
+  }
+});
+
+/* ── Sign out ── */
+window._signOut = function() {
+  signOut(auth).then(function() {
+    window.location.reload();
+  });
+};
+
+/* ── Submit auth ── */
+window.submitAuth = async function() {
+  var mode     = window._authMode || 'signup';
+  var email    = document.getElementById('authEmail').value.trim();
+  var password = document.getElementById('authPassword').value;
+  var errEl    = document.getElementById('authError');
+  var btn      = document.getElementById('authSubmitBtn');
+  errEl.textContent = '';
+  btn.textContent   = 'လုပ်ဆောင်နေသည်...';
+  btn.disabled      = true;
+
+  try {
+    if (mode === 'signup') {
+      var name = document.getElementById('authName').value.trim();
+      var cred = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        name: name, email: email,
+        username: '@' + email.split('@')[0],
+        bio: '', avatar: '',
+        created: new Date().toISOString()
+      });
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+    closeAuthModal();
+  } catch(e) {
+    var msgs = {
+      'auth/email-already-in-use':  'Email ကို အသုံးပြုပြီးသားဖြစ်သည်',
+      'auth/invalid-email':          'Email မမှန်ကန်ပါ',
+      'auth/weak-password':          'Password အနည်းဆုံး ၆ လုံး လိုသည်',
+      'auth/user-not-found':         'Email မတွေ့ပါ',
+      'auth/wrong-password':         'Password မှားနေသည်',
+      'auth/invalid-credential':     'Email သို့မဟုတ် Password မမှန်ပါ'
+    };
+    errEl.textContent = msgs[e.code] || e.message;
+    btn.textContent   = mode === 'signup' ? 'အကောင့်ဖွင့်မည်' : 'ဝင်ရောက်မည်';
+    btn.disabled      = false;
+  }
+};
+
+/* ── Google sign in ── */
+window.signInWithGoogle = async function() {
+  try {
+    await signInWithPopup(auth, provider);
+    closeAuthModal();
+  } catch(e) {
+    document.getElementById('authError').textContent = 'Google sign in မအောင်မြင်ပါ';
+  }
+};
 </script>
 </body>
 </html>
