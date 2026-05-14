@@ -894,19 +894,29 @@ async function loadProfile() {
 
 /* ══ LOAD SCRIPTS ══ */
 async function loadScripts() {
-  var q = query(collection(db,'docs'), where('uid','==',profileUid));
-  var snap = await getDocs(q);
-  scripts = [];
-  snap.forEach(function(d) {
-    var data=d.data();
-    scripts.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',
-      status:data.status||'draft',privacy:data.privacy||'private',
-      scenes:data.screenplay?data.screenplay.length:0,
-      updated:data.updatedAt?data.updatedAt.substring(0,10):'—',uid:data.uid});
-  });
-  if (!isOwner) scripts=scripts.filter(function(s){return s.privacy==='public';});
-  scripts.sort(function(a,b){return b.updated.localeCompare(a.updated);});
-  renderScripts();
+  try {
+    var q = query(collection(db,'docs'), where('uid','==',profileUid));
+    var snap = await getDocs(q);
+    scripts = [];
+    snap.forEach(function(d) {
+      var data=d.data();
+      scripts.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',
+        status:data.status||'draft',privacy:data.privacy||'private',
+        scenes:data.screenplay?data.screenplay.length:0,
+        updated:data.updatedAt?data.updatedAt.substring(0,10):'—',uid:data.uid});
+    });
+    console.log('loadScripts: total='+scripts.length+', isOwner='+isOwner+', profileUid='+profileUid);
+    if (!isOwner) {
+      scripts=scripts.filter(function(s){return s.privacy==='public';});
+      console.log('loadScripts: public only='+scripts.length);
+    }
+    scripts.sort(function(a,b){return b.updated.localeCompare(a.updated);});
+    renderScripts();
+  } catch(e) {
+    console.error('loadScripts error:',e);
+    scripts=[];
+    renderScripts();
+  }
 }
 
 /* ══ LOAD CLAPPERS ══ */

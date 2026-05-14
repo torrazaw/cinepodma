@@ -357,7 +357,9 @@ function toS2(){if(!selType)return;document.getElementById('s1').classList.remov
 function toS1(){document.getElementById('s2').classList.remove('on');document.getElementById('s1').classList.add('on');}
 function pickP(p,el){selPriv=p;document.querySelectorAll('.pc').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');}
 function startDoc(){
-  docType=selType;docPriv=selPriv;savePriv=selPriv;docId='doc_'+Date.now();
+  docType=selType;docPriv=selPriv;savePriv=selPriv;
+  /* only create new docId if not loading existing doc */
+  if(!docId) docId='doc_'+Date.now();
   document.getElementById('newdoc').style.display='none';
   var e=document.getElementById('ed');e.style.display='flex';e.style.flexDirection='column';e.style.overflow='hidden';e.style.flex='1';
   renderTBR();
@@ -699,13 +701,27 @@ async function cloudSave(){
   data.uid=currentUser.uid;
   data.authorName=currentUser.displayName||'';
   data.authorUsername='';
-  /* get username from Firestore */
+  data.updatedAt=new Date().toISOString();
+
+  /* get username */
   try{
     var usnap=await window._getDoc(window._doc(window._db,'users',currentUser.uid));
     if(usnap.exists()) data.authorUsername=usnap.data().username||'';
   }catch(e){}
-  data.updatedAt=new Date().toISOString();
-  if(!data.createdAt) data.createdAt=data.updatedAt;
+
+  /* preserve createdAt from existing doc */
+  try{
+    var existing=await window._getDoc(window._doc(window._db,'docs',docId));
+    if(existing.exists() && existing.data().createdAt){
+      data.createdAt=existing.data().createdAt;
+    } else {
+      data.createdAt=data.updatedAt;
+    }
+  }catch(e){
+    data.createdAt=data.updatedAt;
+  }
+
+  console.log('cloudSave: docId='+docId+', privacy='+data.privacy);
   await window._setDoc(window._doc(window._db,'docs',docId),data);
 }
 
