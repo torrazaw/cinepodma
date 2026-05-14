@@ -359,6 +359,7 @@ footer {
       <button class="filter-btn" onclick="setFilter('Director', this)">🎥 Director</button>
       <button class="filter-btn" onclick="setFilter('Writer', this)">✍️ Writer</button>
       <button class="filter-btn" onclick="setFilter('Filmmaker', this)">🎞️ Filmmaker</button>
+      <button class="filter-btn" onclick="setFilter('Actor', this)">🎭 Actor</button>
       <button class="filter-btn" onclick="setFilter('Cinephile', this)">🍿 Cinephile</button>
     </div>
   </div>
@@ -491,7 +492,7 @@ function renderBatch() {
 
   var roleIcons = {
     Producer: '🎬', Director: '🎥', Writer: '✍️',
-    Filmmaker: '🎞️', Cinephile: '🍿'
+    Filmmaker: '🎞️', Actor: '🎭', Cinephile: '🍿'
   };
 
   batch.forEach(function(u) {

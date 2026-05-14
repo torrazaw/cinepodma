@@ -744,7 +744,7 @@ async function loadProfile() {
     document.getElementById('dispName').textContent     = currentProfile.name || '—';
     document.getElementById('dispUsername').textContent = currentProfile.username || '';
     if (currentProfile.role) {
-      var roleIcons = { Producer:'🎬', Director:'🎥', Writer:'✍️', Filmmaker:'🎞️', Cinephile:'🍿' };
+      var roleIcons = { Producer:'🎬', Director:'🎥', Writer:'✍️', Filmmaker:'🎞️', Actor:'🎭', Cinephile:'🍿' };
       var icon = roleIcons[currentProfile.role] || '';
       document.getElementById('dispRole').innerHTML =
         '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;' +
