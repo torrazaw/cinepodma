@@ -579,6 +579,7 @@ footer {
         <span class="profile-username" id="dispUsername"></span>
       </div>
       <div id="dispRole" style="margin:4px 0 6px;"></div>
+      <p id="dispBio" style="font-size:13px;color:var(--slate);margin-bottom:6px;line-height:1.8;"></p>
       <p id="dispEmail" style="font-size:12px;color:var(--slate);margin-bottom:16px;line-height:1.8;"></p>
 
       <!-- Clappers / Clapping — ကြီးကြီး -->
@@ -743,6 +744,7 @@ async function loadProfile() {
     currentProfile = snap.data();
     document.getElementById('dispName').textContent     = currentProfile.name || '—';
     document.getElementById('dispUsername').textContent = currentProfile.username || '';
+    document.getElementById('dispBio').textContent      = currentProfile.bio || '';
     if (currentProfile.role) {
       var roleIcons = { Producer:'🎬', Director:'🎥', Writer:'✍️', Filmmaker:'🎞️', Actor:'🎭', Cinephile:'🍿' };
       var icon = roleIcons[currentProfile.role] || '';
@@ -992,14 +994,15 @@ window.saveProfile = async function() {
   var bio  = document.getElementById('editBio').value.trim();
   if (!name) { alert('အမည် ထည့်ပါ'); return; }
   try {
-    await updateDoc(doc(db, 'users', currentUser.uid), { name, bio });
+    await updateDoc(doc(db, 'users', currentUser.uid), { name: name, bio: bio });
     await updateProfile(currentUser, { displayName: name });
     currentProfile.name = name;
     currentProfile.bio  = bio;
     document.getElementById('dispName').textContent = name;
+    document.getElementById('dispBio').textContent  = bio;
     window.closeEdit();
     toast('✅ Profile သိမ်းပြီးပါပြီ');
-  } catch(e) { toast('❌ သိမ်းမရပါ'); }
+  } catch(e) { toast('❌ သိမ်းမရပါ — ' + e.message); }
 };
 
 /* ══ SCRIPT ACTIONS ══ */
