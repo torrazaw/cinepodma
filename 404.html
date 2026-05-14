@@ -153,10 +153,11 @@ function showState(id) {
 
 async function handleRoute() {
   var path = window.location.pathname;
+  console.log('404 path:', path);
 
   /* ── @username route ── */
-  /* e.g. /cinepodma/@razaw or /@razaw */
   var usernameMatch = path.match(/\/@([a-z0-9_]+)/i);
+  console.log('usernameMatch:', usernameMatch);
 
   if (usernameMatch) {
     var username = usernameMatch[1].toLowerCase();
