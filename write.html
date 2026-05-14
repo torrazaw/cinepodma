@@ -2,884 +2,384 @@
 <html lang="my">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Write — CinePodma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&family=Noto+Serif+Myanmar:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ══════════════════════════════════
-   TOKENS
-══════════════════════════════════ */
-:root {
-  --white:    #FFFFFF;
-  --black:    #0A0A0A;
-  --slate:    #6B7280;
-  --slate-lt: #9CA3AF;
-  --slate-bg: #F3F4F6;
-  --border:   #E5E7EB;
-  --red:      #DC2626;
-  --red-h:    #B91C1C;
-  --paper:    #FDFCFA;
-  --paper-ln: rgba(0,0,0,0.04);
-  --radius:   20px;
-  --font-en:  'Special Elite', 'Courier New', monospace;
-  --font-my:  'Noto Sans Myanmar', sans-serif;
-  --font-mys: 'Noto Serif Myanmar', serif;
-  --a4-w:     794px;   /* A4 at 96dpi */
-  --a4-h:     1123px;
-  --margin-t: 96px;
-  --margin-b: 96px;
-  --margin-l: 100px;
-  --margin-r: 72px;
+:root{
+  --white:#FFFFFF;--black:#0A0A0A;
+  --slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;
+  --border:#E5E7EB;--red:#DC2626;--red-h:#B91C1C;
+  --paper:#FEFEFE;--bg:#C8C5C0;
+  --radius:12px;
+  --font-en:'Special Elite','Courier New',monospace;
+  --font-my:'Noto Sans Myanmar',sans-serif;
+  --font-mys:'Noto Serif Myanmar',serif;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:var(--font-my);background:var(--white);color:var(--black);
+  height:100%;overflow:hidden;display:flex;flex-direction:column;
+  -webkit-font-smoothing:antialiased;}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; }
-body {
-  font-family: var(--font-my);
-  background: #ECEAE6;
-  color: var(--black);
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  -webkit-font-smoothing: antialiased;
-}
+/* TOPBAR */
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.topbar-center{flex:1;display:flex;justify-content:center;min-width:0;}
+.topbar-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.back-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;
+  border-radius:8px;border:1px solid var(--border);background:transparent;
+  font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;
+  text-decoration:none;transition:all .15s;line-height:1.6;}
+.back-btn:hover{background:var(--slate-bg);color:var(--black);}
+.doc-title-input{font-family:var(--font-my);font-size:14px;font-weight:600;
+  color:var(--black);border:none;outline:none;background:transparent;
+  text-align:center;width:100%;max-width:320px;}
+.doc-title-input::placeholder{color:var(--slate-lt);font-weight:400;}
+.save-status{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);
+  letter-spacing:.5px;white-space:nowrap;}
+.save-status.saved{color:#16A34A;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;
+  border-radius:var(--radius);border:none;cursor:pointer;font-family:var(--font-my);
+  font-size:12px;font-weight:600;line-height:1.6;transition:all .15s;white-space:nowrap;}
+.btn-red{background:var(--red);color:var(--white);}
+.btn-red:hover{background:var(--red-h);}
+.btn-ghost{background:transparent;color:var(--slate);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--slate-bg);color:var(--black);}
+.btn-sm{padding:5px 10px;font-size:11px;}
 
-/* ══════════════════════════════════
-   TOP BAR
-══════════════════════════════════ */
-.topbar {
-  height: 52px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  flex-shrink: 0;
-  z-index: 100;
-  gap: 12px;
-}
+/* TABS BAR */
+.tabs-bar{background:var(--white);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;flex-shrink:0;
+  overflow-x:auto;scrollbar-width:none;}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.tab-btn{display:flex;align-items:center;gap:5px;padding:12px 14px;
+  border:none;background:transparent;font-family:var(--font-my);font-size:13px;
+  color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;
+  transition:all .15s;white-space:nowrap;line-height:1.6;}
+.tab-btn:hover{color:var(--black);}
+.tab-btn.active{color:var(--black);border-bottom-color:var(--black);font-weight:600;}
+.tab-dot{width:6px;height:6px;border-radius:50%;background:var(--border);}
+.tab-btn.has-content .tab-dot{background:var(--red);}
+.tabs-right{margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:12px;flex-shrink:0;}
+.zoom-controls{display:flex;align-items:center;gap:2px;background:var(--slate-bg);
+  border:1px solid var(--border);border-radius:8px;padding:2px 4px;}
+.zoom-btn{width:22px;height:22px;border:none;background:transparent;border-radius:5px;
+  cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;
+  justify-content:center;color:var(--black);transition:background .12s;}
+.zoom-btn:hover{background:var(--border);}
+.zoom-label{font-family:var(--font-en);font-size:10px;color:var(--slate);
+  min-width:34px;text-align:center;}
 
-.topbar-left { display: flex; align-items: center; gap: 10px; }
-.topbar-center { flex: 1; display: flex; justify-content: center; }
-.topbar-right { display: flex; align-items: center; gap: 6px; }
+/* WORKSPACE */
+.workspace{flex:1;overflow:auto;background:var(--bg);
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:32px 24px 100px;scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;}
+.page-scaler{display:flex;flex-direction:column;align-items:center;gap:20px;
+  transform-origin:top center;transition:transform .15s ease;flex-shrink:0;}
 
-.back-btn {
-  display: flex; align-items: center; gap: 5px;
-  padding: 5px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: transparent;
-  font-family: var(--font-my);
-  font-size: 12px;
-  color: var(--slate);
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.15s;
-  line-height: 1.6;
-}
-.back-btn:hover { background: var(--slate-bg); color: var(--black); }
+/* A4 PAGE */
+.a4-page{width:794px;height:1123px;background:var(--paper);
+  box-shadow:0 2px 6px rgba(0,0,0,.15),0 8px 32px rgba(0,0,0,.18);
+  position:relative;flex-shrink:0;overflow:hidden;}
+.a4-page-num{position:absolute;top:20px;right:36px;font-family:var(--font-en);
+  font-size:9px;color:var(--slate-lt);letter-spacing:.5px;pointer-events:none;}
 
-.doc-title-input {
-  font-family: var(--font-my);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--black);
-  border: none;
-  outline: none;
-  background: transparent;
-  text-align: center;
-  min-width: 200px;
-  max-width: 360px;
-  width: 100%;
-}
-.doc-title-input::placeholder { color: var(--slate-lt); font-weight: 400; }
+/* PAGE INNER */
+.page-inner{box-sizing:border-box;width:100%;height:100%;padding:96px;overflow:hidden;position:relative;}
+.section-label{font-family:var(--font-en);font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--slate-lt);margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-textarea{display:block;width:100%;height:calc(100% - 48px);border:none;outline:none;
+  background:transparent;font-family:var(--font-my);font-size:14px;line-height:2.0;
+  color:var(--black);resize:none;overflow:auto;}
+.section-textarea::placeholder{color:var(--slate-lt);font-style:italic;}
 
-.save-status {
-  font-family: var(--font-en);
-  font-size: 10px;
-  color: var(--slate-lt);
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-.save-status.saved { color: #16A34A; }
+/* COVER */
+.cover-inner{box-sizing:border-box;width:100%;height:100%;padding:96px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+.cover-title{font-family:var(--font-my);font-size:28px;font-weight:700;color:var(--black);
+  line-height:1.8;margin-bottom:28px;width:100%;border:none;outline:none;
+  background:transparent;text-align:center;resize:none;overflow:hidden;}
+.cover-title::placeholder{color:var(--slate-lt);font-weight:400;}
+.cover-divider{width:60px;height:1px;background:var(--black);margin:0 auto 28px;}
+.cover-written{font-family:var(--font-en);font-size:12px;color:var(--slate);letter-spacing:1px;margin-bottom:6px;}
+.cover-meta{font-family:var(--font-my);font-size:15px;font-weight:600;color:var(--black);
+  border:none;outline:none;background:transparent;text-align:center;width:100%;line-height:1.8;}
+.cover-meta::placeholder{color:var(--slate-lt);font-weight:400;}
+.cover-draft{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:1px;
+  margin-top:40px;border:none;outline:none;background:transparent;text-align:center;}
+.cover-draft::placeholder{color:var(--slate-lt);}
 
-.btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 6px 14px;
-  border-radius: 10px;
-  border: none; cursor: pointer;
-  font-family: var(--font-my);
-  font-size: 12px; font-weight: 600;
-  line-height: 1.6;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.btn-red { background: var(--red); color: var(--white); }
-.btn-red:hover { background: var(--red-h); }
-.btn-outline { background: transparent; color: var(--black); border: 1.5px solid var(--black); }
-.btn-outline:hover { background: var(--black); color: var(--white); }
-.btn-ghost { background: transparent; color: var(--slate); border: 1px solid var(--border); }
-.btn-ghost:hover { background: var(--slate-bg); color: var(--black); }
+/* SCREENPLAY */
+.sp-area{box-sizing:border-box;width:100%;height:100%;padding:96px;overflow:hidden;}
+.sp-fade{font-family:var(--font-en);font-size:11px;font-weight:600;letter-spacing:.5px;
+  color:var(--black);padding:4px 0;pointer-events:none;user-select:none;}
+.sp-fade.right{text-align:right;margin-top:20px;}
+[contenteditable]{outline:none;min-height:1.6em;transition:background .1s;cursor:text;}
+[contenteditable]:focus{background:rgba(220,38,38,.03);border-radius:2px;}
+.el-scene{font-family:var(--font-my);font-size:13px;font-weight:700;line-height:2.0;
+  color:var(--black);margin-top:24px;margin-bottom:4px;padding:4px 10px;
+  background:rgba(0,0,0,.03);border-left:2px solid var(--black);border-radius:0 3px 3px 0;}
+.el-action{font-family:var(--font-my);font-size:13px;line-height:2.0;color:var(--black);
+  padding:2px 0;margin-bottom:4px;}
+.el-char{font-family:var(--font-my);font-size:13px;font-weight:700;line-height:2.0;
+  color:var(--black);margin-top:12px;padding-left:34%;}
+.el-paren{font-family:var(--font-my);font-size:12px;font-style:italic;line-height:1.8;
+  color:var(--slate);padding-left:26%;padding-right:26%;}
+.el-dial{font-family:var(--font-my);font-size:13px;line-height:2.0;color:var(--black);
+  padding-left:20%;padding-right:20%;margin-bottom:4px;}
+.el-trans{font-family:var(--font-my);font-size:12px;font-weight:700;line-height:2.0;
+  color:var(--slate);text-align:right;margin-top:12px;}
 
-/* ══════════════════════════════════
-   SECTION TABS
-══════════════════════════════════ */
-.section-tabs {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  gap: 0;
-  flex-shrink: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.section-tabs::-webkit-scrollbar { display: none; }
+/* STORY */
+.story-area{box-sizing:border-box;width:100%;height:100%;padding:80px 88px;overflow:auto;position:relative;}
+.story-editor{width:100%;min-height:calc(100% - 80px);border:none;outline:none;
+  font-family:var(--font-mys);font-size:15px;line-height:2.2;color:var(--black);background:transparent;}
+.story-editor:empty::before{content:'ဤနေရာတွင် ဝတ္ထုရေးပါ...';color:var(--slate-lt);font-style:italic;pointer-events:none;}
+.story-editor h1{font-family:var(--font-mys);font-size:22px;font-weight:700;margin:24px 0 12px;line-height:1.6;}
+.story-editor h2{font-family:var(--font-mys);font-size:18px;font-weight:700;margin:20px 0 10px;line-height:1.6;}
 
-.tab-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 12px 16px;
-  border: none; background: transparent;
-  font-family: var(--font-my);
-  font-size: 13px;
-  color: var(--slate);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s;
-  white-space: nowrap;
-  line-height: 1.6;
-  position: relative;
+/* STORY FORMAT TOOLBAR */
+.story-toolbar{
+  position:sticky;top:0;left:0;right:0;
+  display:flex;align-items:center;gap:2px;
+  background:rgba(255,255,255,.95);
+  border-bottom:1px solid var(--border);
+  padding:6px 8px;z-index:10;
+  backdrop-filter:blur(4px);
+  margin:-80px -88px 20px;
+  padding-left:88px;
 }
-.tab-btn:hover { color: var(--black); }
-.tab-btn.active { color: var(--black); border-bottom-color: var(--black); font-weight: 600; }
-.tab-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--border);
-  transition: background 0.15s;
-}
-.tab-btn.has-content .tab-dot { background: var(--red); }
-.tab-btn.active .tab-dot { background: var(--black); }
+.fmt-btn{width:30px;height:30px;border:none;background:transparent;border-radius:6px;
+  cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;
+  justify-content:center;color:var(--black);transition:all .12s;}
+.fmt-btn:hover{background:var(--slate-bg);}
+.fmt-sep{width:1px;height:18px;background:var(--border);margin:0 2px;}
 
-.tabs-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-left: 16px;
-  flex-shrink: 0;
-}
-.page-count {
-  font-family: var(--font-en);
-  font-size: 10px;
-  color: var(--slate-lt);
-  letter-spacing: 0.5px;
-}
+/* BOTTOM TOOLBAR */
+.bottom-toolbar{position:fixed;bottom:0;left:0;right:0;background:var(--white);
+  border-top:1px solid var(--border);display:none;align-items:center;
+  justify-content:center;padding:0 12px;height:52px;z-index:200;
+  overflow-x:auto;scrollbar-width:none;gap:2px;flex-shrink:0;}
+.bottom-toolbar::-webkit-scrollbar{display:none;}
+.bottom-toolbar.visible{display:flex;}
+.bt-btn{display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:5px 11px;border-radius:8px;border:none;background:transparent;
+  cursor:pointer;transition:all .12s;flex-shrink:0;white-space:nowrap;}
+.bt-btn:hover{background:var(--slate-bg);}
+.bt-tag{font-family:var(--font-en);font-size:8px;font-weight:700;letter-spacing:.5px;
+  color:var(--slate-lt);text-transform:uppercase;}
+.bt-label{font-family:var(--font-my);font-size:11px;color:var(--black);line-height:1.5;}
+.bt-sep{width:1px;height:22px;background:var(--border);flex-shrink:0;margin:0 3px;}
 
-/* Zoom controls */
-.zoom-controls {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  background: var(--slate-bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 2px 4px;
-}
-.zoom-btn {
-  width: 24px; height: 24px;
-  border: none; background: transparent;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 15px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--black);
-  transition: background 0.12s;
-  line-height: 1;
-}
-.zoom-btn:hover { background: var(--border); }
-.zoom-label {
-  font-family: var(--font-en);
-  font-size: 11px;
-  color: var(--slate);
-  min-width: 36px;
-  text-align: center;
-}
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal-card{background:var(--white);border-radius:20px;padding:28px 24px;
+  width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.2);
+  animation:popIn .25s cubic-bezier(.34,1.56,.64,1);position:relative;}
+@keyframes popIn{from{opacity:0;transform:scale(.95) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-title{font-family:var(--font-en);font-size:16px;letter-spacing:.5px;margin-bottom:6px;color:var(--black);}
+.modal-sub{font-size:13px;color:var(--slate);margin-bottom:20px;line-height:1.8;}
+.modal-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
 
-/* ══════════════════════════════════
-   WORKSPACE
-══════════════════════════════════ */
-.workspace {
-  flex: 1;
-  overflow: auto;
-  background: #C8C5C0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 24px 80px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
+/* NEW DOC SCREEN */
+.new-doc-screen{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 24px;background:var(--white);overflow-y:auto;}
+.nd-card{width:100%;max-width:460px;background:var(--white);border:1px solid var(--border);
+  border-radius:20px;padding:28px 24px;box-shadow:0 4px 20px rgba(0,0,0,.06);}
+.nd-step{display:none;}
+.nd-step.active{display:block;}
+.nd-step-label{font-family:var(--font-en);font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--slate-lt);margin-bottom:12px;}
+.nd-heading{font-family:var(--font-my);font-size:20px;font-weight:700;
+  color:var(--black);margin-bottom:4px;line-height:1.6;}
+.nd-sub{font-size:13px;color:var(--slate);margin-bottom:20px;line-height:1.8;}
+.doc-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.doc-type-card{padding:20px 14px;text-align:center;border:1.5px solid var(--border);
+  border-radius:14px;cursor:pointer;transition:all .15s;background:var(--white);}
+.doc-type-card:hover{border-color:var(--black);background:var(--slate-bg);}
+.doc-type-card.selected{border-color:var(--black);background:var(--black);color:var(--white);}
+.doc-type-icon{font-size:28px;display:block;margin-bottom:8px;}
+.doc-type-name{font-family:var(--font-en);font-size:13px;font-weight:700;letter-spacing:.5px;display:block;}
+.doc-type-desc{font-size:11px;opacity:.65;margin-top:3px;line-height:1.5;display:block;}
+.privacy-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.privacy-card{padding:14px 12px;text-align:center;border:1.5px solid var(--border);
+  border-radius:12px;cursor:pointer;transition:all .15s;background:var(--white);}
+.privacy-card:hover{border-color:var(--black);}
+.privacy-card.selected{border-color:var(--black);background:var(--black);color:var(--white);}
+.privacy-icon{font-size:20px;display:block;margin-bottom:4px;}
+.privacy-name{font-size:13px;font-weight:600;display:block;line-height:1.6;}
+.privacy-desc{font-size:10px;opacity:.6;line-height:1.4;}
 
-/* page-scaler: transform: scale() applied here via JS */
-.page-scaler {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  transform-origin: top center;
-  transition: transform 0.15s ease;
-  /* prevent scaler from collapsing workspace */
-  flex-shrink: 0;
-}
+/* SAVE MODAL PRIVACY */
+.privacy-opts{display:flex;flex-direction:column;gap:6px;}
+.privacy-opt{display:flex;align-items:center;gap:12px;padding:11px 14px;
+  border:1.5px solid var(--border);border-radius:12px;cursor:pointer;
+  transition:all .15s;font-family:var(--font-my);font-size:13px;line-height:1.8;}
+.privacy-opt:hover{border-color:var(--black);}
+.privacy-opt.selected{border-color:var(--black);background:var(--slate-bg);}
+.privacy-opt-icon{font-size:16px;flex-shrink:0;}
+.privacy-opt-text{flex:1;}
+.privacy-opt-desc{font-size:11px;color:var(--slate);line-height:1.6;}
 
-/* ══════════════════════════════════
-   A4 PAGE
-   794 × 1123 px  =  210 × 297 mm at 96dpi
-   padding 96px   =  1 inch all sides
-══════════════════════════════════ */
-.a4-page {
-  width: 794px;
-  height: 1123px;
-  background: #FFFFFF;
-  box-shadow:
-    0 2px 6px rgba(0,0,0,0.15),
-    0 8px 32px rgba(0,0,0,0.18);
-  position: relative;
-  flex-shrink: 0;
-  overflow: hidden;
-}
+/* COLLAB */
+.collab-item{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border:1px solid var(--border);border-radius:10px;font-size:13px;margin-bottom:8px;}
+.collab-av{width:30px;height:30px;border-radius:50%;background:var(--slate-bg);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.collab-role{margin-left:auto;font-family:var(--font-en);font-size:10px;color:var(--slate);letter-spacing:.5px;}
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;}
+.form-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;
+  font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;
+  transition:border-color .15s;line-height:1.8;background:var(--white);}
+.form-input:focus{border-color:var(--black);}
 
-.a4-page-num {
-  position: absolute;
-  top: 20px; right: 36px;
-  font-family: var(--font-en);
-  font-size: 9px;
-  color: var(--slate-lt);
-  letter-spacing: 0.5px;
-}
+/* TOAST */
+.toast{position:fixed;bottom:72px;right:20px;background:var(--black);color:var(--white);
+  font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;
+  transform:translateY(40px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
 
-/* ── COVER PAGE ── */
-.cover-page {
-  box-sizing: border-box;
-  width: 100%; height: 100%;
-  padding: 96px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+/* RESPONSIVE */
+@media(max-width:860px){
+  .workspace{padding:20px 0 80px;}
+  .zoom-controls{display:none;}
 }
-
-/* ── SECTION PAGE ── */
-.section-page {
-  box-sizing: border-box;
-  width: 100%; height: 100%;
-  padding: 96px;
-  overflow: hidden;
+@media(max-width:600px){
+  .topbar{padding:0 10px;gap:6px;}
+  .topbar-right .hide-mobile{display:none;}
 }
-
-/* ── SCREENPLAY AREA ── */
-.screenplay-area {
-  box-sizing: border-box;
-  width: 100%; height: 100%;
-  padding: 96px;
-  overflow: hidden;
-}
-
-.cover-title {
-  font-family: var(--font-my);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--black);
-  line-height: 1.8;
-  margin-bottom: 32px;
-  width: 100%;
-  border: none; outline: none; background: transparent;
-  text-align: center;
-  resize: none;
-  overflow: hidden;
-}
-.cover-title::placeholder { color: var(--slate-lt); font-weight: 400; }
-
-.cover-divider {
-  width: 60px; height: 1px;
-  background: var(--black);
-  margin: 0 auto 32px;
-}
-.cover-written {
-  font-family: var(--font-en);
-  font-size: 12px;
-  color: var(--slate);
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-.cover-author {
-  font-family: var(--font-my);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--black);
-  border: none; outline: none; background: transparent;
-  text-align: center;
-  width: 100%;
-  line-height: 1.8;
-}
-.cover-author::placeholder { color: var(--slate-lt); font-weight: 400; }
-.cover-draft {
-  font-family: var(--font-en);
-  font-size: 10px;
-  color: var(--slate-lt);
-  letter-spacing: 1px;
-  margin-top: 48px;
-  border: none; outline: none; background: transparent;
-  text-align: center;
-}
-.cover-draft::placeholder { color: var(--slate-lt); }
-
-.section-label {
-  font-family: var(--font-en);
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--slate-lt);
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-.section-textarea {
-  display: block;
-  width: 100%;
-  height: calc(100% - 48px);
-  border: none; outline: none;
-  background: transparent;
-  font-family: var(--font-my);
-  font-size: 14px;
-  line-height: 2.0;
-  color: var(--black);
-  resize: none;
-  overflow: auto;
-}
-.section-textarea::placeholder { color: var(--slate-lt); font-style: italic; }
-
-.sp-content { display: flex; flex-direction: column; }
-
-/* Elements */
-.sp-el { position: relative; margin-bottom: 0; }
-.sp-el:hover .el-type-tag { opacity: 1; }
-
-.el-type-tag {
-  position: absolute;
-  left: -72px; top: 4px;
-  font-family: var(--font-en);
-  font-size: 8px;
-  letter-spacing: 1px;
-  color: var(--slate-lt);
-  text-transform: uppercase;
-  opacity: 0;
-  transition: opacity 0.15s;
-  white-space: nowrap;
-}
-
-[contenteditable] {
-  outline: none;
-  min-height: 1.4em;
-  transition: background 0.1s;
-  -webkit-user-modify: read-write-plaintext-only;
-}
-[contenteditable]:focus { background: rgba(220,38,38,0.03); border-radius: 2px; }
-[contenteditable][data-ph]:empty::before {
-  content: attr(data-ph);
-  color: #C8C5BF;
-  pointer-events: none;
-  font-style: italic;
-}
-
-/* Scene heading */
-.el-scene {
-  font-family: var(--font-my);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 2.0;
-  color: var(--black);
-  margin-top: 28px;
-  margin-bottom: 4px;
-  padding: 4px 10px;
-  background: rgba(0,0,0,0.03);
-  border-left: 2px solid var(--black);
-  border-radius: 0 3px 3px 0;
-}
-
-/* Action */
-.el-action {
-  font-family: var(--font-my);
-  font-size: 13px;
-  line-height: 2.0;
-  color: var(--black);
-  padding: 2px 0;
-  margin-bottom: 4px;
-}
-
-/* Character */
-.el-char {
-  font-family: var(--font-my);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 2.0;
-  color: var(--black);
-  margin-top: 14px;
-  margin-bottom: 0;
-  padding-left: 34%;
-}
-
-/* Parenthetical */
-.el-paren {
-  font-family: var(--font-my);
-  font-size: 12px;
-  font-style: italic;
-  line-height: 1.8;
-  color: var(--slate);
-  padding-left: 26%;
-  padding-right: 26%;
-  margin-bottom: 0;
-}
-
-/* Dialogue */
-.el-dial {
-  font-family: var(--font-my);
-  font-size: 13px;
-  line-height: 2.0;
-  color: var(--black);
-  padding-left: 20%;
-  padding-right: 20%;
-  margin-bottom: 4px;
-}
-
-/* Transition */
-.el-trans {
-  font-family: var(--font-my);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 2.0;
-  color: var(--slate);
-  text-align: right;
-  margin-top: 14px;
-  margin-bottom: 4px;
-}
-
-/* Fade labels */
-.sp-fade {
-  font-family: var(--font-en);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: var(--black);
-  padding: 4px 0;
-}
-.sp-fade.right { text-align: right; margin-top: 24px; }
-
-/* ══════════════════════════════════
-   BOTTOM TOOLBAR — scrollable
-══════════════════════════════════ */
-.bottom-toolbar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--white);
-  border-top: 1px solid var(--border);
-  display: none;
-  align-items: center;
-  padding: 0 8px;
-  height: 52px;
-  z-index: 200;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.bottom-toolbar::-webkit-scrollbar { display: none; }
-.bottom-toolbar.visible { display: flex; }
-
-.bt-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.12s;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-.bt-btn:hover { background: var(--slate-bg); }
-.bt-btn .bt-tag {
-  font-family: var(--font-en);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: var(--slate-lt);
-  text-transform: uppercase;
-}
-.bt-btn .bt-label {
-  font-family: var(--font-my);
-  font-size: 11px;
-  color: var(--black);
-  line-height: 1.5;
-}
-.bt-sep {
-  width: 1px;
-  height: 24px;
-  background: var(--border);
-  flex-shrink: 0;
-  margin: 0 4px;
-}
-
-/* ══════════════════════════════════
-   MODALS
-══════════════════════════════════ */
-.overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(4px);
-  z-index: 500;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.overlay.open { display: flex; }
-.modal-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
-}
-@keyframes popIn {
-  from { opacity:0; transform:scale(0.95) translateY(12px); }
-  to   { opacity:1; transform:scale(1) translateY(0); }
-}
-.modal-title { font-family: var(--font-en); font-size:16px; letter-spacing:0.5px; margin-bottom:20px; }
-.modal-sub { font-size:13px; color:var(--slate); line-height:1.8; margin-bottom:16px; }
-.modal-actions { display:flex; gap:8px; margin-top:20px; flex-wrap:wrap; }
-
-/* Privacy */
-.privacy-options { display:flex; flex-direction:column; gap:6px; }
-.privacy-opt {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: var(--font-my);
-  font-size: 13px;
-  line-height: 1.8;
-}
-.privacy-opt:hover { border-color: var(--black); }
-.privacy-opt.selected { border-color: var(--black); background: var(--slate-bg); }
-.privacy-opt input { display: none; }
-.privacy-icon { font-size: 16px; flex-shrink: 0; }
-.privacy-text { flex: 1; }
-.privacy-desc { font-size: 11px; color: var(--slate); line-height: 1.6; }
-
-/* Share */
-.share-link-box {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 10px 14px;
-  background: var(--slate-bg);
-  border-radius: 10px;
-  margin-bottom: 16px;
-}
-.share-link-box span {
-  flex: 1; font-family: var(--font-en); font-size: 11px; color: var(--slate);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-
-/* Collab */
-.collab-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-.collab-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  font-size: 13px;
-}
-.collab-avatar {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  background: var(--slate-bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
-}
-.collab-role {
-  margin-left: auto;
-  font-family: var(--font-en);
-  font-size: 10px;
-  color: var(--slate);
-  letter-spacing: 0.5px;
-}
-.form-group { margin-bottom: 14px; }
-.form-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
-.form-input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  font-family: var(--font-my);
-  font-size: 14px;
-  color: var(--black);
-  outline: none;
-  transition: border-color 0.15s;
-  line-height: 1.8;
-}
-.form-input:focus { border-color: var(--black); }
-
-/* ══════════════════════════════════
-   TOAST
-══════════════════════════════════ */
-.toast {
-  position: fixed;
-  bottom: 80px; right: 24px;
-  background: var(--black);
-  color: var(--white);
-  font-family: var(--font-my);
-  font-size: 13px;
-  line-height: 1.8;
-  padding: 10px 18px;
-  border-radius: 10px;
-  transform: translateY(40px);
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  z-index: 9999;
-  pointer-events: none;
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-
-/* ══════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════ */
-@media (max-width: 860px) {
-  :root { --a4-w: 100%; --margin-l: 32px; --margin-r: 24px; --margin-t: 56px; --margin-b: 56px; }
-  .workspace { padding: 20px 12px 100px; }
-  .el-type-tag { display: none; }
-  .topbar-center { display: none; }
-}
-@media (max-width: 500px) {
-  .ins-btn { padding: 5px 8px; font-size: 10px; }
-  .topbar-right .btn-ghost { display: none; }
-}
-
-/* ══════════════════════════════════
-   PRINT
-══════════════════════════════════ */
-@media print {
-  body { background: white; overflow: visible; }
-  .topbar, .section-tabs, .insert-bar { display: none !important; }
-  .workspace { padding: 0; overflow: visible; background: white; }
-  .a4-page { box-shadow: none; width: 100%; min-height: auto; break-after: page; }
-  [contenteditable]:focus { background: transparent; }
-  .el-type-tag { display: none; }
+@media print{
+  body{background:white;overflow:visible;}
+  .topbar,.tabs-bar,.bottom-toolbar{display:none!important;}
+  .workspace{padding:0;overflow:visible;background:white;}
+  .a4-page{box-shadow:none;break-after:page;}
 }
 </style>
 </head>
 <body>
 
-<!-- ══════ TOP BAR ══════ -->
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
     <a class="back-btn" href="index.html">← Home</a>
     <span class="save-status" id="saveStatus">—</span>
   </div>
   <div class="topbar-center">
-    <input class="doc-title-input" id="docTitle" type="text" placeholder="ဇာတ်ကားနာမည်" autocomplete="off">
+    <input class="doc-title-input" id="docTitle" type="text" placeholder="ခေါင်းစဉ်" autocomplete="off">
   </div>
-  <div class="topbar-right">
-    <button class="btn btn-ghost" onclick="openCollab()">👥 Collab</button>
-    <button class="btn btn-ghost" onclick="openShare()">🔗 Share</button>
-    <button class="btn btn-ghost" onclick="openPrivacy()">🔒 Privacy</button>
-    <button class="btn btn-red" onclick="saveDoc()">💾 Save</button>
+  <div class="topbar-right" id="topbarRight"></div>
+</div>
+
+<!-- NEW DOC SCREEN -->
+<div class="new-doc-screen" id="newDocScreen">
+  <div class="nd-card">
+    <!-- Step 1 -->
+    <div class="nd-step active" id="ndStep1">
+      <div class="nd-step-label">Step 1 / 2</div>
+      <div class="nd-heading">ဘာရေးမလဲ?</div>
+      <div class="nd-sub">Document type ရွေးပါ</div>
+      <div class="doc-type-grid">
+        <div class="doc-type-card" onclick="selectType('screenplay',this)">
+          <span class="doc-type-icon">🎬</span>
+          <span class="doc-type-name">Screenplay</span>
+          <span class="doc-type-desc">Industry format<br>ဇာတ်ညွှန်း</span>
+        </div>
+        <div class="doc-type-card" onclick="selectType('story',this)">
+          <span class="doc-type-icon">📖</span>
+          <span class="doc-type-name">Story</span>
+          <span class="doc-type-desc">ဝတ္ထု / စာတမ်း<br>Rich text</span>
+        </div>
+      </div>
+      <button class="btn btn-red" style="width:100%;" id="ndBtn1" onclick="goNdStep2()" disabled>ဆက်သွားမည် →</button>
+    </div>
+    <!-- Step 2 -->
+    <div class="nd-step" id="ndStep2">
+      <div class="nd-step-label">Step 2 / 2</div>
+      <div class="nd-heading">ဘယ်သူမြင်မလဲ?</div>
+      <div class="nd-sub">နောက်မှ ပြောင်းလဲနိုင်သည်</div>
+      <div class="privacy-grid">
+        <div class="privacy-card selected" id="privPrivate" onclick="selectPrivacy('private',this)">
+          <span class="privacy-icon">🔒</span>
+          <span class="privacy-name">Private</span>
+          <span class="privacy-desc">ကိုယ်ပဲမြင်</span>
+        </div>
+        <div class="privacy-card" id="privPublic" onclick="selectPrivacy('public',this)">
+          <span class="privacy-icon">🌐</span>
+          <span class="privacy-name">Public</span>
+          <span class="privacy-desc">အားလုံးမြင်</span>
+        </div>
+      </div>
+      <button class="btn btn-red" style="width:100%;" onclick="startDoc()">✍ စတင်မည်</button>
+      <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="backNdStep1()">← ပြန်သွားမည်</button>
+    </div>
   </div>
 </div>
 
-<!-- ══════ SECTION TABS ══════ -->
-<div class="section-tabs">
-  <button class="tab-btn active" data-tab="cover" onclick="switchTab('cover', this)">
-    <span class="tab-dot"></span> Cover
-  </button>
-  <button class="tab-btn" data-tab="logline" onclick="switchTab('logline', this)" id="tab-logline">
-    <span class="tab-dot"></span> Logline
-  </button>
-  <button class="tab-btn" data-tab="synopsis" onclick="switchTab('synopsis', this)" id="tab-synopsis">
-    <span class="tab-dot"></span> Synopsis
-  </button>
-  <button class="tab-btn" data-tab="treatment" onclick="switchTab('treatment', this)" id="tab-treatment">
-    <span class="tab-dot"></span> Treatment
-  </button>
-  <button class="tab-btn" data-tab="screenplay" onclick="switchTab('screenplay', this)" id="tab-screenplay">
-    <span class="tab-dot"></span> Screenplay
-  </button>
-  <div class="tabs-right">
-    <div class="zoom-controls">
-      <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
-      <span class="zoom-label" id="zoomLabel">100%</span>
-      <button class="zoom-btn" onclick="changeZoom(10)">+</button>
-      <button class="zoom-btn" onclick="resetZoom()" title="Reset">⊙</button>
+<!-- EDITOR AREA -->
+<div id="editorArea" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+  <!-- TABS -->
+  <div class="tabs-bar">
+    <div id="spTabs" style="display:none;flex:1;align-items:center;display:flex;">
+      <button class="tab-btn active" data-tab="cover" onclick="switchTab('cover',this)"><span class="tab-dot"></span>Cover</button>
+      <button class="tab-btn" data-tab="logline" onclick="switchTab('logline',this)" id="tabLogline"><span class="tab-dot"></span>Logline</button>
+      <button class="tab-btn" data-tab="synopsis" onclick="switchTab('synopsis',this)" id="tabSynopsis"><span class="tab-dot"></span>Synopsis</button>
+      <button class="tab-btn" data-tab="treatment" onclick="switchTab('treatment',this)" id="tabTreatment"><span class="tab-dot"></span>Treatment</button>
+      <button class="tab-btn" data-tab="screenplay" onclick="switchTab('screenplay',this)" id="tabScreenplay"><span class="tab-dot"></span>Screenplay</button>
     </div>
-    <div style="width:1px;height:16px;background:var(--border);margin:0 6px;"></div>
-    <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="window.print()">🖨 Print</button>
-    <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="exportPDF()">⬇ PDF</button>
+    <div id="storyTabs" style="display:none;flex:1;align-items:center;display:flex;">
+      <button class="tab-btn active">📖 Story</button>
+    </div>
+    <div class="tabs-right">
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+      </div>
+      <button class="btn btn-ghost btn-sm hide-mobile" onclick="window.print()">🖨</button>
+    </div>
+  </div>
+  <!-- WORKSPACE -->
+  <div class="workspace" id="workspace">
+    <div class="page-scaler" id="pageScaler"></div>
   </div>
 </div>
 
-<!-- ══════ WORKSPACE ══════ -->
-<div class="workspace" id="workspace">
-  <div class="page-scaler" id="pageScaler">
-
-  <!-- ── COVER PAGE ── -->
-  <div class="a4-page" id="pg-cover">
-    <div class="cover-page">
-      <textarea class="cover-title" id="coverTitle" placeholder="ဇာတ်ကားနာမည်" rows="1" oninput="syncTitle(this); autoResize(this)"></textarea>
-      <div class="cover-divider"></div>
-      <div class="cover-written">Written by</div>
-      <input class="cover-author" id="coverAuthor" type="text" placeholder="သင့်နာမည်" autocomplete="off">
-      <input class="cover-draft" id="coverDraft" type="text" placeholder="Draft 1 · 2026" autocomplete="off">
-    </div>
-  </div>
-
-  <!-- ── LOGLINE PAGE ── -->
-  <div class="a4-page" id="pg-logline" style="display:none;">
-    <div class="a4-page-num">Logline</div>
-    <div class="section-page">
-      <div class="section-label">Logline</div>
-      <textarea class="section-textarea" id="loglineText"
-        placeholder="ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ..."
-        oninput="autoResize(this); markHasContent('logline', this); autoSave()"></textarea>
-    </div>
-  </div>
-
-  <!-- ── SYNOPSIS PAGE ── -->
-  <div class="a4-page" id="pg-synopsis" style="display:none;">
-    <div class="a4-page-num">Synopsis</div>
-    <div class="section-page">
-      <div class="section-label">Synopsis</div>
-      <textarea class="section-textarea" id="synopsisText"
-        placeholder="ဇာတ်ကားဇာတ်လမ်း အကျဉ်းချုပ် — ဇာတ်ဆုံးပါမှ..."
-        oninput="autoResize(this); markHasContent('synopsis', this); autoSave()"></textarea>
-    </div>
-  </div>
-
-  <!-- ── TREATMENT PAGE ── -->
-  <div class="a4-page" id="pg-treatment" style="display:none;">
-    <div class="a4-page-num">Treatment</div>
-    <div class="section-page">
-      <div class="section-label">Treatment</div>
-      <textarea class="section-textarea" id="treatmentText"
-        placeholder="မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ..."
-        oninput="autoResize(this); markHasContent('treatment', this); autoSave()"></textarea>
-    </div>
-  </div>
-
-  </div><!-- /page-scaler -->
-</div><!-- /workspace -->
-
-<!-- ══════ BOTTOM TOOLBAR (screenplay only) ══════ -->
+<!-- BOTTOM TOOLBAR (Screenplay) -->
 <div class="bottom-toolbar" id="bottomToolbar">
-  <button class="bt-btn" onclick="ins('scene')">
-    <span class="bt-tag">INT/EXT</span>
-    <span class="bt-label">မြင်ကွင်း</span>
-  </button>
-  <button class="bt-btn" onclick="ins('action')">
-    <span class="bt-tag">ACTION</span>
-    <span class="bt-label">အကြောင်းအရာ</span>
-  </button>
-  <button class="bt-btn" onclick="ins('char')">
-    <span class="bt-tag">CHAR</span>
-    <span class="bt-label">ဇာတ်ကောင်</span>
-  </button>
+  <button class="bt-btn" onclick="ins('scene')"><span class="bt-tag">INT/EXT</span><span class="bt-label">မြင်ကွင်း</span></button>
+  <button class="bt-btn" onclick="ins('action')"><span class="bt-tag">ACTION</span><span class="bt-label">အကြောင်းအရာ</span></button>
+  <button class="bt-btn" onclick="ins('char')"><span class="bt-tag">CHAR</span><span class="bt-label">ဇာတ်ကောင်</span></button>
   <div class="bt-sep"></div>
-  <button class="bt-btn" onclick="ins('paren')">
-    <span class="bt-tag">( )</span>
-    <span class="bt-label">ကွင်းစကား</span>
-  </button>
-  <button class="bt-btn" onclick="ins('dial')">
-    <span class="bt-tag">DIAL</span>
-    <span class="bt-label">ဒိုင်ယာလော့ဂ်</span>
-  </button>
-  <button class="bt-btn" onclick="ins('trans')">
-    <span class="bt-tag">TRANS</span>
-    <span class="bt-label">ပြောင်းကူး</span>
-  </button>
+  <button class="bt-btn" onclick="ins('paren')"><span class="bt-tag">( )</span><span class="bt-label">ကွင်း</span></button>
+  <button class="bt-btn" onclick="ins('dial')"><span class="bt-tag">DIAL</span><span class="bt-label">ဒိုင်ယာ</span></button>
+  <button class="bt-btn" onclick="ins('trans')"><span class="bt-tag">TRANS</span><span class="bt-label">ပြောင်းကူး</span></button>
   <div class="bt-sep"></div>
-  <button class="bt-btn" onclick="addFadeOut()">
-    <span class="bt-tag">F.OUT</span>
-    <span class="bt-label">Fade Out</span>
-  </button>
+  <button class="bt-btn" onclick="addFadeOut()"><span class="bt-tag">F.OUT</span><span class="bt-label">Fade Out</span></button>
 </div>
 
-<!-- ══════ SAVE MODAL ══════ -->
+<!-- SAVE MODAL -->
 <div class="overlay" id="saveModal">
   <div class="modal-card">
-    <div class="modal-title">💾 Save & Publish</div>
-    <p class="modal-sub">သိမ်းဆည်းပြီး ဘယ်သူမြင်နိုင်မည်ကို ရွေးပါ</p>
-    <div class="privacy-options">
-      <label class="privacy-opt" onclick="setPrivacyAndSave('private', this)">
-        <input type="radio" name="savePrivacy" value="private" checked>
-        <span class="privacy-icon">🔒</span>
-        <div class="privacy-text">
-          <div>Private</div>
-          <div class="privacy-desc">ကိုယ်ပဲမြင်နိုင်သည် — မည်သူမှ မမြင်ရ</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacyAndSave('logline', this)">
-        <input type="radio" name="savePrivacy" value="logline">
-        <span class="privacy-icon">👁</span>
-        <div class="privacy-text">
-          <div>Logline ထိ</div>
-          <div class="privacy-desc">Title + Logline သာ မြင်နိုင်သည်</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacyAndSave('synopsis', this)">
-        <input type="radio" name="savePrivacy" value="synopsis">
-        <span class="privacy-icon">👁</span>
-        <div class="privacy-text">
-          <div>Synopsis ထိ</div>
-          <div class="privacy-desc">Logline + Synopsis မြင်နိုင်သည်</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacyAndSave('treatment', this)">
-        <input type="radio" name="savePrivacy" value="treatment">
-        <span class="privacy-icon">👁</span>
-        <div class="privacy-text">
-          <div>Treatment ထိ</div>
-          <div class="privacy-desc">Treatment အထိ မြင်နိုင်သည်</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacyAndSave('public', this)">
-        <input type="radio" name="savePrivacy" value="public">
-        <span class="privacy-icon">🌐</span>
-        <div class="privacy-text">
-          <div>Full Public</div>
-          <div class="privacy-desc">Screenplay အပါအဝင် အကုန်မြင်နိုင်သည်</div>
-        </div>
-      </label>
+    <div class="modal-title">💾 Save</div>
+    <p class="modal-sub">Privacy ရွေးပြီး သိမ်းမည်</p>
+    <div class="privacy-opts">
+      <div class="privacy-opt selected" onclick="setSavePrivacy('private',this)">
+        <span class="privacy-opt-icon">🔒</span>
+        <div class="privacy-opt-text"><div>Private</div><div class="privacy-opt-desc">ကိုယ်ပဲမြင်နိုင်သည်</div></div>
+      </div>
+      <div class="privacy-opt" onclick="setSavePrivacy('public',this)">
+        <span class="privacy-opt-icon">🌐</span>
+        <div class="privacy-opt-text"><div>Public</div><div class="privacy-opt-desc">Library + Profile တွင် မြင်နိုင်သည်</div></div>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-red" style="flex:1;" onclick="confirmSave()">သိမ်းမည်</button>
@@ -888,90 +388,33 @@ body {
   </div>
 </div>
 
-<!-- ══════ PRIVACY MODAL ══════ -->
-<div class="overlay" id="privacyModal">
-  <div class="modal-card">
-    <div class="modal-title">Privacy Settings</div>
-    <p class="modal-sub">ဘယ်သူမြင်နိုင်မည်ကို ရွေးပါ</p>
-    <div class="privacy-options">
-      <label class="privacy-opt" onclick="setPrivacy('private', this)">
-        <input type="radio" name="privacy" value="private">
-        <span class="privacy-icon">🔒</span>
-        <div class="privacy-text">
-          <div>Private</div>
-          <div class="privacy-desc">ကိုယ်ပဲမြင်နိုင်သည်</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacy('logline', this)">
-        <input type="radio" name="privacy" value="logline">
-        <span class="privacy-icon">👁</span>
-        <div class="privacy-text">
-          <div>Logline ထိ</div>
-          <div class="privacy-desc">Title + Logline သာ မြင်နိုင်သည်</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacy('synopsis', this)">
-        <input type="radio" name="privacy" value="synopsis">
-        <span class="privacy-icon">👁</span>
-        <div class="privacy-text">
-          <div>Synopsis ထိ</div>
-          <div class="privacy-desc">Logline + Synopsis မြင်နိုင်သည်</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacy('treatment', this)">
-        <input type="radio" name="privacy" value="treatment">
-        <span class="privacy-icon">👁</span>
-        <div class="privacy-text">
-          <div>Treatment ထိ</div>
-          <div class="privacy-desc">Treatment အထိ မြင်နိုင်သည်</div>
-        </div>
-      </label>
-      <label class="privacy-opt" onclick="setPrivacy('public', this)">
-        <input type="radio" name="privacy" value="public">
-        <span class="privacy-icon">🌐</span>
-        <div class="privacy-text">
-          <div>Full Public</div>
-          <div class="privacy-desc">Screenplay အပါအဝင် အကုန်မြင်နိုင်သည်</div>
-        </div>
-      </label>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-red" style="flex:1;" onclick="savePrivacy()">သိမ်းမည်</button>
-      <button class="btn btn-ghost" onclick="closeModal('privacyModal')">ပိတ်မည်</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════ SHARE MODAL ══════ -->
+<!-- SHARE MODAL -->
 <div class="overlay" id="shareModal">
   <div class="modal-card">
-    <div class="modal-title">Share</div>
-    <p class="modal-sub">Link ကို မိတ်ဆွေများနှင့် မျှဝေပါ</p>
-    <div class="share-link-box">
-      <span id="shareLink">cinepodma.com/view/—</span>
-      <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="copyLink()">Copy</button>
+    <div class="modal-title">🔗 Share</div>
+    <p class="modal-sub">Public ထားမှ link မျှဝေနိုင်သည်</p>
+    <div style="display:flex;gap:8px;align-items:center;padding:10px 14px;background:var(--slate-bg);border-radius:10px;margin-bottom:12px;">
+      <span id="shareLink" style="flex:1;font-family:var(--font-en);font-size:11px;color:var(--slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+      <button class="btn btn-ghost btn-sm" onclick="copyShareLink()">Copy</button>
     </div>
-    <p style="font-size:11px; color:var(--slate); line-height:1.8;">
-      Privacy setting အပေါ်မူတည်ပြီး မည်မျှထိ မြင်နိုင်မည်ကို သတ်မှတ်ထားသည်။
-    </p>
     <div class="modal-actions">
       <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('shareModal')">ပိတ်မည်</button>
     </div>
   </div>
 </div>
 
-<!-- ══════ COLLAB MODAL ══════ -->
+<!-- COLLAB MODAL -->
 <div class="overlay" id="collabModal">
   <div class="modal-card">
-    <div class="modal-title">Collaboration</div>
-    <div class="collab-list" id="collabList">
+    <div class="modal-title">👥 Collaboration</div>
+    <div id="collabList">
       <div class="collab-item">
-        <div class="collab-avatar">👤</div>
-        <div style="flex:1; font-size:13px; line-height:1.6;">သင် (Owner)</div>
+        <div class="collab-av">👤</div>
+        <div style="flex:1;font-size:13px;line-height:1.6;" id="collabOwner">Owner</div>
         <span class="collab-role">OWNER</span>
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" style="margin-top:12px;">
       <label class="form-label">Email ဖြင့် ဖိတ်မည်</label>
       <input class="form-input" id="collabEmail" type="email" placeholder="friend@example.com">
     </div>
@@ -979,582 +422,294 @@ body {
       <button class="btn btn-red" style="flex:1;" onclick="inviteCollab()">ဖိတ်မည်</button>
       <button class="btn btn-ghost" onclick="closeModal('collabModal')">ပိတ်မည်</button>
     </div>
-    <p style="font-size:11px; color:var(--slate); margin-top:12px; line-height:1.8;">
-      Real-time collaboration — Firebase ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်
-    </p>
+    <p style="font-size:11px;color:var(--slate);margin-top:10px;line-height:1.8;">Real-time collaboration — Firebase ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်</p>
   </div>
 </div>
 
-<!-- ══════ TOAST ══════ -->
 <div class="toast" id="toast"></div>
 
 <script>
-/* ══ STATE ══ */
-var currentTab = 'cover';
-var privacyLevel = 'private';
-var elements = [];
-var lastFocused = null;
-var autoSaveTimer = null;
-var docId = 'doc_' + Date.now();
+/* STATE */
+var docType='', docPrivacy='private', savePrivacy='private';
+var docId='', elements=[], lastFocused=null;
+var spPageNum=1, zoomLevel=100, autoSaveTimer=null, currentTab='cover';
+var selectedType='', selectedPrivacy='private';
+var PAGE_H=1123, PAGE_PAD=96;
 
-/* ══ INIT ══ */
-window.addEventListener('DOMContentLoaded', function() {
-  loadDoc();
-  updateSaveStatus('unsaved');
-  autoFitZoom();
-  window.addEventListener('resize', autoFitZoom);
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
+function updateSaveStatus(s){var e=document.getElementById('saveStatus');if(s==='saved'){e.textContent='Saved ✓';e.className='save-status saved';}else{e.textContent='Unsaved…';e.className='save-status';}}
 
-  // Title sync
-  document.getElementById('docTitle').addEventListener('input', function() {
-    document.getElementById('coverTitle').value = this.value;
-    autoSave();
-  });
-  document.getElementById('coverTitle').addEventListener('input', function() {
-    document.getElementById('docTitle').value = this.value;
-    autoSave();
-  });
-  document.getElementById('coverAuthor').addEventListener('input', autoSave);
-  document.getElementById('coverDraft').addEventListener('input', autoSave);
-});
-
-/* ══ ZOOM ══ */
-var zoomLevel = 100;
-
-function applyZoom() {
-  var scaler = document.getElementById('pageScaler');
-  var scale = zoomLevel / 100;
-  scaler.style.transform = 'scale(' + scale + ')';
-  // adjust wrapper height so scrolling works
-  scaler.style.marginBottom = ((scale - 1) * 1123) + 'px';
-  document.getElementById('zoomLabel').textContent = zoomLevel + '%';
+/* NEW DOC */
+function selectType(type,el){
+  selectedType=type;
+  document.querySelectorAll('.doc-type-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('ndBtn1').disabled=false;
 }
-
-function changeZoom(delta) {
-  zoomLevel = Math.min(200, Math.max(25, zoomLevel + delta));
-  applyZoom();
-}
-
-function resetZoom() {
-  zoomLevel = 100;
-  applyZoom();
-}
-
-/* auto fit on load */
-function autoFitZoom() {
-  var ws = document.getElementById('workspace');
-  var available = ws.clientWidth - 80;
-  var pageW = 794;
-  if (available < pageW) {
-    zoomLevel = Math.floor((available / pageW) * 100);
-    zoomLevel = Math.max(25, Math.min(100, zoomLevel));
-  } else {
-    zoomLevel = 100;
-  }
-  applyZoom();
-}
-function switchTab(tab, btn) {
-  currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-
-  var pages = ['cover','logline','synopsis','treatment'];
-  pages.forEach(function(p) {
-    var el = document.getElementById('pg-' + p);
-    if (el) el.style.display = p === tab ? '' : 'none';
-  });
-
-  /* hide/show all sp-page- pages */
-  document.querySelectorAll('.a4-page[id^="sp-page-"]').forEach(function(pg) {
-    pg.style.display = tab === 'screenplay' ? '' : 'none';
-  });
-
-  /* ensure page 1 exists for screenplay */
-  if (tab === 'screenplay') {
-    spPageNum = 1;
-    getOrCreateSpPage(1);
-    /* if sp-area-1 is empty, add FADE IN */
-    var area1 = document.getElementById('sp-area-1');
-    if (area1 && !area1.querySelector('.sp-fade')) {
-      var fi = document.createElement('div');
-      fi.className   = 'sp-fade';
-      fi.textContent = 'FADE IN:';
-      area1.insertBefore(fi, area1.firstChild);
-    }
-    document.getElementById('bottomToolbar').classList.add('visible');
-  } else {
-    document.getElementById('bottomToolbar').classList.remove('visible');
-  }
-
-  updatePageCount();
-}
-
-/* ══ SAVE MODAL ══ */
-var pendingPrivacy = 'private';
-
-function saveDoc() {
-  // Pre-select current privacy
-  document.querySelectorAll('#saveModal .privacy-opt').forEach(function(opt) {
-    opt.classList.remove('selected');
-    if (opt.querySelector('input').value === privacyLevel) {
-      opt.classList.add('selected');
-    }
-  });
-  pendingPrivacy = privacyLevel;
-  openModal('saveModal');
-}
-
-function setPrivacyAndSave(level, el) {
-  pendingPrivacy = level;
-  document.querySelectorAll('#saveModal .privacy-opt').forEach(function(o) { o.classList.remove('selected'); });
+function goNdStep2(){if(!selectedType)return;document.getElementById('ndStep1').classList.remove('active');document.getElementById('ndStep2').classList.add('active');}
+function backNdStep1(){document.getElementById('ndStep2').classList.remove('active');document.getElementById('ndStep1').classList.add('active');}
+function selectPrivacy(p,el){
+  selectedPrivacy=p;
+  document.querySelectorAll('.privacy-card').forEach(function(c){c.classList.remove('selected');});
   el.classList.add('selected');
 }
-
-function confirmSave() {
-  privacyLevel = pendingPrivacy;
-  closeModal('saveModal');
-  doSave();
+function startDoc(){
+  docType=selectedType; docPrivacy=selectedPrivacy; savePrivacy=selectedPrivacy;
+  docId='doc_'+Date.now();
+  document.getElementById('newDocScreen').style.display='none';
+  var ea=document.getElementById('editorArea');
+  ea.style.display='flex';ea.style.flexDirection='column';ea.style.overflow='hidden';ea.style.flex='1';
+  renderTopbarRight();
+  if(docType==='screenplay'){initScreenplay();}else{initStory();}
+  autoFitZoom();updateSaveStatus('unsaved');
 }
 
-function doSave() {
-  var data = collectData();
-  try {
-    localStorage.setItem('cp_doc_' + docId, JSON.stringify(data));
-    var scripts = JSON.parse(localStorage.getItem('cp_scripts') || '[]');
-    var idx = scripts.findIndex(function(s) { return s.id === docId; });
-    var entry = {
-      id: docId,
-      title: data.title || 'Untitled',
-      scenes: elements.filter(function(e){ return e.type === 'scene'; }).length,
-      updated: 'ယခုတွင်',
-      status: 'draft'
-    };
-    if (idx >= 0) scripts[idx] = entry; else scripts.unshift(entry);
-    localStorage.setItem('cp_scripts', JSON.stringify(scripts));
-    updateSaveStatus('saved');
-    toast('💾 သိမ်းပြီးပါပြီ · ' + privacyLabel(privacyLevel));
-  } catch(e) { toast('❌ သိမ်းမရပါ'); }
+/* TOPBAR RIGHT */
+function renderTopbarRight(){
+  var el=document.getElementById('topbarRight');
+  var collabBtn=docType==='screenplay'?'<button class="btn btn-ghost btn-sm hide-mobile" onclick="openModal(\'collabModal\')">👥 Collab</button>':'';
+  el.innerHTML=collabBtn+
+    '<button class="btn btn-ghost btn-sm hide-mobile" onclick="openShareModal()">🔗</button>'+
+    '<button class="btn btn-red btn-sm" onclick="openModal(\'saveModal\')">💾 Save</button>';
 }
 
-function privacyLabel(level) {
-  var map = { private: '🔒 Private', logline: '👁 Logline', synopsis: '👁 Synopsis', treatment: '👁 Treatment', public: '🌐 Public' };
-  return map[level] || level;
+/* SCREENPLAY */
+function initScreenplay(){
+  document.getElementById('spTabs').style.display='flex';
+  document.getElementById('storyTabs').style.display='none';
+  switchTab('cover',document.querySelector('[data-tab="cover"]'));
 }
 
-/* ══ MARK HAS CONTENT ══ */
-function markHasContent(section, el) {
-  var tab = document.getElementById('tab-' + section);
-  if (!tab) return;
-  if (el.value.trim()) {
-    tab.classList.add('has-content');
+function switchTab(tab,btn){
+  currentTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  var scaler=document.getElementById('pageScaler');
+  var toolbar=document.getElementById('bottomToolbar');
+  /* hide all pages */
+  scaler.querySelectorAll('.a4-page').forEach(function(p){p.style.display='none';});
+  if(tab==='screenplay'){
+    spPageNum=1;
+    if(!document.getElementById('sp-page-1'))buildSpPage(1);
+    document.querySelectorAll('.a4-page[id^="sp-page-"]').forEach(function(p){p.style.display='';});
+    toolbar.classList.add('visible');
   } else {
-    tab.classList.remove('has-content');
+    toolbar.classList.remove('visible');
+    var pageId='pg-'+tab;
+    var existing=document.getElementById(pageId);
+    if(existing){existing.style.display='';}
+    else{buildSectionPage(tab);}
   }
 }
 
-/* ══ AUTO RESIZE TEXTAREA ══ */
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
+function buildSectionPage(tab){
+  var labels={cover:'Cover',logline:'Logline',synopsis:'Synopsis',treatment:'Treatment'};
+  var phs={
+    logline:'ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ...',
+    synopsis:'ဇာတ်ကားဇာတ်လမ်း အကျဉ်းချုပ် — ဇာတ်ဆုံးပါမှ...',
+    treatment:'မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ...'
+  };
+  var scaler=document.getElementById('pageScaler');
+  var page=document.createElement('div');
+  page.className='a4-page';page.id='pg-'+tab;
+  var num=document.createElement('div');num.className='a4-page-num';num.textContent=labels[tab]||tab;page.appendChild(num);
+  if(tab==='cover'){
+    var ci=document.createElement('div');ci.className='cover-inner';
+    ci.innerHTML='<textarea class="cover-title" id="coverTitle" placeholder="ဇာတ်ကားနာမည်" rows="1" oninput="syncTitle(this);autoResize(this);autoSave()"></textarea>'+
+      '<div class="cover-divider"></div><div class="cover-written">Written by</div>'+
+      '<input class="cover-meta" id="coverAuthor" type="text" placeholder="သင့်နာမည်" oninput="autoSave()">'+
+      '<input class="cover-draft" id="coverDraft" type="text" placeholder="Draft 1 · 2026" oninput="autoSave()">';
+    page.appendChild(ci);
+  } else {
+    var inner=document.createElement('div');inner.className='page-inner';
+    var lbl=document.createElement('div');lbl.className='section-label';lbl.textContent=labels[tab]||tab;
+    var ta=document.createElement('textarea');ta.className='section-textarea';ta.id=tab+'Text';ta.placeholder=phs[tab]||'';
+    ta.addEventListener('input',function(){
+      autoSave();
+      var tbtn=document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1));
+      if(tbtn&&ta.value.trim())tbtn.classList.add('has-content');
+      /* auto new page if overflow */
+      if(ta.scrollHeight>PAGE_H-PAGE_PAD*2-60){addSectionPage(tab,page);}
+    });
+    inner.appendChild(lbl);inner.appendChild(ta);page.appendChild(inner);
+  }
+  scaler.appendChild(page);
 }
 
-/* ══ SYNC TITLE ══ */
-function syncTitle(el) {
-  document.getElementById('docTitle').value = el.value;
-  autoSave();
+function addSectionPage(tab,prevPage){
+  var nextId=prevPage.id+'-cont';
+  if(document.getElementById(nextId))return;
+  var scaler=document.getElementById('pageScaler');
+  var p2=document.createElement('div');p2.className='a4-page';p2.id=nextId;
+  var n2=document.createElement('div');n2.className='a4-page-num';n2.textContent='ဆက်...';p2.appendChild(n2);
+  var i2=document.createElement('div');i2.className='page-inner';
+  var ta2=document.createElement('textarea');ta2.className='section-textarea';ta2.placeholder='ဆက်ရေးပါ...';
+  ta2.addEventListener('input',function(){autoSave();});
+  i2.appendChild(ta2);p2.appendChild(i2);scaler.appendChild(p2);
 }
 
-/* ══ SCREENPLAY ELEMENTS ══ */
-var elConfig = {
-  scene:  { css: 'el-scene',  ph: 'INT. နေရာ — နေ့ / ည',     tag: 'SCENE',    next: 'action' },
-  action: { css: 'el-action', ph: 'ဖြစ်ပျက်မှု ဖော်ပြပါ...',     tag: 'ACTION',   next: 'action' },
-  char:   { css: 'el-char',   ph: 'ဇာတ်ကောင်အမည်',           tag: 'CHAR',     next: 'dial'   },
-  paren:  { css: 'el-paren',  ph: 'ခံစားချက် / ညွှန်ကြားချက်',  tag: '( )',      next: 'dial'   },
-  dial:   { css: 'el-dial',   ph: 'ပြောစကား...',               tag: 'DIALOGUE', next: 'char'   },
-  trans:  { css: 'el-trans',  ph: 'CUT TO: / FADE TO:',        tag: 'TRANS',    next: 'scene'  }
-};
-
-/* Page height constants (px) */
-var PAGE_H    = 1123;
-var PAGE_W    = 794;
-var PAGE_PAD  = 96;   /* 1 inch */
-var spPageNum = 1;
-
-function getOrCreateSpPage(pageNum) {
-  var id = 'sp-page-' + pageNum;
-  var existing = document.getElementById(id);
-  if (existing) return existing;
-
-  /* build new a4 page */
-  var page = document.createElement('div');
-  page.className = 'a4-page';
-  page.id = id;
-
-  var num = document.createElement('div');
-  num.className = 'a4-page-num';
-  num.textContent = 'p. ' + pageNum;
-  page.appendChild(num);
-
-  var area = document.createElement('div');
-  area.className = 'screenplay-area';
-  area.id = 'sp-area-' + pageNum;
-  page.appendChild(area);
-
-  document.getElementById('pageScaler').appendChild(page);
+/* SCREENPLAY PAGES */
+function buildSpPage(num){
+  var scaler=document.getElementById('pageScaler');
+  var page=document.createElement('div');page.className='a4-page';page.id='sp-page-'+num;
+  var pn=document.createElement('div');pn.className='a4-page-num';pn.textContent='p. '+num;page.appendChild(pn);
+  var area=document.createElement('div');area.className='sp-area';area.id='sp-area-'+num;
+  var fade=document.createElement('div');fade.className='sp-fade';
+  fade.textContent=num===1?'FADE IN:':'CONTINUED:';area.appendChild(fade);
+  page.appendChild(area);scaler.appendChild(page);
   return page;
 }
 
-function getCurrentSpContent() {
-  /* find the last sp-area that isn't overflowing */
-  var pageNum = spPageNum;
-  var area = document.getElementById('sp-area-' + pageNum);
-  if (!area) {
-    getOrCreateSpPage(pageNum);
-    area = document.getElementById('sp-area-' + pageNum);
-  }
-  return area;
-}
+var elCfg={scene:{css:'el-scene',next:'action'},action:{css:'el-action',next:'action'},char:{css:'el-char',next:'dial'},paren:{css:'el-paren',next:'dial'},dial:{css:'el-dial',next:'char'},trans:{css:'el-trans',next:'scene'}};
 
-function ins(type) {
-  var cfg = elConfig[type];
-  var id  = 'el_' + Date.now();
-
-  var wrap = document.createElement('div');
-  wrap.className   = 'sp-el';
-  wrap.dataset.id  = id;
-  wrap.dataset.type = type;
-
-  var tag = document.createElement('span');
-  tag.className   = 'el-type-tag';
-  tag.textContent = cfg.tag;
-
-  var div = document.createElement('div');
-  div.className       = cfg.css;
-  div.contentEditable = 'true';
-  div.setAttribute('data-ph', cfg.ph);
-
-  div.addEventListener('input', function() {
-    autoSave();
-    checkPageOverflow(wrap);
-  });
-  div.addEventListener('focus', function() { lastFocused = wrap; });
-  div.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      ins(cfg.next);
-    }
-  });
-
-  wrap.appendChild(tag);
+function ins(type){
+  var cfg=elCfg[type];var id='el_'+Date.now();
+  var wrap=document.createElement('div');wrap.dataset.id=id;wrap.dataset.type=type;
+  var div=document.createElement('div');div.className=cfg.css;div.contentEditable='true';
+  div.addEventListener('input',function(){autoSave();checkSpOverflow(wrap);});
+  div.addEventListener('focus',function(){lastFocused=wrap;});
+  div.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ins(cfg.next);}});
   wrap.appendChild(div);
-
-  /* insert after lastFocused or append to current page */
-  var content = getCurrentSpContent();
-  if (lastFocused && lastFocused.parentNode === content) {
-    lastFocused.after(wrap);
-  } else {
-    content.appendChild(wrap);
-  }
-
-  elements.push({ id: id, type: type, wrap: wrap, div: div });
-  lastFocused = wrap;
-  setTimeout(function() {
-    div.focus();
-    checkPageOverflow(wrap);
-  }, 30);
+  var area=document.getElementById('sp-area-'+spPageNum)||document.getElementById('sp-area-1');
+  if(!area){buildSpPage(1);area=document.getElementById('sp-area-1');}
+  if(lastFocused&&lastFocused.parentNode===area){lastFocused.after(wrap);}else{area.appendChild(wrap);}
+  elements.push({id:id,type:type,wrap:wrap,div:div});
+  lastFocused=wrap;
+  setTimeout(function(){div.focus();},30);
   autoSave();
 }
 
-function addFadeOut() {
-  /* add FADE OUT to last screenplay page */
-  var area = document.getElementById('sp-area-' + spPageNum);
-  if (!area) return;
-  var fo = document.createElement('div');
-  fo.className   = 'sp-fade right';
-  fo.textContent = 'FADE OUT.';
-  area.appendChild(fo);
-  toast('FADE OUT. ထည့်ပြီးပါပြီ');
-}
-
-/* check if current page overflows → move element to next page */
-function checkPageOverflow(wrap) {
-  var area = wrap.parentNode;
-  if (!area || !area.classList.contains('screenplay-area')) return;
-
-  var pageId   = area.id.replace('sp-area-', '');
-  var pageEl   = document.getElementById('sp-page-' + pageId);
-  if (!pageEl) return;
-
-  /* available height = PAGE_H - 2*padding */
-  var maxH = PAGE_H - PAGE_PAD * 2;
-
-  if (area.scrollHeight > maxH) {
-    /* overflow — move wrap to next page */
-    var nextNum = parseInt(pageId) + 1;
-    spPageNum   = nextNum;
-    var nextPage = getOrCreateSpPage(nextNum);
-    var nextArea = document.getElementById('sp-area-' + nextNum);
-
-    /* add FADE IN label if first element on new page */
-    if (!nextArea.firstChild) {
-      var fi = document.createElement('div');
-      fi.className   = 'sp-fade';
-      fi.textContent = 'CONTINUED:';
-      nextArea.insertBefore(fi, nextArea.firstChild);
-    }
-
-    nextArea.appendChild(wrap);
-    lastFocused = wrap;
-    wrap.querySelector('[contenteditable]').focus();
-  }
-
-  updatePageCount();
-}
-
-function updatePageCount() {
-  var count = document.querySelectorAll('.a4-page[id^="sp-page-"]').length || 1;
-  var label = document.getElementById('pageCount');
-  if (label) label.textContent = 'p. ' + count;
-}
-
-/* ══ PINCH-TO-ZOOM (touch) ══ */
-(function() {
-  var ws = null;
-  var startDist = 0;
-  var startZoom = 100;
-
-  function dist(touches) {
-    var dx = touches[0].clientX - touches[1].clientX;
-    var dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  window.addEventListener('DOMContentLoaded', function() {
-    ws = document.getElementById('workspace');
-
-    ws.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        startDist = dist(e.touches);
-        startZoom = zoomLevel;
-      }
-    }, { passive: false });
-
-    ws.addEventListener('touchmove', function(e) {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        var d = dist(e.touches);
-        var ratio = d / startDist;
-        zoomLevel = Math.min(200, Math.max(25, Math.round(startZoom * ratio)));
-        applyZoom();
-      }
-    }, { passive: false });
-  });
-})();
-
-/* ══ PRIVACY ══ */
-var selectedPrivacy = 'private';
-
-function openPrivacy() {
-  document.querySelectorAll('.privacy-opt').forEach(function(opt) {
-    opt.classList.remove('selected');
-    if (opt.querySelector('input').value === privacyLevel) {
-      opt.classList.add('selected');
-    }
-  });
-  openModal('privacyModal');
-}
-
-function setPrivacy(level, el) {
-  selectedPrivacy = level;
-  document.querySelectorAll('.privacy-opt').forEach(function(o) { o.classList.remove('selected'); });
-  el.classList.add('selected');
-}
-
-function savePrivacy() {
-  privacyLevel = selectedPrivacy;
-  closeModal('privacyModal');
-  toast('🔒 Privacy သိမ်းပြီးပါပြီ');
-  autoSave();
-}
-
-/* ══ SHARE ══ */
-function openShare() {
-  var title = document.getElementById('docTitle').value || 'untitled';
-  var slug = title.replace(/\s+/g, '-').toLowerCase();
-  document.getElementById('shareLink').textContent = 'cinepodma.com/view/' + slug;
-  openModal('shareModal');
-}
-
-function copyLink() {
-  var link = document.getElementById('shareLink').textContent;
-  navigator.clipboard.writeText(link).then(function() {
-    toast('🔗 Link ကူးပြီးပါပြီ');
-  });
-}
-
-/* ══ COLLAB ══ */
-function openCollab() { openModal('collabModal'); }
-
-function inviteCollab() {
-  var email = document.getElementById('collabEmail').value.trim();
-  if (!email) return;
-  var list = document.getElementById('collabList');
-  var item = document.createElement('div');
-  item.className = 'collab-item';
-  item.innerHTML = '<div class="collab-avatar">✉</div><div style="flex:1;font-size:13px;line-height:1.6;">' + email + '</div><span class="collab-role">INVITED</span>';
-  list.appendChild(item);
-  document.getElementById('collabEmail').value = '';
-  toast('✅ ဖိတ်ကြားချက် ပို့ပြီးပါပြီ — Firebase ချိတ်ပြီးမှ အသုံးပြုနိုင်မည်');
-}
-
-/* ══ SAVE / LOAD ══ */
-function collectData() {
-  var spEls = [];
-  elements.forEach(function(e) {
-    spEls.push({ type: e.type, text: e.div.textContent });
-  });
-  return {
-    id:         docId,
-    title:      document.getElementById('docTitle').value,
-    author:     document.getElementById('coverAuthor').value,
-    draft:      document.getElementById('coverDraft').value,
-    logline:    document.getElementById('loglineText').value,
-    synopsis:   document.getElementById('synopsisText').value,
-    treatment:  document.getElementById('treatmentText').value,
-    screenplay: spEls,
-    privacy:    privacyLevel,
-    fadeOut:    document.getElementById('fadeOut').style.display !== 'none',
-    saved:      new Date().toISOString()
-  };
-}
-
-function saveDoc() {
-  var data = collectData();
-  try {
-    localStorage.setItem('cp_doc_' + docId, JSON.stringify(data));
-    // Update script list in profile
-    var scripts = JSON.parse(localStorage.getItem('cp_scripts') || '[]');
-    var idx = scripts.findIndex(function(s) { return s.id === docId; });
-    var entry = { id: docId, title: data.title || 'Untitled', scenes: elements.filter(function(e){return e.type==='scene';}).length, updated: 'ယခုတွင်', status: 'draft' };
-    if (idx >= 0) scripts[idx] = entry; else scripts.unshift(entry);
-    localStorage.setItem('cp_scripts', JSON.stringify(scripts));
-    updateSaveStatus('saved');
-    toast('💾 သိမ်းပြီးပါပြီ');
-  } catch(e) { toast('❌ သိမ်းမရပါ'); }
-}
-
-function autoSave() {
-  updateSaveStatus('unsaved');
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(function() {
-    var data = collectData();
-    try {
-      localStorage.setItem('cp_doc_' + docId, JSON.stringify(data));
-      updateSaveStatus('saved');
-    } catch(e) {}
-  }, 1500);
-}
-
-function loadDoc() {
-  // Check URL param ?id=
-  var params = new URLSearchParams(window.location.search);
-  var id = params.get('id');
-  if (id) {
-    docId = id;
-    var raw = localStorage.getItem('cp_doc_' + id);
-    if (raw) {
-      try {
-        var data = JSON.parse(raw);
-        document.getElementById('docTitle').value      = data.title || '';
-        document.getElementById('coverTitle').value    = data.title || '';
-        document.getElementById('coverAuthor').value   = data.author || '';
-        document.getElementById('coverDraft').value    = data.draft || '';
-        document.getElementById('loglineText').value   = data.logline || '';
-        document.getElementById('synopsisText').value  = data.synopsis || '';
-        document.getElementById('treatmentText').value = data.treatment || '';
-        privacyLevel = data.privacy || 'private';
-        if (data.fadeOut) document.getElementById('fadeOut').style.display = 'block';
-
-        // Mark tabs with content
-        ['logline','synopsis','treatment'].forEach(function(s) {
-          var ta = document.getElementById(s + 'Text');
-          if (ta && ta.value.trim()) {
-            autoResize(ta);
-            var tab = document.getElementById('tab-' + s);
-            if (tab) tab.classList.add('has-content');
-          }
-        });
-
-        // Restore screenplay elements
-        if (data.screenplay) {
-          data.screenplay.forEach(function(el) { ins(el.type); });
-          // Re-populate text after insert
-          var els = document.getElementById('spContent').querySelectorAll('[contenteditable]');
-          data.screenplay.forEach(function(el, i) {
-            if (els[i]) els[i].textContent = el.text;
-          });
-        }
-
-        updateSaveStatus('saved');
-      } catch(e) {}
-    }
-  } else {
-    // New doc — set today date
-    var today = new Date();
-    var y = today.getFullYear();
-    var m = String(today.getMonth()+1).padStart(2,'0');
-    var d = String(today.getDate()).padStart(2,'0');
-    document.getElementById('coverDraft').value = 'Draft 1 · ' + y + '.' + m + '.' + d;
-    // Try load profile author
-    try {
-      var prof = JSON.parse(localStorage.getItem('cp_profile') || '{}');
-      if (prof.name) document.getElementById('coverAuthor').value = prof.name;
-    } catch(e) {}
+function checkSpOverflow(wrap){
+  var area=wrap.parentNode;if(!area||!area.classList.contains('sp-area'))return;
+  var num=parseInt(area.id.replace('sp-area-',''));
+  if(area.scrollHeight>PAGE_H-PAGE_PAD*2-40){
+    spPageNum=num+1;
+    if(!document.getElementById('sp-page-'+spPageNum))buildSpPage(spPageNum);
+    var nextArea=document.getElementById('sp-area-'+spPageNum);
+    nextArea.appendChild(wrap);lastFocused=wrap;
+    var ce=wrap.querySelector('[contenteditable]');if(ce)ce.focus();
   }
 }
 
-function updateSaveStatus(state) {
-  var el = document.getElementById('saveStatus');
-  if (state === 'saved') {
-    el.textContent = 'Saved ✓';
-    el.className = 'save-status saved';
-  } else {
-    el.textContent = 'Unsaved…';
-    el.className = 'save-status';
-  }
+function addFadeOut(){
+  var area=document.getElementById('sp-area-'+spPageNum);if(!area)return;
+  var fo=document.createElement('div');fo.className='sp-fade right';fo.textContent='FADE OUT.';area.appendChild(fo);
+  var end=document.createElement('div');end.className='sp-fade';end.style.textAlign='center';end.style.marginTop='16px';end.textContent='THE END';area.appendChild(end);
+  toast('FADE OUT. ထည့်ပြီး');
 }
 
-/* ══ EXPORT PDF ══ */
-function exportPDF() {
-  toast('🖨 Print dialog မှ "Save as PDF" ရွေးပါ');
-  setTimeout(function() { window.print(); }, 800);
+/* STORY */
+function initStory(){
+  document.getElementById('storyTabs').style.display='flex';
+  document.getElementById('spTabs').style.display='none';
+  var scaler=document.getElementById('pageScaler');scaler.innerHTML='';
+  var page=document.createElement('div');page.className='a4-page';page.id='story-page-1';
+  var area=document.createElement('div');area.className='story-area';
+  var ftb=document.createElement('div');ftb.className='story-toolbar';
+  ftb.innerHTML=
+    '<button class="fmt-btn" onmousedown="event.preventDefault();fmt(\'bold\')" title="Bold"><b>B</b></button>'+
+    '<button class="fmt-btn" onmousedown="event.preventDefault();fmt(\'italic\')" title="Italic"><i>I</i></button>'+
+    '<button class="fmt-btn" onmousedown="event.preventDefault();fmt(\'underline\')" title="Underline"><u>U</u></button>'+
+    '<div class="fmt-sep"></div>'+
+    '<button class="fmt-btn" onmousedown="event.preventDefault();fmt(\'h1\')" style="font-size:11px;font-weight:700;">H1</button>'+
+    '<button class="fmt-btn" onmousedown="event.preventDefault();fmt(\'h2\')" style="font-size:11px;font-weight:700;">H2</button>';
+  var editor=document.createElement('div');editor.className='story-editor';editor.contentEditable='true';
+  editor.id='storyEditor';editor.setAttribute('spellcheck','false');
+  editor.addEventListener('input',function(){autoSave();});
+  area.appendChild(ftb);area.appendChild(editor);page.appendChild(area);scaler.appendChild(page);
+  setTimeout(function(){editor.focus();},100);
 }
 
-/* ══ MODAL HELPERS ══ */
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function fmt(cmd){
+  var editor=document.getElementById('storyEditor');if(!editor)return;
+  if(cmd==='h1'||cmd==='h2'){document.execCommand('formatBlock',false,cmd);}
+  else{document.execCommand(cmd,false,null);}
+  editor.focus();
+}
 
-document.addEventListener('click', function(e) {
-  ['saveModal','privacyModal','shareModal','collabModal'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el && e.target === el) closeModal(id);
-  });
+/* ZOOM */
+function applyZoom(){var s=document.getElementById('pageScaler');var scale=zoomLevel/100;s.style.transform='scale('+scale+')';s.style.marginBottom=((scale-1)*PAGE_H)+'px';document.getElementById('zoomLabel').textContent=zoomLevel+'%';}
+function changeZoom(d){zoomLevel=Math.min(200,Math.max(25,zoomLevel+d));applyZoom();}
+function autoFitZoom(){var ws=document.getElementById('workspace');if(!ws)return;var a=ws.clientWidth-80;zoomLevel=a<794?Math.max(25,Math.min(100,Math.floor((a/794)*100))):100;applyZoom();}
+
+function syncTitle(el){document.getElementById('docTitle').value=el.value;autoSave();}
+function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+
+/* SAVE */
+var pendingPrivacy='private';
+function setSavePrivacy(p,el){pendingPrivacy=p;document.querySelectorAll('#saveModal .privacy-opt').forEach(function(o){o.classList.remove('selected');});el.classList.add('selected');}
+function confirmSave(){savePrivacy=pendingPrivacy;closeModal('saveModal');doSave();}
+function doSave(){
+  try{localStorage.setItem('cp_doc_'+docId,JSON.stringify(collectData()));updateSaveStatus('saved');toast('💾 သိမ်းပြီး · '+(savePrivacy==='public'?'🌐 Public':'🔒 Private'));}
+  catch(e){toast('❌ သိမ်းမရပါ');}
+}
+function autoSave(){
+  updateSaveStatus('unsaved');clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(function(){try{localStorage.setItem('cp_doc_'+docId,JSON.stringify(collectData()));updateSaveStatus('saved');}catch(e){};},1500);
+}
+function collectData(){
+  return{id:docId,type:docType,privacy:savePrivacy,
+    title:document.getElementById('docTitle').value,
+    author:(document.getElementById('coverAuthor')||{}).value||'',
+    logline:(document.getElementById('loglineText')||{}).value||'',
+    synopsis:(document.getElementById('synopsisText')||{}).value||'',
+    treatment:(document.getElementById('treatmentText')||{}).value||'',
+    screenplay:elements.map(function(e){return{type:e.type,text:e.div.textContent};}),
+    storyContent:(document.getElementById('storyEditor')||{}).innerHTML||'',
+    saved:new Date().toISOString()};
+}
+
+/* SHARE */
+function openShareModal(){document.getElementById('shareLink').textContent='cinepodma.com/read/'+docId;openModal('shareModal');}
+function copyShareLink(){navigator.clipboard.writeText(document.getElementById('shareLink').textContent).then(function(){toast('🔗 Link ကူးပြီး');});}
+
+/* COLLAB */
+function inviteCollab(){
+  var email=document.getElementById('collabEmail').value.trim();if(!email)return;
+  var list=document.getElementById('collabList');var item=document.createElement('div');item.className='collab-item';
+  item.innerHTML='<div class="collab-av">✉</div><div style="flex:1;font-size:13px;line-height:1.6;">'+email+'</div><span class="collab-role">INVITED</span>';
+  list.appendChild(item);document.getElementById('collabEmail').value='';toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');
+}
+
+/* MODALS */
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('click',function(e){['saveModal','shareModal','collabModal'].forEach(function(id){var el=document.getElementById(id);if(el&&e.target===el)closeModal(id);});});
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openModal('saveModal');}
+  if(e.key==='Escape'){['saveModal','shareModal','collabModal'].forEach(closeModal);}
 });
+window.addEventListener('resize',autoFitZoom);
 
-/* ══ TOAST ══ */
-function toast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2800);
-}
-
-/* ══ KEYBOARD ══ */
-document.addEventListener('keydown', function(e) {
-  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveDoc(); }
-  if (e.key === 'Escape') {
-    ['saveModal','privacyModal','shareModal','collabModal'].forEach(closeModal);
-  }
+/* LOAD EXISTING */
+window.addEventListener('DOMContentLoaded',function(){
+  var params=new URLSearchParams(window.location.search);
+  var id=params.get('id');
+  if(!id)return;
+  var raw=localStorage.getItem('cp_doc_'+id);
+  if(!raw)return;
+  try{
+    var data=JSON.parse(raw);
+    docId=id;docType=data.type||'screenplay';savePrivacy=data.privacy||'private';
+    selectedType=docType;selectedPrivacy=savePrivacy;
+    document.getElementById('docTitle').value=data.title||'';
+    startDoc();
+    setTimeout(function(){
+      if(docType==='screenplay'){
+        if(data.author&&document.getElementById('coverAuthor'))document.getElementById('coverAuthor').value=data.author;
+        ['logline','synopsis','treatment'].forEach(function(k){var el=document.getElementById(k+'Text');if(el&&data[k])el.value=data[k];});
+        if(data.screenplay&&data.screenplay.length){
+          switchTab('screenplay',document.querySelector('[data-tab="screenplay"]'));
+          data.screenplay.forEach(function(el){ins(el.type);});
+          var divs=document.querySelectorAll('[data-type] [contenteditable]');
+          data.screenplay.forEach(function(el,i){if(divs[i])divs[i].textContent=el.text;});
+        }
+      } else {
+        var se=document.getElementById('storyEditor');if(se&&data.storyContent)se.innerHTML=data.storyContent;
+      }
+      updateSaveStatus('saved');
+    },300);
+  }catch(e){}
 });
 </script>
 </body>

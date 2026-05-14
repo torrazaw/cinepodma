@@ -1257,6 +1257,72 @@ footer {
   .draft-card   { padding: 22px; }
 }
 
+/* ══ PODMATES PREVIEW ══ */
+.pm-preview-section {
+  padding: 60px 24px;
+  background: var(--slate-bg);
+  border-top: 1px solid var(--border);
+}
+.pm-preview-inner { max-width: 900px; margin: 0 auto; }
+.pm-preview-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pm-preview-title {
+  font-family: var(--font-en);
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.pm-preview-div { width: 32px; height: 2px; background: var(--red); border-radius: 2px; margin-bottom: 6px; }
+.pm-preview-sub { font-size: 13px; color: var(--slate); line-height: 1.8; }
+.pm-preview-link {
+  font-family: var(--font-en);
+  font-size: 12px;
+  color: var(--black);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--black);
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+.pm-preview-link:hover { color: var(--red); border-color: var(--red); }
+.pm-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+.pm-mini-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--black);
+  display: block;
+  transition: all 0.15s;
+}
+.pm-mini-card:hover { border-color: var(--black); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.07); }
+.pm-mini-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--slate-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  margin: 0 auto 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+.pm-mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pm-mini-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pm-mini-role { font-size: 10px; color: var(--slate); }
+
 /* ── Wide desktop (> 1280px) ── */
 @media (min-width: 1280px) {
   .hero {
@@ -1291,6 +1357,9 @@ footer {
   <div class="menu-nav">
     <a class="menu-link" href="write.html">
       <span class="icon">✍</span> Write
+    </a>
+    <a class="menu-link" href="podmates.html">
+      <span class="icon">👥</span> Podmates
     </a>
     <a class="menu-link" href="#" onclick="showPage('library'); closeMenu()">
       <span class="icon">📚</span> Library
@@ -1358,7 +1427,23 @@ footer {
         </div>
       </div>
 
+    </div>
+  </section>
 
+  <!-- ══ PODMATES PREVIEW ══ -->
+  <section class="pm-preview-section" id="page-home-podmates">
+    <div class="pm-preview-inner">
+      <div class="pm-preview-header">
+        <div>
+          <h2 class="pm-preview-title">Podmates</h2>
+          <div class="pm-preview-div"></div>
+          <p class="pm-preview-sub">CinePodma တွင် ရှိသော filmmaker, screenwriter များ</p>
+        </div>
+        <a class="pm-preview-link" href="podmates.html">အားလုံးကြည့်မည် →</a>
+      </div>
+      <div class="pm-preview-grid" id="pmPreviewGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--slate-lt);">ဖွင့်နေသည်...</div>
+      </div>
     </div>
   </section>
 
@@ -1933,6 +2018,62 @@ document.addEventListener('keydown', e => {
   if (am && am.classList.contains('open')) { closeAuthModal(); return; }
   closeMenu();
 });
+</script>
+
+<!-- ══ PODMATES PREVIEW LOADER ══ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { getFirestore, collection, query, where, limit, getDocs, getCountFromServer }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain:        "cinepodma.firebaseapp.com",
+  projectId:         "cinepodma",
+  storageBucket:     "cinepodma.firebasestorage.app",
+  messagingSenderId: "587916526322",
+  appId:             "1:587916526322:web:d00775311fb92fa1c8466b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+var roleIcons = { Producer:'🎬', Director:'🎥', Writer:'✍️', Filmmaker:'🎞️', Cinephile:'🍿' };
+
+async function loadPmPreview() {
+  try {
+    var q    = query(collection(db, 'users'), where('onboarded','==',true), limit(8));
+    var snap = await getDocs(q);
+    var users = [];
+    snap.forEach(function(d) { users.push({ uid: d.id, ...d.data() }); });
+
+    var grid = document.getElementById('pmPreviewGrid');
+    if (!grid) return;
+
+    if (users.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--slate-lt);font-size:13px;">Podmate မရှိသေးပါ</div>';
+      return;
+    }
+
+    grid.innerHTML = users.map(function(u) {
+      var icon = u.avatar
+        ? '<img src="' + u.avatar + '" alt="">'
+        : (roleIcons[u.role] || '👤');
+      return (
+        '<a class="pm-mini-card" href="profile.html?uid=' + u.uid + '">' +
+          '<div class="pm-mini-avatar">' + icon + '</div>' +
+          '<div class="pm-mini-name">' + (u.name || 'Podmate') + '</div>' +
+          '<div class="pm-mini-role">' + (u.role || '') + '</div>' +
+        '</a>'
+      );
+    }).join('');
+  } catch(e) {
+    var grid = document.getElementById('pmPreviewGrid');
+    if (grid) grid.innerHTML = '';
+  }
+}
+
+loadPmPreview();
 </script>
 
 <!-- ══════ AUTH MODAL ══════ -->

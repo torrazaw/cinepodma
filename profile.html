@@ -466,6 +466,60 @@ footer {
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 
+/* ── Clap stats (big) ── */
+.clap-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+.clap-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.clap-num {
+  font-family: var(--font-en);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+.clap-label {
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.clap-stat-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border);
+}
+
+/* ── Script stats (small) ── */
+.script-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.script-stat-item {
+  font-size: 12px;
+  color: var(--slate);
+  line-height: 1.6;
+}
+.script-stat-item strong {
+  color: var(--black);
+  font-weight: 700;
+}
+.script-stat-sep {
+  color: var(--border);
+  font-size: 12px;
+}
+
 /* ── Role badge ── */
 .role-badge {
   display: inline-flex;
@@ -511,12 +565,11 @@ footer {
 
     <!-- Avatar -->
     <div class="avatar-wrap">
-      <div class="avatar" onclick="document.getElementById('avatarInput').click()" title="Profile ဓာတ်ပုံ ပြောင်းရန်">
+      <div class="avatar" id="avatarDiv">
         <span id="avatarEmoji">👤</span>
         <img id="avatarImg" src="" alt="" style="display:none;">
       </div>
-      <div class="avatar-edit-hint" onclick="document.getElementById('avatarInput').click()">✏</div>
-      <input type="file" id="avatarInput" accept="image/*" onchange="changeAvatar(this)">
+      <input type="file" id="avatarInput" accept="image/*" style="display:none;">
     </div>
 
     <!-- Info -->
@@ -526,25 +579,34 @@ footer {
         <span class="profile-username" id="dispUsername"></span>
       </div>
       <div id="dispRole" style="margin:4px 0 6px;"></div>
-      <p id="dispEmail" style="font-size:12px;color:var(--slate);margin-bottom:6px;line-height:1.8;"></p>
+      <p id="dispEmail" style="font-size:12px;color:var(--slate);margin-bottom:16px;line-height:1.8;"></p>
 
-      <div class="profile-stats">
-        <div class="stat-item">
-          <span class="stat-num" id="statScripts">0</span>
-          <span class="stat-label">Screenplays</span>
+      <!-- Clappers / Clapping — ကြီးကြီး -->
+      <div class="clap-stats">
+        <div class="clap-stat-item">
+          <span class="clap-num" id="statClappers">0</span>
+          <span class="clap-label">👏 Clappers</span>
         </div>
-        <div class="stat-item">
-          <span class="stat-num" id="statDrafts">0</span>
-          <span class="stat-label">Drafts</span>
+        <div class="clap-stat-divider"></div>
+        <div class="clap-stat-item">
+          <span class="clap-num" id="statClapping">0</span>
+          <span class="clap-label">Clapping</span>
         </div>
-        <div class="stat-item">
-          <span class="stat-num" id="statComplete">0</span>
-          <span class="stat-label">Complete</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num" id="statClappers">0</span>
-          <span class="stat-label">👏 Clappers</span>
-        </div>
+      </div>
+
+      <!-- Scripts — သေးသေး -->
+      <div class="script-stats">
+        <span class="script-stat-item">
+          <strong id="statScripts">0</strong> Scripts
+        </span>
+        <span class="script-stat-sep">·</span>
+        <span class="script-stat-item">
+          <strong id="statDrafts">0</strong> Drafts
+        </span>
+        <span class="script-stat-sep">·</span>
+        <span class="script-stat-item">
+          <strong id="statComplete">0</strong> Complete
+        </span>
       </div>
 
       <div class="profile-actions" id="profileActions"></div>
@@ -613,7 +675,6 @@ import { getAuth, onAuthStateChanged, signOut, updateProfile }
 import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
          collection, query, where, getDocs, getCountFromServer }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
-
 const firebaseConfig = {
   apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
   authDomain:        "cinepodma.firebaseapp.com",
@@ -644,6 +705,13 @@ onAuthStateChanged(auth, async function(user) {
 
   if (!profileUid) {
     /* no uid and not logged in → home */
+    window.location.href = 'index.html';
+    return;
+  }
+
+  /* uid param ရှိရင် — public view (login မလိုဘဲ) */
+  /* uid param မရှိရင် — ကိုယ့် profile (login လိုတယ်) */
+  if (!uidParam && !user) {
     window.location.href = 'index.html';
     return;
   }
@@ -713,13 +781,32 @@ async function loadScripts() {
 /* ══ LOAD CLAPPERS ══ */
 async function loadClappers() {
   try {
-    var coll = collection(db, 'clappers', profileUid, 'users');
-    var snap = await getCountFromServer(coll);
+    /* Clappers — ကိုယ့်ကို clap လုပ်သူ */
+    var coll  = collection(db, 'clappers', profileUid, 'users');
+    var snap  = await getCountFromServer(coll);
     var count = snap.data().count;
     document.getElementById('statClappers').textContent =
       count >= 1000 ? (count / 1000).toFixed(1) + 'K' : count;
+
+    /* Clapping — ကိုယ်က clap လုပ်ထားသူ (owner only) */
+    if (isOwner && currentUser) {
+      /* query all clappers subcollections where current user exists */
+      /* Firestore limitation: collectionGroup query လိုအပ်တယ် */
+      /* Simple approach: load from user's clapping list */
+      try {
+        var clappingSnap = await getDocs(collection(db, 'clapping', profileUid, 'users'));
+        var clappingCount = clappingSnap.size;
+        document.getElementById('statClapping').textContent =
+          clappingCount >= 1000 ? (clappingCount / 1000).toFixed(1) + 'K' : clappingCount;
+      } catch(e) {
+        document.getElementById('statClapping').textContent = '0';
+      }
+    } else {
+      document.getElementById('statClapping').textContent = '0';
+    }
   } catch(e) {
     document.getElementById('statClappers').textContent = '0';
+    document.getElementById('statClapping').textContent = '0';
   }
 }
 
@@ -768,19 +855,29 @@ window.toggleClap = async function() {
     window.location.href = 'index.html';
     return;
   }
-  var btn   = document.getElementById('clapBtn');
-  var ref   = doc(db, 'clappers', profileUid, 'users', currentUser.uid);
-  var snap  = await getDoc(ref);
-  var count = parseInt(document.getElementById('statClappers').textContent.replace('K','')) || 0;
+  var btn      = document.getElementById('clapBtn');
+  var clapRef  = doc(db, 'clappers', profileUid, 'users', currentUser.uid);
+  var clapSnap = await getDoc(clapRef);
 
-  if (snap.exists()) {
-    await deleteDoc(ref);
+  var el    = document.getElementById('statClappers');
+  var count = parseInt(el.textContent.replace('K','')) || 0;
+
+  if (clapSnap.exists()) {
+    /* remove clap */
+    await deleteDoc(clapRef);
+    /* remove from my clapping list */
+    try { await deleteDoc(doc(db, 'clapping', currentUser.uid, 'users', profileUid)); } catch(e) {}
     btn.textContent = '👏 Clap';
-    document.getElementById('statClappers').textContent = Math.max(0, count - 1);
+    btn.classList.remove('clapped');
+    el.textContent = Math.max(0, count - 1);
   } else {
-    await setDoc(ref, { clappedAt: new Date().toISOString() });
+    /* add clap */
+    await setDoc(clapRef, { clappedAt: new Date().toISOString() });
+    /* add to my clapping list */
+    try { await setDoc(doc(db, 'clapping', currentUser.uid, 'users', profileUid), { uid: profileUid, clappedAt: new Date().toISOString() }); } catch(e) {}
     btn.textContent = '👏 Clapped';
-    document.getElementById('statClappers').textContent = count + 1;
+    btn.classList.add('clapped');
+    el.textContent = count + 1;
   }
 };
 
@@ -849,10 +946,23 @@ window.openEdit = function() {
   document.getElementById('editName').value     = currentProfile.name     || '';
   document.getElementById('editUsername').value = (currentProfile.username || '').replace('@','');
   document.getElementById('editBio').value      = currentProfile.bio       || '';
+  /* enable avatar click when editing */
+  var avatarDiv = document.getElementById('avatarDiv');
+  avatarDiv.style.cursor = 'pointer';
+  avatarDiv.title = 'ဓာတ်ပုံ ပြောင်းရန် နှိပ်ပါ';
+  avatarDiv.onclick = function() {
+    document.getElementById('avatarInput').click();
+  };
   document.getElementById('editModal').classList.add('open');
 };
+
 window.closeEdit = function() {
   document.getElementById('editModal').classList.remove('open');
+  /* disable avatar click when not editing */
+  var avatarDiv = document.getElementById('avatarDiv');
+  avatarDiv.style.cursor = 'default';
+  avatarDiv.title = '';
+  avatarDiv.onclick = null;
 };
 window.saveProfile = async function() {
   var name = document.getElementById('editName').value.trim();
