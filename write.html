@@ -97,16 +97,51 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .el-dial .el-ce{font-family:var(--font-my);font-size:13px;padding-left:20%;padding-right:20%;}
 .el-trans .el-ce{font-family:var(--font-my);font-size:12px;font-weight:700;text-align:right;color:var(--slate);margin-top:12px;}
 
-/* STORY */
-.st-area{width:100%;height:100%;padding:80px 88px;box-sizing:border-box;overflow:auto;position:relative;}
-.st-fmt{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);padding:6px 8px;margin:-80px -88px 24px;padding-left:88px;position:sticky;top:0;z-index:10;backdrop-filter:blur(4px);}
-.fb{width:30px;height:30px;border:none;background:transparent;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--black);font-style:normal;}
-.fb:hover{background:var(--slate-bg);}
-.fs{width:1px;height:18px;background:var(--border);margin:0 2px;}
-.st-ed{width:100%;min-height:600px;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:15px;line-height:2.2;color:var(--black);}
-.st-ed:empty::before{content:'ဤနေရာတွင် ဝတ္ထုရေးပါ...';color:#CCC;pointer-events:none;}
-.st-ed h1{font-size:22px;font-weight:700;margin:24px 0 12px;line-height:1.6;font-style:normal;}
-.st-ed h2{font-size:18px;font-weight:700;margin:20px 0 10px;line-height:1.6;font-style:normal;}
+/* STORY — free flow, no page */
+.story-wrap{
+  flex:1;overflow-y:auto;
+  background:var(--white);
+  display:flex;justify-content:center;
+  padding:32px 24px 100px;
+  scrollbar-width:thin;
+}
+.story-paper{
+  width:100%;max-width:680px;
+  min-height:100%;
+}
+.story-ed{
+  width:100%;min-height:calc(100vh - 200px);
+  border:none;outline:none;background:transparent;
+  font-family:var(--font-my);font-style:normal;
+  font-size:16px;line-height:2.2;color:var(--black);
+  word-break:break-word;
+}
+.story-ed:empty::before{content:'ဤနေရာတွင် ရေးပါ...';color:#CCC;pointer-events:none;}
+.story-ed h1{font-size:24px;font-weight:700;margin:28px 0 12px;line-height:1.6;font-style:normal;}
+.story-ed h2{font-size:19px;font-weight:700;margin:22px 0 10px;line-height:1.6;font-style:normal;}
+.story-ed blockquote{border-left:3px solid var(--border);margin:16px 0;padding:8px 16px;color:var(--slate);font-style:italic;}
+
+/* Story bottom toolbar */
+.story-btb{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--white);border-top:1px solid var(--border);
+  display:none;align-items:center;justify-content:center;
+  height:52px;z-index:200;
+  overflow-x:auto;scrollbar-width:none;gap:2px;padding:0 8px;
+  flex-shrink:0;
+}
+.story-btb::-webkit-scrollbar{display:none;}
+.story-btb.on{display:flex;}
+.sfb{
+  width:34px;height:34px;border:none;background:transparent;
+  border-radius:7px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--black);transition:all .12s;flex-shrink:0;
+  font-size:13px;font-style:normal;
+}
+.sfb:hover{background:var(--slate-bg);}
+.sfb.active{background:var(--black);color:var(--white);}
+.sfsep{width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 3px;}
 
 /* BOTTOM TOOLBAR */
 .btb{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:none;align-items:center;justify-content:center;padding:0 12px;height:52px;z-index:200;overflow-x:auto;scrollbar-width:none;gap:2px;flex-shrink:0;}
@@ -239,7 +274,7 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
   </div>
 </div>
 
-<!-- BOTTOM TOOLBAR -->
+<!-- SCREENPLAY BOTTOM TOOLBAR -->
 <div class="btb" id="btb">
   <button class="bb" onclick="ins('scene')"><span class="bt">INT/EXT</span><span class="bl">မြင်ကွင်း</span></button>
   <button class="bb" onclick="ins('action')"><span class="bt">ACTION</span><span class="bl">အကြောင်းအရာ</span></button>
@@ -250,6 +285,20 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
   <button class="bb" onclick="ins('trans')"><span class="bt">TRANS</span><span class="bl">ပြောင်းကူး</span></button>
   <div class="bs"></div>
   <button class="bb" onclick="addFO()"><span class="bt">F.OUT</span><span class="bl">Fade Out</span></button>
+</div>
+
+<!-- STORY BOTTOM TOOLBAR -->
+<div class="story-btb" id="storyBtb">
+  <button class="sfb" id="sfb-bold" onmousedown="ev(event)" onclick="storyFmt('bold')"><b>B</b></button>
+  <button class="sfb" id="sfb-italic" onmousedown="ev(event)" onclick="storyFmt('italic')"><i>I</i></button>
+  <button class="sfb" id="sfb-underline" onmousedown="ev(event)" onclick="storyFmt('underline')"><u>U</u></button>
+  <div class="sfsep"></div>
+  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('h1')" style="font-size:11px;font-weight:700;">H1</button>
+  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('h2')" style="font-size:11px;font-weight:700;">H2</button>
+  <div class="sfsep"></div>
+  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('justifyLeft')" title="Left">⬅</button>
+  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('justifyCenter')" title="Center">↔</button>
+  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('justifyRight')" title="Right">➡</button>
 </div>
 
 <!-- MODALS -->
@@ -343,6 +392,7 @@ function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'
 function initSP(){
   document.getElementById('spTabs').style.display='flex';
   document.getElementById('stTabs').style.display='none';
+  document.getElementById('storyBtb').classList.remove('on');
   goTab('cover',document.querySelector('.tb.act'));
 }
 
@@ -538,18 +588,55 @@ function addFO(){
 function initStory(){
   document.getElementById('stTabs').style.display='flex';
   document.getElementById('spTabs').style.display='none';
-  var scaler=document.getElementById('scaler');scaler.innerHTML='';
-  var pg=document.createElement('div');pg.className='page';pg.style.height='auto';pg.style.minHeight='var(--ph)';
-  var area=document.createElement('div');area.className='st-area';
-  var ftb=document.createElement('div');ftb.className='st-fmt';
-  ftb.innerHTML='<button class="fb" onmousedown="ev(event);fmt(\'bold\')"><b>B</b></button><button class="fb" onmousedown="ev(event);fmt(\'italic\')"><i>I</i></button><button class="fb" onmousedown="ev(event);fmt(\'underline\')"><u>U</u></button><div class="fs"></div><button class="fb" onmousedown="ev(event);fmt(\'h1\')" style="font-size:11px;font-weight:700;">H1</button><button class="fb" onmousedown="ev(event);fmt(\'h2\')" style="font-size:11px;font-weight:700;">H2</button>';
-  var ed=document.createElement('div');ed.className='st-ed';ed.contentEditable='true';ed.id='stEd';ed.spellcheck=false;
-  ed.addEventListener('input',function(){autoSave();});
-  area.appendChild(ftb);area.appendChild(ed);pg.appendChild(area);scaler.appendChild(pg);
-  setTimeout(function(){ed.focus();},100);
+  var scaler=document.getElementById('scaler');
+  scaler.style.display='none'; /* hide scaler — story uses own layout */
+
+  /* build story area directly in workspace */
+  var ws=document.getElementById('ws');
+  ws.style.padding='0';
+  ws.style.background='var(--white)';
+  ws.style.display='flex';
+  ws.style.justifyContent='center';
+
+  var existing=document.getElementById('storyWrap');
+  if(!existing){
+    var wrap=document.createElement('div');wrap.className='story-wrap';wrap.id='storyWrap';
+    wrap.style.cssText='flex:1;overflow-y:auto;background:var(--white);display:flex;justify-content:center;padding:32px 24px 100px;width:100%;';
+    var paper=document.createElement('div');paper.className='story-paper';
+    var ed=document.createElement('div');ed.className='story-ed';ed.contentEditable='true';
+    ed.id='stEd';ed.spellcheck=false;
+    ed.addEventListener('input',function(){autoSave();updateStoryFmtState();});
+    ed.addEventListener('keyup',updateStoryFmtState);
+    ed.addEventListener('mouseup',updateStoryFmtState);
+    paper.appendChild(ed);wrap.appendChild(paper);
+    ws.appendChild(wrap);
+  }
+
+  /* show story bottom toolbar */
+  document.getElementById('storyBtb').classList.add('on');
+  setTimeout(function(){document.getElementById('stEd').focus();},100);
 }
+
+function storyFmt(cmd){
+  var ed=document.getElementById('stEd');if(!ed)return;
+  if(cmd==='h1'||cmd==='h2'){document.execCommand('formatBlock',false,cmd);}
+  else{document.execCommand(cmd,false,null);}
+  ed.focus();
+  updateStoryFmtState();
+}
+
+function updateStoryFmtState(){
+  var cmds={
+    'sfb-bold':'bold','sfb-italic':'italic','sfb-underline':'underline'
+  };
+  Object.keys(cmds).forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.toggle('active',document.queryCommandState(cmds[id]));
+  });
+}
+
 function ev(e){e.preventDefault();}
-function fmt(cmd){var ed=document.getElementById('stEd');if(!ed)return;if(cmd==='h1'||cmd==='h2')document.execCommand('formatBlock',false,cmd);else document.execCommand(cmd,false,null);ed.focus();}
+function fmt(cmd){storyFmt(cmd);} /* backward compat */
 
 /* SAVE */
 var pendSP='private';
@@ -583,24 +670,27 @@ function confirmSave(){
 }
 
 function doSave(){
-  /* local backup */
+  /* local backup always */
   try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
-  /* cloud save */
+
   if(currentUser && window._db){
+    setSv('unsaved');
+    toast('💾 သိမ်းနေသည်...');
     cloudSave().then(function(){
       setSv('ok');
-      toast('💾 သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));
-      /* redirect to profile after save */
+      toast('✅ သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));
+      /* redirect after toast visible */
       setTimeout(function(){
         window.location.href='profile.html';
-      },1200);
+      },1800);
     }).catch(function(e){
+      console.error('cloudSave error',e);
       setSv('ok');
-      toast('💾 Local သိမ်းပြီး (cloud error)');
+      toast('⚠️ Local သိမ်းပြီး — cloud error: '+e.message);
     });
   } else {
     setSv('ok');
-    toast('💾 သိမ်းပြီး');
+    toast('💾 Local သိမ်းပြီး — cloud save အတွက် login ဝင်ပါ');
   }
 }
 
