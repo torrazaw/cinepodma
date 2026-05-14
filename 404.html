@@ -167,8 +167,9 @@ async function handleRoute() {
       var snap = await getDoc(doc(db, 'usernames', username));
       if (snap.exists()) {
         var uid = snap.data().uid;
-        /* redirect to profile with uid */
-        window.location.replace('/profile.html?uid=' + uid);
+        /* relative redirect — works on any hosting path */
+        var base = window.location.pathname.replace(/\/[^\/]*$/, '/');
+        window.location.replace(base + 'profile.html?uid=' + uid);
       } else {
         /* username not found */
         document.getElementById('notFoundMsg').innerHTML =

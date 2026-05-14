@@ -726,36 +726,37 @@ onAuthStateChanged(auth, async function(user) {
 
 /* ══ LOAD PROFILE ══ */
 async function loadProfile() {
-  var snap = await getDoc(doc(db, 'users', profileUid));
-  if (!snap.exists()) { window.location.href = '/'; return; }
-  currentProfile = snap.data();
-
-  document.getElementById('dispName').textContent     = currentProfile.name || '—';
-  document.getElementById('dispUsername').textContent = currentProfile.username || '';
-
-  /* role badge */
-  if (currentProfile.role) {
-    var roleIcons = { Producer:'🎬', Director:'🎥', Writer:'✍️', Filmmaker:'🎞️', Cinephile:'🍿' };
-    var icon = roleIcons[currentProfile.role] || '';
-    document.getElementById('dispRole').innerHTML =
-      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;' +
-      'background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">' +
-      icon + ' ' + currentProfile.role + '</span>';
-  }
-
-  /* contact email — only show if set */
-  if (currentProfile.contactEmail) {
-    document.getElementById('dispEmail').innerHTML =
-      '✉ <a href="mailto:' + currentProfile.contactEmail + '" style="color:var(--black)">' +
-      currentProfile.contactEmail + '</a>';
-  }
-
-  /* avatar */
-  if (currentProfile.avatar) {
-    document.getElementById('avatarEmoji').style.display = 'none';
-    var img = document.getElementById('avatarImg');
-    img.src = currentProfile.avatar;
-    img.style.display = 'block';
+  try {
+    var snap = await getDoc(doc(db, 'users', profileUid));
+    if (!snap.exists()) {
+      document.getElementById('dispName').textContent = 'User မတွေ့ပါ';
+      return;
+    }
+    currentProfile = snap.data();
+    document.getElementById('dispName').textContent     = currentProfile.name || '—';
+    document.getElementById('dispUsername').textContent = currentProfile.username || '';
+    if (currentProfile.role) {
+      var roleIcons = { Producer:'🎬', Director:'🎥', Writer:'✍️', Filmmaker:'🎞️', Cinephile:'🍿' };
+      var icon = roleIcons[currentProfile.role] || '';
+      document.getElementById('dispRole').innerHTML =
+        '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;' +
+        'background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">' +
+        icon + ' ' + currentProfile.role + '</span>';
+    }
+    if (currentProfile.contactEmail) {
+      document.getElementById('dispEmail').innerHTML =
+        '✉ <a href="mailto:' + currentProfile.contactEmail + '" style="color:var(--black)">' +
+        currentProfile.contactEmail + '</a>';
+    }
+    if (currentProfile.avatar) {
+      document.getElementById('avatarEmoji').style.display = 'none';
+      var img = document.getElementById('avatarImg');
+      img.src = currentProfile.avatar;
+      img.style.display = 'block';
+    }
+  } catch(e) {
+    console.error('loadProfile error:', e);
+    document.getElementById('dispName').textContent = 'Profile ဖတ်မရပါ';
   }
 }
 
