@@ -227,8 +227,9 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 <!-- NEW DOC -->
 <div class="newdoc" id="newdoc">
   <div class="nd">
+    <!-- Step 1: Type -->
     <div class="nd-step on" id="s1">
-      <div class="nd-sl">Step 1 / 2</div>
+      <div class="nd-sl">Step 1 / 3</div>
       <div class="nd-h">ဘာရေးမလဲ?</div>
       <div class="nd-s">Document type ရွေးပါ</div>
       <div class="tg">
@@ -237,8 +238,20 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
       </div>
       <button class="btn btn-r" style="width:100%;" id="nb1" onclick="toS2()" disabled>ဆက်သွားမည် →</button>
     </div>
+
+    <!-- Step 2: Genre -->
     <div class="nd-step" id="s2">
-      <div class="nd-sl">Step 2 / 2</div>
+      <div class="nd-sl">Step 2 / 3</div>
+      <div class="nd-h">ဘာမျိုးရေးမလဲ?</div>
+      <div class="nd-s">Genre ရွေးပါ — နောက်မှ ပြောင်းနိုင်</div>
+      <div id="genreGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;"></div>
+      <button class="btn btn-r" style="width:100%;" id="nb2" onclick="toS3()" disabled>ဆက်သွားမည် →</button>
+      <button class="btn btn-g" style="width:100%;margin-top:8px;" onclick="toS1()">← ပြန်သွားမည်</button>
+    </div>
+
+    <!-- Step 3: Privacy -->
+    <div class="nd-step" id="s3">
+      <div class="nd-sl">Step 3 / 3</div>
       <div class="nd-h">ဘယ်သူမြင်မလဲ?</div>
       <div class="nd-s">နောက်မှ ပြောင်းနိုင်</div>
       <div class="pg">
@@ -246,7 +259,7 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
         <div class="pc" onclick="pickP('public',this)"><span class="pi">🌐</span><span class="pn">Public</span><span class="pd">အားလုံးမြင်</span></div>
       </div>
       <button class="btn btn-r" style="width:100%;" onclick="startDoc()">✍ စတင်မည်</button>
-      <button class="btn btn-g" style="width:100%;margin-top:8px;" onclick="toS1()">← ပြန်သွားမည်</button>
+      <button class="btn btn-g" style="width:100%;margin-top:8px;" onclick="toS2back()">← ပြန်သွားမည်</button>
     </div>
   </div>
 </div>
@@ -302,6 +315,19 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 </div>
 
 <!-- MODALS -->
+<!-- GENRE MODAL -->
+<div class="ov" id="mGenre">
+  <div class="mc">
+    <div class="mt">🎭 Genre ရွေးပါ</div>
+    <p class="ms">Save မလုပ်ခင် genre တစ်ခု ရွေးပေးပါ</p>
+    <div id="genreModalList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:4px;"></div>
+    <div class="mr">
+      <button class="btn btn-r" style="flex:1;" onclick="confirmGenre()">ဆက်သွားမည်</button>
+      <button class="btn btn-g" onclick="closeM('mGenre')">ပယ်ဖျက်</button>
+    </div>
+  </div>
+</div>
+
 <div class="ov" id="mSave">
   <div class="mc">
     <div class="mt">💾 Save</div>
@@ -339,8 +365,26 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 
 <script>
 /* STATE */
-var docType='', docPriv='private', savePriv='private', docId='';
-var selType='', selPriv='private';
+var docType='', docPriv='private', savePriv='private', docId='', docGenre='';
+var selType='', selPriv='private', selGenre='';
+
+var storyGenres=[
+  {id:'novel',icon:'📗',name:'ဝတ္ထု'},
+  {id:'short',icon:'📄',name:'ဝတ္ထုတို'},
+  {id:'essay',icon:'✍️',name:'ဆောင်းပါး'},
+  {id:'poem', icon:'🌸',name:'ကဗျာ'},
+];
+var spGenres=[
+  {id:'feature',icon:'🎬',name:'ဇာတ်ညွှန်း (Feature)'},
+  {id:'shortfilm',icon:'🎞️',name:'ဇာတ်ညွှန်း (Short)'},
+  {id:'series',icon:'📺',name:'စီးရီး'},
+];
+
+/* GENRE LABELS for display */
+var genreLabels={
+  novel:'ဝတ္ထု', short:'ဝတ္ထုတို', essay:'ဆောင်းပါး', poem:'ကဗျာ',
+  feature:'ဇာတ်ညွှန်း (Feature)', shortfilm:'ဇာတ်ညွှန်း (Short)', series:'စီးရီး'
+};
 var curTab='cover', zoomLv=100;
 var els=[], lastEl=null; /* screenplay elements */
 var autoT=null, ovT=null;
@@ -353,12 +397,51 @@ function setSv(s){var e=document.getElementById('sv');if(s==='ok'){e.textContent
 
 /* NEW DOC */
 function pickT(t,el){selType=t;document.querySelectorAll('.tc').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');document.getElementById('nb1').disabled=false;}
-function toS2(){if(!selType)return;document.getElementById('s1').classList.remove('on');document.getElementById('s2').classList.add('on');}
-function toS1(){document.getElementById('s2').classList.remove('on');document.getElementById('s1').classList.add('on');}
+
+function toS2(){
+  if(!selType)return;
+  /* build genre grid */
+  var genres=selType==='story'?storyGenres:spGenres;
+  var grid=document.getElementById('genreGrid');
+  selGenre='';
+  document.getElementById('nb2').disabled=true;
+  grid.innerHTML=genres.map(function(g){
+    return '<div class="tc" onclick="pickGenre(\''+g.id+'\',this)" style="padding:14px 10px;text-align:center;">'+
+      '<span class="ti" style="font-size:22px;">'+g.icon+'</span>'+
+      '<span class="tn" style="font-size:12px;margin-top:4px;display:block;">'+g.name+'</span>'+
+    '</div>';
+  }).join('');
+  document.getElementById('s1').classList.remove('on');
+  document.getElementById('s2').classList.add('on');
+}
+
+function pickGenre(g,el){
+  selGenre=g;
+  document.querySelectorAll('#genreGrid .tc').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('nb2').disabled=false;
+}
+
+function toS3(){
+  if(!selGenre)return;
+  document.getElementById('s2').classList.remove('on');
+  document.getElementById('s3').classList.add('on');
+}
+
+function toS2back(){
+  document.getElementById('s3').classList.remove('on');
+  document.getElementById('s2').classList.add('on');
+}
+
+function toS1(){
+  document.getElementById('s2').classList.remove('on');
+  document.getElementById('s3').classList.remove('on');
+  document.getElementById('s1').classList.add('on');
+}
+
 function pickP(p,el){selPriv=p;document.querySelectorAll('.pc').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');}
 function startDoc(){
-  docType=selType;docPriv=selPriv;savePriv=selPriv;
-  /* only create new docId if not loading existing doc */
+  docType=selType;docPriv=selPriv;savePriv=selPriv;docGenre=selGenre;
   if(!docId) docId='doc_'+Date.now();
   document.getElementById('newdoc').style.display='none';
   var e=document.getElementById('ed');e.style.display='flex';e.style.flexDirection='column';e.style.overflow='hidden';e.style.flex='1';
@@ -651,18 +734,39 @@ function pickSP(p,el){
 }
 
 function openSaveModal(){
-  /* guest check */
-  if(!currentUser){
-    openM('mSignup');
-    return;
-  }
-  /* pre-select current privacy */
+  if(!currentUser){ openM('mSignup'); return; }
+  /* if no genre selected yet, show genre modal first */
+  if(!docGenre){ openGenreModal(); return; }
   document.querySelectorAll('#mSave .po').forEach(function(o){
     o.classList.remove('sel');
     if(o.dataset.priv===savePriv) o.classList.add('sel');
   });
   pendSP=savePriv;
   openM('mSave');
+}
+
+function openGenreModal(){
+  var genres=docType==='story'?storyGenres:spGenres;
+  var html=genres.map(function(g){
+    return '<div class="po" style="cursor:pointer;" onclick="pickSaveGenre(\''+g.id+'\',this)">'+
+      '<span class="poi">'+g.icon+'</span>'+
+      '<div class="pot"><div>'+g.name+'</div></div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('genreModalList').innerHTML=html;
+  openM('mGenre');
+}
+
+function pickSaveGenre(g,el){
+  docGenre=g;
+  document.querySelectorAll('#genreModalList .po').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+}
+
+function confirmGenre(){
+  if(!docGenre){toast('Genre ရွေးပါ');return;}
+  closeM('mGenre');
+  openSaveModal();
 }
 
 function confirmSave(){
@@ -744,6 +848,8 @@ function collect(){
   var spEls=els.map(function(e){return{type:e.type,text:e.ce.textContent};});
   return{
     id:docId,type:docType,privacy:savePriv,
+    genre:docGenre,
+    genreLabel:genreLabels[docGenre]||docGenre,
     title:document.getElementById('docTitle').value,
     author:(document.getElementById('cvAuth')||{}).value||'',
     draft:(document.getElementById('cvDraft')||{}).value||'',
@@ -797,13 +903,13 @@ function invC(){
 function openM(id){document.getElementById(id).classList.add('on');}
 function closeM(id){document.getElementById(id).classList.remove('on');}
 document.addEventListener('click',function(e){
-  ['mSave','mShare','mCollab','mSignup'].forEach(function(id){
+  ['mSave','mShare','mCollab','mSignup','mGenre'].forEach(function(id){
     var el=document.getElementById(id);if(el&&e.target===el)closeM(id);
   });
 });
 document.addEventListener('keydown',function(e){
   if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openSaveModal();}
-  if(e.key==='Escape')['mSave','mShare','mCollab','mSignup'].forEach(closeM);
+  if(e.key==='Escape')['mSave','mShare','mCollab','mSignup','mGenre'].forEach(closeM);
 });
 
 /* LOAD — Firestore first, localStorage fallback */

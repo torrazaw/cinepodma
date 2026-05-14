@@ -902,6 +902,7 @@ async function loadScripts() {
       var data=d.data();
       scripts.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',
         status:data.status||'draft',privacy:data.privacy||'private',
+        genre:data.genre||'',genreLabel:data.genreLabel||'',
         scenes:data.screenplay?data.screenplay.length:0,
         updated:data.updatedAt?data.updatedAt.substring(0,10):'—',uid:data.uid});
     });
@@ -1206,7 +1207,7 @@ function renderScripts(){
       '</div>'+
       '<div class="script-card-meta">'+typeName+' · '+s.updated+'</div>'+
       '<div style="display:flex;gap:6px;margin-top:4px;">'+
-        '<span class="script-tag '+s.status+'">'+(s.status==='draft'?'Draft':'Complete')+'</span>'+
+        '<span class="script-tag '+s.status+'">'+(s.status==='draft'?'Draft':(s.genreLabel||'Complete'))+'</span>'+
         '<span class="script-tag" style="background:var(--slate-bg);color:var(--slate);">'+(s.privacy==='public'?'🌐 Public':'🔒 Private')+'</span>'+
       '</div>'+
       '<div class="script-card-actions">'+actionBtns+'</div>'+
