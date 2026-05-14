@@ -258,8 +258,8 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
     <div class="mt">💾 Save</div>
     <p class="ms">Privacy ရွေးပြီး သိမ်းမည်</p>
     <div>
-      <div class="po sel" onclick="pickSP('private',this)"><span class="poi">🔒</span><div class="pot"><div>Private</div><div class="pod">ကိုယ်ပဲမြင်</div></div></div>
-      <div class="po" onclick="pickSP('public',this)"><span class="poi">🌐</span><div class="pot"><div>Public</div><div class="pod">Library + Profile တွင် မြင်နိုင်</div></div></div>
+      <div class="po sel" data-priv="private" onclick="pickSP('private',this)"><span class="poi">🔒</span><div class="pot"><div>Private</div><div class="pod">ကိုယ်ပဲမြင်</div></div></div>
+      <div class="po" data-priv="public" onclick="pickSP('public',this)"><span class="poi">🌐</span><div class="pot"><div>Public</div><div class="pod">Library + Profile တွင် မြင်နိုင်</div></div></div>
     </div>
     <div class="mr">
       <button class="btn btn-r" style="flex:1;" onclick="confirmSave()">သိမ်းမည်</button>
@@ -321,7 +321,11 @@ function startDoc(){
 function renderTBR(){
   var e=document.getElementById('tbr');
   var co=docType==='screenplay'?'<button class="btn btn-g btn-s hm" onclick="openM(\'mCollab\')">👥</button>':'';
-  e.innerHTML=co+'<button class="btn btn-g btn-s" onclick="openShareM()">🔗</button><button class="btn btn-r btn-s" onclick="openM(\'mSave\')">💾 Save</button>';
+  e.innerHTML=
+    co+
+    '<button class="btn btn-g btn-s hm" onclick="downloadPDF()">⬇ PDF</button>'+
+    '<button class="btn btn-g btn-s" onclick="openShareM()">🔗</button>'+
+    '<button class="btn btn-r btn-s" onclick="openSaveModal()">💾 Save</button>';
 }
 
 /* ZOOM */
@@ -549,19 +553,91 @@ function fmt(cmd){var ed=document.getElementById('stEd');if(!ed)return;if(cmd===
 
 /* SAVE */
 var pendSP='private';
-function pickSP(p,el){pendSP=p;document.querySelectorAll('#mSave .po').forEach(function(o){o.classList.remove('sel');});el.classList.add('sel');}
-function confirmSave(){savePriv=pendSP;closeM('mSave');doSave();}
+var currentUser=null;
+
+function pickSP(p,el){
+  pendSP=p;
+  document.querySelectorAll('#mSave .po').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+}
+
+function openSaveModal(){
+  /* guest check */
+  if(!currentUser){
+    openM('mSignup');
+    return;
+  }
+  /* pre-select current privacy */
+  document.querySelectorAll('#mSave .po').forEach(function(o){
+    o.classList.remove('sel');
+    if(o.dataset.priv===savePriv) o.classList.add('sel');
+  });
+  pendSP=savePriv;
+  openM('mSave');
+}
+
+function confirmSave(){
+  savePriv=pendSP;
+  closeM('mSave');
+  doSave();
+}
+
 function doSave(){
-  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));setSv('ok');toast('💾 သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));}
-  catch(e){toast('❌ သိမ်းမရ');}
+  /* local backup */
+  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
+  /* cloud save */
+  if(currentUser && window._db){
+    cloudSave().then(function(){
+      setSv('ok');
+      toast('💾 သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));
+      /* redirect to profile after save */
+      setTimeout(function(){
+        window.location.href='profile.html';
+      },1200);
+    }).catch(function(e){
+      setSv('ok');
+      toast('💾 Local သိမ်းပြီး (cloud error)');
+    });
+  } else {
+    setSv('ok');
+    toast('💾 သိမ်းပြီး');
+  }
 }
+
+async function cloudSave(){
+  var data=collect();
+  data.uid=currentUser.uid;
+  data.authorName=currentUser.displayName||'';
+  data.authorUsername='';
+  /* get username from Firestore */
+  try{
+    var usnap=await window._getDoc(window._doc(window._db,'users',currentUser.uid));
+    if(usnap.exists()) data.authorUsername=usnap.data().username||'';
+  }catch(e){}
+  data.updatedAt=new Date().toISOString();
+  if(!data.createdAt) data.createdAt=data.updatedAt;
+  await window._setDoc(window._doc(window._db,'docs',docId),data);
+}
+
 function autoSave(){
-  setSv('unsaved');clearTimeout(autoT);
-  autoT=setTimeout(function(){try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));setSv('ok');}catch(e){};},1500);
+  setSv('unsaved');
+  clearTimeout(autoT);
+  autoT=setTimeout(function(){
+    /* always save to local */
+    try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
+    /* cloud autosave if logged in */
+    if(currentUser && window._db){
+      cloudSave().then(function(){setSv('ok');}).catch(function(){setSv('ok');});
+    } else {
+      setSv('ok');
+    }
+  },2000);
 }
+
 function collect(){
   var spEls=els.map(function(e){return{type:e.type,text:e.ce.textContent};});
-  return{id:docId,type:docType,privacy:savePriv,
+  return{
+    id:docId,type:docType,privacy:savePriv,
     title:document.getElementById('docTitle').value,
     author:(document.getElementById('cvAuth')||{}).value||'',
     draft:(document.getElementById('cvDraft')||{}).value||'',
@@ -570,27 +646,66 @@ function collect(){
     treatment:(document.getElementById('treatmentTa')||{}).value||'',
     screenplay:spEls,
     story:(document.getElementById('stEd')||{}).innerHTML||'',
-    saved:new Date().toISOString()};
+    saved:new Date().toISOString()
+  };
+}
+
+/* PDF DOWNLOAD */
+function downloadPDF(){
+  /* hide non-page elements, print, restore */
+  var style=document.createElement('style');
+  style.id='pdf-style';
+  style.textContent=
+    '.topbar,.tabs,.btb{display:none!important;}'+
+    '.ws{padding:0!important;background:white!important;overflow:visible!important;}'+
+    '.scaler{transform:none!important;margin:0!important;}'+
+    '.page{box-shadow:none!important;margin-bottom:0!important;break-after:page;}'+
+    'body{overflow:visible!important;}';
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(function(){
+    var s=document.getElementById('pdf-style');
+    if(s) s.remove();
+  },1000);
 }
 
 /* SHARE / COLLAB */
-function openShareM(){document.getElementById('sUrl').textContent='cinepodma.com/read/'+docId;openM('mShare');}
-function cpLink(){navigator.clipboard.writeText(document.getElementById('sUrl').textContent).then(function(){toast('🔗 Link ကူးပြီး');});}
-function invC(){var e=document.getElementById('clEmail').value.trim();if(!e)return;var l=document.getElementById('clList');var i=document.createElement('div');i.className='ci';i.innerHTML='<div class="ca">✉</div><div style="flex:1;font-size:13px;line-height:1.6;">'+e+'</div><span class="cr">INVITED</span>';l.appendChild(i);document.getElementById('clEmail').value='';toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');}
+function openShareM(){
+  document.getElementById('sUrl').textContent='cinepodma.com/read/'+docId;
+  openM('mShare');
+}
+function cpLink(){
+  navigator.clipboard.writeText(document.getElementById('sUrl').textContent)
+    .then(function(){toast('🔗 Link ကူးပြီး');});
+}
+function invC(){
+  var e=document.getElementById('clEmail').value.trim();if(!e)return;
+  var l=document.getElementById('clList');
+  var i=document.createElement('div');i.className='ci';
+  i.innerHTML='<div class="ca">✉</div><div style="flex:1;font-size:13px;line-height:1.6;">'+e+'</div><span class="cr">INVITED</span>';
+  l.appendChild(i);document.getElementById('clEmail').value='';
+  toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');
+}
 
 /* MODALS */
 function openM(id){document.getElementById(id).classList.add('on');}
 function closeM(id){document.getElementById(id).classList.remove('on');}
-document.addEventListener('click',function(e){['mSave','mShare','mCollab'].forEach(function(id){var el=document.getElementById(id);if(el&&e.target===el)closeM(id);});});
+document.addEventListener('click',function(e){
+  ['mSave','mShare','mCollab','mSignup'].forEach(function(id){
+    var el=document.getElementById(id);if(el&&e.target===el)closeM(id);
+  });
+});
 document.addEventListener('keydown',function(e){
-  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openM('mSave');}
-  if(e.key==='Escape')['mSave','mShare','mCollab'].forEach(closeM);
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openSaveModal();}
+  if(e.key==='Escape')['mSave','mShare','mCollab','mSignup'].forEach(closeM);
 });
 
-/* LOAD */
+/* LOAD from localStorage */
 window.addEventListener('DOMContentLoaded',function(){
-  var p=new URLSearchParams(window.location.search);var id=p.get('id');if(!id)return;
-  var raw=localStorage.getItem('cp_'+id)||localStorage.getItem('cp_doc_'+id);if(!raw)return;
+  var p=new URLSearchParams(window.location.search);
+  var id=p.get('id');if(!id)return;
+  var raw=localStorage.getItem('cp_'+id)||localStorage.getItem('cp_doc_'+id);
+  if(!raw)return;
   try{
     var data=JSON.parse(raw);
     docId=id;docType=data.type||'screenplay';savePriv=data.privacy||'private';
@@ -601,7 +716,9 @@ window.addEventListener('DOMContentLoaded',function(){
       if(docType==='screenplay'){
         var ca=document.getElementById('cvAuth');if(ca&&data.author)ca.value=data.author;
         var cd=document.getElementById('cvDraft');if(cd&&data.draft)cd.value=data.draft;
-        ['logline','synopsis','treatment'].forEach(function(k){var ta=document.getElementById(k+'Ta');if(ta&&data[k]){ta.value=data[k];}});
+        ['logline','synopsis','treatment'].forEach(function(k){
+          var ta=document.getElementById(k+'Ta');if(ta&&data[k])ta.value=data[k];
+        });
         if(data.screenplay&&data.screenplay.length){
           goTab('screenplay',document.getElementById('tSp'));
           data.screenplay.forEach(function(el){ins(el.type);});
@@ -615,6 +732,64 @@ window.addEventListener('DOMContentLoaded',function(){
       setSv('ok');
     },300);
   }catch(e){console.error(e);}
+});
+</script>
+
+<!-- SIGNUP MODAL (guest redirect) -->
+<div class="ov" id="mSignup">
+  <div class="mc">
+    <div class="mt">🔒 အကောင့်လိုသည်</div>
+    <p class="ms">Cloud save + profile တွင် သိမ်းရန် အကောင့်ဖွင့်ပါ။ Guest mode တွင် ရေးဆက်လို့ရသည်။</p>
+    <div class="mr">
+      <a class="btn btn-r" href="index.html" style="flex:1;text-align:center;">အကောင့်ဖွင့်မည်</a>
+      <button class="btn btn-g" onclick="closeM('mSignup')">ဆက်ရေးမည်</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp }  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+
+const firebaseConfig={
+  apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain:"cinepodma.firebaseapp.com",
+  projectId:"cinepodma",
+  storageBucket:"cinepodma.firebasestorage.app",
+  messagingSenderId:"587916526322",
+  appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+/* expose to global scope */
+window._db     = db;
+window._doc    = doc;
+window._setDoc = setDoc;
+window._getDoc = getDoc;
+
+/* auth state */
+onAuthStateChanged(auth, function(user){
+  currentUser = user;
+  /* update topbar right if needed */
+  renderTBR();
+  /* load from cloud if doc exists */
+  var p=new URLSearchParams(window.location.search);
+  var id=p.get('id');
+  if(id && user && !window._cloudLoaded){
+    window._cloudLoaded=true;
+    getDoc(doc(db,'docs',id)).then(function(snap){
+      if(snap.exists()){
+        var data=snap.data();
+        /* update privacy to cloud value */
+        savePriv=data.privacy||'private';
+      }
+    }).catch(function(){});
+  }
 });
 </script>
 </body>
