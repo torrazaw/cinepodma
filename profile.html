@@ -1196,9 +1196,9 @@ function renderScripts(){
         '<button class="script-dd-item danger" onclick="window._deleteScript(\''+s.id+'\')">🗑 ဖျက်မည်</button>'+
       '</div>'
     ):'';
-    var actionBtns=isOwner
+    var actionBtns = isOwner
       ?'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">✍ ဆက်ရေးမည်</button>'
-      :'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">📖 ဖတ်မည်</button>';
+      :'<button class="script-act-btn primary" onclick="window.location.href=\'read.html?id='+s.id+'\'">📖 ဖတ်မည်</button>';
     return '<div class="script-card" id="sc-'+s.id+'">'+
       '<div class="script-card-top">'+
         '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
