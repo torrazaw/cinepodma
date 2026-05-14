@@ -1291,9 +1291,9 @@ footer {
 /* Avatar circles row */
 .pm-avatar-grid {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
   margin-bottom: 36px;
 }
@@ -1301,29 +1301,50 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   text-decoration: none;
   transition: transform .15s;
 }
-.pm-av-item:hover { transform: translateY(-3px); }
+.pm-av-item:hover { transform: translateY(-4px); }
 .pm-av-circle {
-  width: 56px; height: 56px;
   border-radius: 50%;
   background: rgba(255,255,255,.15);
   border: 2px solid rgba(255,255,255,.3);
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
   overflow: hidden;
   transition: border-color .15s;
+  flex-shrink: 0;
 }
-.pm-av-item:hover .pm-av-circle { border-color: rgba(255,255,255,.8); }
+.pm-av-item:hover .pm-av-circle { border-color: rgba(255,255,255,.85); }
 .pm-av-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.pm-av-circle.sz-lg { width:68px; height:68px; font-size:28px; }
+.pm-av-circle.sz-md { width:54px; height:54px; font-size:22px; }
+.pm-av-circle.sz-sm { width:42px; height:42px; font-size:18px; }
 .pm-av-clap {
   font-family: var(--font-en);
   font-size: 11px;
-  color: rgba(255,255,255,.8);
+  color: rgba(255,255,255,.9);
   letter-spacing: .3px;
+  font-weight: 600;
+}
+.pm-av-name {
+  font-family: var(--font-my);
+  font-size: 11px;
+  color: rgba(255,255,255,.8);
+  line-height: 1.4;
+  text-align: center;
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pm-av-role {
+  font-family: var(--font-en);
+  font-size: 9px;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .5px;
+  text-align: center;
 }
 
 /* CTA Button */
@@ -2110,16 +2131,24 @@ async function loadPmPreview(){
       grid.innerHTML='<div style="color:rgba(255,255,255,.5);font-size:13px;">Podmate မရှိသေးပါ</div>';
       return;
     }
-    grid.innerHTML=users.map(function(u){
+    var sizes = ['sz-lg','sz-sm','sz-md','sz-lg','sz-sm','sz-md','sz-lg','sz-sm'];
+    /* shuffle sizes */
+    for(var i=sizes.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=sizes[i];sizes[i]=sizes[j];sizes[j]=tmp;}
+
+    grid.innerHTML=users.map(function(u,i){
       var count=u.clappers||0;
       var countStr=count>=1000?(count/1000).toFixed(1)+'K':count;
+      var sz=sizes[i%sizes.length];
       var avatarHtml=u.avatar
         ?'<img src="'+u.avatar+'" alt="">'
         :'👤';
+      var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
       return(
         '<a class="pm-av-item" href="profile.html?uid='+u.uid+'">'+
-          '<div class="pm-av-circle">'+avatarHtml+'</div>'+
+          '<div class="pm-av-circle '+sz+'">'+avatarHtml+'</div>'+
           '<span class="pm-av-clap">👏 '+countStr+'</span>'+
+          '<span class="pm-av-name">'+(u.name||'Podmate')+'</span>'+
+          (u.role?'<span class="pm-av-role">'+(roleIcons[u.role]||'')+' '+u.role+'</span>':'')+
         '</a>'
       );
     }).join('');
