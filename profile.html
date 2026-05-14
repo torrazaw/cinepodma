@@ -699,7 +699,11 @@ var scripts         = [];
 var urlParams = new URLSearchParams(window.location.search);
 var uidParam  = urlParams.get('uid');
 
+var initialized = false;
+
 onAuthStateChanged(auth, async function(user) {
+  if (initialized) return;
+  initialized = true;
   currentUser = user;
 
   /* ── Public view via URL ?uid=xxx ── */
