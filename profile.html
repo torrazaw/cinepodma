@@ -701,25 +701,29 @@ var uidParam  = urlParams.get('uid');
 
 onAuthStateChanged(auth, async function(user) {
   currentUser = user;
-  profileUid  = uidParam || (user ? user.uid : null);
 
-  if (!profileUid) {
-    /* no uid and not logged in → home */
-    window.location.href = 'index.html';
+  /* ── Public view via URL ?uid=xxx ── */
+  if (uidParam) {
+    profileUid = uidParam;
+    isOwner    = user ? user.uid === profileUid : false;
+    try { await loadProfile(); } catch(e) { console.error('loadProfile',e); }
+    try { await loadScripts(); } catch(e) { console.error('loadScripts',e); }
+    try { await loadClappers(); } catch(e) { console.error('loadClappers',e); }
+    renderNav();
+    renderActions();
     return;
   }
 
-  /* uid param ရှိရင် — public view (login မလိုဘဲ) */
-  /* uid param မရှိရင် — ကိုယ့် profile (login လိုတယ်) */
-  if (!uidParam && !user) {
+  /* ── Own profile — must be logged in ── */
+  if (!user) {
     window.location.href = 'index.html';
     return;
   }
-
-  isOwner = user && user.uid === profileUid;
-  await loadProfile();
-  await loadScripts();
-  await loadClappers();
+  profileUid = user.uid;
+  isOwner    = true;
+  try { await loadProfile(); } catch(e) { console.error('loadProfile',e); }
+  try { await loadScripts(); } catch(e) { console.error('loadScripts',e); }
+  try { await loadClappers(); } catch(e) { console.error('loadClappers',e); }
   renderNav();
   renderActions();
 });
