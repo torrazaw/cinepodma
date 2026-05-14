@@ -790,39 +790,56 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape')['mSave','mShare','mCollab','mSignup'].forEach(closeM);
 });
 
-/* LOAD from localStorage */
+/* LOAD — Firestore first, localStorage fallback */
 window.addEventListener('DOMContentLoaded',function(){
   var p=new URLSearchParams(window.location.search);
   var id=p.get('id');if(!id)return;
+  docId=id;
+  /* try localStorage first for instant load */
   var raw=localStorage.getItem('cp_'+id)||localStorage.getItem('cp_doc_'+id);
-  if(!raw)return;
-  try{
-    var data=JSON.parse(raw);
-    docId=id;docType=data.type||'screenplay';savePriv=data.privacy||'private';
-    selType=docType;selPriv=savePriv;
-    document.getElementById('docTitle').value=data.title||'';
-    startDoc();
-    setTimeout(function(){
-      if(docType==='screenplay'){
-        var ca=document.getElementById('cvAuth');if(ca&&data.author)ca.value=data.author;
-        var cd=document.getElementById('cvDraft');if(cd&&data.draft)cd.value=data.draft;
-        ['logline','synopsis','treatment'].forEach(function(k){
-          var ta=document.getElementById(k+'Ta');if(ta&&data[k])ta.value=data[k];
-        });
-        if(data.screenplay&&data.screenplay.length){
-          goTab('screenplay',document.getElementById('tSp'));
-          data.screenplay.forEach(function(el){ins(el.type);});
-          var ces=document.querySelectorAll('.el .el-ce');
-          data.screenplay.forEach(function(el,i){if(ces[i])ces[i].textContent=el.text;});
-          goTab('cover',document.querySelector('.tb'));
-        }
-      } else {
-        var se=document.getElementById('stEd');if(se&&data.story)se.innerHTML=data.story;
-      }
-      setSv('ok');
-    },300);
-  }catch(e){console.error(e);}
+  if(raw){
+    try{
+      var data=JSON.parse(raw);
+      restoreDoc(data);
+    }catch(e){console.error(e);}
+  }
+  /* Firestore load happens in Firebase module after auth */
+  window._pendingDocId=id;
 });
+
+function restoreDoc(data){
+  if(!data)return;
+  docType=data.type||'screenplay';
+  savePriv=data.privacy||'private';
+  selType=docType;selPriv=savePriv;
+  document.getElementById('docTitle').value=data.title||'';
+  if(!window._docStarted){
+    window._docStarted=true;
+    startDoc();
+  }
+  setTimeout(function(){
+    if(docType==='screenplay'){
+      var ca=document.getElementById('cvAuth');if(ca&&data.author)ca.value=data.author;
+      var cd=document.getElementById('cvDraft');if(cd&&data.draft)cd.value=data.draft;
+      ['logline','synopsis','treatment'].forEach(function(k){
+        var ta=document.getElementById(k+'Ta');if(ta&&data[k])ta.value=data[k];
+      });
+      if(data.screenplay&&data.screenplay.length){
+        /* clear existing elements first */
+        els=[];lastEl=null;spPages=[];
+        document.getElementById('scaler').innerHTML='';
+        goTab('screenplay',document.getElementById('tSp'));
+        data.screenplay.forEach(function(el){ins(el.type);});
+        var ces=document.querySelectorAll('.el .el-ce');
+        data.screenplay.forEach(function(el,i){if(ces[i])ces[i].textContent=el.text;});
+        goTab('cover',document.querySelector('.tb.act'));
+      }
+    } else {
+      var se=document.getElementById('stEd');if(se&&data.story)se.innerHTML=data.story;
+    }
+    setSv('ok');
+  },300);
+}
 </script>
 
 <!-- SIGNUP MODAL (guest redirect) -->
@@ -863,22 +880,32 @@ window._setDoc = setDoc;
 window._getDoc = getDoc;
 
 /* auth state */
-onAuthStateChanged(auth, function(user){
+onAuthStateChanged(auth, async function(user){
   currentUser = user;
-  /* update topbar right if needed */
   renderTBR();
-  /* load from cloud if doc exists */
-  var p=new URLSearchParams(window.location.search);
-  var id=p.get('id');
-  if(id && user && !window._cloudLoaded){
-    window._cloudLoaded=true;
-    getDoc(doc(db,'docs',id)).then(function(snap){
+
+  /* load doc from Firestore if id param exists and logged in */
+  var pendId = window._pendingDocId;
+  if(pendId && user && !window._cloudLoaded){
+    window._cloudLoaded = true;
+    try{
+      var snap = await getDoc(doc(db,'docs',pendId));
       if(snap.exists()){
-        var data=snap.data();
-        /* update privacy to cloud value */
-        savePriv=data.privacy||'private';
+        var data = snap.data();
+        /* Firestore data is more up-to-date — restore it */
+        data.id = pendId;
+        /* save to localStorage for offline */
+        try{localStorage.setItem('cp_'+pendId, JSON.stringify(data));}catch(e){}
+        /* restore if not started yet, or update privacy */
+        if(!window._docStarted){
+          restoreDoc(data);
+        } else {
+          /* just update privacy silently */
+          savePriv = data.privacy || 'private';
+          selPriv  = savePriv;
+        }
       }
-    }).catch(function(){});
+    }catch(e){ console.error('Firestore load error', e); }
   }
 });
 </script>

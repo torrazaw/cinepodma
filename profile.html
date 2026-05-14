@@ -520,6 +520,94 @@ footer {
   font-size: 12px;
 }
 
+/* ── Profile tabs ── */
+.profile-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  gap: 0;
+}
+.profile-tab {
+  padding: 12px 20px;
+  border: none; background: transparent;
+  font-family: var(--font-my); font-size: 14px;
+  color: var(--slate); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s; line-height: 1.6;
+  white-space: nowrap;
+}
+.profile-tab:hover { color: var(--black); }
+.profile-tab.active { color: var(--black); border-bottom-color: var(--black); font-weight: 600; }
+
+/* ── Clapped privacy buttons ── */
+.clap-priv-btn {
+  padding: 5px 12px; border-radius: 99px;
+  border: 1.5px solid var(--border);
+  background: var(--white); font-family: var(--font-my);
+  font-size: 12px; color: var(--slate); cursor: pointer;
+  transition: all .15s; line-height: 1.8;
+}
+.clap-priv-btn.active { background: var(--black); border-color: var(--black); color: var(--white); }
+
+/* ── Clapper count — clickable ── */
+.clap-num { cursor: pointer; transition: opacity .15s; }
+.clap-num:hover { opacity: .7; }
+
+/* ── New clapper badge ── */
+.new-clap-badge {
+  display: inline-flex; align-items: center;
+  padding: 1px 6px; border-radius: 99px;
+  background: var(--red); color: var(--white);
+  font-family: var(--font-en); font-size: 10px; font-weight: 700;
+  margin-left: 6px; vertical-align: middle;
+  animation: pulse 1.5s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.6;} }
+
+/* ── Clappers/Clapping popup ── */
+.clap-popup-ov {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+  z-index: 600; align-items: center; justify-content: center; padding: 20px;
+}
+.clap-popup-ov.open { display: flex; }
+.clap-popup {
+  background: var(--white); border-radius: 20px;
+  padding: 0; width: 100%; max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  animation: popIn .25s cubic-bezier(.34,1.56,.64,1);
+  overflow: hidden; max-height: 80vh; display: flex; flex-direction: column;
+}
+@keyframes popIn { from{opacity:0;transform:scale(.95) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);} }
+.clap-popup-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.clap-popup-title { font-family: var(--font-my); font-size: 15px; font-weight: 600; color: var(--black); line-height: 1.6; }
+.clap-popup-close {
+  width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
+  background: transparent; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; color: var(--slate);
+}
+.clap-popup-close:hover { background: var(--slate-bg); }
+.clap-popup-body { overflow-y: auto; flex: 1; padding: 8px 0; }
+.clap-user-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px; text-decoration: none; color: var(--black);
+  transition: background .12s;
+}
+.clap-user-item:hover { background: var(--slate-bg); }
+.clap-user-av {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--slate-bg); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; overflow: hidden; flex-shrink: 0;
+}
+.clap-user-av img { width: 100%; height: 100%; object-fit: cover; }
+.clap-user-name { font-size: 14px; font-weight: 600; line-height: 1.5; }
+.clap-user-uname { font-family: var(--font-en); font-size: 12px; color: var(--slate-lt); }
+.clap-popup-empty { padding: 32px; text-align: center; color: var(--slate-lt); font-size: 13px; line-height: 2; }
+
 /* ── Role badge ── */
 .role-badge {
   display: inline-flex;
@@ -584,12 +672,12 @@ footer {
 
       <!-- Clappers / Clapping — ကြီးကြီး -->
       <div class="clap-stats">
-        <div class="clap-stat-item">
-          <span class="clap-num" id="statClappers">0</span>
+        <div class="clap-stat-item" onclick="openClappersPopup()" style="cursor:pointer;">
+          <span class="clap-num" id="statClappers">0</span><span id="newClapBadge" style="display:none;" class="new-clap-badge"></span>
           <span class="clap-label">👏 Clappers</span>
         </div>
         <div class="clap-stat-divider"></div>
-        <div class="clap-stat-item">
+        <div class="clap-stat-item" onclick="openClappingPopup()" style="cursor:pointer;">
           <span class="clap-num" id="statClapping">0</span>
           <span class="clap-label">Clapping</span>
         </div>
@@ -614,17 +702,39 @@ footer {
     </div>
   </div>
 
-  <!-- SCRIPTS HEADER — JS က owner/public အလိုက် ပြောင်းမည် -->
-  <div class="section-header">
-    <div class="section-title" id="scriptsHeader">
-      Screenplays
-      <span class="section-divider"></span>
-    </div>
-    <div id="newScriptBtn"></div>
+  <!-- PROFILE TABS -->
+  <div class="profile-tabs">
+    <button class="profile-tab active" id="tabDocs" onclick="switchProfileTab('docs',this)">
+      Story / Screenplay
+    </button>
+    <button class="profile-tab" id="tabClapped" onclick="switchProfileTab('clapped',this)">
+      👏 Clapped
+    </button>
   </div>
 
-  <div class="scripts-grid" id="scriptsGrid">
-    <!-- populated by JS -->
+  <!-- DOCS TAB -->
+  <div id="tabDocsContent">
+    <div class="section-header">
+      <div class="section-title">
+        <span id="scriptsHeader">Docs</span>
+        <span class="section-divider"></span>
+      </div>
+      <div id="newScriptBtn"></div>
+    </div>
+    <div class="scripts-grid" id="scriptsGrid"></div>
+  </div>
+
+  <!-- CLAPPED TAB -->
+  <div id="tabClappedContent" style="display:none;">
+    <!-- Privacy toggle (owner only) -->
+    <div id="clappedPrivacyRow" style="display:none;margin-bottom:16px;display:none;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:13px;color:var(--slate);line-height:1.8;">ဘယ်သူ မြင်မလဲ:</span>
+        <button class="clap-priv-btn active" id="cpPublic" onclick="setClappedPrivacy('public',this)">🌐 Public</button>
+        <button class="clap-priv-btn" id="cpPrivate" onclick="setClappedPrivacy('private',this)">🔒 ကိုယ်ပဲ</button>
+      </div>
+    </div>
+    <div class="scripts-grid" id="clappedGrid"></div>
   </div>
 
 </main>
@@ -632,6 +742,32 @@ footer {
 <footer>
   <span class="footer-text">© 2026 CinePodma. All rights reserved.</span>
 </footer>
+
+<!-- CLAPPERS POPUP -->
+<div class="clap-popup-ov" id="clappersPopup">
+  <div class="clap-popup">
+    <div class="clap-popup-hdr">
+      <span class="clap-popup-title">👏 Clappers</span>
+      <button class="clap-popup-close" onclick="closeClappersPopup()">✕</button>
+    </div>
+    <div class="clap-popup-body" id="clappersBody">
+      <div class="clap-popup-empty">ဖွင့်နေသည်...</div>
+    </div>
+  </div>
+</div>
+
+<!-- CLAPPING POPUP -->
+<div class="clap-popup-ov" id="clappingPopup">
+  <div class="clap-popup">
+    <div class="clap-popup-hdr">
+      <span class="clap-popup-title">Clapping</span>
+      <button class="clap-popup-close" onclick="closeClappingPopup()">✕</button>
+    </div>
+    <div class="clap-popup-body" id="clappingBody">
+      <div class="clap-popup-empty">ဖွင့်နေသည်...</div>
+    </div>
+  </div>
+</div>
 
 <!-- EDIT PROFILE MODAL -->
 <div class="modal-overlay" id="editModal">
@@ -674,8 +810,464 @@ import { initializeApp }   from 'https://www.gstatic.com/firebasejs/12.13.0/fire
 import { getAuth, onAuthStateChanged, signOut, updateProfile }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
-         collection, query, where, getDocs, getCountFromServer }
+         collection, query, where, getDocs, getCountFromServer, orderBy }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain:"cinepodma.firebaseapp.com",
+  projectId:"cinepodma",
+  storageBucket:"cinepodma.firebasestorage.app",
+  messagingSenderId:"587916526322",
+  appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+var currentUser    = null;
+var currentProfile = {};
+var scripts        = [];
+var clappedPrivacy = 'public'; /* clapped tab default */
+var initialized    = false;
+
+/* ══ AUTH ══ */
+onAuthStateChanged(auth, async function(user) {
+  if (initialized) return;
+  initialized = true;
+  currentUser = user;
+
+  if (uidParam) {
+    profileUid = uidParam;
+    isOwner    = user ? user.uid === profileUid : false;
+  } else {
+    if (!user) { window.location.href = 'index.html'; return; }
+    profileUid = user.uid;
+    isOwner    = true;
+  }
+
+  try { await loadProfile(); }    catch(e) { console.error('loadProfile',e); }
+  try { await loadScripts(); }    catch(e) { console.error('loadScripts',e); }
+  try { await loadClappers(); }   catch(e) { console.error('loadClappers',e); }
+  renderNav();
+  renderActions();
+
+  /* owner: show privacy row in clapped tab */
+  if (isOwner) {
+    var row = document.getElementById('clappedPrivacyRow');
+    if (row) row.style.display = 'flex';
+    /* check new clappers notification */
+    checkNewClappers();
+  }
+});
+
+/* ══ LOAD PROFILE ══ */
+async function loadProfile() {
+  var snap = await getDoc(doc(db, 'users', profileUid));
+  if (!snap.exists()) { document.getElementById('dispName').textContent='User မတွေ့ပါ'; return; }
+  currentProfile = snap.data();
+  document.getElementById('dispName').textContent     = currentProfile.name     || '—';
+  document.getElementById('dispUsername').textContent = currentProfile.username  || '';
+  document.getElementById('dispBio').textContent      = currentProfile.bio       || '';
+  if (currentProfile.role) {
+    var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
+    document.getElementById('dispRole').innerHTML =
+      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">' +
+      (roleIcons[currentProfile.role]||'') + ' ' + currentProfile.role + '</span>';
+  }
+  if (currentProfile.contactEmail) {
+    document.getElementById('dispEmail').innerHTML =
+      '✉ <a href="mailto:'+currentProfile.contactEmail+'" style="color:var(--black)">'+currentProfile.contactEmail+'</a>';
+  }
+  if (currentProfile.avatar) {
+    document.getElementById('avatarEmoji').style.display='none';
+    var img=document.getElementById('avatarImg');img.src=currentProfile.avatar;img.style.display='block';
+  }
+}
+
+/* ══ LOAD SCRIPTS ══ */
+async function loadScripts() {
+  var q = query(collection(db,'docs'), where('uid','==',profileUid));
+  var snap = await getDocs(q);
+  scripts = [];
+  snap.forEach(function(d) {
+    var data=d.data();
+    scripts.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',
+      status:data.status||'draft',privacy:data.privacy||'private',
+      scenes:data.screenplay?data.screenplay.length:0,
+      updated:data.updatedAt?data.updatedAt.substring(0,10):'—',uid:data.uid});
+  });
+  if (!isOwner) scripts=scripts.filter(function(s){return s.privacy==='public';});
+  scripts.sort(function(a,b){return b.updated.localeCompare(a.updated);});
+  renderScripts();
+}
+
+/* ══ LOAD CLAPPERS ══ */
+async function loadClappers() {
+  try {
+    var coll = collection(db,'clappers',profileUid,'users');
+    var snap = await getCountFromServer(coll);
+    var count = snap.data().count;
+    document.getElementById('statClappers').textContent =
+      count>=1000?(count/1000).toFixed(1)+'K':count;
+  } catch(e) { document.getElementById('statClappers').textContent='0'; }
+
+  try {
+    var coll2 = collection(db,'clapping',profileUid,'users');
+    var snap2 = await getCountFromServer(coll2);
+    var count2 = snap2.data().count;
+    document.getElementById('statClapping').textContent =
+      count2>=1000?(count2/1000).toFixed(1)+'K':count2;
+  } catch(e) { document.getElementById('statClapping').textContent='0'; }
+}
+
+/* ══ NEW CLAPPER NOTIFICATION ══ */
+async function checkNewClappers() {
+  if (!isOwner || !currentUser) return;
+  try {
+    var snap = await getDoc(doc(db,'users',currentUser.uid));
+    var newCount = snap.exists() ? (snap.data().newClappers||0) : 0;
+    if (newCount > 0) {
+      var badge = document.getElementById('newClapBadge');
+      badge.textContent = '+' + newCount;
+      badge.style.display = 'inline-flex';
+    }
+  } catch(e) {}
+}
+
+async function clearNewClappers() {
+  if (!isOwner || !currentUser) return;
+  try {
+    await updateDoc(doc(db,'users',currentUser.uid),{newClappers:0});
+    document.getElementById('newClapBadge').style.display='none';
+  } catch(e) {}
+}
+
+/* ══ CLAPPERS POPUP ══ */
+window.openClappersPopup = async function() {
+  document.getElementById('clappersPopup').classList.add('open');
+  document.body.style.overflow='hidden';
+  if (isOwner) clearNewClappers();
+  var body = document.getElementById('clappersBody');
+  body.innerHTML='<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
+  try {
+    var snap = await getDocs(collection(db,'clappers',profileUid,'users'));
+    if (snap.empty) { body.innerHTML='<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>'; return; }
+    var html='';
+    var promises=[];
+    snap.forEach(function(d){ promises.push(getDoc(doc(db,'users',d.id))); });
+    var users=await Promise.all(promises);
+    users.forEach(function(u){
+      if(!u.exists())return;
+      var ud=u.data();
+      var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
+      html+='<a class="clap-user-item" href="profile.html?uid='+u.id+'">'+
+        '<div class="clap-user-av">'+av+'</div>'+
+        '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
+        '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
+    });
+    body.innerHTML=html||'<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';
+  } catch(e) { body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ</div>'; }
+};
+window.closeClappersPopup=function(){document.getElementById('clappersPopup').classList.remove('open');document.body.style.overflow='';};
+
+/* ══ CLAPPING POPUP ══ */
+window.openClappingPopup = async function() {
+  document.getElementById('clappingPopup').classList.add('open');
+  document.body.style.overflow='hidden';
+  var body=document.getElementById('clappingBody');
+  body.innerHTML='<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
+  try {
+    var snap=await getDocs(collection(db,'clapping',profileUid,'users'));
+    if(snap.empty){body.innerHTML='<div class="clap-popup-empty">Clapping မရှိသေးပါ</div>';return;}
+    var html='';
+    var promises=[];
+    snap.forEach(function(d){promises.push(getDoc(doc(db,'users',d.data().uid||d.id)));});
+    var users=await Promise.all(promises);
+    users.forEach(function(u){
+      if(!u.exists())return;
+      var ud=u.data();
+      var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
+      html+='<a class="clap-user-item" href="profile.html?uid='+u.id+'">'+
+        '<div class="clap-user-av">'+av+'</div>'+
+        '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
+        '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
+    });
+    body.innerHTML=html||'<div class="clap-popup-empty">Clapping မရှိသေးပါ</div>';
+  }catch(e){body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ</div>';}
+};
+window.closeClappingPopup=function(){document.getElementById('clappingPopup').classList.remove('open');document.body.style.overflow='';};
+
+/* ══ PROFILE TABS ══ */
+window.switchProfileTab=function(tab,btn){
+  document.querySelectorAll('.profile-tab').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('tabDocsContent').style.display   = tab==='docs'    ? '' : 'none';
+  document.getElementById('tabClappedContent').style.display= tab==='clapped' ? '' : 'none';
+  if(tab==='clapped') loadClappedDocs();
+};
+
+/* ══ CLAPPED TAB ══ */
+var clappedDocs=[];
+window.setClappedPrivacy=function(p,btn){
+  clappedPrivacy=p;
+  document.querySelectorAll('.clap-priv-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderClappedDocs();
+};
+
+async function loadClappedDocs(){
+  var grid=document.getElementById('clappedGrid');
+  grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်နေသည်...</div>';
+  try{
+    var snap=await getDocs(collection(db,'clapping',profileUid,'users'));
+    var docIds=[];
+    snap.forEach(function(d){docIds.push(d.data().uid||d.id);});
+    if(docIds.length===0){grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Clapped doc မရှိသေးပါ</div>';return;}
+    /* load each doc */
+    var promises=docIds.map(function(id){return getDoc(doc(db,'docs',id));});
+    var docs=await Promise.all(promises);
+    clappedDocs=[];
+    docs.forEach(function(d){if(d.exists())clappedDocs.push({id:d.id,...d.data()});});
+    renderClappedDocs();
+  }catch(e){grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်မရပါ</div>';}
+}
+
+function renderClappedDocs(){
+  var grid=document.getElementById('clappedGrid');
+  var docs=clappedDocs;
+  /* privacy filter — owner only sees private, public sees all public */
+  if(!isOwner){
+    docs=docs.filter(function(d){return d.privacy==='public';});
+  } else {
+    if(clappedPrivacy==='public') docs=docs.filter(function(d){return d.privacy==='public';});
+    /* private = show all (owner) */
+  }
+  if(docs.length===0){
+    grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Doc မရှိသေးပါ</div>';
+    return;
+  }
+  grid.innerHTML=docs.map(function(s){
+    var typeIcon=s.type==='story'?'📖':'🎬';
+    return '<div class="script-card">'+
+      '<div class="script-card-top">'+
+        '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
+      '</div>'+
+      '<div class="script-card-meta">'+(s.authorUsername||s.authorName||'—')+'</div>'+
+      '<div class="script-card-actions">'+
+        '<button class="script-act-btn primary" onclick="window.location.href=\'profile.html?uid='+(s.uid||'')+'\'">👤 Profile</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+/* ══ CLAP TOGGLE ══ */
+window.toggleClap=async function(){
+  if(!currentUser){
+    /* show sign up prompt instead of redirect */
+    if(confirm('Clap လုပ်ရန် အကောင့်ဖွင့်ရန် လိုသည်။ အကောင့်ဖွင့်မည်လား?')){
+      window.location.href='index.html';
+    }
+    return;
+  }
+  var btn      =document.getElementById('clapBtn');
+  var clapRef  =doc(db,'clappers',profileUid,'users',currentUser.uid);
+  var clapSnap =await getDoc(clapRef);
+  var el       =document.getElementById('statClappers');
+  var count    =parseInt(el.textContent.replace('K',''))||0;
+
+  if(clapSnap.exists()){
+    await deleteDoc(clapRef);
+    try{await deleteDoc(doc(db,'clapping',currentUser.uid,'users',profileUid));}catch(e){}
+    /* decrease newClappers for profile owner */
+    try{
+      var ownerSnap=await getDoc(doc(db,'users',profileUid));
+      if(ownerSnap.exists()){
+        var nc=Math.max(0,(ownerSnap.data().newClappers||0)-1);
+        await updateDoc(doc(db,'users',profileUid),{newClappers:nc});
+      }
+    }catch(e){}
+    btn.textContent='👏 Clap';btn.classList.remove('clapped');
+    el.textContent=Math.max(0,count-1);
+  }else{
+    await setDoc(clapRef,{clappedAt:new Date().toISOString(),uid:currentUser.uid});
+    try{
+      /* get my profile for clapping record */
+      var mySnap=await getDoc(doc(db,'users',currentUser.uid));
+      var myData=mySnap.exists()?mySnap.data():{};
+      await setDoc(doc(db,'clapping',currentUser.uid,'users',profileUid),
+        {uid:profileUid,clappedAt:new Date().toISOString()});
+      /* increment newClappers for profile owner */
+      var ownerSnap2=await getDoc(doc(db,'users',profileUid));
+      if(ownerSnap2.exists()){
+        var nc2=(ownerSnap2.data().newClappers||0)+1;
+        await updateDoc(doc(db,'users',profileUid),{newClappers:nc2});
+      }
+    }catch(e){}
+    btn.textContent='👏 Clapped';btn.classList.add('clapped');
+    el.textContent=count+1;
+  }
+};
+
+/* ══ RENDER NAV ══ */
+function renderNav(){
+  var navRight=document.getElementById('navRight');
+  if(isOwner){
+    navRight.innerHTML=
+      '<a class="btn btn-ghost btn-sm" href="index.html">← Home</a>'+
+      '<button class="btn btn-ghost btn-sm" onclick="window._signOut()">ထွက်မည်</button>'+
+      '<button class="btn btn-red btn-sm" onclick="openEdit()">✏ Edit</button>';
+  }else{
+    navRight.innerHTML='<a class="btn btn-ghost btn-sm" href="index.html">← Home</a>';
+  }
+}
+
+/* ══ RENDER ACTIONS ══ */
+async function renderActions(){
+  var el=document.getElementById('profileActions');
+  var newBtn=document.getElementById('newScriptBtn');
+  if(isOwner){
+    el.innerHTML='<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
+    newBtn.innerHTML='<a class="btn btn-red btn-sm" href="write.html">+ New</a>';
+  }else{
+    var clapped=false;
+    if(currentUser){
+      var cs=await getDoc(doc(db,'clappers',profileUid,'users',currentUser.uid));
+      clapped=cs.exists();
+    }
+    el.innerHTML=
+      '<button class="btn btn-red btn-sm" id="clapBtn" onclick="toggleClap()">'+(clapped?'👏 Clapped':'👏 Clap')+'</button>'+
+      '<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
+    newBtn.innerHTML='';
+  }
+}
+
+/* ══ RENDER SCRIPTS ══ */
+function renderScripts(){
+  var grid=document.getElementById('scriptsGrid');
+  var drafts=scripts.filter(function(s){return s.status==='draft';}).length;
+  var complete=scripts.filter(function(s){return s.status==='complete';}).length;
+  document.getElementById('statScripts').textContent=scripts.length;
+  document.getElementById('statDrafts').textContent=drafts;
+  document.getElementById('statComplete').textContent=complete;
+
+  if(scripts.length===0){
+    grid.innerHTML='<div class="empty-state"><span class="icon">📝</span>'+(isOwner?'Doc မရှိသေးပါ<br><small>+ New နှိပ်ပြီး စတင်ပါ</small>':'Public doc မရှိသေးပါ')+'</div>';
+    return;
+  }
+  var html=scripts.map(function(s){
+    var typeIcon=s.type==='story'?'📖':'🎬';
+    var typeName=s.type==='story'?'Story':'Screenplay';
+    var ownerBtns=isOwner?(
+      '<button class="script-menu-btn" onclick="window._toggleMenu(\''+s.id+'\', event)">⋯</button>'+
+      '<div class="script-dropdown" id="menu-'+s.id+'">'+
+        '<button class="script-dd-item" onclick="window._editScript(\''+s.id+'\')">✏ ဖွင့်မည်</button>'+
+        '<button class="script-dd-item" onclick="window._toggleStatus(\''+s.id+'\')">'+(s.status==='draft'?'✅ Complete မှတ်မည်':'📝 Draft ပြန်မည်')+'</button>'+
+        '<button class="script-dd-item" onclick="window._togglePrivacy(\''+s.id+'\')">'+(s.privacy==='public'?'🔒 Private ပြောင်းမည်':'🌐 Public ပြောင်းမည်')+'</button>'+
+        '<button class="script-dd-item danger" onclick="window._deleteScript(\''+s.id+'\')">🗑 ဖျက်မည်</button>'+
+      '</div>'
+    ):'';
+    var actionBtns=isOwner
+      ?'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">✍ ဆက်ရေးမည်</button>'
+      :'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">📖 ဖတ်မည်</button>';
+    return '<div class="script-card" id="sc-'+s.id+'">'+
+      '<div class="script-card-top">'+
+        '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
+        '<div class="script-card-menu">'+ownerBtns+'</div>'+
+      '</div>'+
+      '<div class="script-card-meta">'+typeName+' · '+s.updated+'</div>'+
+      '<div style="display:flex;gap:6px;margin-top:4px;">'+
+        '<span class="script-tag '+s.status+'">'+(s.status==='draft'?'Draft':'Complete')+'</span>'+
+        '<span class="script-tag" style="background:var(--slate-bg);color:var(--slate);">'+(s.privacy==='public'?'🌐 Public':'🔒 Private')+'</span>'+
+      '</div>'+
+      '<div class="script-card-actions">'+actionBtns+'</div>'+
+    '</div>';
+  }).join('');
+  if(isOwner) html+='<a class="script-card-new" href="write.html"><span class="plus">+</span><span class="new-label">New Doc</span></a>';
+  grid.innerHTML=html;
+}
+
+/* ══ SCRIPT ACTIONS ══ */
+window._toggleMenu=function(id,e){
+  e.stopPropagation();
+  document.querySelectorAll('.script-dropdown').forEach(function(d){if(d.id!=='menu-'+id)d.classList.remove('open');});
+  document.getElementById('menu-'+id).classList.toggle('open');
+};
+document.addEventListener('click',function(){document.querySelectorAll('.script-dropdown').forEach(function(d){d.classList.remove('open');});});
+window._editScript=function(id){window.location.href='write.html?id='+id;};
+window._toggleStatus=async function(id){
+  var s=scripts.find(function(x){return x.id===id;});if(!s)return;
+  s.status=s.status==='draft'?'complete':'draft';
+  await updateDoc(doc(db,'docs',id),{status:s.status});
+  renderScripts();toast('✅ '+(s.status==='complete'?'Complete':'Draft')+' မှတ်ပြီး');
+};
+window._togglePrivacy=async function(id){
+  var s=scripts.find(function(x){return x.id===id;});if(!s)return;
+  s.privacy=s.privacy==='public'?'private':'public';
+  await updateDoc(doc(db,'docs',id),{privacy:s.privacy});
+  renderScripts();toast((s.privacy==='public'?'🌐 Public':'🔒 Private')+' ပြောင်းပြီး');
+};
+window._deleteScript=async function(id){
+  var s=scripts.find(function(x){return x.id===id;});
+  if(!s||!confirm('"'+s.title+'" ကို ဖျက်မည်?'))return;
+  await deleteDoc(doc(db,'docs',id));
+  scripts=scripts.filter(function(x){return x.id!==id;});
+  renderScripts();toast('🗑 ဖျက်ပြီး');
+};
+
+/* ══ AVATAR ══ */
+document.getElementById('avatarInput').addEventListener('change',async function(){
+  if(!isOwner||!this.files[0])return;
+  toast('Avatar upload — Firebase Storage လိုအပ်သည်');
+});
+
+/* ══ EDIT PROFILE ══ */
+window.openEdit=function(){
+  document.getElementById('editName').value=(currentProfile.name||'');
+  document.getElementById('editUsername').value=(currentProfile.username||'').replace('@','');
+  document.getElementById('editBio').value=(currentProfile.bio||'');
+  var av=document.getElementById('avatarDiv');
+  av.style.cursor='pointer';av.onclick=function(){document.getElementById('avatarInput').click();};
+  document.getElementById('editModal').classList.add('open');
+};
+window.closeEdit=function(){
+  document.getElementById('editModal').classList.remove('open');
+  var av=document.getElementById('avatarDiv');av.style.cursor='default';av.onclick=null;
+};
+window.saveProfile=async function(){
+  var name=document.getElementById('editName').value.trim();
+  var bio=document.getElementById('editBio').value.trim();
+  if(!name){alert('အမည် ထည့်ပါ');return;}
+  await updateDoc(doc(db,'users',currentUser.uid),{name:name,bio:bio});
+  await updateProfile(currentUser,{displayName:name});
+  currentProfile.name=name;currentProfile.bio=bio;
+  document.getElementById('dispName').textContent=name;
+  document.getElementById('dispBio').textContent=bio;
+  window.closeEdit();toast('✅ Profile သိမ်းပြီး');
+};
+
+/* ══ SHARE ══ */
+window.copyProfileLink=function(){
+  var u=(currentProfile.usernameRaw||currentProfile.username||'').replace('@','');
+  var url=window.location.origin+'/@'+u;
+  navigator.clipboard.writeText(url).then(function(){toast('🔗 Link ကူးပြီး — '+url);});
+};
+
+/* ══ SIGN OUT ══ */
+window._signOut=async function(){await signOut(auth);window.location.href='index.html';};
+
+/* ══ ESC ══ */
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  window.closeEdit&&window.closeEdit();
+  window.closeClappersPopup&&window.closeClappersPopup();
+  window.closeClappingPopup&&window.closeClappingPopup();
+});
+document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)window.closeEdit();});
+document.getElementById('clappersPopup').addEventListener('click',function(e){if(e.target===this)window.closeClappersPopup();});
+document.getElementById('clappingPopup').addEventListener('click',function(e){if(e.target===this)window.closeClappingPopup();});
+</script>
 const firebaseConfig = {
   apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
   authDomain:        "cinepodma.firebaseapp.com",
@@ -1021,6 +1613,28 @@ window._editScript = function(id) {
   window.location.href = 'write.html?id=' + id;
 };
 
+window._toggleStatus = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
+  if (!s) return;
+  s.status = s.status === 'draft' ? 'complete' : 'draft';
+  try {
+    await updateDoc(doc(db, 'docs', id), { status: s.status });
+    renderScripts();
+    toast('✅ Status ပြောင်းပြီး — ' + (s.status === 'complete' ? 'Complete' : 'Draft'));
+  } catch(e) { toast('❌ ပြောင်းမရပါ'); }
+};
+
+window._togglePrivacy = async function(id) {
+  var s = scripts.find(function(x) { return x.id === id; });
+  if (!s) return;
+  s.privacy = s.privacy === 'public' ? 'private' : 'public';
+  try {
+    await updateDoc(doc(db, 'docs', id), { privacy: s.privacy });
+    renderScripts();
+    toast((s.privacy === 'public' ? '🌐 Public' : '🔒 Private') + ' ပြောင်းပြီး');
+  } catch(e) { toast('❌ ပြောင်းမရပါ'); }
+};
+
 window._deleteScript = async function(id) {
   var s = scripts.find(function(x) { return x.id === id; });
   if (!s || !confirm('"' + s.title + '" ကို ဖျက်မည်နှင့် သေချာပါသလား?')) return;
@@ -1052,282 +1666,6 @@ document.addEventListener('keydown', function(e) {
 document.getElementById('editModal').addEventListener('click', function(e) {
   if (e.target === this) window.closeEdit();
 });
-</script>
-</body>
-</html>
-
-<!-- ══════ FIREBASE ══════ -->
-<script type="module">
-import { initializeApp }   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getAuth, onAuthStateChanged, signOut, updateProfile }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, updateDoc,
-         collection, query, where, getDocs, deleteDoc }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
-import { getStorage, ref, uploadBytes, getDownloadURL }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js';
-
-const firebaseConfig = {
-  apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-  authDomain:        "cinepodma.firebaseapp.com",
-  projectId:         "cinepodma",
-  storageBucket:     "cinepodma.firebasestorage.app",
-  messagingSenderId: "587916526322",
-  appId:             "1:587916526322:web:d00775311fb92fa1c8466b"
-};
-
-const app     = initializeApp(firebaseConfig);
-const auth    = getAuth(app);
-const db      = getFirestore(app);
-const storage = getStorage(app);
-
-var currentUser   = null;
-var currentProfile = {};
-var scripts        = [];
-
-/* ══════ AUTH STATE ══════ */
-onAuthStateChanged(auth, async function(user) {
-  if (!user) {
-    /* not logged in — redirect home */
-    window.location.href = 'index.html';
-    return;
-  }
-  currentUser = user;
-  await loadProfile(user);
-  await loadScripts(user.uid);
-});
-
-/* ══════ LOAD PROFILE ══════ */
-async function loadProfile(user) {
-  try {
-    var ref  = doc(db, 'users', user.uid);
-    var snap = await getDoc(ref);
-    if (snap.exists()) {
-      currentProfile = snap.data();
-    } else {
-      currentProfile = {
-        name:     user.displayName || '',
-        email:    user.email,
-        username: '@' + user.email.split('@')[0],
-        bio:      '',
-        avatar:   user.photoURL || ''
-      };
-      await setDoc(ref, currentProfile);
-    }
-    renderProfile();
-  } catch(e) {
-    toast('❌ Profile ဖတ်မရပါ');
-  }
-}
-
-/* ══════ RENDER PROFILE ══════ */
-function renderProfile() {
-  document.getElementById('dispName').textContent     = currentProfile.name     || '—';
-  document.getElementById('dispUsername').textContent = currentProfile.username  || '';
-  document.getElementById('dispBio').textContent      = currentProfile.bio       || '';
-
-  var avatar   = currentProfile.avatar || '';
-  var emojiEl  = document.getElementById('avatarEmoji');
-  var imgEl    = document.getElementById('avatarImg');
-  if (avatar) {
-    emojiEl.style.display = 'none';
-    imgEl.src             = avatar;
-    imgEl.style.display   = 'block';
-  } else {
-    emojiEl.style.display = 'block';
-    imgEl.style.display   = 'none';
-  }
-}
-
-/* ══════ LOAD SCRIPTS ══════ */
-async function loadScripts(uid) {
-  try {
-    var q = query(collection(db, 'docs'), where('uid', '==', uid));
-    var snap = await getDocs(q);
-    scripts = [];
-    snap.forEach(function(d) {
-      var data = d.data();
-      scripts.push({
-        id: d.id,
-        title: data.title || 'Untitled',
-        type: data.type || 'screenplay',
-        status: data.status || 'draft',
-        privacy: data.privacy || 'private',
-        scenes: data.screenplay ? data.screenplay.length : 0,
-        updated: data.updatedAt ? data.updatedAt.substring(0,10) : '—',
-        uid: data.uid
-      });
-    });
-    scripts.sort(function(a,b){ return b.updated.localeCompare(a.updated); });
-    renderScripts();
-  } catch(e) {
-    console.error('loadScripts(uid)',e);
-    scripts = [];
-    renderScripts();
-  }
-}
-
-/* ══════ RENDER SCRIPTS ══════ */
-function renderScripts() {
-  var grid     = document.getElementById('scriptsGrid');
-  var drafts   = scripts.filter(function(s) { return s.status === 'draft'; }).length;
-  var complete = scripts.filter(function(s) { return s.status === 'complete'; }).length;
-  document.getElementById('statScripts').textContent  = scripts.length;
-  document.getElementById('statDrafts').textContent   = drafts;
-  document.getElementById('statComplete').textContent = complete;
-
-  if (scripts.length === 0) {
-    grid.innerHTML =
-      '<div class="empty-state">' +
-        '<span class="icon">📝</span>' +
-        (isOwner ? 'Doc မရှိသေးပါ<br><small>write.html မှ စတင်ပါ</small>' : 'Public doc မရှိသေးပါ') +
-      '</div>';
-    return;
-  }
-
-  var html = scripts.map(function(s) {
-    var typeIcon = s.type === 'story' ? '📖' : '🎬';
-    var typeName = s.type === 'story' ? 'Story' : 'Screenplay';
-    var metaText = s.type === 'story' ? s.updated : 'မြင်ကွင်း ' + (s.scenes || 0) + ' ခု · ' + s.updated;
-    var ownerBtns = isOwner ? (
-      '<button class="script-menu-btn" onclick="window._toggleMenu(\'' + s.id + '\', event)">⋯</button>' +
-      '<div class="script-dropdown" id="menu-' + s.id + '">' +
-        '<button class="script-dd-item" onclick="window._editScript(\'' + s.id + '\')">✏ ဖွင့်မည်</button>' +
-        '<button class="script-dd-item danger" onclick="window._deleteScript(\'' + s.id + '\')">🗑 ဖျက်မည်</button>' +
-      '</div>'
-    ) : '';
-    var actionBtns = isOwner
-      ? '<button class="script-act-btn primary" onclick="window._editScript(\'' + s.id + '\')">✍ ဆက်ရေးမည်</button>'
-      : '<button class="script-act-btn" onclick="window._editScript(\'' + s.id + '\')">📖 ဖတ်မည်</button>';
-    return (
-      '<div class="script-card" id="sc-' + s.id + '">' +
-        '<div class="script-card-top">' +
-          '<div class="script-card-title">' + typeIcon + ' ' + (s.title || 'Untitled') + '</div>' +
-          '<div class="script-card-menu">' + ownerBtns + '</div>' +
-        '</div>' +
-        '<div class="script-card-meta">' + typeName + ' · ' + metaText + '</div>' +
-        '<div>' +
-          '<span class="script-tag ' + s.status + '">' + (s.status === 'draft' ? 'Draft' : 'Complete') + '</span>' +
-          '<span class="script-tag" style="margin-left:4px;background:var(--slate-bg);color:var(--slate);">' + (s.privacy === 'public' ? '🌐' : '🔒') + '</span>' +
-        '</div>' +
-        '<div class="script-card-actions">' + actionBtns + '</div>' +
-      '</div>'
-    );
-  }).join('');
-        '</div>' +
-      '</div>'
-    );
-  }).join('');
-
-  if (isOwner) {
-    html += '<a class="script-card-new" href="write.html"><span class="plus">+</span><span class="new-label">New Doc</span></a>';
-  }
-  grid.innerHTML = html;
-}
-
-/* ══════ AVATAR ══════ */
-document.getElementById('avatarInput').addEventListener('change', async function() {
-  var file = this.files[0];
-  if (!file || !currentUser) return;
-  try {
-    var storageRef = ref(storage, 'avatars/' + currentUser.uid);
-    await uploadBytes(storageRef, file);
-    var url = await getDownloadURL(storageRef);
-    await updateDoc(doc(db, 'users', currentUser.uid), { avatar: url });
-    await updateProfile(currentUser, { photoURL: url });
-    currentProfile.avatar = url;
-    renderProfile();
-    toast('✅ Profile ဓာတ်ပုံ ပြောင်းပြီးပါပြီ');
-  } catch(e) {
-    toast('❌ ဓာတ်ပုံ တင်မရပါ — Storage enable လိုအပ်သည်');
-  }
-});
-
-/* ══════ EDIT PROFILE ══════ */
-window.openEdit = function() {
-  document.getElementById('editName').value     = currentProfile.name     || '';
-  document.getElementById('editUsername').value = currentProfile.username  || '';
-  document.getElementById('editBio').value      = currentProfile.bio       || '';
-  document.getElementById('editModal').classList.add('open');
-};
-window.closeEdit = function() {
-  document.getElementById('editModal').classList.remove('open');
-};
-
-window.saveProfile = async function() {
-  var name = document.getElementById('editName').value.trim();
-  var user = document.getElementById('editUsername').value.trim();
-  var bio  = document.getElementById('editBio').value.trim();
-  if (!name) { alert('အမည် ထည့်ပါ'); return; }
-
-  var username = user.startsWith('@') ? user : '@' + user;
-  currentProfile.name     = name;
-  currentProfile.username = username;
-  currentProfile.bio      = bio;
-
-  try {
-    await updateDoc(doc(db, 'users', currentUser.uid), {
-      name: name, username: username, bio: bio
-    });
-    await updateProfile(currentUser, { displayName: name });
-    renderProfile();
-    window.closeEdit();
-    toast('✅ Profile သိမ်းပြီးပါပြီ');
-  } catch(e) {
-    toast('❌ သိမ်းမရပါ — ' + e.message);
-  }
-};
-
-/* ══════ SCRIPT ACTIONS ══════ */
-window.editScript = function(id) {
-  window.location.href = 'write.html?id=' + id;
-};
-
-window.renameScript = async function(id) {
-  var s = scripts.find(function(x) { return x.id === id; });
-  if (!s) return;
-  var name = prompt('နာမည်သစ်', s.title);
-  if (!name || !name.trim()) return;
-  s.title = name.trim();
-  try {
-    await updateDoc(doc(db, 'scripts', id), { title: s.title });
-    renderScripts();
-    toast('✅ နာမည် ပြောင်းပြီးပါပြီ');
-  } catch(e) { toast('❌ ပြောင်းမရပါ'); }
-};
-
-window.toggleStatus = async function(id) {
-  var s = scripts.find(function(x) { return x.id === id; });
-  if (!s) return;
-  s.status = s.status === 'draft' ? 'complete' : 'draft';
-  try {
-    await updateDoc(doc(db, 'scripts', id), { status: s.status });
-    renderScripts();
-    toast('✅ Status ပြောင်းပြီးပါပြီ');
-  } catch(e) { renderScripts(); }
-};
-
-window.deleteScript = async function(id) {
-  var s = scripts.find(function(x) { return x.id === id; });
-  if (!s) return;
-  if (!confirm('"' + s.title + '" ကို ဖျက်မည်နှင့် သေချာပါသလား?')) return;
-  try {
-    await deleteDoc(doc(db, 'scripts', id));
-    scripts = scripts.filter(function(x) { return x.id !== id; });
-    renderScripts();
-    toast('🗑 ဖျက်ပြီးပါပြီ');
-  } catch(e) { toast('❌ ဖျက်မရပါ'); }
-};
-
-window.exportScript = function(id) {
-  window.location.href = 'write.html?id=' + id + '&export=1';
-};
-
-/* ══════ SIGN OUT ══════ */
-window.signOutUser = async function() {
-  await signOut(auth);
-  window.location.href = 'index.html';
-};
 </script>
 </body>
 </html>
