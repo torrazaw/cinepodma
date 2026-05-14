@@ -921,6 +921,7 @@ async function loadScripts() {
 
 /* ══ LOAD CLAPPERS ══ */
 async function loadClappers() {
+  /* Clappers count */
   try {
     var coll = collection(db,'clappers',profileUid,'users');
     var snap = await getCountFromServer(coll);
@@ -929,13 +930,25 @@ async function loadClappers() {
       count>=1000?(count/1000).toFixed(1)+'K':count;
   } catch(e) { document.getElementById('statClappers').textContent='0'; }
 
+  /* Clapping count — public မြင်ရမည် */
   try {
     var coll2 = collection(db,'clapping',profileUid,'users');
     var snap2 = await getCountFromServer(coll2);
     var count2 = snap2.data().count;
     document.getElementById('statClapping').textContent =
       count2>=1000?(count2/1000).toFixed(1)+'K':count2;
-  } catch(e) { document.getElementById('statClapping').textContent='0'; }
+  } catch(e) {
+    /* clapping collection may need different approach */
+    try {
+      var snap3 = await getDocs(collection(db,'clapping',profileUid,'users'));
+      var count3 = snap3.size;
+      document.getElementById('statClapping').textContent =
+        count3>=1000?(count3/1000).toFixed(1)+'K':count3;
+    } catch(e2) {
+      document.getElementById('statClapping').textContent='0';
+    }
+  }
+}
 }
 
 /* ══ NEW CLAPPER NOTIFICATION ══ */
