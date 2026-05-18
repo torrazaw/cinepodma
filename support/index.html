@@ -1,1 +1,101 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — CinePodma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--white:#fff;--black:#0A0A0A;--slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;--border:#E5E7EB;--red:#DC2626;--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+.brand{font-family:var(--font-en);font-size:13px;color:var(--black);text-decoration:none;line-height:1.3;}
+.brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
+.back-btn{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
+.back-btn:hover{background:var(--slate-bg);color:var(--black);}
+main{flex:1;max-width:680px;margin:0 auto;width:100%;padding:100px 24px 60px;}
+.page-title{font-family:var(--font-en);font-size:32px;letter-spacing:.5px;margin-bottom:6px;}
+.page-div{width:40px;height:3px;background:var(--red);border-radius:2px;margin-bottom:20px;}
+.page-sub{font-size:14px;color:var(--slate);line-height:2.0;margin-bottom:40px;}
+/* FAQ */
+.faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+.faq-q{width:100%;padding:16px 20px;text-align:left;background:transparent;border:none;font-family:var(--font-my);font-size:14px;font-weight:600;color:var(--black);cursor:pointer;display:flex;justify-content:space-between;align-items:center;line-height:1.6;gap:12px;}
+.faq-q:hover{background:var(--slate-bg);}
+.faq-arr{font-size:12px;color:var(--slate-lt);transition:transform .2s;flex-shrink:0;}
+.faq-item.open .faq-arr{transform:rotate(180deg);}
+.faq-a{display:none;padding:0 20px 16px;font-size:13px;color:var(--slate);line-height:2.0;}
+.faq-item.open .faq-a{display:block;}
+.sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:16px;margin-top:40px;display:flex;align-items:center;gap:12px;}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.contact-link{display:flex;align-items:center;gap:14px;padding:16px 20px;border:1px solid var(--border);border-radius:14px;text-decoration:none;color:var(--black);transition:all .15s;margin-bottom:10px;}
+.contact-link:hover{border-color:var(--black);background:var(--slate-bg);}
+.cl-icon{font-size:22px;flex-shrink:0;}
+.cl-text{font-size:14px;font-weight:600;line-height:1.6;}
+.cl-sub{font-size:12px;color:var(--slate);}
+footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16px 28px;text-align:center;font-family:var(--font-en);font-size:11px;color:var(--slate);letter-spacing:.5px;}
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="/home">cine<br><span>podma</span></a>
+  <a class="back-btn" href="/home">← Home</a>
+</nav>
+<main>
+  <h1 class="page-title">Support</h1>
+  <div class="page-div"></div>
+  <p class="page-sub">အသုံးပြုရာတွင် ပြဿနာများ ရှိပါက အောက်ပါ FAQ တွေ ကြည့်ပြီး မဖြေရှင်းနိုင်သေးရင် ဆက်သွယ်ပါ။</p>
 
+  <div class="sec-lbl">FAQ</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggle(this)">Account မဖွင့်ဘဲ ရေးလို့ရသလား? <span class="faq-arr">▼</span></button>
+    <div class="faq-a">ရပါသည် — Guest mode ဖြင့် ရေးနိုင်သော်လည်း Cloud save မရပါ။ PDF download ဆွဲနိုင်ပါသည်။ Cloud save + Profile အတွက် account ဖွင့်ရန် လိုအပ်သည်။</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggle(this)">ရေးထားတာ ဘယ်မှာ သိမ်းသလဲ? <span class="faq-arr">▼</span></button>
+    <div class="faq-a">Login မဝင်ထားပါက browser localStorage တွင် သိမ်းသည်။ Login ဝင်ပြီး save နှိပ်ပါက Firebase Firestore cloud တွင် သိမ်းသည် — ဘယ် device မှမဆို access ရနိုင်သည်။</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggle(this)">Password မေ့သွားရင် ဘယ်လိုပြန်ရမလဲ? <span class="faq-arr">▼</span></button>
+    <div class="faq-a">Write page တွင် Sign in → "Password မေ့သွားပြီလား?" ကို နှိပ်ပါ — email ထည့်ရင် reset link ပို့ပေးမည်။</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggle(this)">PDF ထုတ်လို့ ရသလား? <span class="faq-arr">▼</span></button>
+    <div class="faq-a">Screenplay type အတွက်သာ PDF export ရနိုင်သည်။ Cover → Logline → Synopsis → Treatment → Screenplay pages အစဉ်လိုက် PDF ဖြစ်မည်။ Watermark option ပါသည်။ Story type များကို CinePodma ထဲမှသာ ဖတ်ရနိုင်ပါသည်။</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggle(this)">Public/Private ဘာကွာသလဲ? <span class="faq-arr">▼</span></button>
+    <div class="faq-a">Public ဆိုရင် Library တွင် ပေါ်မည်၊ မည်သူမဆို ဖတ်နိုင်သည်။ Private ဆိုရင် ကိုယ်တိုင်သာ မြင်နိုင်သည်။ Profile menu မှ ခလုတ်နှိပ်ကာ ပြောင်းနိုင်သည်။</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggle(this)">Clap ဆိုတာ ဘာလဲ? <span class="faq-arr">▼</span></button>
+    <div class="faq-a">Instagram Like ကဲ့သို့ — တစ်ဦး၏ profile ကို ကြိုက်ပါက 👏 Clap နှိပ်နိုင်သည်။ Clappers count သည် profile ၏ popularity ကို ဖော်ပြသည်။</div>
+  </div>
+
+  <div class="sec-lbl">ဆက်သွယ်မည်</div>
+
+  <a class="contact-link" href="mailto:hello@cinepodma.com">
+    <span class="cl-icon">✉️</span>
+    <div><div class="cl-text">Email ပို့မည်</div><div class="cl-sub">hello@cinepodma.com</div></div>
+  </a>
+  <a class="contact-link" href="/contact">
+    <span class="cl-icon">💬</span>
+    <div><div class="cl-text">Contact Form</div><div class="cl-sub">Message ရေးပို့မည်</div></div>
+  </a>
+</main>
+<footer>© 2026 CinePodma. All rights reserved.</footer>
+<script>
+function toggle(btn){
+  var item=btn.closest('.faq-item');
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>
