@@ -333,8 +333,8 @@ footer {
 
 <!-- NAV -->
 <nav>
-  <a class="brand" href="index.html">cine<br><span>podma</span></a>
-  <a class="nav-back" href="index.html">← Home</a>
+  <a class="brand" href="/home">cine<br><span>podma</span></a>
+  <a class="nav-back" href="/home">← Home</a>
 </nav>
 
 <main>
@@ -498,7 +498,7 @@ function renderBatch() {
   batch.forEach(function(u) {
     var card = document.createElement('a');
     card.className = 'pm-card';
-    card.href      = 'profile.html?uid=' + u.uid;
+    card.href      = '/profile?uid=' + u.uid;
 
     var count = u.clapperCount || 0;
     var countStr = count >= 1000 ? (count / 1000).toFixed(1) + 'K' : count;
@@ -549,4 +549,3 @@ loadUsers();
 </script>
 </body>
 </html>
-
