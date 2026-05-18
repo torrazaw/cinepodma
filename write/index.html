@@ -59,8 +59,9 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .ws{flex:1;overflow:auto;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:32px 24px 100px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
 .scaler{display:flex;flex-direction:column;align-items:center;gap:20px;transform-origin:top center;flex-shrink:0;}
 
-/* A4 PAGE — fixed height like real paper */
-.page{width:var(--pw);height:var(--ph);background:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.14),0 8px 28px rgba(0,0,0,.16);position:relative;flex-shrink:0;overflow:hidden;}
+/* A4 PAGE */
+.page{width:var(--pw);min-height:var(--ph);background:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.14),0 8px 28px rgba(0,0,0,.16);position:relative;flex-shrink:0;}
+.page.fixed-h{height:var(--ph);overflow:hidden;}
 .page-num{position:absolute;top:18px;right:32px;font-family:var(--font-en);font-size:9px;color:var(--slate-lt);letter-spacing:.5px;pointer-events:none;}
 
 /* COVER */
@@ -81,8 +82,19 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .sec-ta{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);resize:none;overflow-y:auto;}
 .sec-ta::placeholder{color:#CCC;font-style:normal;}
 
-/* SCREENPLAY AREA — grows, page clips */
-.sp-area{width:100%;height:100%;padding:var(--pad);box-sizing:border-box;overflow:hidden;}
+/* SCREENPLAY AREA — grows with content, no page split */
+.sp-area{
+  width:100%;
+  min-height:calc(var(--ph) - var(--pad)*2);
+  padding:var(--pad);
+  box-sizing:border-box;
+}
+
+/* page height auto for screenplay */
+.page.sp-page{
+  height:auto;
+  min-height:var(--ph);
+}
 
 /* Screenplay elements */
 .el{margin-bottom:2px;}
@@ -558,9 +570,14 @@ function goTab(tab,btn){
   document.getElementById('btb').classList.remove('on');
   if(tab==='screenplay'){
     spPages.forEach(function(p){p.pageEl.style.display='';});
-    if(spPages.length===0) addSpPage();
+    if(spPages.length===0){
+      addSpPage();
+      /* auto-insert first action element so cursor appears */
+      setTimeout(function(){
+        if(els.length===0) ins('action');
+      },50);
+    }
     document.getElementById('btb').classList.add('on');
-    /* focus last element */
     if(els.length>0){var last=els[els.length-1].ce;setTimeout(function(){last.focus();},50);}
   } else {
     var pg=tabPages[tab];
@@ -575,7 +592,9 @@ var secPH={logline:'ဇာတ်ကားတစ်ကားလုံး၏ အ�
 
 function buildSecPage(tab){
   var scaler=document.getElementById('scaler');
-  var pg=document.createElement('div');pg.className='page';pg.id='pg-'+tab;pg.style.display='none';
+  var pg=document.createElement('div');
+  pg.className='page fixed-h';
+  pg.id='pg-'+tab;pg.style.display='none';
   var pn=document.createElement('div');pn.className='page-num';
   if(tab==='cover'){
     pn.textContent='Cover';pg.appendChild(pn);
@@ -610,12 +629,13 @@ function addSpPage(){
   if(curTab!=='screenplay')pg.style.display='none';
   var pn=document.createElement('div');pn.className='page-num';pn.textContent='p. '+num;pg.appendChild(pn);
   var area=document.createElement('div');area.className='sp-area';area.id='sp-area-'+num;
-  /* click on empty area → focus last element or insert action */
+  /* click on blank area → focus last element in this page */
   area.addEventListener('click',function(e){
-    if(e.target===area||e.target===pg){
-      var lastCe=area.querySelector('.el:last-child .el-ce');
-      if(lastCe){ lastCe.focus(); var r=document.createRange();r.selectNodeContents(lastCe);r.collapse(false);var s=window.getSelection();s.removeAllRanges();s.addRange(r); }
-      else{ ins('action'); }
+    if(e.target!==area&&e.target!==pg) return;
+    var lastCe=area.querySelector('.el:last-child .el-ce');
+    if(lastCe){
+      lastCe.focus();
+      try{var r=document.createRange();r.selectNodeContents(lastCe);r.collapse(false);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(ex){}
     }
   });
   pg.appendChild(area);scaler.appendChild(pg);
@@ -674,57 +694,10 @@ function ins(type){
   autoSave();
 }
 
-/* OVERFLOW CHECK */
-function scheduleOverflow(delay){
-  clearTimeout(ovT);
-  ovT=setTimeout(checkOverflow, delay||800);
-}
-
-function checkOverflow(){
-  var changed=false;
-
-  /* Forward: push overflow elements to next page */
-  for(var i=0;i<spPages.length;i++){
-    var area=spPages[i].areaEl;
-    var elems=Array.from(area.querySelectorAll('.el'));
-    while(area.scrollHeight>USABLE && elems.length>1){
-      var last=elems.pop();
-      if(i+1>=spPages.length) addSpPage();
-      spPages[i+1].areaEl.insertBefore(last,spPages[i+1].areaEl.firstChild);
-      changed=true;
-    }
-  }
-
-  /* Backward: pull elements back if prev page has room */
-  for(var j=1;j<spPages.length;j++){
-    var prevArea=spPages[j-1].areaEl;
-    var thisArea=spPages[j].areaEl;
-    var firstEl=thisArea.querySelector('.el');
-    if(!firstEl) continue;
-    /* test if it fits */
-    prevArea.appendChild(firstEl);
-    if(prevArea.scrollHeight>USABLE){
-      thisArea.insertBefore(firstEl,thisArea.firstChild);
-    } else {
-      changed=true;
-    }
-  }
-
-  if(changed) cleanEmptyPages();
-}
-
-function cleanEmptyPages(){
-  /* remove trailing empty sp pages */
-  for(var i=spPages.length-1;i>0;i--){
-    var area=spPages[i].areaEl;
-    if(area.querySelectorAll('.el').length===0){
-      spPages[i].pageEl.remove();
-      spPages.splice(i,1);
-    } else {
-      break;
-    }
-  }
-}
+/* OVERFLOW — disabled, sp-area grows with content */
+function scheduleOverflow(delay){ /* noop */ }
+function checkOverflow(){ /* noop */ }
+function cleanEmptyPages(){ /* noop */ }
 
 function removeEl(wrap,id){
   var prev=wrap.previousElementSibling;
