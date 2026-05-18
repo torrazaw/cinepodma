@@ -1260,7 +1260,7 @@ footer {
 /* ══ PODMATES PREVIEW ══ */
 .pm-preview-section {
   padding: 60px 24px 56px;
-  background: var(--red);
+  background: var(--black);
   border-top: none;
 }
 .pm-preview-inner {
@@ -1347,14 +1347,13 @@ footer {
   text-align: center;
 }
 
-/* CTA Button */
 .pm-cta-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 14px 28px;
   background: var(--white);
-  color: var(--red);
+  color: var(--black);
   border-radius: 99px;
   text-decoration: none;
   font-family: var(--font-my);
@@ -1362,12 +1361,12 @@ footer {
   font-weight: 700;
   line-height: 1.6;
   transition: all .18s;
-  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
 }
 .pm-cta-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0,0,0,.2);
-  background: #FFF5F5;
+  box-shadow: 0 8px 28px rgba(0,0,0,.4);
+  background: #F5F5F5;
 }
 .pm-cta-icon { font-size: 18px; }
 .pm-cta-arr {
@@ -1409,22 +1408,22 @@ footer {
 <!-- ══════ FULL-PAGE MENU ══════ -->
 <div class="full-menu" id="fullMenu">
   <div class="menu-nav">
-    <a class="menu-link" href="write.html">
+    <a class="menu-link" href="/write">
       <span class="icon">✍</span> Write
     </a>
-    <a class="menu-link" href="podmates.html">
+    <a class="menu-link" href="/podmates">
       <span class="icon">👥</span> Podmates
     </a>
-    <a class="menu-link" href="library.html">
+    <a class="menu-link" href="/library">
       <span class="icon">📚</span> Library
     </a>
-    <a class="menu-link" href="#" onclick="showPage('about'); closeMenu()">
+    <a class="menu-link" href="/about">
       <span class="icon">◎</span> About
     </a>
-    <a class="menu-link" href="#" onclick="showPage('contact'); closeMenu()">
+    <a class="menu-link" href="/contact">
       <span class="icon">✉</span> Contact
     </a>
-    <a class="menu-link" href="#" onclick="showPage('support'); closeMenu()">
+    <a class="menu-link" href="/support">
       <span class="icon">♡</span> Support
     </a>
   </div>
@@ -1452,7 +1451,8 @@ footer {
       </p>
 
       <div class="auth-row" id="heroAuthRow">
-        <a class="btn btn-red" href="write.html">✍ ဇာတ်လမ်းရေးမည်</a>
+        <a class="btn btn-red" href="/write">✍ တတ်လမ်းရေးမည်</a>
+        <a class="btn btn-outline" href="/library">📚 စာဖတ်မည်</a>
         <button class="btn btn-outline" onclick="openAuthModal('signup')">အကောင့်ဖွင့်မည်</button>
         <button class="btn btn-ghost" onclick="openAuthModal('signin')">အကောင့်ဝင်မည်</button>
       </div>
@@ -1497,7 +1497,7 @@ footer {
       </div>
 
       <!-- CTA -->
-      <a class="pm-cta-btn" href="podmates.html">
+      <a class="pm-cta-btn" href="/podmates">
         <span class="pm-cta-icon">🎬</span>
         <span>Podmates ကြည့်မည်</span>
         <span class="pm-cta-arr">→</span>
@@ -1819,7 +1819,7 @@ function showPage(id) {
   window.scrollTo(0, 0);
 
   if (id === 'write') {
-    window.location.href = 'write.html';
+    window.location.href = '/write';
   }
 }
 
@@ -2144,7 +2144,7 @@ async function loadPmPreview(){
         :'👤';
       var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
       return(
-        '<a class="pm-av-item" href="profile.html?uid='+u.uid+'">'+
+        '<a class="pm-av-item" href="/profile?uid='+u.uid+'">'+
           '<div class="pm-av-circle '+sz+'">'+avatarHtml+'</div>'+
           '<span class="pm-av-clap">👏 '+countStr+'</span>'+
           '<span class="pm-av-name">'+(u.name||'Podmate')+'</span>'+
@@ -2245,17 +2245,18 @@ onAuthStateChanged(auth, async function(user) {
 
     /* nav: avatar only — no sign out */
     area.innerHTML =
-      '<a class="nav-user" href="profile.html">' +
+      '<a class="nav-user" href="/profile">' +
         '<div class="nav-avatar">' +
           (photoUrl ? '<img src="' + photoUrl + '" alt="">' : initial) +
         '</div>' +
       '</a>';
 
-    /* hero: write + profile */
+    /* hero: write + library + profile */
     if (heroRow) {
       heroRow.innerHTML =
-        '<a class="btn btn-red" href="write.html">✍ ဇာတ်လမ်းရေးမည်</a>' +
-        '<a class="btn btn-outline" href="profile.html">👤 Profile</a>';
+        '<a class="btn btn-red" href="/write">✍ တတ်လမ်းရေးမည်</a>' +
+        '<a class="btn btn-outline" href="/library">📚 စာဖတ်မည်</a>' +
+        '<a class="btn btn-outline" href="/profile">👤 Profile</a>';
     }
     if (guestNote) guestNote.style.display = 'none';
 
@@ -2279,7 +2280,7 @@ onAuthStateChanged(auth, async function(user) {
 
     if (heroRow) {
       heroRow.innerHTML =
-        '<a class="btn btn-red" href="write.html">✍ ဇာတ်လမ်းရေးမည်</a>' +
+        '<a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a>' +
         '<button class="btn btn-outline" onclick="openAuthModal(\'signup\')">အကောင့်ဖွင့်မည်</button>' +
         '<button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်ဝင်မည်</button>';
     }
@@ -2317,7 +2318,7 @@ window.submitAuth = async function() {
         created: new Date().toISOString()
       });
       closeAuthModal();
-      window.location.href = 'onboarding.html';
+      window.location.href = '/onboarding';
     } else {
       await signInWithEmailAndPassword(auth, email, password);
     }
@@ -2346,7 +2347,7 @@ window.signInWithGoogle = async function() {
     /* check onboarded */
     var snap = await getDoc(doc(db, 'users', user.uid));
     if (!snap.exists() || snap.data().onboarded !== true) {
-      window.location.href = 'onboarding.html';
+      window.location.href = '/onboarding';
     }
   } catch(e) {
     document.getElementById('authError').textContent = 'Google sign in မအောင်မြင်ပါ';
@@ -2355,4 +2356,3 @@ window.signInWithGoogle = async function() {
 </script>
 </body>
 </html>
-
