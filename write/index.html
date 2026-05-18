@@ -223,6 +223,32 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .toast{position:fixed;bottom:68px;right:20px;background:var(--black);color:var(--white);font-family:var(--font-my);font-style:normal;font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;transform:translateY(40px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;}
 .toast.on{transform:translateY(0);opacity:1;}
 
+/* PAGE BOUNDARY — dashed line between A4 pages */
+.page-boundary{
+  width:calc(100% - var(--pad)*2);
+  margin:0 auto;
+  border-top:1.5px dashed #CCC;
+  position:relative;
+}
+.page-boundary::before{
+  content:attr(data-pg);
+  position:absolute;
+  right:0;
+  top:-9px;
+  font-family:var(--font-en);
+  font-size:8px;
+  color:#BBB;
+  background:var(--white);
+  padding:0 4px;
+  letter-spacing:.5px;
+}
+
+/* UNDO/REDO mobile */
+.ur-btns{display:flex;gap:2px;}
+.ur-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:7px;background:transparent;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--black);transition:all .12s;}
+.ur-btn:hover{background:var(--slate-bg);}
+.ur-btn:disabled{opacity:.3;cursor:not-allowed;}
+
 /* RESPONSIVE */
 @media(max-width:860px){.ws{padding:20px 0 80px;}.zr{display:none;}}
 @media(max-width:600px){.topbar{padding:0 10px;gap:6px;}.hm{display:none;}}
@@ -234,13 +260,19 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="tb-l">
-    <a class="back" href="index.html">← Home</a>
+    <a class="back" href="/home">← Home</a>
     <span class="sv" id="sv">—</span>
   </div>
   <div class="tb-c">
     <input class="title-in" id="docTitle" type="text" placeholder="ခေါင်းစဉ်" autocomplete="off" oninput="syncTitle()">
   </div>
-  <div class="tb-r" id="tbr"></div>
+  <div class="tb-r" id="tbr">
+    <!-- page indicator (screenplay only) -->
+    <span class="pg-ind" id="pgInd" style="display:none;font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:.5px;white-space:nowrap;"></span>
+    <!-- undo/redo -->
+    <button class="btn btn-g btn-s hm" id="undoBtn" onclick="doUndo()" title="Undo Ctrl+Z" style="display:none;">↩</button>
+    <button class="btn btn-g btn-s hm" id="redoBtn" onclick="doRedo()" title="Redo Ctrl+Y" style="display:none;">↪</button>
+  </div>
 </div>
 
 <!-- NEW DOC -->
@@ -308,6 +340,11 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 
 <!-- SCREENPLAY BOTTOM TOOLBAR -->
 <div class="btb" id="btb">
+  <div class="ur-btns" style="flex-shrink:0;">
+    <button class="ur-btn" onclick="doUndo()" title="Undo">↩</button>
+    <button class="ur-btn" onclick="doRedo()" title="Redo">↪</button>
+  </div>
+  <div class="bs"></div>
   <button class="bb" onclick="ins('scene')"><span class="bt">INT/EXT</span><span class="bl">မြင်ကွင်း</span></button>
   <button class="bb" onclick="ins('action')"><span class="bt">ACTION</span><span class="bl">အကြောင်းအရာ</span></button>
   <button class="bb" onclick="ins('char')"><span class="bt">CHAR</span><span class="bl">ဇာတ်ကောင်</span></button>
@@ -446,8 +483,105 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 /* STATE */
 var docType='', docPriv='private', savePriv='private', docId='', docGenre='';
 var selType='', selPriv='private', selGenre='';
+var curTab='cover', zoomLv=100;
+var els=[], lastEl=null;
+var spPages=[];
+var autoT=null, ovT=null;
 
-var storyGenres=[
+/* UNDO/REDO STACK */
+var undoStack=[], redoStack=[], MAX_UNDO=50;
+var isUndoRedo=false;
+
+function pushUndo(){
+  if(isUndoRedo) return;
+  var state=collectSpState();
+  undoStack.push(state);
+  if(undoStack.length>MAX_UNDO) undoStack.shift();
+  redoStack=[];
+}
+
+function collectSpState(){
+  return els.map(function(e){return{id:e.id,type:e.type,text:e.ce.textContent};});
+}
+
+function applySpState(state){
+  isUndoRedo=true;
+  /* clear current elements */
+  els=[];lastEl=null;
+  spPages.forEach(function(p){p.areaEl.innerHTML='';});
+  /* rebuild */
+  state.forEach(function(s){ ins(s.type); });
+  var ces=document.querySelectorAll('.el .el-ce');
+  state.forEach(function(s,i){if(ces[i])ces[i].textContent=s.text;});
+  isUndoRedo=false;
+  updatePageIndicator();
+}
+
+function doUndo(){
+  if(undoStack.length===0) return;
+  var cur=collectSpState();
+  redoStack.push(cur);
+  var prev=undoStack.pop();
+  applySpState(prev);
+  toast('↩ Undo');
+}
+
+function doRedo(){
+  if(redoStack.length===0) return;
+  var cur=collectSpState();
+  undoStack.push(cur);
+  var next=redoStack.pop();
+  applySpState(next);
+  toast('↪ Redo');
+}
+
+/* PAGE INDICATOR + BOUNDARY */
+var A4_H=1123, PAD_V=96;
+var USABLE_H=A4_H - PAD_V*2; /* 931px */
+
+function updatePageIndicator(){
+  if(curTab!=='screenplay') return;
+  var area=document.querySelector('.sp-area');
+  if(!area) return;
+  var totalH=area.scrollHeight;
+  var totalPages=Math.max(1,Math.ceil(totalH/USABLE_H));
+  /* current page from scroll */
+  var ws=document.getElementById('ws');
+  var scrollY=ws?ws.scrollTop:0;
+  var curPage=Math.min(totalPages,Math.max(1,Math.ceil((scrollY/zoomLv*100+1)/USABLE_H)));
+  var ind=document.getElementById('pgInd');
+  if(ind){ind.style.display='';ind.textContent='p. '+curPage+' / '+totalPages;}
+  renderBoundaries(area,totalH,totalPages);
+}
+
+function renderBoundaries(area,totalH,totalPages){
+  /* remove old boundaries */
+  area.querySelectorAll('.page-boundary').forEach(function(b){b.remove();});
+  if(totalPages<=1) return;
+  /* find elements that cross page boundaries */
+  var areaTop=area.getBoundingClientRect().top;
+  for(var pg=1;pg<totalPages;pg++){
+    var boundaryY=pg*USABLE_H;
+    /* find element after boundary */
+    var elems=Array.from(area.querySelectorAll('.el'));
+    for(var i=0;i<elems.length;i++){
+      var elTop=elems[i].getBoundingClientRect().top - areaTop + (document.getElementById('ws')||{scrollTop:0}).scrollTop;
+      if(elTop>boundaryY){
+        var div=document.createElement('div');
+        div.className='page-boundary';
+        div.setAttribute('data-pg','p.'+(pg+1));
+        area.insertBefore(div,elems[i]);
+        break;
+      }
+    }
+  }
+}
+
+/* scroll → update page indicator */
+function initPageIndicatorScroll(){
+  var ws=document.getElementById('ws');
+  if(ws) ws.addEventListener('scroll',function(){updatePageIndicator();});
+}
   {id:'novel',icon:'📗',name:'ဝတ္ထု'},
   {id:'short',icon:'📄',name:'ဝတ္ထုတို'},
   {id:'essay',icon:'✍️',name:'ဆောင်းပါး'},
@@ -572,13 +706,13 @@ function goTab(tab,btn){
     spPages.forEach(function(p){p.pageEl.style.display='';});
     if(spPages.length===0){
       addSpPage();
-      /* auto-insert first action element so cursor appears */
-      setTimeout(function(){
-        if(els.length===0) ins('action');
-      },50);
+      setTimeout(function(){if(els.length===0) ins('action');},50);
     }
     document.getElementById('btb').classList.add('on');
+    document.getElementById('pgInd').style.display='';
     if(els.length>0){var last=els[els.length-1].ce;setTimeout(function(){last.focus();},50);}
+    initPageIndicatorScroll();
+    setTimeout(updatePageIndicator,100);
   } else {
     var pg=tabPages[tab];
     if(!pg) pg=buildSecPage(tab);
@@ -666,7 +800,12 @@ function ins(type){
   var wrap=document.createElement('div');wrap.className='el '+cfg.cls;wrap.dataset.id=id;wrap.dataset.type=type;
   var ce=document.createElement('div');ce.className='el-ce';ce.contentEditable='true';
   ce.setAttribute('data-ph',cfg.ph);ce.spellcheck=false;
-  ce.addEventListener('input',function(){autoSave();scheduleOverflow(800);});
+  ce.addEventListener('input',function(){
+    pushUndo();
+    autoSave();
+    scheduleOverflow(800);
+    updatePageIndicator();
+  });
   ce.addEventListener('focus',function(){lastEl=wrap;});
   ce.addEventListener('keydown',function(e){
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ins(cfg.next);return;}
@@ -909,7 +1048,7 @@ function doSave(){
       toast('✅ သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));
       /* redirect after toast visible */
       setTimeout(function(){
-        window.location.href='profile.html';
+        window.location.href='/profile';
       },1800);
     }).catch(function(e){
       console.error('cloudSave error',e);
@@ -1123,6 +1262,8 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('keydown',function(e){
   if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openSaveModal();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();doUndo();}
+  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();doRedo();}
   if(e.key==='Escape')['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);
 });
 
