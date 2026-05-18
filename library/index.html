@@ -5,31 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Library — CinePodma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --white:#FFFFFF; --black:#0A0A0A;
-  --slate:#6B7280; --slate-lt:#9CA3AF; --slate-bg:#F3F4F6;
-  --border:#E5E7EB; --red:#DC2626; --red-h:#B91C1C;
-  --radius:16px;
+:root{
+  --white:#FFFFFF;--black:#0A0A0A;
+  --slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;
+  --border:#E5E7EB;--red:#DC2626;--red-h:#B91C1C;
   --font-en:'Special Elite','Courier New',monospace;
   --font-my:'Noto Sans Myanmar',sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
 .brand{font-family:var(--font-en);font-size:13px;color:var(--black);text-decoration:none;line-height:1.3;}
 .brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
-.back-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
-.back-btn:hover{background:var(--slate-bg);color:var(--black);}
+.nav-r{display:flex;align-items:center;gap:8px;}
+.nav-btn{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
+.nav-btn:hover{background:var(--slate-bg);color:var(--black);}
+.nav-btn.red{background:var(--red);color:var(--white);border-color:var(--red);}
+.nav-btn.red:hover{background:var(--red-h);}
+.nav-user-av{width:32px;height:32px;border-radius:50%;background:var(--slate-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;cursor:pointer;text-decoration:none;}
+.nav-user-av img{width:100%;height:100%;object-fit:cover;}
 
 /* MAIN */
 main{flex:1;padding:80px 24px 60px;max-width:960px;margin:0 auto;width:100%;}
 
-/* PAGE HEADER */
+/* HEADER */
 .page-hdr{margin-bottom:24px;}
 .page-title{font-family:var(--font-en);font-size:28px;letter-spacing:.5px;color:var(--black);margin-bottom:4px;}
 .page-div{width:40px;height:2px;background:var(--red);border-radius:2px;margin-bottom:6px;}
@@ -38,18 +42,18 @@ main{flex:1;padding:80px 24px 60px;max-width:960px;margin:0 auto;width:100%;}
 /* SEARCH */
 .search-wrap{position:relative;margin-bottom:16px;}
 .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--slate-lt);pointer-events:none;}
-.search-input{width:100%;padding:11px 16px 11px 42px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;line-height:1.8;}
+.search-input{width:100%;padding:11px 16px 11px 42px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;line-height:1.8;background:var(--white);}
 .search-input:focus{border-color:var(--black);}
 
 /* TABS */
-.lib-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto;scrollbar-width:none;}
+.lib-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto;scrollbar-width:none;}
 .lib-tabs::-webkit-scrollbar{display:none;}
 .lib-tab{padding:12px 20px;border:none;background:transparent;font-family:var(--font-my);font-size:14px;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;line-height:1.6;}
 .lib-tab:hover{color:var(--black);}
 .lib-tab.active{color:var(--black);border-bottom-color:var(--red);font-weight:600;}
 
-/* FILTER ROW */
-.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+/* FILTER */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
 .filter-btn{padding:6px 14px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;transition:all .15s;line-height:1.8;white-space:nowrap;}
 .filter-btn:hover,.filter-btn.active{background:var(--black);border-color:var(--black);color:var(--white);}
 
@@ -63,79 +67,54 @@ main{flex:1;padding:80px 24px 60px;max-width:960px;margin:0 auto;width:100%;}
 /* GRID */
 .lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:32px;}
 
-/* CARD — vertical poster style */
-.lib-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);text-decoration:none;color:var(--black);display:block;}
-.lib-card:hover{border-color:var(--black);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.1);}
+/* CARD */
+.lib-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);text-decoration:none;color:var(--black);display:flex;flex-direction:column;}
+.lib-card:hover{border-color:#CCC;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
 
-/* Poster — 2:3 ratio */
-.lib-poster{width:100%;aspect-ratio:2/3;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-.lib-poster-img{width:100%;height:100%;object-fit:cover;display:block;}
-.lib-poster-gradient{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:16px;}
-.lib-poster-letter{font-family:var(--font-my);font-size:32px;font-weight:700;color:rgba(255,255,255,.9);text-align:center;line-height:1.4;word-break:break-word;}
-.lib-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:99px;font-family:var(--font-en);font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
-.badge-mm{background:rgba(220,38,38,.9);color:white;}
-.badge-int{background:rgba(10,10,10,.8);color:white;}
-.badge-story{background:rgba(59,130,246,.9);color:white;}
-.badge-sp{background:rgba(16,185,129,.9);color:white;}
-.lib-type-icon{position:absolute;bottom:8px;right:8px;font-size:16px;opacity:.85;}
+/* Poster — solid light gray bg */
+.lib-poster{width:100%;aspect-ratio:2/3;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.lib-poster-letter{font-family:var(--font-my);font-size:36px;font-weight:700;color:#C0C0C0;}
+.lib-poster img{width:100%;height:100%;object-fit:cover;}
+
+/* Genre badge */
+.lib-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:6px;font-family:var(--font-my);font-size:10px;font-weight:600;background:rgba(0,0,0,.65);color:var(--white);backdrop-filter:blur(4px);}
+
+/* Clap on card */
+.card-clap{position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;background:rgba(255,255,255,.92);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:600;color:var(--black);cursor:pointer;border:none;transition:all .15s;backdrop-filter:blur(4px);}
+.card-clap:hover{background:var(--white);transform:scale(1.05);}
+.card-clap.clapped{background:var(--red);color:var(--white);}
 
 /* Card body */
-.lib-body{padding:10px 12px;}
-.lib-title{font-family:var(--font-my);font-size:13px;font-weight:600;color:var(--black);margin-bottom:3px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lib-body{padding:10px 12px;flex:1;}
+.lib-title{font-size:13px;font-weight:600;color:var(--black);margin-bottom:3px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .lib-author{font-size:11px;color:var(--slate-lt);line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lib-meta{font-size:10px;color:var(--slate-lt);margin-top:4px;line-height:1.4;}
 
-/* LOADING / EMPTY */
+/* EMPTY / LOADING */
 .state-msg{grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--slate-lt);font-size:14px;line-height:2;}
 .spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* LOAD MORE */
-.load-more-wrap{text-align:center;margin-top:8px;}
-.load-more-btn{padding:11px 32px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font-my);font-size:13px;color:var(--black);cursor:pointer;transition:all .15s;line-height:1.8;}
-.load-more-btn:hover{background:var(--black);color:var(--white);border-color:var(--black);}
-
-/* PDF VIEWER */
-.pdf-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);z-index:700;flex-direction:column;}
-.pdf-ov.open{display:flex;}
-.pdf-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px;}
-.pdf-title{font-family:var(--font-my);font-size:14px;font-weight:600;color:var(--black);line-height:1.6;flex:1;}
-.pdf-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
-.pdf-close:hover{background:var(--black);color:var(--white);border-color:var(--black);}
-.pdf-body{flex:1;overflow:hidden;background:#525659;}
-.pdf-body iframe{width:100%;height:100%;border:none;display:block;}
-.pdf-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ccc;font-family:var(--font-my);font-size:14px;line-height:2;text-align:center;padding:24px;}
-
-/* STORY READER OVERLAY */
-.reader-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);z-index:700;flex-direction:column;}
-.reader-ov.open{display:flex;}
-.reader-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px;}
-.reader-title{font-family:var(--font-my);font-size:14px;font-weight:600;color:var(--black);line-height:1.6;flex:1;}
-.reader-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.reader-close:hover{background:var(--black);color:var(--white);border-color:var(--black);}
-.reader-body{flex:1;overflow-y:auto;background:var(--white);}
-.reader-content{max-width:680px;margin:0 auto;padding:48px 32px;font-family:var(--font-my);font-size:16px;line-height:2.2;color:var(--black);}
-.reader-content h1{font-size:24px;font-weight:700;text-align:center;margin-bottom:8px;line-height:1.6;}
-.reader-content .r-author{text-align:center;color:var(--slate);font-size:13px;margin-bottom:40px;}
-.reader-content .r-divider{width:40px;height:1px;background:var(--border);margin:32px auto;}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:20px;background:var(--black);color:var(--white);font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;transform:translateY(40px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;}
+.toast.on{transform:translateY(0);opacity:1;}
 
 /* FOOTER */
-footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:18px 28px;text-align:center;}
+footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16px 28px;text-align:center;}
 .footer-text{font-family:var(--font-en);font-size:11px;color:var(--slate);letter-spacing:.5px;}
 
 @media(max-width:600px){
   main{padding:72px 12px 48px;}
-  nav{padding:14px 18px;}
   .lib-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
-  .lib-body{padding:8px 10px;}
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="brand" href="index.html">cine<br><span>podma</span></a>
-  <a class="back-btn" href="index.html">← Home</a>
+  <a class="brand" href="/home">cine<br><span>podma</span></a>
+  <div class="nav-r" id="navR">
+    <a class="nav-btn" href="/write">✍ ရေးမည်</a>
+  </div>
 </nav>
 
 <main>
@@ -145,316 +124,200 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:18p
     <p class="page-sub" id="libSub">ဇာတ်ညွှန်းနှင့် ဝတ္ထုများ — အားလုံး အခမဲ့ဖတ်ရှုနိုင်</p>
   </div>
 
-  <!-- Search -->
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input class="search-input" id="searchIn" type="text" placeholder="ခေါင်းစဉ်၊ ရေးသားသူ ရှာပါ..." oninput="onSearch(this.value)">
   </div>
 
-  <!-- Tabs -->
   <div class="lib-tabs">
-    <button class="lib-tab active" onclick="setLibTab('admin',this)">ပြည်တွင်း / ပြည်ပ</button>
-    <button class="lib-tab" onclick="setLibTab('podmates',this)">Podmates</button>
+    <button class="lib-tab active" id="tabPodmates" onclick="setTab('podmates',this)">Podmates</button>
+    <button class="lib-tab" id="tabAdmin" onclick="setTab('admin',this)">ပြည်တွင်း / ပြည်ပ</button>
   </div>
 
-  <!-- Admin tab filters -->
-  <div id="adminFilters">
-    <div class="filter-row">
-      <button class="filter-btn active" onclick="setFilter('all',this)">အားလုံး</button>
-      <button class="filter-btn" onclick="setFilter('mm',this)">🇲🇲 ပြည်တွင်း</button>
-      <button class="filter-btn" onclick="setFilter('int',this)">🌐 ပြည်ပ</button>
-    </div>
-  </div>
-
-  <!-- Podmates tab filters -->
-  <div id="pmFilters" style="display:none;">
+  <!-- Podmates filters -->
+  <div id="pmFilters">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setPmFilter('all',this)">အားလုံး</button>
-      <button class="filter-btn" onclick="setPmFilter('screenplay',this)">🎬 Screenplay</button>
-      <button class="filter-btn" onclick="setPmFilter('story',this)">📖 Story</button>
+      <button class="filter-btn" onclick="setPmFilter('screenplay',this)">🎬 ဇာတ်ညွှန်း</button>
+      <button class="filter-btn" onclick="setPmFilter('story',this)">📖 ဝတ္ထု</button>
     </div>
   </div>
 
-  <!-- Sort -->
+  <!-- Admin filters -->
+  <div id="adminFilters" style="display:none;">
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setAdminFilter('all',this)">အားလုံး</button>
+      <button class="filter-btn" onclick="setAdminFilter('mm',this)">🇲🇲 ပြည်တွင်း</button>
+      <button class="filter-btn" onclick="setAdminFilter('int',this)">🌐 ပြည်ပ</button>
+    </div>
+  </div>
+
   <div class="sort-row">
     <span class="result-count" id="resultCount"></span>
-    <div class="sort-btns" id="sortBtns">
+    <div class="sort-btns">
       <button class="sort-btn active" onclick="setSort('newest',this)">Newest</button>
       <button class="sort-btn" onclick="setSort('title',this)">A–Z</button>
+      <button class="sort-btn" onclick="setSort('claps',this)">👏 Claps</button>
     </div>
   </div>
 
-  <!-- Grid -->
   <div class="lib-grid" id="libGrid">
     <div class="state-msg"><div class="spinner"></div>ဖွင့်နေသည်...</div>
   </div>
-
-  <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
-    <button class="load-more-btn" onclick="loadMore()">နောက်ထပ် ထပ်ကြည့်မည်</button>
-  </div>
 </main>
 
-<footer>
-  <span class="footer-text">© 2026 CinePodma. All rights reserved.</span>
-</footer>
-
-<!-- PDF VIEWER -->
-<div class="pdf-ov" id="pdfViewer">
-  <div class="pdf-hdr">
-    <span class="pdf-title" id="pdfTitle">—</span>
-    <button class="pdf-close" onclick="closePdf()">✕</button>
-  </div>
-  <div class="pdf-body" id="pdfBody">
-    <div class="pdf-ph"><span style="font-size:48px;">📄</span><span>PDF ဖတ်ရှုနေသည်...</span></div>
-  </div>
-</div>
-
-<!-- STORY READER -->
-<div class="reader-ov" id="storyReader">
-  <div class="reader-hdr">
-    <span class="reader-title" id="readerTitle">—</span>
-    <button class="reader-close" onclick="closeReader()">✕</button>
-  </div>
-  <div class="reader-body">
-    <div class="reader-content" id="readerContent"></div>
-  </div>
-</div>
+<footer><span class="footer-text">© 2026 CinePodma. All rights reserved.</span></footer>
+<div class="toast" id="toast"></div>
 
 <script>
-/* ══ ADMIN DATA (static — admin တင်မည်) ══ */
+/* STATE */
+var curTab='podmates', pmFilter='all', adminFilter='all', sortBy='newest', searchQ='';
+var pmDocs=[], currentUser=null;
+var myClaps={}; /* docId → true */
+
+var genreLabels={
+  novel:'ဝတ္ထု', short:'ဝတ္ထုတို', essay:'ဆောင်းပါး', poem:'ကဗျာ',
+  feature:'ဇာတ်ညွှန်း', shortfilm:'ဇာတ်ညွှန်းတို', series:'စီးရီး'
+};
+
 var adminDocs=[
-  {id:'admin-1',cat:'mm',type:'screenplay',title:'ချစ်ရသောမြို့တော်',author:'Admin',year:'၂၀၁၈',genre:'Drama',pdfUrl:null},
-  {id:'admin-2',cat:'int',type:'screenplay',title:'Parasite',author:'Bong Joon-ho',year:'2019',genre:'Thriller',pdfUrl:null},
-  {id:'admin-3',cat:'int',type:'screenplay',title:'Pulp Fiction',author:'Quentin Tarantino',year:'1994',genre:'Crime',pdfUrl:null},
-  {id:'admin-4',cat:'mm',type:'screenplay',title:'နမူနာဇာတ်ညွှန်း',author:'Admin',year:'—',genre:'—',pdfUrl:null},
+  {id:'ad1',cat:'mm',type:'screenplay',title:'နမူနာဇာတ်ညွှန်း',author:'Admin',genreLabel:'ဇာတ်ညွှန်း',clapCount:0},
+  {id:'ad2',cat:'int',type:'screenplay',title:'Parasite',author:'Bong Joon-ho',genreLabel:'ဇာတ်ညွှန်း',clapCount:0},
+  {id:'ad3',cat:'int',type:'screenplay',title:'Pulp Fiction',author:'Quentin Tarantino',genreLabel:'ဇာတ်ညွှန်း',clapCount:0},
 ];
 
-/* ══ STATE ══ */
-var curLibTab='admin';
-var activeFilter='all';
-var activePmFilter='all';
-var activeSort='newest';
-var searchQ='';
-var pmDocs=[];
-var displayed=0;
-var PAGE_SIZE=20;
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
 
-/* ══ GRADIENT COLORS ══ */
-var gradients=[
-  ['#1a1a2e','#16213e'],['#2d1b69','#11998e'],['#0f2027','#203a43'],
-  ['#1e3c72','#2a5298'],['#360033','#0b8793'],['#1f4037','#99f2c8'],
-  ['#141e30','#243b55'],['#42275a','#734b6d'],['#3d0000','#a00000'],
-  ['#000428','#004e92']
-];
-function getGradient(str){
-  var h=0;for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))&0xffffffff;
-  var g=gradients[Math.abs(h)%gradients.length];
-  return'linear-gradient(135deg,'+g[0]+','+g[1]+')';
+/* GENRE LABEL */
+function getGenreLabel(d){
+  if(d.genreLabel) return d.genreLabel;
+  if(d.genre && genreLabels[d.genre]) return genreLabels[d.genre];
+  return d.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း';
 }
-function getInitial(title){return title?title.charAt(0):' ';}
 
-/* ══ BUILD CARD ══ */
+/* BUILD CARD */
 function buildCard(doc){
   var a=document.createElement('a');
   a.className='lib-card';
-  if(doc.type==='story'){
-    a.href='#';
-    a.onclick=function(e){e.preventDefault();openReader(doc);return false;};
-  } else {
-    a.href='#';
-    a.onclick=function(e){e.preventDefault();openPdf(doc.title,doc.pdfUrl);return false;};
-  }
+  a.href='/read?id='+doc.id;
 
-  /* poster */
   var poster=document.createElement('div');poster.className='lib-poster';
+
   if(doc.coverUrl){
-    var img=document.createElement('img');img.className='lib-poster-img';img.src=doc.coverUrl;img.alt=doc.title;
+    var img=document.createElement('img');img.src=doc.coverUrl;img.alt=doc.title;
     poster.appendChild(img);
   } else {
-    var grad=document.createElement('div');grad.className='lib-poster-gradient';
-    grad.style.background=getGradient(doc.title||'');
     var letter=document.createElement('div');letter.className='lib-poster-letter';
-    letter.textContent=getInitial(doc.title);
-    grad.appendChild(letter);poster.appendChild(grad);
+    letter.textContent=(doc.title||'?').charAt(0);
+    poster.appendChild(letter);
   }
 
-  /* badge */
+  /* genre badge */
   var badge=document.createElement('div');badge.className='lib-badge';
-  if(doc.source==='admin'){
-    badge.className+=' '+(doc.cat==='mm'?'badge-mm':'badge-int');
-    badge.textContent=doc.cat==='mm'?'မြန်မာ':'INT';
-  } else {
-    badge.className+=' '+(doc.type==='story'?'badge-story':'badge-sp');
-    badge.textContent=doc.type==='story'?'Story':'Screenplay';
-  }
+  badge.textContent=getGenreLabel(doc);
   poster.appendChild(badge);
 
-  /* type icon */
-  var icon=document.createElement('div');icon.className='lib-type-icon';
-  icon.textContent=doc.type==='story'?'📖':'🎬';
-  poster.appendChild(icon);
+  /* clap button */
+  var clap=document.createElement('button');clap.className='card-clap'+(myClaps[doc.id]?' clapped':'');
+  var clapCount=doc.clapCount||0;
+  clap.innerHTML='👏 '+clapCount;
+  clap.onclick=function(e){e.preventDefault();e.stopPropagation();toggleDocClap(doc,clap);};
+  poster.appendChild(clap);
 
-  /* body */
   var body=document.createElement('div');body.className='lib-body';
   var title=document.createElement('div');title.className='lib-title';title.textContent=doc.title||'Untitled';
   var author=document.createElement('div');author.className='lib-author';
-  author.textContent=(doc.authorUsername||doc.author||'—');
-  var meta=document.createElement('div');meta.className='lib-meta';
-  meta.textContent=(doc.year||'')+(doc.genre?' · '+doc.genre:'')+(doc.type?'':' · '+(doc.type||''));
-  body.appendChild(title);body.appendChild(author);body.appendChild(meta);
+  author.textContent=doc.authorUsername||doc.author||'—';
+  body.appendChild(title);body.appendChild(author);
 
   a.appendChild(poster);a.appendChild(body);
   return a;
 }
 
-/* ══ RENDER GRID ══ */
+/* RENDER */
 function renderGrid(docs){
   var grid=document.getElementById('libGrid');
-  if(docs.length===0){
-    grid.innerHTML='<div class="state-msg">ရှာမတွေ့ပါ</div>';
-    document.getElementById('loadMoreWrap').style.display='none';
-    document.getElementById('resultCount').textContent='0 ခု';
-    return;
-  }
-  var batch=docs.slice(0,PAGE_SIZE);
-  displayed=batch.length;
-  grid.innerHTML='';
-  batch.forEach(function(d){grid.appendChild(buildCard(d));});
   document.getElementById('resultCount').textContent=docs.length+' ခု';
-  document.getElementById('loadMoreWrap').style.display=docs.length>PAGE_SIZE?'':'none';
-  window._allDocs=docs;
+  if(docs.length===0){grid.innerHTML='<div class="state-msg">ရှာမတွေ့ပါ</div>';return;}
+  grid.innerHTML='';
+  docs.forEach(function(d){grid.appendChild(buildCard(d));});
 }
 
-function loadMore(){
-  var docs=window._allDocs||[];
-  var next=docs.slice(displayed,displayed+PAGE_SIZE);
-  var grid=document.getElementById('libGrid');
-  next.forEach(function(d){grid.appendChild(buildCard(d));});
-  displayed+=next.length;
-  if(displayed>=docs.length) document.getElementById('loadMoreWrap').style.display='none';
+/* FILTER + SORT */
+function applyPm(){
+  var docs=pmDocs.slice();
+  if(pmFilter!=='all') docs=docs.filter(function(d){return d.type===pmFilter;});
+  if(searchQ) docs=docs.filter(function(d){
+    var t=(d.title||'').toLowerCase();var a=(d.authorUsername||d.authorName||'').toLowerCase();
+    return t.includes(searchQ)||a.includes(searchQ);
+  });
+  if(sortBy==='newest') docs.sort(function(a,b){return (b.updatedAt||'').localeCompare(a.updatedAt||'');});
+  else if(sortBy==='title') docs.sort(function(a,b){return(a.title||'').localeCompare(b.title||'');});
+  else if(sortBy==='claps') docs.sort(function(a,b){return(b.clapCount||0)-(a.clapCount||0);});
+  renderGrid(docs);
 }
 
-/* ══ ADMIN TAB ══ */
-function loadAdmin(){
-  var docs=adminDocs.map(function(d){return Object.assign({},d,{source:'admin'});});
-  /* filter */
-  if(activeFilter!=='all') docs=docs.filter(function(d){return d.cat===activeFilter;});
-  /* search */
+function applyAdmin(){
+  var docs=adminDocs.slice();
+  if(adminFilter!=='all') docs=docs.filter(function(d){return d.cat===adminFilter;});
   if(searchQ) docs=docs.filter(function(d){
     return (d.title||'').toLowerCase().includes(searchQ)||(d.author||'').toLowerCase().includes(searchQ);
   });
-  /* sort */
-  if(activeSort==='title') docs.sort(function(a,b){return(a.title||'').localeCompare(b.title||'');});
+  if(sortBy==='title') docs.sort(function(a,b){return(a.title||'').localeCompare(b.title||'');});
   renderGrid(docs);
 }
 
-/* ══ PODMATES TAB ══ */
-function loadPodmates(){
-  var grid=document.getElementById('libGrid');
-  if(pmDocs.length===0){
-    grid.innerHTML='<div class="state-msg"><div class="spinner"></div>ဖွင့်နေသည်...</div>';
-  }
-  /* filter */
-  var docs=pmDocs.slice();
-  if(activePmFilter!=='all') docs=docs.filter(function(d){return d.type===activePmFilter;});
-  if(searchQ) docs=docs.filter(function(d){
-    return (d.title||'').toLowerCase().includes(searchQ)||(d.authorUsername||'').toLowerCase().includes(searchQ)||(d.authorName||'').toLowerCase().includes(searchQ);
-  });
-  /* sort */
-  if(activeSort==='newest') docs.sort(function(a,b){return new Date(b.updatedAt||0)-new Date(a.updatedAt||0);});
-  else docs.sort(function(a,b){return(a.title||'').localeCompare(b.title||'');});
-  renderGrid(docs);
-}
+function refresh(){if(curTab==='podmates')applyPm();else applyAdmin();}
 
-/* ══ CONTROLS ══ */
-function setLibTab(tab,btn){
-  curLibTab=tab;
+/* CONTROLS */
+function setTab(tab,btn){
+  curTab=tab;
   document.querySelectorAll('.lib-tab').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
-  document.getElementById('adminFilters').style.display=tab==='admin'?'':'none';
   document.getElementById('pmFilters').style.display=tab==='podmates'?'':'none';
-  if(tab==='admin') loadAdmin();
-  else loadPodmates();
+  document.getElementById('adminFilters').style.display=tab==='admin'?'':'none';
+  refresh();
 }
+function setPmFilter(f,btn){pmFilter=f;document.querySelectorAll('#pmFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyPm();}
+function setAdminFilter(f,btn){adminFilter=f;document.querySelectorAll('#adminFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyAdmin();}
+function setSort(s,btn){sortBy=s;document.querySelectorAll('.sort-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');refresh();}
+function onSearch(q){searchQ=q.toLowerCase().trim();refresh();}
 
-function setFilter(f,btn){
-  activeFilter=f;
-  document.querySelectorAll('#adminFilters .filter-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  loadAdmin();
+/* CLAP */
+async function toggleDocClap(doc,btn){
+  if(!currentUser){toast('👏 Clap လုပ်ရန် အကောင့်ဝင်ပါ');return;}
+  if(!window._db){toast('ချိတ်ဆက်မှု မရှိသေးပါ');return;}
+  var docId=doc.id;
+  var clapRef=window._docRef(window._db,'docClaps',docId,'users',currentUser.uid);
+  var already=myClaps[docId];
+  try{
+    if(already){
+      await window._deleteDoc(clapRef);
+      myClaps[docId]=false;
+      doc.clapCount=Math.max(0,(doc.clapCount||1)-1);
+      btn.className='card-clap';
+      toast('👏 Clap ဖြုတ်ပြီး');
+    }else{
+      await window._setDoc(clapRef,{uid:currentUser.uid,clappedAt:new Date().toISOString()});
+      /* increment clapCount on doc */
+      await window._updateDoc(window._docRef2(window._db,'docs',docId),{clapCount:window._inc(1)});
+      myClaps[docId]=true;
+      doc.clapCount=(doc.clapCount||0)+1;
+      btn.className='card-clap clapped';
+      toast('👏 Clap လုပ်ပြီး');
+    }
+    btn.innerHTML='👏 '+doc.clapCount;
+  }catch(e){toast('❌ Error: '+e.message);}
 }
-
-function setPmFilter(f,btn){
-  activePmFilter=f;
-  document.querySelectorAll('#pmFilters .filter-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  loadPodmates();
-}
-
-function setSort(s,btn){
-  activeSort=s;
-  document.querySelectorAll('.sort-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  if(curLibTab==='admin') loadAdmin();
-  else loadPodmates();
-}
-
-function onSearch(q){
-  searchQ=q.toLowerCase().trim();
-  if(curLibTab==='admin') loadAdmin();
-  else loadPodmates();
-}
-
-/* ══ PDF VIEWER ══ */
-function openPdf(title,url){
-  document.getElementById('pdfTitle').textContent=title;
-  var body=document.getElementById('pdfBody');
-  if(url){
-    body.innerHTML='<iframe src="'+url+'#toolbar=1" title="'+title+'"></iframe>';
-  } else {
-    body.innerHTML='<div class="pdf-ph"><span style="font-size:48px;">📄</span><span>'+title+'</span><span>PDF ဖိုင်ကို Admin တင်ပြီးမှ ဖတ်ရှုနိုင်မည်</span></div>';
-  }
-  document.getElementById('pdfViewer').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closePdf(){
-  document.getElementById('pdfViewer').classList.remove('open');
-  document.getElementById('pdfBody').innerHTML='';
-  document.body.style.overflow='';
-}
-
-/* ══ STORY READER ══ */
-function openReader(doc){
-  document.getElementById('readerTitle').textContent=doc.title||'—';
-  var content=document.getElementById('readerContent');
-  content.innerHTML=
-    '<h1>'+escHtml(doc.title||'')+'</h1>'+
-    '<div class="r-author">'+escHtml(doc.authorUsername||doc.authorName||'')+'</div>'+
-    '<div class="r-divider"></div>'+
-    (doc.story||'<p style="color:#ccc;font-style:italic;">Story မပါသေးပါ</p>');
-  document.getElementById('storyReader').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeReader(){
-  document.getElementById('storyReader').classList.remove('open');
-  document.body.style.overflow='';
-}
-
-function escHtml(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-/* ESC key */
-document.addEventListener('keydown',function(e){
-  if(e.key!=='Escape')return;
-  closePdf();closeReader();
-});
 </script>
 
-<!-- FIREBASE — load public docs -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getFirestore, collection, query, where, getDocs, orderBy, limit }
+import { getAuth, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import { getFirestore, collection, query, where, orderBy, limit, getDocs,
+         doc, getDoc, setDoc, deleteDoc, updateDoc, increment }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
 const firebaseConfig={
@@ -465,36 +328,92 @@ const firebaseConfig={
   messagingSenderId:"587916526322",
   appId:"1:587916526322:web:d00775311fb92fa1c8466b"
 };
+
 const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
 const db=getFirestore(app);
 
-/* Load public docs from Podmates */
-async function loadPublicDocs(){
+/* expose helpers */
+window._db=db;
+window._docRef=function(db,...path){
+  /* docClaps/docId/users/uid */
+  if(path.length===4) return doc(db,path[0],path[1],path[2],path[3]);
+  return doc(db,...path);
+};
+window._docRef2=function(db,col,id){return doc(db,col,id);};
+window._setDoc=function(ref,data){return setDoc(ref,data);};
+window._deleteDoc=function(ref){return deleteDoc(ref);};
+window._updateDoc=function(ref,data){return updateDoc(ref,data);};
+window._inc=increment;
+
+/* nav auth state */
+onAuthStateChanged(auth,async function(user){
+  currentUser=user;
+  var navR=document.getElementById('navR');
+  if(user){
+    var usnap=await getDoc(doc(db,'users',user.uid));
+    var av=usnap.exists()&&usnap.data().avatar?'<img src="'+usnap.data().avatar+'" alt="">':'👤';
+    navR.innerHTML=
+      '<a class="nav-user-av" href="/profile">'+av+'</a>'+
+      '<a class="nav-btn red" href="/write">✍ ရေးမည်</a>';
+    /* load my claps */
+    loadMyClaps(user.uid);
+  } else {
+    navR.innerHTML='<a class="nav-btn" href="/write">✍ ရေးမည်</a>';
+  }
+});
+
+/* load my clapped docs */
+async function loadMyClaps(uid){
+  /* we'll check per-doc when needed — lazy */
+}
+
+/* load public docs */
+async function loadDocs(){
   try{
-    var q=query(
-      collection(db,'docs'),
-      where('privacy','==','public'),
-      orderBy('updatedAt','desc'),
-      limit(100)
-    );
+    var q=query(collection(db,'docs'),where('privacy','==','public'),orderBy('updatedAt','desc'),limit(100));
     var snap=await getDocs(q);
-    var docs=[];
-    snap.forEach(function(d){docs.push(Object.assign({id:d.id},d.data(),{source:'podmate'}));});
-    pmDocs=docs;
-    document.getElementById('libSub').textContent=
-      'ဇာတ်ညွှန်းနှင့် ဝတ္ထုများ — Podmates '+docs.length+' ဦး၏ ရေးသားချက်များ';
-    /* if currently on podmates tab, refresh */
-    if(curLibTab==='podmates') loadPodmates();
-  }catch(e){
-    console.error('loadPublicDocs',e);
     pmDocs=[];
-    if(curLibTab==='podmates') loadPodmates();
+    snap.forEach(function(d){
+      var data=d.data();
+      pmDocs.push({
+        id:d.id,
+        title:data.title||'Untitled',
+        type:data.type||'screenplay',
+        genre:data.genre||'',
+        genreLabel:data.genreLabel||'',
+        authorName:data.authorName||'',
+        authorUsername:data.authorUsername||'',
+        coverUrl:data.coverUrl||'',
+        clapCount:data.clapCount||0,
+        updatedAt:data.updatedAt||''
+      });
+    });
+    /* if logged in — load which ones I clapped */
+    if(currentUser){
+      await loadMyClapsForDocs(pmDocs.map(function(d){return d.id;}));
+    }
+    document.getElementById('libSub').textContent=
+      'Podmates '+pmDocs.length+' ဦး၏ ရေးသားချက်များ';
+    applyPm();
+  }catch(e){
+    console.error('loadDocs',e);
+    document.getElementById('libGrid').innerHTML=
+      '<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';
   }
 }
 
-loadPublicDocs();
-/* initial admin load */
-loadAdmin();
+async function loadMyClapsForDocs(docIds){
+  if(!currentUser) return;
+  for(var i=0;i<Math.min(docIds.length,50);i++){
+    try{
+      var snap=await getDoc(doc(db,'docClaps',docIds[i],'users',currentUser.uid));
+      if(snap.exists()) myClaps[docIds[i]]=true;
+    }catch(e){}
+  }
+}
+
+loadDocs();
 </script>
 </body>
 </html>
