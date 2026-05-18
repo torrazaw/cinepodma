@@ -637,11 +637,11 @@ footer {
 
 <!-- NAV -->
 <nav>
-  <a class="brand" href="index.html">
+  <a class="brand" href="/home">
     cine<br><span>podma</span>
   </a>
   <div class="nav-right" id="navRight">
-    <a class="btn btn-ghost btn-sm" href="index.html">← Home</a>
+    <a class="btn btn-ghost btn-sm" href="/home">← Home</a>
     <!-- JS က owner/public အလိုက် ဖြည့်မည် -->
   </div>
 </nav>
@@ -848,7 +848,7 @@ onAuthStateChanged(auth, async function(user) {
     profileUid = uidParam;
     isOwner    = user ? user.uid === profileUid : false;
   } else {
-    if (!user) { window.location.href = 'index.html'; return; }
+    if (!user) { window.location.href = '/home'; return; }
     profileUid = user.uid;
     isOwner    = true;
   }
@@ -991,7 +991,7 @@ window.openClappersPopup = async function() {
       if(!u.exists())return;
       var ud=u.data();
       var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
-      html+='<a class="clap-user-item" href="profile.html?uid='+u.id+'">'+
+      html+='<a class="clap-user-item" href="/profile?uid='+u.id+'">'+
         '<div class="clap-user-av">'+av+'</div>'+
         '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
         '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
@@ -1018,7 +1018,7 @@ window.openClappingPopup = async function() {
       if(!u.exists())return;
       var ud=u.data();
       var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
-      html+='<a class="clap-user-item" href="profile.html?uid='+u.id+'">'+
+      html+='<a class="clap-user-item" href="/profile?uid='+u.id+'">'+
         '<div class="clap-user-av">'+av+'</div>'+
         '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
         '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
@@ -1085,7 +1085,7 @@ function renderClappedDocs(){
       '</div>'+
       '<div class="script-card-meta">'+(s.authorUsername||s.authorName||'—')+'</div>'+
       '<div class="script-card-actions">'+
-        '<button class="script-act-btn primary" onclick="window.location.href=\'profile.html?uid='+(s.uid||'')+'\'">👤 Profile</button>'+
+        '<button class="script-act-btn primary" onclick="window.location.href=\'/profile?uid='+(s.uid||'')+'\'">👤 Profile</button>'+
       '</div>'+
     '</div>';
   }).join('');
@@ -1096,7 +1096,7 @@ window.toggleClap=async function(){
   if(!currentUser){
     /* show sign up prompt instead of redirect */
     if(confirm('Clap လုပ်ရန် အကောင့်ဖွင့်ရန် လိုသည်။ အကောင့်ဖွင့်မည်လား?')){
-      window.location.href='index.html';
+      window.location.href='/home';
     }
     return;
   }
@@ -1144,11 +1144,11 @@ function renderNav(){
   var navRight=document.getElementById('navRight');
   if(isOwner){
     navRight.innerHTML=
-      '<a class="btn btn-ghost btn-sm" href="index.html">← Home</a>'+
+      '<a class="btn btn-ghost btn-sm" href="/home">← Home</a>'+
       '<button class="btn btn-ghost btn-sm" onclick="window._signOut()">ထွက်မည်</button>'+
       '<button class="btn btn-red btn-sm" onclick="openEdit()">✏ Edit</button>';
   }else{
-    navRight.innerHTML='<a class="btn btn-ghost btn-sm" href="index.html">← Home</a>';
+    navRight.innerHTML='<a class="btn btn-ghost btn-sm" href="/home">← Home</a>';
   }
 }
 
@@ -1158,7 +1158,7 @@ async function renderActions(){
   var newBtn=document.getElementById('newScriptBtn');
   if(isOwner){
     el.innerHTML='<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
-    newBtn.innerHTML='<a class="btn btn-red btn-sm" href="write.html">+ New</a>';
+    newBtn.innerHTML='<a class="btn btn-red btn-sm" href="/write">+ New</a>';
   }else{
     var clapped=false;
     if(currentUser){
@@ -1199,7 +1199,7 @@ function renderScripts(){
     ):'';
     var actionBtns = isOwner
       ?'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">✍ ဆက်ရေးမည်</button>'
-      :'<button class="script-act-btn primary" onclick="window.location.href=\'read.html?id='+s.id+'\'">📖 ဖတ်မည်</button>';
+      :'<button class="script-act-btn primary" onclick="window.location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>';
     return '<div class="script-card" id="sc-'+s.id+'">'+
       '<div class="script-card-top">'+
         '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
@@ -1213,7 +1213,7 @@ function renderScripts(){
       '<div class="script-card-actions">'+actionBtns+'</div>'+
     '</div>';
   }).join('');
-  if(isOwner) html+='<a class="script-card-new" href="write.html"><span class="plus">+</span><span class="new-label">New Doc</span></a>';
+  if(isOwner) html+='<a class="script-card-new" href="/write"><span class="plus">+</span><span class="new-label">New Doc</span></a>';
   grid.innerHTML=html;
 }
 
@@ -1224,7 +1224,7 @@ window._toggleMenu=function(id,e){
   document.getElementById('menu-'+id).classList.toggle('open');
 };
 document.addEventListener('click',function(){document.querySelectorAll('.script-dropdown').forEach(function(d){d.classList.remove('open');});});
-window._editScript=function(id){window.location.href='write.html?id='+id;};
+window._editScript=function(id){window.location.href='/write?id='+id;};
 window._toggleStatus=async function(id){
   var s=scripts.find(function(x){return x.id===id;});if(!s)return;
   s.status=s.status==='draft'?'complete':'draft';
@@ -1284,7 +1284,7 @@ window.copyProfileLink=function(){
 };
 
 /* ══ SIGN OUT ══ */
-window._signOut=async function(){await signOut(auth);window.location.href='index.html';};
+window._signOut=async function(){await signOut(auth);window.location.href='/home';};
 
 /* ══ ESC ══ */
 document.addEventListener('keydown',function(e){
