@@ -460,8 +460,6 @@ var spPages=[]; /* [{pageEl, areaEl}] */
 
 /* UTILS */
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2800);}
-function setSv(s){var e=document.getElementById('sv');if(s==='ok'){e.textContent='Saved ✓';e.className='sv ok';}else{e.textContent='Unsaved…';e.className='sv';}}
-
 /* NEW DOC */
 function pickT(t,el){selType=t;document.querySelectorAll('.tc').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');document.getElementById('nb1').disabled=false;}
 
@@ -666,10 +664,13 @@ function ins(type){
   lastEl=wrap;
   setTimeout(function(){
     ce.focus();
-    var r=document.createRange();r.selectNodeContents(ce);r.collapse(false);
-    var s=window.getSelection();s.removeAllRanges();s.addRange(r);
-    scheduleOverflow();
-  },20);
+    /* place cursor at start so user can type immediately */
+    try{
+      var r=document.createRange();
+      r.setStart(ce,0);r.collapse(true);
+      var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+    }catch(ex){}
+  },10);
   autoSave();
 }
 
@@ -981,15 +982,20 @@ function autoSave(){
   setSv('unsaved');
   clearTimeout(autoT);
   autoT=setTimeout(function(){
-    /* always save to local */
     try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
-    /* cloud autosave if logged in */
     if(currentUser && window._db){
-      cloudSave().then(function(){setSv('ok');}).catch(function(){setSv('ok');});
+      cloudSave().then(function(){setSv('ok');}).catch(function(){setSv('local');});
     } else {
-      setSv('ok');
+      setSv('local');
     }
   },2000);
+}
+
+function setSv(s){
+  var e=document.getElementById('sv');
+  if(s==='ok'){e.textContent='Cloud Saved ✓';e.className='sv ok';}
+  else if(s==='local'){e.textContent='Local only';e.className='sv';}
+  else{e.textContent='Unsaved…';e.className='sv';}
 }
 
 function collect(){
