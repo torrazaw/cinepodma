@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — CinePodma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--white:#fff;--black:#0A0A0A;--slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;--border:#E5E7EB;--red:#DC2626;--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+.brand{font-family:var(--font-en);font-size:13px;color:var(--black);text-decoration:none;line-height:1.3;}
+.brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
+.back-btn{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
+.back-btn:hover{background:var(--slate-bg);color:var(--black);}
+main{flex:1;max-width:680px;margin:0 auto;width:100%;padding:100px 24px 60px;}
+.hero{text-align:center;padding:40px 0 48px;border-bottom:1px solid var(--border);margin-bottom:48px;}
+.hero-en{font-family:var(--font-en);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:12px;}
+.hero-title{font-family:var(--font-en);font-size:48px;line-height:1.2;margin-bottom:6px;}
+.hero-red{color:var(--red);}
+.hero-sub{font-size:15px;color:var(--slate);line-height:2.0;margin-top:16px;}
+.section{margin-bottom:48px;}
+.sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.sec-body{font-size:15px;line-height:2.2;color:var(--black);}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.feat{background:var(--slate-bg);border-radius:14px;padding:20px 16px;border:1px solid var(--border);}
+.feat-icon{font-size:24px;margin-bottom:8px;}
+.feat-title{font-size:14px;font-weight:700;margin-bottom:4px;line-height:1.6;}
+.feat-desc{font-size:12px;color:var(--slate);line-height:1.8;}
+.team-card{display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;}
+.team-av{width:52px;height:52px;border-radius:50%;background:var(--slate-bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.team-name{font-size:15px;font-weight:700;line-height:1.6;}
+.team-role{font-size:12px;color:var(--slate);}
+.cta-wrap{text-align:center;padding:48px 0;border-top:1px solid var(--border);}
+.btn-r{display:inline-flex;align-items:center;gap:6px;padding:14px 28px;border-radius:99px;border:none;cursor:pointer;font-family:var(--font-my);font-size:14px;font-weight:700;line-height:1.6;background:var(--red);color:var(--white);text-decoration:none;transition:all .15s;}
+.btn-r:hover{opacity:.9;transform:translateY(-2px);}
+footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16px 28px;text-align:center;font-family:var(--font-en);font-size:11px;color:var(--slate);letter-spacing:.5px;}
+@media(max-width:600px){.feature-grid{grid-template-columns:1fr;}.hero-title{font-size:36px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="/home">cine<br><span>podma</span></a>
+  <a class="back-btn" href="/home">← Home</a>
+</nav>
+<main>
+  <div class="hero">
+    <div class="hero-en">Myanmar Screenplay Editor</div>
+    <h1 class="hero-title">Cine<span class="hero-red">.</span><br>Podma</h1>
+    <p class="hero-sub">မြန်မာဘာသာဖြင့် screenplay ရေးသားနိုင်သော<br>professional script editor platform</p>
+  </div>
 
+  <div class="section">
+    <div class="sec-lbl">CinePodma အကြောင်း</div>
+    <p class="sec-body">CinePodma သည် မြန်မာ filmmaker, screenwriter များအတွက် တည်ဆောက်ထားသော screenplay editing platform ဖြစ်သည်။ Industry-standard format ကို မြန်မာဘာသာဖြင့် ရေးသားနိုင်ပြီး community ဖြင့် share ပြုနိုင်သည်။</p>
+  </div>
+
+  <div class="section">
+    <div class="sec-lbl">Features</div>
+    <div class="feature-grid">
+      <div class="feat"><div class="feat-icon">🎬</div><div class="feat-title">Industry Format</div><div class="feat-desc">Scene, Action, Character, Dialogue — standard screenplay format</div></div>
+      <div class="feat"><div class="feat-icon">📖</div><div class="feat-title">Story Editor</div><div class="feat-desc">ဝတ္ထု၊ ဝတ္ထုတို၊ ဆောင်းပါး — rich text editor</div></div>
+      <div class="feat"><div class="feat-icon">☁️</div><div class="feat-title">Cloud Save</div><div class="feat-desc">Firebase Firestore — ဘယ် device မှမဆို access</div></div>
+      <div class="feat"><div class="feat-icon">👥</div><div class="feat-title">Podmates</div><div class="feat-icon-sm">Community of filmmakers</div></div>
+      <div class="feat"><div class="feat-icon">📄</div><div class="feat-title">PDF Export</div><div class="feat-desc">Watermark option ပါသော A4 PDF export</div></div>
+      <div class="feat"><div class="feat-icon">🌐</div><div class="feat-title">Public Library</div><div class="feat-desc">Public docs — Library မှ ဖတ်ရှုနိုင်</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-lbl">Team</div>
+    <div class="team-card">
+      <div class="team-av">🎬</div>
+      <div>
+        <div class="team-name">Ra Zaw</div>
+        <div class="team-role">Founder · Cinephile</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <a class="btn-r" href="/write">✍ တတ်လမ်းစရေးမည်</a>
+  </div>
+</main>
+<footer>© 2026 CinePodma. All rights reserved.</footer>
+</body>
+</html>
