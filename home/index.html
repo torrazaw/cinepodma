@@ -2339,7 +2339,8 @@ onAuthStateChanged(auth, async function(user) {
     if (heroRow) {
       heroRow.innerHTML =
         '<a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a>' +
-        '<button class="btn btn-outline" onclick="openAuthModal(\'signup\')">အကောင့်ဖွင့်မည်</button>' +
+        '<a class="btn btn-lib" href="/library">📚 စာဖတ်မည်</a>' +
+        '<button class="btn btn-outline-red" onclick="openAuthModal(\'signup\')">အကောင့်ဖွင့်မည်</button>' +
         '<button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်ဝင်မည်</button>';
     }
     if (guestNote) guestNote.style.display = '';
