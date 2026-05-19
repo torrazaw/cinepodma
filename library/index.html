@@ -296,8 +296,12 @@ async function toggleDocClap(doc, btn){
     if(snap.exists()){
       await window._deleteDoc(clapRef);
       try{await window._deleteDoc(clappingRef);}catch(e){}
-      /* decrement */
-      try{await window._updateDoc(window._getRef('docs/'+docId),{clapCount:window._inc(-1)});}catch(e){}
+      try{
+        var docRef2=window._getRef('docs/'+docId);
+        var docSnap2=await window._getDoc2(docRef2);
+        var cur=docSnap2.exists()?(docSnap2.data().clapCount||0):0;
+        await window._updateDoc(docRef2,{clapCount:Math.max(0,cur-1)});
+      }catch(e){console.error('clapCount decrement:',e);}
       myClaps[docId]=false;
       doc.clapCount=Math.max(0,(doc.clapCount||1)-1);
       btn.className='card-clap';
@@ -306,16 +310,13 @@ async function toggleDocClap(doc, btn){
       var now=new Date().toISOString();
       await window._setDoc(clapRef,{uid:currentUser.uid,clappedAt:now});
       await window._setDoc(clappingRef,{docId:docId,clappedAt:now});
-      /* update clapCount */
+      /* update clapCount — setDoc merge to ensure field exists first */
       try{
-        await window._updateDoc(window._getRef('docs/'+docId),{clapCount:window._inc(1)});
-      }catch(e){
-        console.error('clapCount increment error:',e);
-        /* fallback: set directly */
-        try{
-          await window._updateDoc(window._getRef('docs/'+docId),{clapCount:(doc.clapCount||0)+1});
-        }catch(e2){console.error('clapCount fallback error:',e2);}
-      }
+        var docRef=window._getRef('docs/'+docId);
+        var docSnap=await window._getDoc2(docRef);
+        var currentCount=docSnap.exists()?(docSnap.data().clapCount||0):0;
+        await window._updateDoc(docRef,{clapCount:currentCount+1});
+      }catch(e){console.error('clapCount update:',e);}
       myClaps[docId]=true;
       doc.clapCount=(doc.clapCount||0)+1;
       btn.className='card-clap clapped';
