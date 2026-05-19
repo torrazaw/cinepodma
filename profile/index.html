@@ -398,7 +398,8 @@ main {
   line-height: 1.6;
 }
 .script-act-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
-.script-act-btn.primary { background: var(--black); color: var(--white); border-color: var(--black); }
+.script-act-btn.black { background: var(--black); color: var(--white); border-color: var(--black); }
+.script-act-btn.black:hover { background: #222; }
 .script-act-btn.primary:hover { background: var(--red); border-color: var(--red); }
 
 /* New script card */
@@ -812,6 +813,8 @@ import { getAuth, onAuthStateChanged, signOut, updateProfile }
 import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
          collection, query, where, getDocs, getCountFromServer, orderBy }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js';
 
 const firebaseConfig = {
   apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
@@ -825,6 +828,31 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
+const storage = getStorage(app);
+
+/* Avatar upload */
+document.getElementById('avatarInput').addEventListener('change', async function(){
+  if(!isOwner || !this.files[0] || !currentUser) return;
+  var file = this.files[0];
+  if(!file.type.startsWith('image/')) { toast('ပုံ file ထည့်ပါ'); return; }
+  if(file.size > 2*1024*1024) { toast('ပုံ 2MB အောက်ဖြစ်ရမည်'); return; }
+  toast('📤 Upload လုပ်နေသည်...');
+  try {
+    var storageRef = ref(storage, 'avatars/' + currentUser.uid);
+    await uploadBytes(storageRef, file);
+    var url = await getDownloadURL(storageRef);
+    /* update Firestore + Auth */
+    await updateDoc(doc(db,'users',currentUser.uid), { avatar: url });
+    await updateProfile(currentUser, { photoURL: url });
+    currentProfile.avatar = url;
+    /* update UI */
+    var img = document.getElementById('avatarImg');
+    var em  = document.getElementById('avatarEmoji');
+    if(img){ img.src=url; img.style.display='block'; }
+    if(em) em.style.display='none';
+    toast('✅ Profile ပုံ ပြောင်းပြီး');
+  } catch(e) { toast('❌ Upload မရပါ — ' + e.message); }
+});
 
 var currentUser    = null;
 var currentProfile = {};
@@ -1199,7 +1227,7 @@ function renderScripts(){
     ):'';
     var actionBtns = isOwner
       ?'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">✍ ဆက်ရေးမည်</button>'
-      :'<button class="script-act-btn primary" onclick="window.location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>';
+      :'<button class="script-act-btn black" onclick="window.location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>';
     return '<div class="script-card" id="sc-'+s.id+'">'+
       '<div class="script-card-top">'+
         '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
