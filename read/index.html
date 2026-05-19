@@ -7,115 +7,180 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --white:#FFFFFF; --black:#0A0A0A;
-  --slate:#6B7280; --slate-lt:#9CA3AF; --slate-bg:#F3F4F6;
-  --border:#E5E7EB; --red:#DC2626;
+:root{
+  --bg:#FFFFFF;--fg:#0A0A0A;--fg2:#6B7280;--fg3:#9CA3AF;
+  --border:#E5E7EB;--card:#F9F9F9;--red:#DC2626;
   --font-en:'Special Elite','Courier New',monospace;
   --font-my:'Noto Sans Myanmar',sans-serif;
+  --fs:17px;--lh:2.2;
 }
+body.dark{--bg:#111;--fg:#E8E8E8;--fg2:#9CA3AF;--fg3:#6B7280;--border:#2A2A2A;--card:#1A1A1A;}
+body.warm{--bg:#FAF3E0;--fg:#2C1810;--fg2:#8B6F47;--fg3:#A08060;--border:#E8D5A0;--card:#F5EBD0;}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--font-my);background:var(--bg);color:var(--fg);min-height:100vh;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;}
 
 /* NAV */
-.reader-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 24px;gap:12px;
-}
-.brand{font-family:var(--font-en);font-size:13px;color:var(--black);text-decoration:none;line-height:1.3;flex-shrink:0;}
-.brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
-.reader-nav-title{font-family:var(--font-my);font-size:13px;font-weight:600;color:var(--black);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.6;}
-.nav-back{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;flex-shrink:0;}
-.nav-back:hover{background:var(--slate-bg);color:var(--black);}
+.reader-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:10px 20px;gap:8px;transition:background .3s,border-color .3s;}
+.brand{font-family:var(--font-en);font-size:12px;color:var(--fg);text-decoration:none;line-height:1.3;flex-shrink:0;}
+.brand span{display:block;color:var(--fg3);font-size:10px;letter-spacing:1px;}
+.nav-title{font-family:var(--font-my);font-size:13px;font-weight:600;color:var(--fg);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.6;}
+.nav-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--fg2);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
+.nav-btn:hover{background:var(--card);color:var(--fg);}
 
-/* LOADING */
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px;color:var(--slate);font-size:14px;line-height:1.8;}
-.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+/* SETTINGS BAR */
+.settings-bar{position:fixed;top:53px;left:0;right:0;z-index:99;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 20px;flex-wrap:wrap;transition:background .3s;}
+.theme-btn{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:all .15s;flex-shrink:0;}
+.theme-btn.t-light{background:#FFF;}
+.theme-btn.t-dark{background:#111;border-color:#444;}
+.theme-btn.t-warm{background:#FAF3E0;border-color:#E8D5A0;}
+.theme-btn.active{border-color:var(--red);transform:scale(1.15);}
+.sb-div{width:1px;height:20px;background:var(--border);}
+.fs-ctrl{display:flex;align-items:center;gap:4px;}
+.fs-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;font-size:13px;cursor:pointer;color:var(--fg);display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.fs-btn:hover{background:var(--card);}
+.fs-val{font-family:var(--font-en);font-size:11px;color:var(--fg2);min-width:22px;text-align:center;}
 
-/* STORY READER */
-.story-reader{max-width:680px;margin:0 auto;padding:88px 32px 80px;}
+/* CONTENT */
+#content{padding-top:102px;}
 
-.story-cover{text-align:center;padding:48px 0 40px;border-bottom:1px solid var(--border);margin-bottom:48px;}
-.story-cover-title{font-family:var(--font-my);font-size:28px;font-weight:700;color:var(--black);line-height:1.6;margin-bottom:12px;}
-.story-cover-author{font-size:14px;color:var(--slate);line-height:1.8;margin-bottom:8px;}
-.story-cover-meta{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
-.story-badge{padding:3px 10px;border-radius:99px;font-size:11px;border:1px solid var(--border);color:var(--slate);background:var(--slate-bg);}
+/* AUTHOR CARD */
+.author-card{display:flex;align-items:center;gap:12px;padding:16px 24px;max-width:700px;margin:0 auto 4px;}
+.author-av{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0;cursor:pointer;text-decoration:none;transition:opacity .15s;}
+.author-av:hover{opacity:.8;}
+.author-av img{width:100%;height:100%;object-fit:cover;}
+.author-info{flex:1;min-width:0;}
+.author-name{font-size:14px;font-weight:600;color:var(--fg);line-height:1.6;}
+.author-uname{font-family:var(--font-en);font-size:11px;color:var(--fg3);}
+.doc-badges{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;}
+.doc-badge{padding:3px 10px;border-radius:99px;font-size:11px;border:1px solid var(--border);color:var(--fg2);background:var(--card);white-space:nowrap;}
 
-.story-body{font-family:var(--font-my);font-size:16px;line-height:2.2;color:var(--black);}
+/* STORY */
+.story-wrap{max-width:700px;margin:0 auto;padding:0 24px 140px;}
+.story-title{font-size:24px;font-weight:700;color:var(--fg);line-height:1.6;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.story-body{font-size:var(--fs);line-height:var(--lh);color:var(--fg);}
 .story-body h1{font-size:22px;font-weight:700;margin:32px 0 16px;line-height:1.6;}
 .story-body h2{font-size:18px;font-weight:700;margin:24px 0 12px;line-height:1.6;}
 .story-body p{margin-bottom:16px;}
-.story-body blockquote{border-left:3px solid var(--border);margin:20px 0;padding:8px 16px;color:var(--slate);font-style:italic;}
 
-/* SCREENPLAY READER */
-.sp-reader{max-width:794px;margin:0 auto;padding:88px 24px 80px;}
-.sp-cover{text-align:center;padding:80px 48px;background:var(--white);border:1px solid var(--border);border-radius:16px;margin-bottom:32px;}
-.sp-cover-title{font-family:var(--font-my);font-size:28px;font-weight:700;color:var(--black);line-height:1.8;margin-bottom:16px;}
-.sp-cover-hr{width:60px;height:1px;background:var(--black);margin:0 auto 16px;}
-.sp-cover-by{font-family:var(--font-en);font-size:12px;color:var(--slate);letter-spacing:1px;margin-bottom:6px;}
-.sp-cover-author{font-family:var(--font-my);font-size:15px;font-weight:600;color:var(--black);line-height:1.8;}
+/* PAGE WRAP */
+.page-content{font-size:var(--fs);line-height:var(--lh);color:var(--fg);}
+.page-content p{margin-bottom:16px;}
+.page-content h1{font-size:22px;font-weight:700;margin:28px 0 14px;line-height:1.6;}
+.page-content h2{font-size:18px;font-weight:700;margin:20px 0 10px;line-height:1.6;}
 
-.sp-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:40px 48px;margin-bottom:24px;}
-.sp-section-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-.sp-section-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
-.sp-section-text{font-family:var(--font-my);font-size:14px;line-height:2.0;color:var(--black);white-space:pre-wrap;}
+/* SCREENPLAY */
+.sp-wrap{max-width:794px;margin:0 auto;padding:0 24px 140px;}
+.sp-cover-card{text-align:center;padding:60px 40px;border:1px solid var(--border);border-radius:16px;margin-bottom:20px;background:var(--card);}
+.sp-cover-title{font-size:24px;font-weight:700;color:var(--fg);line-height:1.8;margin-bottom:16px;}
+.sp-cover-hr{width:50px;height:1px;background:var(--fg);margin:0 auto 16px;}
+.sp-cover-by{font-family:var(--font-en);font-size:11px;color:var(--fg3);letter-spacing:1px;margin-bottom:6px;}
+.sp-cover-author{font-size:14px;font-weight:600;color:var(--fg);line-height:1.8;}
+.sp-section{border:1px solid var(--border);border-radius:14px;padding:28px 36px;margin-bottom:16px;background:var(--card);}
+.sp-lbl{font-family:var(--font-en);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--fg3);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.sp-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.sp-text{font-size:var(--fs);line-height:var(--lh);color:var(--fg);white-space:pre-wrap;}
+.sp-script-body{border:1px solid var(--border);border-radius:14px;padding:28px 36px;margin-bottom:16px;background:var(--card);}
+.sp-fade{font-family:var(--font-en);font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--fg);padding:4px 0;margin-bottom:8px;}
+.sp-fade.right{text-align:right;margin-top:20px;}
+.sp-el-scene{font-weight:700;font-size:var(--fs);line-height:2.0;padding:3px 8px;background:rgba(128,128,128,.08);border-left:2px solid var(--fg);margin:20px 0 4px;}
+.sp-el-action{font-size:var(--fs);line-height:var(--lh);padding:2px 0;margin-bottom:4px;}
+.sp-el-char{font-size:var(--fs);font-weight:700;line-height:2.0;padding-left:34%;margin-top:12px;}
+.sp-el-paren{font-size:calc(var(--fs) - 1px);line-height:1.8;color:var(--fg2);padding-left:26%;padding-right:26%;font-style:italic;}
+.sp-el-dial{font-size:var(--fs);line-height:var(--lh);padding-left:20%;padding-right:20%;margin-bottom:4px;}
+.sp-el-trans{font-size:var(--fs);font-weight:700;line-height:2.0;color:var(--fg2);text-align:right;margin-top:12px;}
 
-.sp-script{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:40px 48px;margin-bottom:24px;}
-.sp-fade{font-family:var(--font-en);font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--black);padding:4px 0;margin-bottom:8px;}
-.sp-fade.right{text-align:right;margin-top:20px;margin-bottom:0;}
-.sp-el-scene{font-family:var(--font-my);font-size:13px;font-weight:700;line-height:2.0;padding:4px 10px;background:rgba(0,0,0,.03);border-left:2px solid var(--black);border-radius:0 3px 3px 0;margin:20px 0 4px;}
-.sp-el-action{font-family:var(--font-my);font-size:13px;line-height:2.0;padding:2px 0;margin-bottom:4px;}
-.sp-el-char{font-family:var(--font-my);font-size:13px;font-weight:700;line-height:2.0;padding-left:34%;margin-top:12px;}
-.sp-el-paren{font-family:var(--font-my);font-size:12px;line-height:1.8;color:var(--slate);padding-left:26%;padding-right:26%;}
-.sp-el-dial{font-family:var(--font-my);font-size:13px;line-height:2.0;padding-left:20%;padding-right:20%;margin-bottom:4px;}
-.sp-el-trans{font-family:var(--font-my);font-size:12px;font-weight:700;line-height:2.0;color:var(--slate);text-align:right;margin-top:12px;}
+/* PAGE NAV */
+.page-nav{position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--bg);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:10px 20px;gap:8px;transition:background .3s;}
+.page-nav-btn{padding:10px 20px;border-radius:12px;border:1.5px solid var(--border);background:transparent;font-family:var(--font-my);font-size:13px;color:var(--fg);cursor:pointer;transition:all .15s;line-height:1.6;}
+.page-nav-btn:hover:not(:disabled){background:var(--card);}
+.page-nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+.page-nav-btn.red{background:var(--red);color:#fff;border-color:var(--red);}
+.page-ind{font-family:var(--font-en);font-size:12px;color:var(--fg3);letter-spacing:.5px;}
 
-/* NOT FOUND */
-.not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px;text-align:center;padding:32px;}
+/* CLAP FAB */
+.clap-fab{position:fixed;bottom:72px;right:20px;z-index:98;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(220,38,38,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;transition:all .2s;}
+.clap-fab:hover{transform:scale(1.1);}
+.clap-fab.clapped{background:#16A34A;box-shadow:0 4px 16px rgba(22,163,74,.4);}
+.clap-fab-icon{font-size:20px;line-height:1;}
+.clap-fab-count{font-size:10px;font-family:var(--font-en);line-height:1;margin-top:1px;}
+
+/* LOADING / NOT FOUND */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;color:var(--fg2);font-size:14px;}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;text-align:center;padding:32px;}
 .not-found-icon{font-size:48px;}
-.not-found-title{font-family:var(--font-en);font-size:20px;color:var(--black);}
-.not-found-sub{font-size:13px;color:var(--slate);line-height:1.8;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font-my);font-size:13px;font-weight:600;line-height:1.6;transition:all .15s;text-decoration:none;}
-.btn-red{background:var(--red);color:var(--white);}
-.btn-red:hover{opacity:.9;}
+.not-found-title{font-size:18px;font-weight:700;color:var(--fg);}
+.not-found-sub{font-size:13px;color:var(--fg2);line-height:1.8;}
+.btn-home{display:inline-flex;align-items:center;gap:5px;padding:10px 20px;border-radius:10px;background:var(--red);color:#fff;text-decoration:none;font-size:13px;font-weight:600;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--fg);color:var(--bg);font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 20px;border-radius:10px;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
 
 @media(max-width:600px){
-  .story-reader{padding:80px 20px 60px;}
-  .sp-reader{padding:80px 12px 60px;}
-  .sp-section,.sp-script{padding:28px 20px;}
-  .sp-cover{padding:48px 24px;}
+  .story-wrap,.sp-wrap{padding-left:16px;padding-right:16px;}
+  .sp-section,.sp-script-body{padding:20px 16px;}
+  .sp-cover-card{padding:40px 16px;}
   .sp-el-char{padding-left:20%;}
-  .sp-el-paren{padding-left:15%;padding-right:15%;}
-  .sp-el-dial{padding-left:10%;padding-right:10%;}
+  .sp-el-paren{padding-left:10%;padding-right:10%;}
+  .sp-el-dial{padding-left:6%;padding-right:6%;}
+  .author-card{padding:12px 16px;}
 }
 </style>
 </head>
-<body>
+<body class="light">
 
 <!-- NAV -->
 <nav class="reader-nav">
-  <a class="brand" href="index.html">cine<br><span>podma</span></a>
-  <div class="reader-nav-title" id="navTitle">ဖွင့်နေသည်...</div>
-  <a class="nav-back" href="javascript:history.back()">← ပြန်</a>
+  <a class="brand" href="/home">cine<br><span>podma</span></a>
+  <div class="nav-title" id="navTitle">ဖွင့်နေသည်...</div>
+  <a class="nav-btn" href="javascript:history.back()">← ပြန်</a>
 </nav>
 
-<!-- CONTENT -->
-<div id="content">
-  <div class="loading">
-    <div class="spinner"></div>
-    <span>ဖွင့်နေသည်...</span>
+<!-- SETTINGS BAR -->
+<div class="settings-bar">
+  <button class="theme-btn t-light active" id="thLight" onclick="setTheme('light')" title="Light"></button>
+  <button class="theme-btn t-dark"  id="thDark"  onclick="setTheme('dark')"  title="Dark"></button>
+  <button class="theme-btn t-warm"  id="thWarm"  onclick="setTheme('warm')"  title="Warm"></button>
+  <div class="sb-div"></div>
+  <div class="fs-ctrl">
+    <button class="fs-btn" onclick="changeFontSize(-1)">A−</button>
+    <span class="fs-val" id="fsVal">17</span>
+    <button class="fs-btn" onclick="changeFontSize(+1)">A+</button>
   </div>
 </div>
 
+<!-- CONTENT -->
+<div id="content">
+  <div class="loading"><div class="spinner"></div><span>ဖွင့်နေသည်...</span></div>
+</div>
+
+<!-- CLAP FAB -->
+<button class="clap-fab" id="clapFab" onclick="doClap()" style="display:none;" title="Clap">
+  <span class="clap-fab-icon">👏</span>
+  <span class="clap-fab-count" id="clapCount">0</span>
+</button>
+
+<!-- PAGE NAV -->
+<div class="page-nav" id="pageNav" style="display:none;">
+  <button class="page-nav-btn" id="prevBtn" onclick="prevPage()" disabled>← ရှေ့</button>
+  <span class="page-ind" id="pageInd">p. 1 / 1</span>
+  <button class="page-nav-btn red" id="nextBtn" onclick="nextPage()">နောက် →</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, updateDoc }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+import { getAuth, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 
-const firebaseConfig = {
+const cfg={
   apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
   authDomain:"cinepodma.firebaseapp.com",
   projectId:"cinepodma",
@@ -123,153 +188,217 @@ const firebaseConfig = {
   messagingSenderId:"587916526322",
   appId:"1:587916526322:web:d00775311fb92fa1c8466b"
 };
+const app=initializeApp(cfg);
+const db=getFirestore(app);
+const auth=getAuth(app);
 
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+var params=new URLSearchParams(window.location.search);
+var docId=params.get('id');
+var docData=null;
+var authorData={};
+var currentUser=null;
+var isClapped=false;
+var pages=[];
+var curPage=0;
 
-/* get doc id from URL */
-var params = new URLSearchParams(window.location.search);
-var docId  = params.get('id');
+var genreMap={novel:'ဝတ္ထု',short:'ဝတ္ထုတို',essay:'ဆောင်းပါး',poem:'ကဗျာ',
+  feature:'ဇာတ်ညွှန်း',shortfilm:'ဇာတ်ညွှန်းတို',series:'စီးရီး'};
 
-if (!docId) {
-  showNotFound('Doc ID မပါပါ');
-} else {
-  loadDoc(docId);
+onAuthStateChanged(auth,function(user){
+  currentUser=user;
+  if(!docId){showNotFound('Doc ID မပါပါ');return;}
+  loadDoc();
+});
+
+async function loadDoc(){
+  try{
+    var snap=await getDoc(doc(db,'docs',docId));
+    if(!snap.exists()){showNotFound('Doc မတွေ့ပါ');return;}
+    docData=snap.data();
+    var isOwner=currentUser&&currentUser.uid===docData.uid;
+    if(docData.privacy!=='public'&&!isOwner){showNotFound('🔒 Private doc — ဖတ်ခွင့် မရှိပါ');return;}
+    /* load author */
+    try{var aSnap=await getDoc(doc(db,'users',docData.uid));authorData=aSnap.exists()?aSnap.data():{};}catch(e){}
+    /* check clap */
+    if(currentUser){
+      try{var cSnap=await getDoc(doc(db,'docClaps',docId,'users',currentUser.uid));isClapped=cSnap.exists();}catch(e){}
+    }
+    renderDoc();
+  }catch(e){showNotFound('ဖတ်မရပါ — '+e.message);}
 }
 
-async function loadDoc(id) {
-  try {
-    var snap = await getDoc(doc(db, 'docs', id));
-    if (!snap.exists()) { showNotFound('Doc မတွေ့ပါ'); return; }
-    var data = snap.data();
-    if (data.privacy !== 'public') { showNotFound('Private doc ဖြစ်သည် — ဖတ်ခွင့် မရှိပါ'); return; }
-    render(data);
-  } catch(e) {
-    console.error(e);
-    showNotFound('ဖတ်မရပါ — ' + e.message);
-  }
+function renderDoc(){
+  document.getElementById('navTitle').textContent=docData.title||'Untitled';
+  document.title=(docData.title||'Untitled')+' — CinePodma';
+  /* clap fab */
+  var fab=document.getElementById('clapFab');
+  fab.style.display='flex';
+  fab.className='clap-fab'+(isClapped?' clapped':'');
+  document.getElementById('clapCount').textContent=docData.clapCount||0;
+  if(docData.type==='story') renderStory();
+  else renderScreenplay();
 }
 
-function render(data) {
-  document.getElementById('navTitle').textContent = data.title || 'Untitled';
-  document.title = (data.title || 'Untitled') + ' — CinePodma';
-
-  if (data.type === 'story') {
-    renderStory(data);
-  } else {
-    renderScreenplay(data);
-  }
+/* AUTHOR CARD */
+function buildAuthorCard(){
+  var gl=docData.genreLabel||genreMap[docData.genre]||(docData.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
+  var date=docData.updatedAt?docData.updatedAt.substring(0,10):'';
+  var av=authorData.avatar?'<img src="'+esc(authorData.avatar)+'" alt="">':'<span>👤</span>';
+  return '<div class="author-card">'+
+    '<a class="author-av" href="/profile?uid='+esc(docData.uid||'')+'">'+av+'</a>'+
+    '<div class="author-info">'+
+      '<div class="author-name">'+esc(authorData.name||docData.authorName||'Unknown')+'</div>'+
+      '<div class="author-uname">'+esc(authorData.username||docData.authorUsername||'')+'</div>'+
+    '</div>'+
+    '<div class="doc-badges">'+
+      '<span class="doc-badge">'+esc(gl)+'</span>'+
+      (date?'<span class="doc-badge">'+date+'</span>':'')+
+    '</div>'+
+  '</div>';
 }
 
-/* ══ STORY ══ */
-function renderStory(data) {
-  var content = document.getElementById('content');
-  var div = document.createElement('div');
-  div.className = 'story-reader';
+/* STORY */
+function renderStory(){
+  /* paginate: ~500 words per page */
+  var div=document.createElement('div');
+  div.innerHTML=docData.story||'<p>Content မရှိပါ</p>';
+  var nodes=Array.from(div.children);
+  if(nodes.length===0){div.querySelectorAll('*').length===0&&(div.innerHTML='<p>'+(docData.story||'')+'</p>');nodes=Array.from(div.children);}
+  if(nodes.length===0) nodes=[div];
+  pages=[];
+  var chunk=[],wc=0;
+  nodes.forEach(function(n){
+    var w=(n.textContent||'').split(/\s+/).filter(Boolean).length;
+    chunk.push(n.outerHTML||n.textContent);
+    wc+=w;
+    if(wc>=500){pages.push(chunk.join(''));chunk=[];wc=0;}
+  });
+  if(chunk.length) pages.push(chunk.join(''));
+  if(!pages.length) pages=['<p>Content မရှိပါ</p>'];
+  /* restore page */
+  try{curPage=Math.min(parseInt(localStorage.getItem('cprd_'+docId))||0,pages.length-1);}catch(e){curPage=0;}
+  showPage();
+  document.getElementById('pageNav').style.display='flex';
+}
 
-  /* cover */
-  var cover = document.createElement('div');
-  cover.className = 'story-cover';
-  cover.innerHTML =
-    '<div class="story-cover-title">' + esc(data.title||'Untitled') + '</div>' +
-    '<div class="story-cover-author">' + esc(data.authorName||data.authorUsername||'—') + '</div>' +
-    '<div class="story-cover-meta">' +
-      '<span class="story-badge">📖 Story</span>' +
-      (data.updatedAt ? '<span class="story-badge">' + data.updatedAt.substring(0,10) + '</span>' : '') +
+function showPage(){
+  var ac=buildAuthorCard();
+  var titleHtml=curPage===0?'<div class="story-title">'+esc(docData.title||'')+'</div>':'';
+  document.getElementById('content').innerHTML=
+    ac+'<div class="story-wrap">'+titleHtml+'<div class="page-content">'+pages[curPage]+'</div></div>';
+  document.getElementById('pageInd').textContent='p. '+(curPage+1)+' / '+pages.length;
+  document.getElementById('prevBtn').disabled=curPage===0;
+  var nb=document.getElementById('nextBtn');
+  nb.disabled=curPage===pages.length-1;
+  nb.className='page-nav-btn'+(curPage<pages.length-1?' red':'');
+  nb.textContent=curPage===pages.length-1?'✅ ပြီးပြီ':'နောက် →';
+  try{localStorage.setItem('cprd_'+docId,curPage);}catch(e){}
+  window.scrollTo(0,0);
+}
+
+window.prevPage=function(){if(curPage>0){curPage--;showPage();}};
+window.nextPage=function(){if(curPage<pages.length-1){curPage++;showPage();}};
+
+/* SCREENPLAY */
+function renderScreenplay(){
+  var ac=buildAuthorCard();
+  var html=ac+'<div class="sp-wrap">'+
+    '<div class="sp-cover-card">'+
+      '<div class="sp-cover-title">'+esc(docData.title||'')+'</div>'+
+      '<div class="sp-cover-hr"></div>'+
+      '<div class="sp-cover-by">Written by</div>'+
+      '<div class="sp-cover-author">'+esc(docData.author||docData.authorName||'')+'</div>'+
     '</div>';
-  div.appendChild(cover);
-
-  /* body */
-  var body = document.createElement('div');
-  body.className = 'story-body';
-  body.innerHTML = data.story || '<p style="color:#ccc;font-style:italic;">Content မပါသေးပါ</p>';
-  div.appendChild(body);
-
-  content.innerHTML = '';
-  content.appendChild(div);
-}
-
-/* ══ SCREENPLAY ══ */
-function renderScreenplay(data) {
-  var content = document.getElementById('content');
-  var div = document.createElement('div');
-  div.className = 'sp-reader';
-
-  /* cover */
-  var cover = document.createElement('div');
-  cover.className = 'sp-cover';
-  cover.innerHTML =
-    '<div class="sp-cover-title">' + esc(data.title||'Untitled') + '</div>' +
-    '<div class="sp-cover-hr"></div>' +
-    '<div class="sp-cover-by">Written by</div>' +
-    '<div class="sp-cover-author">' + esc(data.author||data.authorName||'—') + '</div>';
-  div.appendChild(cover);
-
-  /* logline */
-  if (data.logline) {
-    div.appendChild(makeSection('Logline', data.logline));
-  }
-  /* synopsis */
-  if (data.synopsis) {
-    div.appendChild(makeSection('Synopsis', data.synopsis));
-  }
-  /* treatment */
-  if (data.treatment) {
-    div.appendChild(makeSection('Treatment', data.treatment));
-  }
-
-  /* screenplay */
-  if (data.screenplay && data.screenplay.length > 0) {
-    var script = document.createElement('div');
-    script.className = 'sp-script';
-
-    var fi = document.createElement('div');
-    fi.className = 'sp-fade';
-    fi.textContent = 'FADE IN:';
-    script.appendChild(fi);
-
-    data.screenplay.forEach(function(el) {
-      var elDiv = document.createElement('div');
-      elDiv.className = 'sp-el-' + el.type;
-      elDiv.textContent = el.text || '';
-      script.appendChild(elDiv);
+  if(docData.logline) html+='<div class="sp-section"><div class="sp-lbl">Logline</div><div class="sp-text">'+esc(docData.logline)+'</div></div>';
+  if(docData.synopsis) html+='<div class="sp-section"><div class="sp-lbl">Synopsis</div><div class="sp-text">'+esc(docData.synopsis)+'</div></div>';
+  if(docData.treatment) html+='<div class="sp-section"><div class="sp-lbl">Treatment</div><div class="sp-text">'+esc(docData.treatment)+'</div></div>';
+  if(docData.screenplay&&docData.screenplay.length){
+    html+='<div class="sp-script-body"><div class="sp-fade">FADE IN:</div>';
+    docData.screenplay.forEach(function(el){
+      var t=el.type||'action';var tx=esc(el.text||'');
+      if(t==='scene')  html+='<div class="sp-el-scene">'+tx+'</div>';
+      else if(t==='action') html+='<div class="sp-el-action">'+tx+'</div>';
+      else if(t==='char')   html+='<div class="sp-el-char">'+tx+'</div>';
+      else if(t==='paren')  html+='<div class="sp-el-paren">'+tx+'</div>';
+      else if(t==='dial')   html+='<div class="sp-el-dial">'+tx+'</div>';
+      else if(t==='trans')  html+='<div class="sp-el-trans">'+tx+'</div>';
+      else html+='<div class="sp-el-action">'+tx+'</div>';
     });
-
-    div.appendChild(script);
+    html+='<div class="sp-fade right">FADE OUT.</div></div>';
   }
-
-  content.innerHTML = '';
-  content.appendChild(div);
+  html+='</div>';
+  document.getElementById('content').innerHTML=html;
 }
 
-function makeSection(label, text) {
-  var sec = document.createElement('div');
-  sec.className = 'sp-section';
-  var lbl = document.createElement('div');
-  lbl.className = 'sp-section-lbl';
-  lbl.textContent = label;
-  var txt = document.createElement('div');
-  txt.className = 'sp-section-text';
-  txt.textContent = text;
-  sec.appendChild(lbl);
-  sec.appendChild(txt);
-  return sec;
-}
+/* CLAP */
+window.doClap=async function(){
+  if(!currentUser){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
+  var fab=document.getElementById('clapFab');
+  var cEl=document.getElementById('clapCount');
+  var cRef=doc(db,'docClaps',docId,'users',currentUser.uid);
+  var gRef=doc(db,'clapping',currentUser.uid,'users',docId);
+  try{
+    if(isClapped){
+      await deleteDoc(cRef);
+      try{await deleteDoc(gRef);}catch(e){}
+      var dS=await getDoc(doc(db,'docs',docId));
+      var c=dS.exists()?(dS.data().clapCount||0):0;
+      await updateDoc(doc(db,'docs',docId),{clapCount:Math.max(0,c-1)});
+      cEl.textContent=Math.max(0,c-1);
+      docData.clapCount=Math.max(0,c-1);
+      isClapped=false;fab.className='clap-fab';toast('👏 Clap ဖြုတ်ပြီး');
+    }else{
+      var now=new Date().toISOString();
+      await setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
+      await setDoc(gRef,{docId:docId,clappedAt:now});
+      var dS2=await getDoc(doc(db,'docs',docId));
+      var c2=dS2.exists()?(dS2.data().clapCount||0):0;
+      await updateDoc(doc(db,'docs',docId),{clapCount:c2+1});
+      cEl.textContent=c2+1;
+      docData.clapCount=c2+1;
+      isClapped=true;fab.className='clap-fab clapped';toast('👏 Clap လုပ်ပြီး');
+    }
+  }catch(e){toast('❌ '+e.message);}
+};
 
-function showNotFound(msg) {
-  document.getElementById('content').innerHTML =
-    '<div class="not-found">' +
-      '<div class="not-found-icon">📄</div>' +
-      '<div class="not-found-title">ဖတ်မရပါ</div>' +
-      '<div class="not-found-sub">' + esc(msg) + '</div>' +
-      '<a class="btn btn-red" href="index.html">Home သို့ပြန်မည်</a>' +
+/* HELPERS */
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function showNotFound(msg){
+  document.getElementById('content').innerHTML=
+    '<div class="not-found">'+
+      '<div class="not-found-icon">🔒</div>'+
+      '<div class="not-found-title">'+msg+'</div>'+
+      '<div class="not-found-sub">ဤ doc ကို ဖတ်ခွင့် မရှိပါ</div>'+
+      '<a class="btn-home" href="/home">← Home</a>'+
     '</div>';
-  document.getElementById('navTitle').textContent = '—';
 }
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
+</script>
 
-function esc(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+<script>
+/* THEME */
+var fontSize=17;
+function setTheme(t){
+  document.body.className=t;
+  document.getElementById('thLight').classList.toggle('active',t==='light');
+  document.getElementById('thDark').classList.toggle('active',t==='dark');
+  document.getElementById('thWarm').classList.toggle('active',t==='warm');
+  try{localStorage.setItem('cp_theme',t);}catch(e){}
 }
+/* FONT SIZE */
+function changeFontSize(d){
+  fontSize=Math.min(24,Math.max(13,fontSize+d));
+  document.documentElement.style.setProperty('--fs',fontSize+'px');
+  document.getElementById('fsVal').textContent=fontSize;
+  try{localStorage.setItem('cp_fs',fontSize);}catch(e){}
+}
+/* RESTORE */
+try{
+  var st=localStorage.getItem('cp_theme')||'light';setTheme(st);
+  var sf=parseInt(localStorage.getItem('cp_fs'))||17;
+  fontSize=sf;document.documentElement.style.setProperty('--fs',sf+'px');
+  document.getElementById('fsVal').textContent=sf;
+}catch(e){}
 </script>
 </body>
 </html>
