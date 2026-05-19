@@ -287,7 +287,7 @@ function openPopup(doc){
 
   var cb=document.getElementById('popupClapBtn');
   cb.className='popup-btn-clap'+(myClaps[doc.id]?' clapped':'');
-  cb.textContent=myClaps[doc.id]?'❤️':'👏';
+  cb.textContent=myClaps[doc.id]?'👏':'👏';
   document.getElementById('detailPopup').classList.add('on');
   document.body.style.overflow='hidden';
 }
@@ -340,7 +340,7 @@ async function toggleClap(doc,cardBtn,popupBtn){
       doc.clapCount=n2+1;
       myClaps[docId]=true;
       if(cardBtn){cardBtn.className='card-clap clapped';cardBtn.innerHTML='👏 '+doc.clapCount;}
-      if(popupBtn){popupBtn.className='popup-btn-clap clapped';popupBtn.textContent='❤️';}
+      if(popupBtn){popupBtn.className='popup-btn-clap clapped';popupBtn.textContent='👏';}
       toast('👏 Clap လုပ်ပြီး');
     }
   }catch(e){toast('❌ '+e.message);}
