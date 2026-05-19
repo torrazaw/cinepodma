@@ -46,38 +46,33 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
   <div class="page-div"></div>
   <p class="page-sub">မေးခွန်းများ၊ တိုင်ကြားချက်များ ရှိပါက အောက်ပါ နည်းလမ်းများဖြင့် ဆက်သွယ်နိုင်ပါသည်။</p>
 
-  <a class="contact-card" href="mailto:hello@cinepodma.com">
+  <a class="contact-card" href="mailto:razaw@cinepodma.com">
     <span class="contact-icon">✉️</span>
     <div>
       <div class="contact-label">Email</div>
-      <div class="contact-val">hello@cinepodma.com</div>
-    </div>
-  </a>
-
-  <a class="contact-card" href="https://fb.com/cinepodma" target="_blank">
-    <span class="contact-icon">📘</span>
-    <div>
-      <div class="contact-label">Facebook</div>
-      <div class="contact-val">fb.com/cinepodma</div>
-    </div>
-  </a>
-
-  <a class="contact-card" href="https://t.me/cinepodma" target="_blank">
-    <span class="contact-icon">✈️</span>
-    <div>
-      <div class="contact-label">Telegram</div>
-      <div class="contact-val">t.me/cinepodma</div>
+      <div class="contact-val">razaw@cinepodma.com</div>
     </div>
   </a>
 
   <div class="form-wrap">
     <div class="form-title">Message ပို့မည်</div>
-    <div class="fg"><label class="fl">အမည်</label><input class="fi" type="text" placeholder="သင့်နာမည်"></div>
-    <div class="fg"><label class="fl">Email</label><input class="fi" type="email" placeholder="email@example.com"></div>
-    <div class="fg"><label class="fl">Message</label><textarea class="fi" placeholder="မေးချင်သည်မျာ ရေးပါ..."></textarea></div>
-    <button class="btn-r" onclick="alert('Message ပို့ပြီး — မကြာမီ ပြန်ဆက်မည်')">📨 ပို့မည်</button>
+    <div class="fg"><label class="fl">အမည်</label><input class="fi" id="fName" type="text" placeholder="သင့်နာမည်"></div>
+    <div class="fg"><label class="fl">Email</label><input class="fi" id="fEmail" type="email" placeholder="email@example.com"></div>
+    <div class="fg"><label class="fl">Message</label><textarea class="fi" id="fMsg" placeholder="မေးချင်သည်များ ရေးပါ..."></textarea></div>
+    <button class="btn-r" onclick="sendMsg()">📨 ပို့မည်</button>
   </div>
 </main>
 <footer>© 2026 CinePodma. All rights reserved.</footer>
+<script>
+function sendMsg(){
+  var name=document.getElementById('fName').value.trim();
+  var email=document.getElementById('fEmail').value.trim();
+  var msg=document.getElementById('fMsg').value.trim();
+  if(!name||!email||!msg){alert('အကုန်ဖြည့်ပါ');return;}
+  var subject=encodeURIComponent('CinePodma Message from '+name);
+  var body=encodeURIComponent('From: '+name+'\nEmail: '+email+'\n\n'+msg);
+  window.location.href='mailto:razaw@cinepodma.com?subject='+subject+'&body='+body;
+}
+</script>
 </body>
 </html>
