@@ -738,13 +738,13 @@ footer {
 
   <!-- CLAPPED TAB -->
   <div id="tabClappedContent" style="display:none;">
-    <!-- Privacy toggle (owner only) -->
-    <div id="clappedPrivacyRow" style="display:none;margin-bottom:16px;display:none;">
-      <div style="display:flex;gap:8px;align-items:center;">
-        <span style="font-size:13px;color:var(--slate);line-height:1.8;">ဘယ်သူ မြင်မလဲ:</span>
+    <div id="clappedPrivacyRow" style="display:none;margin-bottom:16px;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:13px;color:var(--slate);line-height:1.8;">👁 ဘယ်သူမြင်မလဲ:</span>
         <button class="clap-priv-btn active" id="cpPublic" onclick="setClappedPrivacy('public',this)">🌐 Public</button>
         <button class="clap-priv-btn" id="cpPrivate" onclick="setClappedPrivacy('private',this)">🔒 ကိုယ်ပဲ</button>
       </div>
+      <p style="font-size:11px;color:var(--slate-lt);margin-top:6px;line-height:1.6;">Public ထားရင် သင့် profile ကြည့်သူတွေ မြင်နိုင်သည်</p>
     </div>
     <div class="scripts-grid" id="clappedGrid"></div>
   </div>
@@ -1078,29 +1078,52 @@ window.switchProfileTab=function(tab,btn){
 
 /* ══ CLAPPED TAB ══ */
 var clappedDocs=[];
-window.setClappedPrivacy=function(p,btn){
+window.setClappedPrivacy=async function(p,btn){
   clappedPrivacy=p;
   document.querySelectorAll('.clap-priv-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
+  try{
+    await updateDoc(doc(db,'users',currentUser.uid),{clappedPrivacy:p});
+    toast(p==='public'?'🌐 Clapped list Public ဖြစ်ပြီ':'🔒 Clapped list Private ဖြစ်ပြီ');
+  }catch(e){}
   renderClappedDocs();
 };
 
 async function loadClappedDocs(){
   var grid=document.getElementById('clappedGrid');
   grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်နေသည်...</div>';
+
+  /* load clappedPrivacy setting */
+  try{
+    var usnap=await getDoc(doc(db,'users',profileUid));
+    if(usnap.exists()){
+      var savedPriv=usnap.data().clappedPrivacy||'public';
+      clappedPrivacy=savedPriv;
+      var btn=document.getElementById(savedPriv==='public'?'cpPublic':'cpPrivate');
+      if(btn){
+        document.querySelectorAll('.clap-priv-btn').forEach(function(b){b.classList.remove('active');});
+        btn.classList.add('active');
+      }
+    }
+  }catch(e){}
+
+  /* non-owner: check if allowed to see */
+  if(!isOwner && clappedPrivacy==='private'){
+    grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">🔒 Private — ကိုယ်ပဲမြင်ရမည်</div>';
+    return;
+  }
+
   try{
     var snap=await getDocs(collection(db,'clapping',profileUid,'users'));
     if(snap.empty){
       grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Clapped doc မရှိသေးပါ</div>';
       return;
     }
-    /* get docIds — stored as uid field or docId field or doc.id */
     var docIds=[];
     snap.forEach(function(d){
       var data=d.data();
-      docIds.push(data.docId||data.uid||d.id);
+      docIds.push(data.docId||d.id);
     });
-    /* load each doc */
     var promises=docIds.map(function(id){return getDoc(doc(db,'docs',id));});
     var docs=await Promise.all(promises);
     clappedDocs=[];
@@ -1115,6 +1138,7 @@ async function loadClappedDocs(){
     renderClappedDocs();
   }catch(e){
     grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်မရပါ — '+e.message+'</div>';
+    console.error('loadClappedDocs',e);
   }
 }
 
