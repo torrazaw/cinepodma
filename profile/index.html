@@ -1141,8 +1141,6 @@ async function loadClappedDocs(){
     docs.forEach(function(d){
       if(d.exists()){
         var data=d.data();
-        clappedDocs.push({id:d.id,title:data.title,type:data.type,
-          privacy:data.privacy,authorUsername:data.authorUsername,
         clappedDocs.push({
           id:d.id,title:data.title,type:data.type,
           privacy:data.privacy,genreLabel:data.genreLabel,
