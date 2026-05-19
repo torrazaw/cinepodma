@@ -315,9 +315,31 @@ function initStory(){
              .replace(/\s*style\s*=\s*"(\s*)"/gi,'');
   });
   try{curPage=parseInt(localStorage.getItem('cprd_'+docId))||0;}catch(e){curPage=0;}
-  document.fonts.ready.then(function(){ renderEpub(); initSwipe(); });
+  /* wait for fonts AND layout to be ready */
+  function waitAndBuild(){
+    var reader=document.getElementById('reader');
+    if(!reader||reader.clientWidth===0||reader.clientHeight===0){
+      setTimeout(waitAndBuild,50);
+      return;
+    }
+    renderEpub();
+    initSwipe();
+  }
+  document.fonts.ready.then(waitAndBuild);
   window._rebuildPages=function(){ renderEpub(); };
   window._showCurrentPage=function(){ goPage(curPage,true); };
+
+  /* re-render when returning to page (iOS tab switch) */
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible' && window._rebuildPages){
+      setTimeout(window._rebuildPages, 100);
+    }
+  });
+  window.addEventListener('pageshow',function(e){
+    if(e.persisted && window._rebuildPages){
+      setTimeout(window._rebuildPages, 100);
+    }
+  });
 }
 
 function renderEpub(){
