@@ -163,14 +163,14 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 <body class="light">
 
 <!-- NAV -->
-<nav class="nav">
+<nav class="nav" id="topbar">
   <a class="brand" href="/home">cine<br><span>podma</span></a>
   <div class="nav-title" id="navTitle">ဖွင့်နေသည်...</div>
   <a class="back-btn" href="javascript:history.back()">← ပြန်</a>
 </nav>
 
 <!-- SETTINGS BAR -->
-<div class="sbar">
+<div class="sbar" id="sbar">
   <a class="sb-av" id="sbAv" href="/home">👤</a>
   <span class="sb-name" id="sbName">—</span>
   <span class="sb-badge" id="sbGenre">—</span>
@@ -214,11 +214,11 @@ function setTheme(t){
 
 function chFS(d){
   fontSize=Math.min(24,Math.max(12,fontSize+d));
+  window.fontSize=fontSize; /* expose to module script */
   document.getElementById('fsNum').textContent=fontSize;
   try{localStorage.setItem('cp_fs',fontSize);}catch(e){}
-  /* rebuild epub with new font size */
   if(window._rebuildPages){
-    setTimeout(window._rebuildPages, 30);
+    setTimeout(window._rebuildPages,30);
   }
 }
 
@@ -226,9 +226,7 @@ function chFS(d){
 try{
   var _t=localStorage.getItem('cp_theme')||'light'; setTheme(_t);
   var _f=parseInt(localStorage.getItem('cp_fs'))||17;
-  fontSize=_f;
-  document.documentElement.style.setProperty('--rfs',_f+'px');
-  document.body.style.setProperty('--rfs',_f+'px');
+  fontSize=_f; window.fontSize=_f;
   document.getElementById('fsNum').textContent=_f;
 }catch(e){}
 
@@ -326,17 +324,21 @@ function initStory(){
 
 function renderEpub(){
   var reader=document.getElementById('reader');
+  if(!reader) return;
   var W=reader.clientWidth;
   var H=reader.clientHeight;
   var PAD=22;
+  var fs=window.fontSize||fontSize; /* sync with global */
   var fg=getFg();
   var bg=getBg();
-  /* update page background */
+  /* update page background safely */
   reader.style.background=bg;
-  document.getElementById('topbar').style.background=bg;
-  document.getElementById('sbar').style.background=bg;
+  var tb=document.getElementById('topbar');
+  var sb=document.getElementById('sbar');
+  if(tb) tb.style.background=bg;
+  if(sb) sb.style.background=bg;
   var titleHtml=docData.title
-    ?'<div style="font-size:'+(fontSize+4)+'px;font-weight:700;line-height:1.6;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(128,128,128,.2);">'+esc(docData.title)+'</div>'
+    ?'<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(128,128,128,.2);">'+esc(docData.title)+'</div>'
     :'';
 
   reader.innerHTML=
@@ -349,7 +351,7 @@ function renderEpub(){
         '<div id="epubCol" style="'+
           'height:'+H+'px;'+
           'padding:'+PAD+'px '+PAD+'px '+(PAD+24)+'px;'+
-          'font-size:'+fontSize+'px;'+
+          'font-size:'+fs+'px;'+
           'line-height:2.1;color:'+fg+';'+
           'column-width:'+(W-PAD*2)+'px;'+
           'column-gap:'+(PAD*2)+'px;'+
