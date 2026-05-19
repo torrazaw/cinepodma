@@ -305,9 +305,17 @@ async function toggleDocClap(doc, btn){
     }else{
       var now=new Date().toISOString();
       await window._setDoc(clapRef,{uid:currentUser.uid,clappedAt:now});
-      /* save to clapping with docId as key — profile clapped tab reads this */
       await window._setDoc(clappingRef,{docId:docId,clappedAt:now});
-      try{await window._updateDoc(window._getRef('docs/'+docId),{clapCount:window._inc(1)});}catch(e){}
+      /* update clapCount */
+      try{
+        await window._updateDoc(window._getRef('docs/'+docId),{clapCount:window._inc(1)});
+      }catch(e){
+        console.error('clapCount increment error:',e);
+        /* fallback: set directly */
+        try{
+          await window._updateDoc(window._getRef('docs/'+docId),{clapCount:(doc.clapCount||0)+1});
+        }catch(e2){console.error('clapCount fallback error:',e2);}
+      }
       myClaps[docId]=true;
       doc.clapCount=(doc.clapCount||0)+1;
       btn.className='card-clap clapped';
