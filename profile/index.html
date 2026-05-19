@@ -1132,7 +1132,7 @@ async function loadClappedDocs(){
         var data=d.data();
         clappedDocs.push({id:d.id,title:data.title,type:data.type,
           privacy:data.privacy,authorUsername:data.authorUsername,
-          authorName:data.authorName,uid:data.uid,genreLabel:data.genreLabel});
+          authorName:data.authorName,uid:data.uid,genreLabel:data.genreLabel,clapCount:data.clapCount||0});
       }
     });
     renderClappedDocs();
@@ -1158,15 +1158,23 @@ function renderClappedDocs(){
   }
   grid.innerHTML=docs.map(function(s){
     var typeIcon=s.type==='story'?'📖':'🎬';
-    return '<div class="script-card">'+
-      '<div class="script-card-top">'+
-        '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
+    var genreLabel=s.genreLabel||typeIcon;
+    var letter=(s.title||'?').charAt(0);
+    return '<a href="/read?id='+s.id+'" style="text-decoration:none;color:inherit;">'+
+      '<div class="script-card" style="padding:0;overflow:hidden;">'+
+        /* poster */
+        '<div style="width:100%;aspect-ratio:3/4;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;">'+
+          '<span style="font-size:36px;font-weight:700;color:#C0C0C0;">'+letter+'</span>'+
+          '<span style="position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.65);color:white;font-size:10px;font-weight:600;">'+genreLabel+'</span>'+
+          '<span style="position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,.92);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:600;">👏 '+(s.clapCount||0)+'</span>'+
+        '</div>'+
+        /* body */
+        '<div style="padding:10px 12px;">'+
+          '<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;">'+(s.title||'Untitled')+'</div>'+
+          '<div style="font-size:11px;color:var(--slate-lt);">'+(s.authorUsername||s.authorName||'—')+'</div>'+
+        '</div>'+
       '</div>'+
-      '<div class="script-card-meta">'+(s.authorUsername||s.authorName||'—')+'</div>'+
-      '<div class="script-card-actions">'+
-        '<button class="script-act-btn primary" onclick="window.location.href=\'/profile?uid='+(s.uid||'')+'\'">👤 Profile</button>'+
-      '</div>'+
-    '</div>';
+    '</a>';
   }).join('');
 }
 
