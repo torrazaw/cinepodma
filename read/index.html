@@ -326,7 +326,13 @@ function renderEpub(){
   var W=reader.clientWidth;
   var H=reader.clientHeight;
   var PAD=22;
-  var fs=window.fontSize||17; /* read from global */
+  var fs=window.fontSize||17;
+  /* inject font-size into every paragraph */
+  var styledParas=allParas.map(function(h){
+    return h.replace(/^<(\w+)/,function(m,tag){
+      return '<'+tag+' style="font-size:'+fs+'px;line-height:2.1;color:'+fg+';"';
+    });
+  });
   var fg=getFg();
   var bg=getBg();
   /* update page background safely */
@@ -340,44 +346,40 @@ function renderEpub(){
     :'';
 
   reader.innerHTML=
-    '<div id="epubWrap" style="'+
-      'position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;">'+
+    '<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;">'+
       '<div id="epubSlider" style="'+
         'position:absolute;top:0;left:0;height:100%;'+
         'display:flex;will-change:transform;'+
         'transition:transform .3s cubic-bezier(.4,0,.2,1);">'+
         '<div id="epubCol" style="'+
           'height:'+H+'px;'+
-          'padding:'+PAD+'px '+PAD+'px '+(PAD+24)+'px;'+
-          'font-size:'+fs+'px !important;'+
+          'padding:'+PAD+'px '+PAD+'px '+(PAD+20)+'px;'+
+          'font-size:'+fs+'px;'+
           'line-height:2.1;color:'+fg+';'+
-          'column-width:'+W+'px;'+
-          'column-gap:0px;'+
+          'column-width:'+(W-PAD*2)+'px;'+
+          'column-gap:'+(PAD*2)+'px;'+
           'column-fill:auto;'+
           'overflow:hidden;'+
           'word-break:break-word;'+
           'box-sizing:border-box;'+
-          '-webkit-column-width:'+W+'px;'+
-          '-webkit-column-gap:0px;'+
-          '-moz-column-width:'+W+'px;'+
-        '">'+titleHtml+allParas.join('')+'</div>'+
+        '">'+titleHtml+styledParas.join('')+'</div>'+
       '</div>'+
     '</div>'+
-    '<div id="pgInd" style="position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:monospace;font-size:10px;color:'+fg+';opacity:.35;pointer-events:none;"></div>';
+    '<div id="pgInd" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-family:monospace;font-size:10px;color:'+fg+';opacity:.35;pointer-events:none;"></div>';
 
-  /* wait for layout then measure */
+  /* measure after font renders */
   setTimeout(function(){
     var col=document.getElementById('epubCol');
     var slider=document.getElementById('epubSlider');
     if(!col||!slider) return;
-    col.style.width='auto'; /* let it expand */
+    /* each column unit = (W-PAD*2) + PAD*2 = W */
     var sw=col.scrollWidth;
     totalPages=Math.max(1,Math.round(sw/W));
     col.style.width=(totalPages*W)+'px';
     slider.style.width=(totalPages*W)+'px';
     curPage=Math.min(curPage,totalPages-1);
     goPage(curPage,true);
-  },120);
+  },150);
 }
 
 var totalPages=1;
