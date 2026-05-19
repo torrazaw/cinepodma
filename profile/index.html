@@ -854,29 +854,6 @@ const db   = getFirestore(app);
 const storage = getStorage(app);
 
 /* Avatar upload */
-document.getElementById('avatarInput').addEventListener('change', async function(){
-  if(!isOwner || !this.files[0] || !currentUser) return;
-  var file = this.files[0];
-  if(!file.type.startsWith('image/')) { toast('ပုံ file ထည့်ပါ'); return; }
-  if(file.size > 2*1024*1024) { toast('ပုံ 2MB အောက်ဖြစ်ရမည်'); return; }
-  toast('📤 Upload လုပ်နေသည်...');
-  try {
-    var storageRef = ref(storage, 'avatars/' + currentUser.uid);
-    await uploadBytes(storageRef, file);
-    var url = await getDownloadURL(storageRef);
-    /* update Firestore + Auth */
-    await updateDoc(doc(db,'users',currentUser.uid), { avatar: url });
-    await updateProfile(currentUser, { photoURL: url });
-    currentProfile.avatar = url;
-    /* update UI */
-    var img = document.getElementById('avatarImg');
-    var em  = document.getElementById('avatarEmoji');
-    if(img){ img.src=url; img.style.display='block'; }
-    if(em) em.style.display='none';
-    toast('✅ Profile ပုံ ပြောင်းပြီး');
-  } catch(e) { toast('❌ Upload မရပါ — ' + e.message); }
-});
-
 var currentUser    = null;
 var currentProfile = {};
 var scripts        = [];
@@ -888,6 +865,28 @@ var urlParams = new URLSearchParams(window.location.search);
 var uidParam  = urlParams.get('uid');
 var profileUid = null;
 var isOwner    = false;
+
+/* Avatar upload — declare after vars so isOwner/currentUser accessible */
+document.getElementById('avatarInput').addEventListener('change', async function(){
+  if(!isOwner || !this.files[0] || !currentUser) return;
+  var file = this.files[0];
+  if(!file.type.startsWith('image/')) { toast('ပုံ file ထည့်ပါ'); return; }
+  if(file.size > 2*1024*1024) { toast('ပုံ 2MB အောက်ဖြစ်ရမည်'); return; }
+  toast('📤 Upload လုပ်နေသည်...');
+  try {
+    var storageRef = ref(storage, 'avatars/' + currentUser.uid);
+    await uploadBytes(storageRef, file);
+    var url = await getDownloadURL(storageRef);
+    await updateDoc(doc(db,'users',currentUser.uid), { avatar: url });
+    await updateProfile(currentUser, { photoURL: url });
+    currentProfile.avatar = url;
+    var img = document.getElementById('avatarImg');
+    var em  = document.getElementById('avatarEmoji');
+    if(img){ img.src=url; img.style.display='block'; }
+    if(em) em.style.display='none';
+    toast('✅ Profile ပုံ ပြောင်းပြီး');
+  } catch(e) { toast('❌ Upload မရပါ — ' + e.message); }
+});
 
 /* ══ AUTH ══ */
 onAuthStateChanged(auth, async function(user) {
