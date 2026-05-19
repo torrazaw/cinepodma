@@ -383,10 +383,17 @@ function buildPages(cb){
   cb();
 }
 
+function getFg(){
+  var t=document.body.className;
+  if(t==='dark') return '#F0EDE8';
+  if(t==='warm') return '#2C1810';
+  return '#111111';
+}
+
 function showPage(){
   var reader=document.getElementById('reader');
   var indices=pageGroups[curPage]||[];
-  var fg=getComputedStyle(document.body).getPropertyValue('--fg').trim()||'#111';
+  var fg=getFg();
   var fs=fontSize+'px';
   var titleHtml=curPage===0&&docData.title
     ?'<div style="font-size:'+(fontSize+5)+'px;font-weight:700;line-height:1.6;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+'">'+esc(docData.title)+'</div>'
