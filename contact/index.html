@@ -64,14 +64,35 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
 </main>
 <footer>© 2026 CinePodma. All rights reserved.</footer>
 <script>
-function sendMsg(){
-  var name=document.getElementById('fName').value.trim();
-  var email=document.getElementById('fEmail').value.trim();
-  var msg=document.getElementById('fMsg').value.trim();
-  if(!name||!email||!msg){alert('အကုန်ဖြည့်ပါ');return;}
-  var subject=encodeURIComponent('CinePodma Message from '+name);
-  var body=encodeURIComponent('From: '+name+'\nEmail: '+email+'\n\n'+msg);
-  window.location.href='mailto:razaw@cinepodma.com?subject='+subject+'&body='+body;
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPh9BZZMOyRGyryHrUmVH800HaADFJVxt5GUYb0E9lP-ZYM1sGogzCivtuuK8f2e1I/exec';
+
+async function sendMsg(){
+  var name  = document.getElementById('fName').value.trim();
+  var email = document.getElementById('fEmail').value.trim();
+  var msg   = document.getElementById('fMsg').value.trim();
+  if(!name||!email||!msg){ alert('အကုန်ဖြည့်ပါ'); return; }
+
+  var btn = document.querySelector('.btn-r');
+  btn.textContent = '📤 ပို့နေသည်...';
+  btn.disabled = true;
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name:name, email:email, message:msg })
+    });
+    /* no-cors မို့ response မဖတ်နိုင်ဘူး — success ယူဆမယ် */
+    document.getElementById('fName').value = '';
+    document.getElementById('fEmail').value = '';
+    document.getElementById('fMsg').value = '';
+    btn.textContent = '✅ ပို့ပြီးပြီ';
+    setTimeout(function(){ btn.textContent='📨 ပို့မည်'; btn.disabled=false; }, 3000);
+  } catch(e) {
+    btn.textContent = '❌ မရပါ — ထပ်ကြိုးစားပါ';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
