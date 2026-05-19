@@ -209,8 +209,7 @@ function setTheme(t){
     document.getElementById('th'+x).classList.toggle('act',['light','dark','warm'][i]===t);
   });
   try{localStorage.setItem('cp_theme',t);}catch(e){}
-  /* re-render page so inline colors update */
-  if(window._showCurrentPage) window._showCurrentPage();
+  if(window._rebuildPages) window._rebuildPages();
 }
 
 function chFS(d){
@@ -331,6 +330,11 @@ function renderEpub(){
   var H=reader.clientHeight;
   var PAD=22;
   var fg=getFg();
+  var bg=getBg();
+  /* update page background */
+  reader.style.background=bg;
+  document.getElementById('topbar').style.background=bg;
+  document.getElementById('sbar').style.background=bg;
   var titleHtml=docData.title
     ?'<div style="font-size:'+(fontSize+4)+'px;font-weight:700;line-height:1.6;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(128,128,128,.2);">'+esc(docData.title)+'</div>'
     :'';
@@ -403,6 +407,12 @@ function getFg(){
   if(t==='dark') return '#F0EDE8';
   if(t==='warm') return '#2C1810';
   return '#111111';
+}
+function getBg(){
+  var t=document.body.className;
+  if(t==='dark') return '#1C1C1E';
+  if(t==='warm') return '#FAF3E0';
+  return '#FFFFFF';
 }
 
 /* ── SWIPE / TAP ── */
