@@ -217,10 +217,11 @@ function buildCard(doc){
   badge.textContent=getGenreLabel(doc);
   poster.appendChild(badge);
 
-  /* clap button */
-  var clap=document.createElement('button');clap.className='card-clap'+(myClaps[doc.id]?' clapped':'');
-  var clapCount=doc.clapCount||0;
-  clap.innerHTML='👏 '+clapCount;
+  /* clap button — check myClaps state */
+  var isClapped = myClaps[doc.id] ? true : false;
+  var clap=document.createElement('button');
+  clap.className='card-clap'+(isClapped?' clapped':'');
+  clap.innerHTML='👏 '+(doc.clapCount||0);
   clap.onclick=function(e){e.preventDefault();e.stopPropagation();toggleDocClap(doc,clap);};
   poster.appendChild(clap);
 
@@ -286,27 +287,34 @@ function onSearch(q){searchQ=q.toLowerCase().trim();refresh();}
 /* CLAP */
 async function toggleDocClap(doc, btn){
   if(!currentUser){ toast('👏 Clap လုပ်ရန် အကောင့်ဝင်ပါ'); return; }
-  var docId = doc.id;
-  try {
-    var clapPath = 'docClaps/' + docId + '/users/' + currentUser.uid;
-    var clapRef  = window._getRef(clapPath);
-    var snap     = await window._getDoc2(clapRef);
+  var docId=doc.id;
+  try{
+    var clapRef    =window._getRef('docClaps/'+docId+'/users/'+currentUser.uid);
+    /* clapping collection — key = docId so profile can find it */
+    var clappingRef=window._getRef('clapping/'+currentUser.uid+'/users/'+docId);
+    var snap=await window._getDoc2(clapRef);
     if(snap.exists()){
       await window._deleteDoc(clapRef);
-      myClaps[docId] = false;
-      doc.clapCount  = Math.max(0,(doc.clapCount||1)-1);
-      btn.className  = 'card-clap';
+      try{await window._deleteDoc(clappingRef);}catch(e){}
+      /* decrement */
+      try{await window._updateDoc(window._getRef('docs/'+docId),{clapCount:window._inc(-1)});}catch(e){}
+      myClaps[docId]=false;
+      doc.clapCount=Math.max(0,(doc.clapCount||1)-1);
+      btn.className='card-clap';
       toast('👏 Clap ဖြုတ်ပြီး');
-    } else {
-      await window._setDoc(clapRef, {uid:currentUser.uid, clappedAt:new Date().toISOString()});
-      try { await window._updateDoc(window._getRef('docs/'+docId), {clapCount:window._inc(1)}); }catch(e){}
-      myClaps[docId] = true;
-      doc.clapCount  = (doc.clapCount||0)+1;
-      btn.className  = 'card-clap clapped';
+    }else{
+      var now=new Date().toISOString();
+      await window._setDoc(clapRef,{uid:currentUser.uid,clappedAt:now});
+      /* save to clapping with docId as key — profile clapped tab reads this */
+      await window._setDoc(clappingRef,{docId:docId,clappedAt:now});
+      try{await window._updateDoc(window._getRef('docs/'+docId),{clapCount:window._inc(1)});}catch(e){}
+      myClaps[docId]=true;
+      doc.clapCount=(doc.clapCount||0)+1;
+      btn.className='card-clap clapped';
       toast('👏 Clap လုပ်ပြီး');
     }
-    btn.innerHTML = '👏 '+doc.clapCount;
-  } catch(e){ toast('❌ Error: '+e.message); console.error(e); }
+    btn.innerHTML='👏 '+doc.clapCount;
+  }catch(e){toast('❌ Error: '+e.message);console.error(e);}
 }
 </script>
 
@@ -401,14 +409,17 @@ async function loadDocs(){
   }
 }
 
+/* load my clapped docs and restore clap state */
 async function loadMyClapsForDocs(docIds){
   if(!currentUser) return;
-  for(var i=0;i<Math.min(docIds.length,50);i++){
+  for(var i=0;i<Math.min(docIds.length,100);i++){
     try{
-      var snap=await getDoc(doc(db,'docClaps',docIds[i],'users',currentUser.uid));
+      var snap=await window._getDoc2(window._getRef('docClaps/'+docIds[i]+'/users/'+currentUser.uid));
       if(snap.exists()) myClaps[docIds[i]]=true;
     }catch(e){}
   }
+  /* re-render to update clap button states */
+  refresh();
 }
 
 loadDocs();
