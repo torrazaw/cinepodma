@@ -19,7 +19,7 @@ html{scroll-behavior:smooth;}
 body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
 .brand{font-family:var(--font-en);font-size:13px;color:var(--black);text-decoration:none;line-height:1.3;}
 .brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
 .nav-r{display:flex;align-items:center;gap:8px;}
@@ -31,80 +31,90 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .nav-user-av img{width:100%;height:100%;object-fit:cover;}
 
 /* MAIN */
-main{flex:1;padding:80px 24px 60px;max-width:960px;margin:0 auto;width:100%;}
+main{flex:1;padding:76px 16px 60px;max-width:960px;margin:0 auto;width:100%;}
 
 /* HEADER */
-.page-hdr{margin-bottom:24px;}
+.page-hdr{margin-bottom:20px;}
 .page-title{font-family:var(--font-en);font-size:28px;letter-spacing:.5px;color:var(--black);margin-bottom:4px;}
 .page-div{width:40px;height:2px;background:var(--red);border-radius:2px;margin-bottom:6px;}
 .page-sub{font-size:13px;color:var(--slate);line-height:1.8;}
 
 /* SEARCH */
-.search-wrap{position:relative;margin-bottom:16px;}
+.search-wrap{position:relative;margin-bottom:14px;}
 .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--slate-lt);pointer-events:none;}
-.search-input{width:100%;padding:11px 16px 11px 42px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;line-height:1.8;background:var(--white);}
+.search-input{width:100%;padding:10px 16px 10px 42px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;line-height:1.8;background:var(--white);}
 .search-input:focus{border-color:var(--black);}
 
 /* TABS */
-.lib-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto;scrollbar-width:none;}
+.lib-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none;}
 .lib-tabs::-webkit-scrollbar{display:none;}
-.lib-tab{padding:12px 20px;border:none;background:transparent;font-family:var(--font-my);font-size:14px;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;line-height:1.6;}
+.lib-tab{padding:10px 18px;border:none;background:transparent;font-family:var(--font-my);font-size:14px;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;line-height:1.6;flex-shrink:0;}
 .lib-tab:hover{color:var(--black);}
 .lib-tab.active{color:var(--black);border-bottom-color:var(--red);font-weight:600;}
 
 /* FILTER */
-.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
-.filter-btn{padding:6px 14px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;transition:all .15s;line-height:1.8;white-space:nowrap;}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-btn{padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font-my);font-size:11px;color:var(--slate);cursor:pointer;transition:all .15s;line-height:1.8;white-space:nowrap;}
 .filter-btn:hover,.filter-btn.active{background:var(--black);border-color:var(--black);color:var(--white);}
 
-/* SORT */
-.sort-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
-.result-count{font-family:var(--font-en);font-size:11px;color:var(--slate-lt);letter-spacing:.3px;}
-.sort-btns{display:flex;gap:4px;}
-.sort-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--white);font-family:var(--font-en);font-size:11px;color:var(--slate);cursor:pointer;transition:all .12s;letter-spacing:.3px;}
-.sort-btn.active{background:var(--black);color:var(--white);border-color:var(--black);}
+/* COUNT */
+.result-count{font-family:var(--font-en);font-size:11px;color:var(--slate-lt);letter-spacing:.3px;margin-bottom:12px;}
 
-/* GRID */
-.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:32px;}
+/* 3-COL GRID */
+.lib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:32px;}
 
 /* CARD */
-.lib-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);text-decoration:none;color:var(--black);display:flex;flex-direction:column;}
-.lib-card:hover{border-color:#CCC;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
-
-/* Poster — shorter vertical */
+.lib-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);display:flex;flex-direction:column;}
+.lib-card:hover{border-color:#CCC;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
 .lib-poster{width:100%;aspect-ratio:3/4;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.lib-poster-letter{font-family:var(--font-my);font-size:36px;font-weight:700;color:#C0C0C0;}
+.lib-poster-letter{font-family:var(--font-my);font-size:28px;font-weight:700;color:#C0C0C0;}
 .lib-poster img{width:100%;height:100%;object-fit:cover;}
-
-/* Genre badge */
-.lib-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:6px;font-family:var(--font-my);font-size:10px;font-weight:600;background:rgba(0,0,0,.65);color:var(--white);backdrop-filter:blur(4px);}
-
-/* Clap on card */
-.card-clap{position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;background:rgba(255,255,255,.92);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:600;color:var(--black);cursor:pointer;border:none;transition:all .15s;backdrop-filter:blur(4px);}
-.card-clap:hover{background:var(--white);transform:scale(1.05);}
+.lib-badge{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:5px;font-family:var(--font-my);font-size:9px;font-weight:600;background:rgba(0,0,0,.7);color:var(--white);backdrop-filter:blur(4px);}
+.card-clap{position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.92);border-radius:99px;padding:2px 7px;font-size:10px;font-weight:600;color:var(--black);cursor:pointer;border:none;transition:all .15s;backdrop-filter:blur(4px);}
+.card-clap:hover{background:var(--white);}
 .card-clap.clapped{background:var(--red);color:var(--white);}
+.lib-body{padding:8px 10px;}
+.lib-title{font-size:11px;font-weight:600;color:var(--black);margin-bottom:2px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lib-author{font-size:10px;color:var(--slate-lt);line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-/* Card body */
-.lib-body{padding:10px 12px;flex:1;}
-.lib-title{font-size:13px;font-weight:600;color:var(--black);margin-bottom:3px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lib-author{font-size:11px;color:var(--slate-lt);line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* DETAIL POPUP */
+.popup-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:300;display:none;align-items:flex-end;justify-content:center;}
+.popup-ov.on{display:flex;}
+.popup-card{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:640px;padding:24px 24px 40px;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.popup-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+.popup-cover-row{display:flex;gap:16px;margin-bottom:20px;}
+.popup-cover{width:80px;height:106px;border-radius:10px;background:#F0F0F0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:28px;font-weight:700;color:#C0C0C0;font-family:var(--font-my);}
+.popup-cover img{width:100%;height:100%;object-fit:cover;}
+.popup-meta{flex:1;min-width:0;}
+.popup-title{font-size:18px;font-weight:700;color:var(--black);line-height:1.5;margin-bottom:6px;}
+.popup-author{font-size:13px;color:var(--slate);margin-bottom:8px;line-height:1.6;}
+.popup-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.popup-badge{padding:3px 10px;border-radius:99px;font-size:11px;border:1px solid var(--border);color:var(--slate);background:var(--slate-bg);}
+.popup-clap{font-size:13px;color:var(--slate);line-height:1.6;}
+.popup-synopsis{font-size:13px;color:var(--slate);line-height:2.0;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.popup-actions{display:flex;gap:10px;}
+.popup-btn-read{flex:1;padding:13px;border-radius:12px;border:none;background:var(--black);color:var(--white);font-family:var(--font-my);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;line-height:1.6;}
+.popup-btn-read:hover{background:#222;}
+.popup-btn-clap{width:48px;height:48px;border-radius:12px;border:1px solid var(--border);background:var(--white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.popup-btn-clap:hover{background:var(--slate-bg);}
+.popup-btn-clap.clapped{background:var(--red);border-color:var(--red);}
 
-/* EMPTY / LOADING */
+/* LOADING */
 .state-msg{grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--slate-lt);font-size:14px;line-height:2;}
 .spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:20px;background:var(--black);color:var(--white);font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;transform:translateY(40px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;}
-.toast.on{transform:translateY(0);opacity:1;}
-
 /* FOOTER */
-footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16px 28px;text-align:center;}
+footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:14px 20px;text-align:center;}
 .footer-text{font-family:var(--font-en);font-size:11px;color:var(--slate);letter-spacing:.5px;}
 
-@media(max-width:600px){
-  main{padding:72px 12px 48px;}
-  .lib-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--black);color:var(--white);font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;white-space:nowrap;}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
+
+@media(max-width:480px){
+  .lib-grid{gap:8px;}
 }
 </style>
 </head>
@@ -113,7 +123,7 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
 <nav>
   <a class="brand" href="/home">cine<br><span>podma</span></a>
   <div class="nav-r" id="navR">
-    <a class="nav-btn" href="/write">✍ ရေးမည်</a>
+    <a class="nav-btn red" href="/write">✍ ရေးမည်</a>
   </div>
 </nav>
 
@@ -121,7 +131,7 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
   <div class="page-hdr">
     <h1 class="page-title">Library</h1>
     <div class="page-div"></div>
-    <p class="page-sub" id="libSub">ဇာတ်ညွှန်းနှင့် ဝတ္ထုများ — အားလုံး အခမဲ့ဖတ်ရှုနိုင်</p>
+    <p class="page-sub" id="libSub">CinePodma တွင် ရေးသားထားသော ဝတ္ထုနှင့် ဇာတ်ညွှန်းများ</p>
   </div>
 
   <div class="search-wrap">
@@ -131,20 +141,26 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
 
   <div class="lib-tabs">
     <button class="lib-tab active" id="tabPodmates" onclick="setTab('podmates',this)">Podmates</button>
-    <button class="lib-tab" id="tabAdmin" onclick="setTab('admin',this)">ပြည်တွင်း / ပြည်ပ</button>
+    <button class="lib-tab" id="tabAdmin" onclick="setTab('admin',this)">ရုပ်ရှင်ဇာတ်ညွှန်းများ</button>
   </div>
 
   <!-- Podmates filters -->
   <div id="pmFilters">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setPmFilter('all',this)">အားလုံး</button>
-      <button class="filter-btn" onclick="setPmFilter('screenplay',this)">🎬 ဇာတ်ညွှန်း</button>
-      <button class="filter-btn" onclick="setPmFilter('story',this)">📖 ဝတ္ထု</button>
+      <button class="filter-btn" onclick="setPmFilter('feature',this)">🎬 ဇာတ်ညွှန်း</button>
+      <button class="filter-btn" onclick="setPmFilter('shortfilm',this)">🎬 ဇာတ်ညွှန်းတို</button>
+      <button class="filter-btn" onclick="setPmFilter('series',this)">📺 စီးရီး</button>
+      <button class="filter-btn" onclick="setPmFilter('novel',this)">📖 ဝတ္ထု</button>
+      <button class="filter-btn" onclick="setPmFilter('short',this)">📄 ဝတ္ထုတို</button>
+      <button class="filter-btn" onclick="setPmFilter('poem',this)">🌸 ကဗျာ</button>
+      <button class="filter-btn" onclick="setPmFilter('essay',this)">✍ ဆောင်းပါး</button>
     </div>
   </div>
 
   <!-- Admin filters -->
   <div id="adminFilters" style="display:none;">
+    <p style="font-size:12px;color:var(--slate);line-height:1.8;margin-bottom:10px;">မြန်မာ့ရုပ်ရှင်အပါအဝင် နိုင်ငံတကာရုပ်ရှင်များ၏ ဇာတ်ညွှန်းများ</p>
     <div class="filter-row">
       <button class="filter-btn active" onclick="setAdminFilter('all',this)">အားလုံး</button>
       <button class="filter-btn" onclick="setAdminFilter('mm',this)">🇲🇲 ပြည်တွင်း</button>
@@ -152,57 +168,72 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
     </div>
   </div>
 
-  <div class="sort-row">
-    <span class="result-count" id="resultCount"></span>
-    <div class="sort-btns">
-      <button class="sort-btn active" onclick="setSort('newest',this)">Newest</button>
-      <button class="sort-btn" onclick="setSort('title',this)">A–Z</button>
-      <button class="sort-btn" onclick="setSort('claps',this)">👏 Claps</button>
-    </div>
-  </div>
-
+  <div class="result-count" id="resultCount"></div>
   <div class="lib-grid" id="libGrid">
     <div class="state-msg"><div class="spinner"></div>ဖွင့်နေသည်...</div>
   </div>
 </main>
 
+<!-- DETAIL POPUP -->
+<div class="popup-ov" id="detailPopup" onclick="closePopup(event)">
+  <div class="popup-card" id="popupCard">
+    <div class="popup-handle"></div>
+    <div class="popup-cover-row">
+      <div class="popup-cover" id="popupCover">?</div>
+      <div class="popup-meta">
+        <div class="popup-title" id="popupTitle">—</div>
+        <div class="popup-author" id="popupAuthor">—</div>
+        <div class="popup-badges" id="popupBadges"></div>
+        <div class="popup-clap" id="popupClap">👏 0</div>
+      </div>
+    </div>
+    <div class="popup-synopsis" id="popupSynopsis"></div>
+    <div class="popup-actions">
+      <button class="popup-btn-read" id="popupReadBtn" onclick="goRead()">📖 ဖတ်မည်</button>
+      <button class="popup-btn-clap" id="popupClapBtn" onclick="doPopupClap()">👏</button>
+    </div>
+  </div>
+</div>
+
 <footer><span class="footer-text">© 2026 CinePodma. All rights reserved.</span></footer>
 <div class="toast" id="toast"></div>
 
 <script>
-/* STATE */
-var curTab='podmates', pmFilter='all', adminFilter='all', sortBy='newest', searchQ='';
-var pmDocs=[], currentUser=null;
-var myClaps={}; /* docId → true */
+var curTab='podmates', pmFilter='all', adminFilter='all', searchQ='';
+var pmDocs=[], currentUser=null, myClaps={};
+var activeDoc=null; /* doc shown in popup */
 
 var genreLabels={
-  novel:'ဝတ္ထု', short:'ဝတ္ထုတို', essay:'ဆောင်းပါး', poem:'ကဗျာ',
-  feature:'ဇာတ်ညွှန်း', shortfilm:'ဇာတ်ညွှန်းတို', series:'စီးရီး'
+  novel:'ဝတ္ထု',short:'ဝတ္ထုတို',essay:'ဆောင်းပါး',poem:'ကဗျာ',
+  feature:'ဇာတ်ညွှန်း',shortfilm:'ဇာတ်ညွှန်းတို',series:'စီးရီး'
+};
+var genreFilters={
+  feature:['feature'],shortfilm:['shortfilm'],series:['series'],
+  novel:['novel'],short:['short'],poem:['poem'],essay:['essay'],
+  screenplay:['feature','shortfilm','series'],
+  story:['novel','short','poem','essay']
 };
 
 var adminDocs=[
-  {id:'ad1',cat:'mm',type:'screenplay',title:'နမူနာဇာတ်ညွှန်း',author:'Admin',genreLabel:'ဇာတ်ညွှန်း',clapCount:0},
-  {id:'ad2',cat:'int',type:'screenplay',title:'Parasite',author:'Bong Joon-ho',genreLabel:'ဇာတ်ညွှန်း',clapCount:0},
-  {id:'ad3',cat:'int',type:'screenplay',title:'Pulp Fiction',author:'Quentin Tarantino',genreLabel:'ဇာတ်ညွှန်း',clapCount:0},
+  {id:'ad1',cat:'mm',type:'screenplay',title:'နမူနာဇာတ်ညွှန်း',author:'Admin',genreLabel:'ဇာတ်ညွှန်း',clapCount:0,synopsis:''},
+  {id:'ad2',cat:'int',type:'screenplay',title:'Parasite',author:'Bong Joon-ho',genreLabel:'ဇာတ်ညွှန်း',clapCount:0,synopsis:''},
+  {id:'ad3',cat:'int',type:'screenplay',title:'Pulp Fiction',author:'Quentin Tarantino',genreLabel:'ဇာတ်ညွှန်း',clapCount:0,synopsis:''},
 ];
 
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-/* GENRE LABEL */
 function getGenreLabel(d){
-  if(d.genreLabel) return d.genreLabel;
-  if(d.genre && genreLabels[d.genre]) return genreLabels[d.genre];
-  return d.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း';
+  return d.genreLabel||genreLabels[d.genre]||(d.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
 }
 
-/* BUILD CARD */
+/* ── BUILD CARD ── */
 function buildCard(doc){
-  var a=document.createElement('a');
-  a.className='lib-card';
-  a.href='/read?id='+doc.id;
+  var div=document.createElement('div');
+  div.className='lib-card';
+  div.onclick=function(){ openPopup(doc); };
 
   var poster=document.createElement('div');poster.className='lib-poster';
-
   if(doc.coverUrl){
     var img=document.createElement('img');img.src=doc.coverUrl;img.alt=doc.title;
     poster.appendChild(img);
@@ -211,18 +242,15 @@ function buildCard(doc){
     letter.textContent=(doc.title||'?').charAt(0);
     poster.appendChild(letter);
   }
-
-  /* genre badge */
+  /* badge */
   var badge=document.createElement('div');badge.className='lib-badge';
   badge.textContent=getGenreLabel(doc);
   poster.appendChild(badge);
-
-  /* clap button — check myClaps state */
-  var isClapped = myClaps[doc.id] ? true : false;
+  /* clap */
   var clap=document.createElement('button');
-  clap.className='card-clap'+(isClapped?' clapped':'');
+  clap.className='card-clap'+(myClaps[doc.id]?' clapped':'');
   clap.innerHTML='👏 '+(doc.clapCount||0);
-  clap.onclick=function(e){e.preventDefault();e.stopPropagation();toggleDocClap(doc,clap);};
+  clap.onclick=function(e){e.stopPropagation();toggleClap(doc,clap,null);};
   poster.appendChild(clap);
 
   var body=document.createElement('div');body.className='lib-body';
@@ -230,101 +258,151 @@ function buildCard(doc){
   var author=document.createElement('div');author.className='lib-author';
   author.textContent=doc.authorUsername||doc.author||'—';
   body.appendChild(title);body.appendChild(author);
-
-  a.appendChild(poster);a.appendChild(body);
-  return a;
+  div.appendChild(poster);div.appendChild(body);
+  return div;
 }
 
-/* RENDER */
+/* ── POPUP ── */
+function openPopup(doc){
+  activeDoc=doc;
+  var cv=document.getElementById('popupCover');
+  if(doc.coverUrl){cv.innerHTML='<img src="'+esc(doc.coverUrl)+'" alt="">';}
+  else{cv.textContent=(doc.title||'?').charAt(0);}
+  document.getElementById('popupTitle').textContent=doc.title||'Untitled';
+  document.getElementById('popupAuthor').textContent=(doc.authorName||doc.author||'—')+(doc.authorUsername?' · '+doc.authorUsername:'');
+  document.getElementById('popupBadges').innerHTML=
+    '<span class="popup-badge">'+getGenreLabel(doc)+'</span>'+
+    (doc.updatedAt?'<span class="popup-badge">'+doc.updatedAt.substring(0,10)+'</span>':'');
+  document.getElementById('popupClap').textContent='👏 '+(doc.clapCount||0);
+  document.getElementById('popupSynopsis').textContent=doc.synopsis||doc.logline||'';
+  var cb=document.getElementById('popupClapBtn');
+  cb.className='popup-btn-clap'+(myClaps[doc.id]?' clapped':'');
+  cb.textContent=myClaps[doc.id]?'❤️':'👏';
+  document.getElementById('detailPopup').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closePopup(e){
+  if(e&&e.target!==document.getElementById('detailPopup')) return;
+  document.getElementById('detailPopup').classList.remove('on');
+  document.body.style.overflow='';
+  activeDoc=null;
+}
+window.closePopupBtn=function(){
+  document.getElementById('detailPopup').classList.remove('on');
+  document.body.style.overflow='';
+  activeDoc=null;
+};
+window.goRead=function(){
+  if(activeDoc) window.location.href='/read?id='+activeDoc.id;
+};
+window.doPopupClap=async function(){
+  if(!activeDoc) return;
+  await toggleClap(activeDoc, null, document.getElementById('popupClapBtn'));
+  document.getElementById('popupClap').textContent='👏 '+(activeDoc.clapCount||0);
+};
+
+/* ── CLAP ── */
+async function toggleClap(doc,cardBtn,popupBtn){
+  if(!currentUser){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
+  var docId=doc.id;
+  try{
+    var cRef=window._getRef('docClaps/'+docId+'/users/'+currentUser.uid);
+    var gRef=window._getRef('clapping/'+currentUser.uid+'/users/'+docId);
+    var snap=await window._getDoc2(cRef);
+    if(snap.exists()){
+      await window._deleteDoc(cRef);
+      try{await window._deleteDoc(gRef);}catch(e){}
+      var s=await window._getDoc2(window._getRef('docs/'+docId));
+      var n=s.exists()?(s.data().clapCount||0):0;
+      await window._updateDoc(window._getRef('docs/'+docId),{clapCount:Math.max(0,n-1)});
+      doc.clapCount=Math.max(0,n-1);
+      myClaps[docId]=false;
+      if(cardBtn){cardBtn.className='card-clap';cardBtn.innerHTML='👏 '+doc.clapCount;}
+      if(popupBtn){popupBtn.className='popup-btn-clap';popupBtn.textContent='👏';}
+      toast('👏 Clap ဖြုတ်ပြီး');
+    }else{
+      var now=new Date().toISOString();
+      await window._setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
+      await window._setDoc(gRef,{docId:docId,clappedAt:now});
+      var s2=await window._getDoc2(window._getRef('docs/'+docId));
+      var n2=s2.exists()?(s2.data().clapCount||0):0;
+      await window._updateDoc(window._getRef('docs/'+docId),{clapCount:n2+1});
+      doc.clapCount=n2+1;
+      myClaps[docId]=true;
+      if(cardBtn){cardBtn.className='card-clap clapped';cardBtn.innerHTML='👏 '+doc.clapCount;}
+      if(popupBtn){popupBtn.className='popup-btn-clap clapped';popupBtn.textContent='❤️';}
+      toast('👏 Clap လုပ်ပြီး');
+    }
+  }catch(e){toast('❌ '+e.message);}
+}
+
+/* ── RENDER ── */
 function renderGrid(docs){
   var grid=document.getElementById('libGrid');
   document.getElementById('resultCount').textContent=docs.length+' ခု';
-  if(docs.length===0){grid.innerHTML='<div class="state-msg">ရှာမတွေ့ပါ</div>';return;}
+  if(!docs.length){grid.innerHTML='<div class="state-msg">ရှာမတွေ့ပါ</div>';return;}
   grid.innerHTML='';
   docs.forEach(function(d){grid.appendChild(buildCard(d));});
 }
 
-/* FILTER + SORT */
+/* ── FILTER/SORT ── */
 function applyPm(){
   var docs=pmDocs.slice();
-  if(pmFilter!=='all') docs=docs.filter(function(d){return d.type===pmFilter;});
-  if(searchQ) docs=docs.filter(function(d){
-    var t=(d.title||'').toLowerCase();var a=(d.authorUsername||d.authorName||'').toLowerCase();
-    return t.includes(searchQ)||a.includes(searchQ);
-  });
-  if(sortBy==='newest') docs.sort(function(a,b){return (b.updatedAt||'').localeCompare(a.updatedAt||'');});
-  else if(sortBy==='title') docs.sort(function(a,b){return(a.title||'').localeCompare(b.title||'');});
-  else if(sortBy==='claps') docs.sort(function(a,b){return(b.clapCount||0)-(a.clapCount||0);});
+  /* filter by genre */
+  if(pmFilter!=='all'){
+    var allowed=genreFilters[pmFilter]||[pmFilter];
+    docs=docs.filter(function(d){return allowed.indexOf(d.genre)>-1||allowed.indexOf(d.type)>-1;});
+  }
+  /* search */
+  if(searchQ){
+    docs=docs.filter(function(d){
+      return (d.title||'').toLowerCase().includes(searchQ)||
+             (d.authorUsername||d.authorName||'').toLowerCase().includes(searchQ);
+    });
+  }
+  /* sort by claps DESC */
+  docs.sort(function(a,b){return (b.clapCount||0)-(a.clapCount||0);});
   renderGrid(docs);
 }
 
 function applyAdmin(){
   var docs=adminDocs.slice();
   if(adminFilter!=='all') docs=docs.filter(function(d){return d.cat===adminFilter;});
-  if(searchQ) docs=docs.filter(function(d){
-    return (d.title||'').toLowerCase().includes(searchQ)||(d.author||'').toLowerCase().includes(searchQ);
-  });
-  if(sortBy==='title') docs.sort(function(a,b){return(a.title||'').localeCompare(b.title||'');});
+  if(searchQ) docs=docs.filter(function(d){return (d.title||'').toLowerCase().includes(searchQ);});
+  docs.sort(function(a,b){return (b.clapCount||0)-(a.clapCount||0);});
   renderGrid(docs);
 }
 
 function refresh(){if(curTab==='podmates')applyPm();else applyAdmin();}
 
-/* CONTROLS */
+/* ── CONTROLS ── */
 function setTab(tab,btn){
   curTab=tab;
   document.querySelectorAll('.lib-tab').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   document.getElementById('pmFilters').style.display=tab==='podmates'?'':'none';
   document.getElementById('adminFilters').style.display=tab==='admin'?'':'none';
+  document.getElementById('libSub').textContent=tab==='podmates'
+    ?'CinePodma တွင် ရေးသားထားသော ဝတ္ထုနှင့် ဇာတ်ညွှန်းများ'
+    :'မြန်မာ့ရုပ်ရှင်အပါအဝင် နိုင်ငံတကာရုပ်ရှင်များ၏ ဇာတ်ညွှန်းများ';
   refresh();
 }
-function setPmFilter(f,btn){pmFilter=f;document.querySelectorAll('#pmFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyPm();}
-function setAdminFilter(f,btn){adminFilter=f;document.querySelectorAll('#adminFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyAdmin();}
-function setSort(s,btn){sortBy=s;document.querySelectorAll('.sort-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');refresh();}
+function setPmFilter(f,btn){
+  pmFilter=f;
+  document.querySelectorAll('#pmFilters .filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');applyPm();
+}
+function setAdminFilter(f,btn){
+  adminFilter=f;
+  document.querySelectorAll('#adminFilters .filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');applyAdmin();
+}
 function onSearch(q){searchQ=q.toLowerCase().trim();refresh();}
 
-/* CLAP */
-async function toggleDocClap(doc, btn){
-  if(!currentUser){ toast('👏 Clap လုပ်ရန် အကောင့်ဝင်ပါ'); return; }
-  var docId=doc.id;
-  try{
-    var clapRef    =window._getRef('docClaps/'+docId+'/users/'+currentUser.uid);
-    /* clapping collection — key = docId so profile can find it */
-    var clappingRef=window._getRef('clapping/'+currentUser.uid+'/users/'+docId);
-    var snap=await window._getDoc2(clapRef);
-    if(snap.exists()){
-      await window._deleteDoc(clapRef);
-      try{await window._deleteDoc(clappingRef);}catch(e){}
-      try{
-        var docRef2=window._getRef('docs/'+docId);
-        var docSnap2=await window._getDoc2(docRef2);
-        var cur=docSnap2.exists()?(docSnap2.data().clapCount||0):0;
-        await window._updateDoc(docRef2,{clapCount:Math.max(0,cur-1)});
-      }catch(e){console.error('clapCount decrement:',e);}
-      myClaps[docId]=false;
-      doc.clapCount=Math.max(0,(doc.clapCount||1)-1);
-      btn.className='card-clap';
-      toast('👏 Clap ဖြုတ်ပြီး');
-    }else{
-      var now=new Date().toISOString();
-      await window._setDoc(clapRef,{uid:currentUser.uid,clappedAt:now});
-      await window._setDoc(clappingRef,{docId:docId,clappedAt:now});
-      /* update clapCount — setDoc merge to ensure field exists first */
-      try{
-        var docRef=window._getRef('docs/'+docId);
-        var docSnap=await window._getDoc2(docRef);
-        var currentCount=docSnap.exists()?(docSnap.data().clapCount||0):0;
-        await window._updateDoc(docRef,{clapCount:currentCount+1});
-      }catch(e){console.error('clapCount update:',e);}
-      myClaps[docId]=true;
-      doc.clapCount=(doc.clapCount||0)+1;
-      btn.className='card-clap clapped';
-      toast('👏 Clap လုပ်ပြီး');
-    }
-    btn.innerHTML='👏 '+doc.clapCount;
-  }catch(e){toast('❌ Error: '+e.message);console.error(e);}
-}
+/* swipe down to close popup */
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') closePopupBtn();
+});
 </script>
 
 <!-- FIREBASE -->
@@ -333,104 +411,74 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/fireba
 import { getAuth, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 import { getFirestore, collection, query, where, orderBy, limit, getDocs,
-         doc, getDoc, setDoc, deleteDoc, updateDoc, increment }
+         doc, getDoc, setDoc, deleteDoc, updateDoc }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
-const firebaseConfig={
+const app=initializeApp({
   apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-  authDomain:"cinepodma.firebaseapp.com",
-  projectId:"cinepodma",
+  authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",
   storageBucket:"cinepodma.firebasestorage.app",
-  messagingSenderId:"587916526322",
-  appId:"1:587916526322:web:d00775311fb92fa1c8466b"
-};
-
-const app=initializeApp(firebaseConfig);
+  messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+});
 const auth=getAuth(app);
 const db=getFirestore(app);
 
 /* expose helpers */
-window._db = db;
-window._getRef = function(path){
-  var parts = path.split('/');
-  return doc(db, ...parts);
-};
-window._getDoc2  = function(ref){ return getDoc(ref); };
-window._setDoc   = function(ref,data){ return setDoc(ref,data); };
-window._deleteDoc= function(ref){ return deleteDoc(ref); };
-window._updateDoc= function(ref,data){ return updateDoc(ref,data); };
-window._inc      = increment;
+window._getRef=function(path){var p=path.split('/');return doc(db,...p);};
+window._getDoc2=function(ref){return getDoc(ref);};
+window._setDoc=function(r,d){return setDoc(r,d);};
+window._deleteDoc=function(r){return deleteDoc(r);};
+window._updateDoc=function(r,d){return updateDoc(r,d);};
 
-/* nav auth state */
+/* auth state */
 onAuthStateChanged(auth,async function(user){
   currentUser=user;
   var navR=document.getElementById('navR');
   if(user){
-    var usnap=await getDoc(doc(db,'users',user.uid));
-    var av=usnap.exists()&&usnap.data().avatar?'<img src="'+usnap.data().avatar+'" alt="">':'👤';
-    navR.innerHTML=
-      '<a class="nav-user-av" href="/profile">'+av+'</a>'+
-      '<a class="nav-btn red" href="/write">✍ ရေးမည်</a>';
-    /* load my claps */
-    loadMyClaps(user.uid);
-  } else {
-    navR.innerHTML='<a class="nav-btn" href="/write">✍ ရေးမည်</a>';
+    try{
+      var us=await getDoc(doc(db,'users',user.uid));
+      var av=us.exists()&&us.data().avatar?'<img src="'+us.data().avatar+'" alt="">':'👤';
+      navR.innerHTML='<a class="nav-user-av" href="/profile">'+av+'</a>'+
+        '<a class="nav-btn red" href="/write">✍ ရေးမည်</a>';
+    }catch(e){}
   }
 });
-
-/* load my clapped docs */
-async function loadMyClaps(uid){
-  /* we'll check per-doc when needed — lazy */
-}
 
 /* load public docs */
 async function loadDocs(){
   try{
-    var q=query(collection(db,'docs'),where('privacy','==','public'),orderBy('updatedAt','desc'),limit(100));
+    var q=query(collection(db,'docs'),where('privacy','==','public'),orderBy('clapCount','desc'),limit(100));
     var snap=await getDocs(q);
     pmDocs=[];
+    var uids=new Set();
     snap.forEach(function(d){
       var data=d.data();
-      pmDocs.push({
-        id:d.id,
-        title:data.title||'Untitled',
-        type:data.type||'screenplay',
-        genre:data.genre||'',
-        genreLabel:data.genreLabel||'',
-        authorName:data.authorName||'',
-        authorUsername:data.authorUsername||'',
-        coverUrl:data.coverUrl||'',
-        clapCount:data.clapCount||0,
-        updatedAt:data.updatedAt||''
-      });
+      pmDocs.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',
+        genre:data.genre||'',genreLabel:data.genreLabel||'',
+        authorName:data.authorName||'',authorUsername:data.authorUsername||'',
+        coverUrl:data.coverUrl||'',clapCount:data.clapCount||0,
+        updatedAt:data.updatedAt||'',uid:data.uid||'',
+        synopsis:data.synopsis||data.logline||data.story||''});
+      if(data.uid) uids.add(data.uid);
     });
-    /* if logged in — load which ones I clapped */
+    /* load clap state */
     if(currentUser){
-      await loadMyClapsForDocs(pmDocs.map(function(d){return d.id;}));
+      for(var i=0;i<Math.min(pmDocs.length,50);i++){
+        try{
+          var cs=await getDoc(doc(db,'docClaps',pmDocs[i].id,'users',currentUser.uid));
+          if(cs.exists()) myClaps[pmDocs[i].id]=true;
+        }catch(e){}
+      }
     }
     document.getElementById('libSub').textContent=
-      'Podmates '+pmDocs.length+' ဦး၏ ရေးသားချက်များ';
+      'CinePodma တွင် ရေးသားထားသော ဝတ္ထုနှင့် ဇာတ်ညွှန်းများ ('+pmDocs.length+' ခု)';
     applyPm();
   }catch(e){
-    console.error('loadDocs',e);
     document.getElementById('libGrid').innerHTML=
       '<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';
+    console.error('loadDocs',e);
   }
 }
-
-/* load my clapped docs and restore clap state */
-async function loadMyClapsForDocs(docIds){
-  if(!currentUser) return;
-  for(var i=0;i<Math.min(docIds.length,100);i++){
-    try{
-      var snap=await window._getDoc2(window._getRef('docClaps/'+docIds[i]+'/users/'+currentUser.uid));
-      if(snap.exists()) myClaps[docIds[i]]=true;
-    }catch(e){}
-  }
-  /* re-render to update clap button states */
-  refresh();
-}
-
 loadDocs();
 </script>
 </body>
