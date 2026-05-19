@@ -214,12 +214,15 @@ function setTheme(t){
 }
 
 function chFS(d){
-  fontSize=Math.min(22,Math.max(13,fontSize+d));
-  document.documentElement.style.setProperty('--rfs',fontSize+'px');
-  document.body.style.setProperty('--rfs',fontSize+'px');
-  document.getElementById('fsNum').textContent=fontSize;
-  if(window._rebuildPages) window._rebuildPages();
-  try{localStorage.setItem('cp_fs',fontSize);}catch(e){}
+  fontSize = Math.min(24, Math.max(12, fontSize + d));
+  document.documentElement.style.setProperty('--rfs', fontSize+'px');
+  document.body.style.setProperty('--rfs', fontSize+'px');
+  document.getElementById('fsNum').textContent = fontSize;
+  try{localStorage.setItem('cp_fs', fontSize);}catch(e){}
+  /* rebuild after paint so layout is ready */
+  setTimeout(function(){
+    if(window._rebuildPages) window._rebuildPages();
+  }, 50);
 }
 
 /* restore settings */
@@ -345,44 +348,46 @@ function initStory(){
   };
 }
 
-/* ── PAGINATION: word-count based (reliable across fonts/sizes) ── */
+/* ── PAGINATION ── */
 function wordsPerPage(){
-  /* estimate: screen area / (avg char width * line height) */
   var reader=document.getElementById('reader');
-  var rH=reader.clientHeight-68; /* minus padding + page num */
-  var rW=reader.clientWidth-44;  /* minus left+right padding */
-  /* Myanmar char avg width ≈ fontSize * 0.55, line-height = 2.0 */
-  var charW=fontSize*0.55;
-  var charsPerLine=Math.floor(rW/charW);
-  var linesPerPage=Math.floor(rH/(fontSize*2.0));
-  var charsPerPage=charsPerLine*linesPerPage;
-  /* avg Myanmar word ≈ 3.5 chars */
-  return Math.max(60,Math.floor(charsPerPage/3.5));
+  var rH=reader.clientHeight - 68;
+  var rW=reader.clientWidth  - 44;
+  /* Myanmar char avg width ≈ fontSize * 0.52 */
+  var charsPerLine = Math.floor(rW / (fontSize * 0.52));
+  var linesPerPage = Math.floor(rH / (fontSize * 2.1));
+  var charsPerPage = charsPerLine * linesPerPage;
+  /* avg Myanmar syllable ≈ 2.8 chars */
+  return Math.max(40, Math.floor(charsPerPage / 2.8));
 }
 
 function buildPages(cb){
-  var wpp=wordsPerPage();
-  pageGroups=[];
-  var group=[],used=0;
-  /* page 1 loses some space for title */
-  var titleWords=docData.title?(docData.title.split(/\s+/).length+5):0;
-  var budget=wpp-(pageGroups.length===0?titleWords:0);
+  var wpp = wordsPerPage();
+  pageGroups = [];
+  var group = [], used = 0;
+  var titleWds = docData.title
+    ? Math.ceil(docData.title.length / 2.8) + 4
+    : 0;
 
-  for(var i=0;i<allParas.length;i++){
-    var div=document.createElement('div');
-    div.innerHTML=allParas[i];
-    var words=(div.textContent||'').split(/\s+/).filter(Boolean).length;
-    if(words===0) words=1;
+  for(var i = 0; i < allParas.length; i++){
+    var tmp = document.createElement('div');
+    tmp.innerHTML = allParas[i];
+    var txt = tmp.textContent || '';
+    /* count by chars / 2.8 for Myanmar */
+    var w = Math.max(1, Math.ceil(txt.length / 2.8));
 
-    if(used+words>budget&&group.length>0){
+    var budget = wpp - (pageGroups.length === 0 ? titleWds : 0);
+
+    /* if single paragraph overflows a full page, still put it alone */
+    if(used + w > budget && group.length > 0){
       pageGroups.push(group.slice());
-      group=[];used=0;budget=wpp;
+      group = []; used = 0;
     }
     group.push(i);
-    used+=words;
+    used += w;
   }
   if(group.length) pageGroups.push(group.slice());
-  if(!pageGroups.length) pageGroups=[[0]];
+  if(!pageGroups.length) pageGroups = [[0]];
   cb();
 }
 
@@ -394,24 +399,33 @@ function getFg(){
 }
 
 function showPage(){
-  var reader=document.getElementById('reader');
-  var indices=pageGroups[curPage]||[];
-  var fg=getFg();
-  var fs=fontSize+'px';
-  var titleHtml=curPage===0&&docData.title
-    ?'<div style="font-size:'+(fontSize+5)+'px;font-weight:700;line-height:1.6;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+'">'+esc(docData.title)+'</div>'
-    :'';
-  var bodyHtml=indices.map(function(i){return allParas[i]||'';}).join('');
-  reader.innerHTML=
+  var reader = document.getElementById('reader');
+  var indices = pageGroups[curPage] || [];
+  var fg = getFg();
+  var fs = fontSize + 'px';
+
+  var titleHtml = '';
+  if(curPage === 0 && docData.title){
+    titleHtml = '<div style="font-size:'+(fontSize+4)+'px;font-weight:700;'+
+      'line-height:1.6;margin-bottom:16px;padding-bottom:12px;'+
+      'border-bottom:1px solid rgba(128,128,128,.25);color:'+fg+'">'+
+      esc(docData.title)+'</div>';
+  }
+
+  var bodyHtml = indices.map(function(i){ return allParas[i] || ''; }).join('');
+  var pgNum = pageGroups.length > 1
+    ? 'p.'+(curPage+1)+' / '+pageGroups.length
+    : '';
+
+  reader.innerHTML =
     '<div class="rpage">'+
-      '<div class="rpage-body" style="font-size:'+fs+';color:'+fg+' !important">'+
-        titleHtml+bodyHtml+
+      '<div class="rpage-body" style="font-size:'+fs+';color:'+fg+';line-height:2.1">'+
+        titleHtml + bodyHtml +
       '</div>'+
-      '<div class="rpage-num" style="color:'+fg+';opacity:.4;">'+
-        (pageGroups.length>1?('p.'+(curPage+1)+' / '+pageGroups.length):'')+
-      '</div>'+
+      '<div class="rpage-num" style="color:'+fg+';opacity:.4;">'+pgNum+'</div>'+
     '</div>';
-  try{localStorage.setItem('cprd_'+docId,curPage);}catch(e){}
+
+  try{ localStorage.setItem('cprd_'+docId, curPage); }catch(e){}
 }
 
 /* ── SWIPE / TAP ── */
