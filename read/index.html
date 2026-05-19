@@ -347,60 +347,77 @@ function renderEpub(){
   if(!reader) return;
   var W=reader.clientWidth;
   var H=reader.clientHeight;
+  if(W===0||H===0) return;
   var PAD=22;
+  var savedPage=curPage;
   var fs=window.fontSize||17;
-  /* inject font-size into every paragraph */
-  var styledParas=allParas.map(function(h){
-    return h.replace(/^<(\w+)/,function(m,tag){
-      return '<'+tag+' style="font-size:'+fs+'px;line-height:2.1;color:'+fg+';"';
-    });
-  });
   var fg=getFg();
   var bg=getBg();
-  /* update page background safely */
+
   reader.style.background=bg;
   var tb=document.getElementById('topbar');
   var sb=document.getElementById('sbar');
   if(tb) tb.style.background=bg;
   if(sb) sb.style.background=bg;
+
   var titleHtml=docData.title
-    ?'<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(128,128,128,.2);">'+esc(docData.title)+'</div>'
+    ?'<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;'+
+      'margin-bottom:18px;padding-bottom:14px;'+
+      'border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+';">'+
+      esc(docData.title)+'</div>'
     :'';
 
+  var styledParas=allParas.map(function(h){
+    return h.replace(/^<(\w+)/,function(m,tag){
+      return '<'+tag+' style="font-size:'+fs+'px;line-height:2.1;color:'+fg+';"';
+    });
+  });
+
+  /* render invisible first */
   reader.innerHTML=
-    '<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;">'+
-      '<div id="epubSlider" style="'+
-        'position:absolute;top:0;left:0;height:100%;'+
-        'display:flex;will-change:transform;'+
-        'transition:transform .3s cubic-bezier(.4,0,.2,1);">'+
+    '<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s ease;">'+
+      '<div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;">'+
         '<div id="epubCol" style="'+
           'height:'+H+'px;'+
           'padding:'+PAD+'px '+PAD+'px '+(PAD+20)+'px;'+
-          'font-size:'+fs+'px;'+
-          'line-height:2.1;color:'+fg+';'+
-          'column-width:'+(W-PAD*2)+'px;'+
-          'column-gap:'+(PAD*2)+'px;'+
-          'column-fill:auto;'+
-          'overflow:hidden;'+
-          'word-break:break-word;'+
-          'box-sizing:border-box;'+
+          'font-size:'+fs+'px;line-height:2.1;color:'+fg+';'+
+          'column-width:'+(W-PAD*2)+'px;column-gap:'+(PAD*2)+'px;'+
+          'column-fill:auto;overflow:hidden;word-break:break-word;box-sizing:border-box;'+
         '">'+titleHtml+styledParas.join('')+'</div>'+
       '</div>'+
     '</div>'+
-    '<div id="pgInd" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-family:monospace;font-size:10px;color:'+fg+';opacity:.35;pointer-events:none;"></div>';
+    '<div id="pgInd" style="position:absolute;bottom:8px;left:0;right:0;'+
+      'text-align:center;font-family:monospace;font-size:10px;'+
+      'color:'+fg+';opacity:.35;pointer-events:none;"></div>';
 
-  /* measure after font renders */
   setTimeout(function(){
     var col=document.getElementById('epubCol');
     var slider=document.getElementById('epubSlider');
-    if(!col||!slider) return;
-    /* each column unit = (W-PAD*2) + PAD*2 = W */
+    var wrap=document.getElementById('epubWrap');
+    var ind=document.getElementById('pgInd');
+    if(!col||!slider||!wrap) return;
+
     var sw=col.scrollWidth;
     totalPages=Math.max(1,Math.round(sw/W));
     col.style.width=(totalPages*W)+'px';
     slider.style.width=(totalPages*W)+'px';
-    curPage=Math.min(curPage,totalPages-1);
-    goPage(curPage,true);
+
+    /* restore page position (no animation) */
+    curPage=Math.min(savedPage,totalPages-1);
+    slider.style.transition='none';
+    slider.style.transform='translateX('+(-curPage*W)+'px)';
+    if(ind) ind.textContent=totalPages>1?'p.'+(curPage+1)+' / '+totalPages:'';
+
+    /* fade in */
+    requestAnimationFrame(function(){
+      wrap.style.opacity='1';
+      /* restore swipe transition after fade */
+      setTimeout(function(){
+        if(slider) slider.style.transition='transform .3s cubic-bezier(.4,0,.2,1)';
+      },220);
+    });
+
+    try{localStorage.setItem('cprd_'+docId,curPage);}catch(e){}
   },150);
 }
 
