@@ -411,6 +411,8 @@ main {
 .script-act-btn.black { background: var(--black); color: var(--white); border-color: var(--black); }
 .script-act-btn.black:hover { background: #222; }
 .script-act-btn.primary:hover { background: var(--red); border-color: var(--red); }
+.clap-count-btn{padding:3px 10px;border-radius:99px;border:1px solid var(--border);background:var(--white);font-size:12px;color:var(--slate);cursor:pointer;transition:all .12s;line-height:1.8;}
+.clap-count-btn:hover{background:var(--slate-bg);border-color:var(--black);color:var(--black);}
 
 /* New script card */
 .script-card-new {
@@ -816,8 +818,16 @@ footer {
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<!-- DOC CLAPPERS POPUP -->
+<div class="clap-popup-overlay" id="docClappersPopup" onclick="window.closeDocClappersPopup()">
+  <div class="clap-popup" onclick="event.stopPropagation()">
+    <div class="clap-popup-header">
+      <span id="docClappersTitle">👏 Clappers</span>
+      <button onclick="window.closeDocClappersPopup()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
+    </div>
+    <div class="clap-popup-body" id="docClappersBody"></div>
+  </div>
+</div>
 
 <script>
 function toast(msg) {
@@ -954,7 +964,8 @@ async function loadScripts() {
         status:data.status||'draft',privacy:data.privacy||'private',
         genre:data.genre||'',genreLabel:data.genreLabel||'',
         scenes:data.screenplay?data.screenplay.length:0,
-        updated:data.updatedAt?data.updatedAt.substring(0,10):'—',uid:data.uid});
+        updated:data.updatedAt?data.updatedAt.substring(0,10):'—',
+        uid:data.uid, clapCount:data.clapCount||0});
     });
     console.log('loadScripts: total='+scripts.length+', isOwner='+isOwner+', profileUid='+profileUid);
     if (!isOwner) {
@@ -1078,7 +1089,40 @@ window.openClappingPopup = async function() {
 };
 window.closeClappingPopup=function(){document.getElementById('clappingPopup').classList.remove('open');document.body.style.overflow='';};
 
-/* ══ PROFILE TABS ══ */
+window.closeDocClappersPopup=function(){
+  document.getElementById('docClappersPopup').classList.remove('open');
+  document.body.style.overflow='';
+};
+
+window._openDocClappers=async function(docId,e){
+  if(e) e.stopPropagation();
+  var s=scripts.find(function(x){return x.id===docId;});
+  var title=s?s.title:'Doc';
+  document.getElementById('docClappersTitle').textContent='👏 '+title+' — Clappers';
+  document.getElementById('docClappersPopup').classList.add('open');
+  document.body.style.overflow='hidden';
+  var body=document.getElementById('docClappersBody');
+  body.innerHTML='<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
+  try{
+    var snap=await getDocs(collection(db,'docClaps',docId,'users'));
+    if(snap.empty){body.innerHTML='<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';return;}
+    var uids=[];
+    snap.forEach(function(d){uids.push(d.data().uid||d.id);});
+    var promises=uids.map(function(uid){return getDoc(doc(db,'users',uid));});
+    var users=await Promise.all(promises);
+    var html='';
+    users.forEach(function(u){
+      if(!u.exists())return;
+      var ud=u.data();
+      var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
+      html+='<a class="clap-user-item" href="/profile?uid='+u.id+'">'+
+        '<div class="clap-user-av">'+av+'</div>'+
+        '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
+        '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
+    });
+    body.innerHTML=html||'<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';
+  }catch(e){body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ</div>';}
+};
 window.switchProfileTab=function(tab,btn){
   document.querySelectorAll('.profile-tab').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -1313,17 +1357,20 @@ function renderScripts(){
       '</div>'
     ):'';
     var actionBtns = isOwner
-      ?'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">✍ ဆက်ရေးမည်</button>'
+      ?'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">✍ ဆက်ရေးမည်</button>'+
+       '<button class="script-act-btn black" onclick="window.location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>'
       :'<button class="script-act-btn black" onclick="window.location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>';
+    var clapBtn='<button class="clap-count-btn" onclick="window._openDocClappers(\''+s.id+'\',event)">👏 '+(s.clapCount||0)+'</button>';
     return '<div class="script-card" id="sc-'+s.id+'">'+
       '<div class="script-card-top">'+
         '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
         '<div class="script-card-menu">'+ownerBtns+'</div>'+
       '</div>'+
       '<div class="script-card-meta">'+typeName+' · '+s.updated+'</div>'+
-      '<div style="display:flex;gap:6px;margin-top:4px;">'+
+      '<div style="display:flex;gap:6px;margin-top:4px;align-items:center;flex-wrap:wrap;">'+
         '<span class="script-tag '+s.status+'">'+(s.status==='draft'?'Draft':(s.genreLabel||'Complete'))+'</span>'+
         '<span class="script-tag" style="background:var(--slate-bg);color:var(--slate);">'+(s.privacy==='public'?'🌐 Public':'🔒 Private')+'</span>'+
+        clapBtn+
       '</div>'+
       '<div class="script-card-actions">'+actionBtns+'</div>'+
     '</div>';
