@@ -201,7 +201,7 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:14p
 <script>
 var curTab='podmates', pmFilter='all', adminFilter='all', searchQ='';
 var pmDocs=[], currentUser=null, myClaps={};
-var activeDoc=null; /* doc shown in popup */
+var activeDoc=null;
 
 var genreLabels={
   novel:'ဝတ္ထု',short:'ဝတ္ထုတို',essay:'ဆောင်းပါး',poem:'ကဗျာ',
@@ -227,6 +227,14 @@ function getGenreLabel(d){
   return d.genreLabel||genreLabels[d.genre]||(d.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
 }
 
+/* HTML tags ဖြုတ်ပြီး plain text ထုတ်သည့် helper */
+function stripHtml(html){
+  if(!html) return '';
+  var tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  return tmp.textContent||tmp.innerText||'';
+}
+
 /* ── BUILD CARD ── */
 function buildCard(doc){
   var div=document.createElement('div');
@@ -242,11 +250,9 @@ function buildCard(doc){
     letter.textContent=(doc.title||'?').charAt(0);
     poster.appendChild(letter);
   }
-  /* badge */
   var badge=document.createElement('div');badge.className='lib-badge';
   badge.textContent=getGenreLabel(doc);
   poster.appendChild(badge);
-  /* clap */
   var clap=document.createElement('button');
   clap.className='card-clap'+(myClaps[doc.id]?' clapped':'');
   clap.innerHTML='👏 '+(doc.clapCount||0);
@@ -274,7 +280,11 @@ function openPopup(doc){
     '<span class="popup-badge">'+getGenreLabel(doc)+'</span>'+
     (doc.updatedAt?'<span class="popup-badge">'+doc.updatedAt.substring(0,10)+'</span>':'');
   document.getElementById('popupClap').textContent='👏 '+(doc.clapCount||0);
-  document.getElementById('popupSynopsis').textContent=doc.synopsis||doc.logline||'';
+
+  /* ✅ FIX: HTML tags ဖြုတ်ပြီး plain text ပဲ ပြသည် */
+  var rawSynopsis=doc.synopsis||doc.logline||'';
+  document.getElementById('popupSynopsis').textContent=stripHtml(rawSynopsis);
+
   var cb=document.getElementById('popupClapBtn');
   cb.className='popup-btn-clap'+(myClaps[doc.id]?' clapped':'');
   cb.textContent=myClaps[doc.id]?'❤️':'👏';
@@ -348,19 +358,16 @@ function renderGrid(docs){
 /* ── FILTER/SORT ── */
 function applyPm(){
   var docs=pmDocs.slice();
-  /* filter by genre */
   if(pmFilter!=='all'){
     var allowed=genreFilters[pmFilter]||[pmFilter];
     docs=docs.filter(function(d){return allowed.indexOf(d.genre)>-1||allowed.indexOf(d.type)>-1;});
   }
-  /* search */
   if(searchQ){
     docs=docs.filter(function(d){
       return (d.title||'').toLowerCase().includes(searchQ)||
              (d.authorUsername||d.authorName||'').toLowerCase().includes(searchQ);
     });
   }
-  /* sort by claps DESC */
   docs.sort(function(a,b){return (b.clapCount||0)-(a.clapCount||0);});
   renderGrid(docs);
 }
@@ -399,7 +406,6 @@ function setAdminFilter(f,btn){
 }
 function onSearch(q){searchQ=q.toLowerCase().trim();refresh();}
 
-/* swipe down to close popup */
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape') closePopupBtn();
 });
@@ -423,14 +429,12 @@ const app=initializeApp({
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-/* expose helpers */
 window._getRef=function(path){var p=path.split('/');return doc(db,...p);};
 window._getDoc2=function(ref){return getDoc(ref);};
 window._setDoc=function(r,d){return setDoc(r,d);};
 window._deleteDoc=function(r){return deleteDoc(r);};
 window._updateDoc=function(r,d){return updateDoc(r,d);};
 
-/* auth state */
 onAuthStateChanged(auth,async function(user){
   currentUser=user;
   var navR=document.getElementById('navR');
@@ -444,7 +448,6 @@ onAuthStateChanged(auth,async function(user){
   }
 });
 
-/* load public docs */
 async function loadDocs(){
   try{
     var q=query(collection(db,'docs'),where('privacy','==','public'),limit(100));
@@ -461,7 +464,6 @@ async function loadDocs(){
         synopsis:data.synopsis||data.logline||data.story||''});
       if(data.uid) uids.add(data.uid);
     });
-    /* load clap state */
     if(currentUser){
       for(var i=0;i<Math.min(pmDocs.length,50);i++){
         try{
