@@ -1363,12 +1363,6 @@ window._deleteScript=async function(id){
   renderScripts();toast('🗑 ဖျက်ပြီး');
 };
 
-/* ══ AVATAR ══ */
-document.getElementById('avatarInput').addEventListener('change',async function(){
-  if(!isOwner||!this.files[0])return;
-  toast('Avatar upload — Firebase Storage လိုအပ်သည်');
-});
-
 /* ══ EDIT PROFILE ══ */
 window.openEdit=function(){
   document.getElementById('editName').value=(currentProfile.name||'');
