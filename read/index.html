@@ -219,10 +219,10 @@ function chFS(d){
   document.body.style.setProperty('--rfs', fontSize+'px');
   document.getElementById('fsNum').textContent = fontSize;
   try{localStorage.setItem('cp_fs', fontSize);}catch(e){}
-  /* rebuild after paint so layout is ready */
+  /* wait for reflow then rebuild */
   setTimeout(function(){
     if(window._rebuildPages) window._rebuildPages();
-  }, 50);
+  }, 100);
 }
 
 /* restore settings */
@@ -327,67 +327,81 @@ function initStory(){
     return h.replace(/\s*color\s*:[^;"}]+[;"]?/gi,'').replace(/\s*style\s*=\s*"(\s*)"/gi,'');
   });
 
-  /* restore page */
-  try{curPage=Math.min(parseInt(localStorage.getItem('cprd_'+docId))||0,999);}catch(e){curPage=0;}
-
-  buildPages(function(){
-    curPage=Math.min(curPage,pageGroups.length-1);
-    showPage();
-    initSwipe();
-  });
-
-  /* expose rebuild for font size change and theme change */
-  window._rebuildPages=function(){
+  /* wait for fonts then build */
+  function doBuild(){
+    try{curPage=Math.min(parseInt(localStorage.getItem('cprd_'+docId))||0,999);}catch(e){curPage=0;}
     buildPages(function(){
       curPage=Math.min(curPage,pageGroups.length-1);
       showPage();
+      initSwipe();
     });
-  };
-  window._showCurrentPage=function(){
-    if(pageGroups.length>0) showPage();
-  };
+    window._rebuildPages=function(){
+      buildPages(function(){
+        curPage=Math.min(curPage,pageGroups.length-1);
+        showPage();
+      });
+    };
+    window._showCurrentPage=function(){
+      if(pageGroups.length>0) showPage();
+    };
+  }
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(doBuild);
+  } else {
+    setTimeout(doBuild, 300);
+  }
 }
 
-/* ── PAGINATION ── */
-function wordsPerPage(){
-  var reader=document.getElementById('reader');
-  var rH=reader.clientHeight - 68;
-  var rW=reader.clientWidth  - 44;
-  /* Myanmar char avg width ≈ fontSize * 0.52 */
-  var charsPerLine = Math.floor(rW / (fontSize * 0.52));
-  var linesPerPage = Math.floor(rH / (fontSize * 2.1));
-  var charsPerPage = charsPerLine * linesPerPage;
-  /* avg Myanmar syllable ≈ 2.8 chars */
-  return Math.max(40, Math.floor(charsPerPage / 2.8));
-}
-
+/* ── PAGINATION: render-based measurement ── */
 function buildPages(cb){
-  var wpp = wordsPerPage();
+  var reader = document.getElementById('reader');
+  var rH = reader.clientHeight - 60; /* available height */
+  var rW = reader.clientWidth  - 44; /* available width */
+
+  /* hidden measure container — same width as real reader */
+  var mc = document.createElement('div');
+  mc.style.cssText =
+    'position:fixed;top:-9999px;left:0;width:'+rW+'px;'+
+    'font-size:'+fontSize+'px;line-height:2.1;'+
+    'font-family:"Noto Sans Myanmar","Special Elite",sans-serif;'+
+    'word-break:break-word;visibility:hidden;';
+  document.body.appendChild(mc);
+
+  /* measure title */
+  var titleH = 0;
+  if(docData.title){
+    mc.innerHTML =
+      '<div style="font-size:'+(fontSize+4)+'px;font-weight:700;'+
+      'line-height:1.6;margin-bottom:16px;padding-bottom:12px;'+
+      'border-bottom:1px solid #ccc;">'+esc(docData.title)+'</div>';
+    titleH = mc.getBoundingClientRect().height;
+  }
+
+  /* measure each paragraph */
+  var paraH = allParas.map(function(p){
+    mc.innerHTML = p;
+    return mc.getBoundingClientRect().height + 14; /* +margin-bottom */
+  });
+
+  document.body.removeChild(mc);
+
+  /* group into pages */
   pageGroups = [];
-  var group = [], used = 0;
-  var titleWds = docData.title
-    ? Math.ceil(docData.title.length / 2.8) + 4
-    : 0;
-
+  var group = [], used = 0, isFirst = true;
   for(var i = 0; i < allParas.length; i++){
-    var tmp = document.createElement('div');
-    tmp.innerHTML = allParas[i];
-    var txt = tmp.textContent || '';
-    /* count by chars / 2.8 for Myanmar */
-    var w = Math.max(1, Math.ceil(txt.length / 2.8));
-
-    var budget = wpp - (pageGroups.length === 0 ? titleWds : 0);
-
-    /* if single paragraph overflows a full page, still put it alone */
-    if(used + w > budget && group.length > 0){
+    var avail = rH - (isFirst ? titleH : 0);
+    /* if single para alone overflows, still give it its own page */
+    if(group.length > 0 && used + paraH[i] > avail){
       pageGroups.push(group.slice());
-      group = []; used = 0;
+      group = []; used = 0; isFirst = false;
     }
     group.push(i);
-    used += w;
+    used += paraH[i];
   }
   if(group.length) pageGroups.push(group.slice());
   if(!pageGroups.length) pageGroups = [[0]];
+
   cb();
 }
 
