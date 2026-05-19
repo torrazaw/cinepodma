@@ -292,11 +292,27 @@ main {
 /* Scripts grid */
 .scripts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
-.script-card {
+/* 3-col poster card */
+.pc-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);display:flex;flex-direction:column;}
+.pc-card:hover{border-color:#CCC;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
+.pc-poster{width:100%;aspect-ratio:3/4;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pc-poster img{width:100%;height:100%;object-fit:cover;}
+.pc-letter{font-family:var(--font-my);font-size:28px;font-weight:700;color:#C0C0C0;}
+.pc-badge{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:600;background:rgba(0,0,0,.7);color:#fff;backdrop-filter:blur(4px);}
+.pc-clap{position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,.92);border-radius:99px;padding:2px 7px;font-size:10px;font-weight:600;color:var(--black);border:none;backdrop-filter:blur(4px);}
+.pc-clap.clapped{background:var(--red);color:#fff;}
+.pc-priv{position:absolute;top:6px;right:6px;font-size:10px;opacity:.8;}
+.pc-body{padding:7px 9px;}
+.pc-title{font-size:11px;font-weight:600;color:var(--black);margin-bottom:2px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pc-meta{font-size:10px;color:var(--slate-lt);line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* pc new */
+.pc-new{border:2px dashed var(--border);border-radius:12px;aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;text-decoration:none;color:var(--slate);transition:all .15s;font-size:11px;}
+.pc-new:hover{border-color:var(--black);color:var(--black);}
+.pc-new .plus{font-size:24px;line-height:1;}
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
@@ -822,6 +838,45 @@ footer {
 <div class="clap-popup-ov" id="docClappersPopup" onclick="window.closeDocClappersPopup()">
   <div class="clap-popup" onclick="event.stopPropagation()">
     <div class="clap-popup-hdr">
+
+<!-- DOC ACTION POPUP -->
+<div class="clap-popup-ov" id="docPopup" onclick="if(event.target===this)closeDocPopup()">
+  <div class="clap-popup" onclick="event.stopPropagation()">
+    <div class="clap-popup-hdr">
+      <span id="dpTitle">—</span>
+      <button onclick="closeDocPopup()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px 12px;">
+      <div id="dpCover" style="width:64px;height:85px;border-radius:8px;background:#F0F0F0;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#C0C0C0;overflow:hidden;font-family:var(--font-my);"></div>
+      <div style="flex:1;min-width:0;">
+        <div id="dpMeta" style="font-size:12px;color:var(--slate);margin-bottom:4px;line-height:1.6;"></div>
+        <div id="dpClap" style="font-size:12px;color:var(--slate);line-height:1.6;"></div>
+      </div>
+    </div>
+    <div id="dpActions" style="display:flex;flex-direction:column;gap:8px;padding:0 20px 20px;"></div>
+  </div>
+</div>
+
+<!-- WALLET POPUP -->
+<div class="clap-popup-ov" id="walletPopup" onclick="if(event.target===this)closeWallet()">
+  <div class="clap-popup" onclick="event.stopPropagation()">
+    <div class="clap-popup-hdr">
+      <span>💰 CinePodma Wallet</span>
+      <button onclick="closeWallet()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
+    </div>
+    <div style="padding:20px;line-height:2.0;">
+      <div style="margin-bottom:16px;padding:14px;background:var(--slate-bg);border-radius:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">📚 စာဖတ်သူများအတွက်</div>
+        <div style="font-size:13px;color:var(--slate);">ကြိုက်နှစ်သက်ရာ ဝတ္ထု၊ ဇာတ်ညွှန်းများကို ဝယ်ဖတ်နိုင်သော feature</div>
+      </div>
+      <div style="margin-bottom:20px;padding:14px;background:var(--slate-bg);border-radius:12px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">✍ စာရေးသူများအတွက်</div>
+        <div style="font-size:13px;color:var(--slate);">မိမိ၏ ဝတ္ထု၊ ဇာတ်ညွှန်းများကို အခကြေးငွေဖြင့် ဝေမျှနိုင်သော feature</div>
+      </div>
+      <div style="text-align:center;font-size:13px;color:var(--slate-lt);">🔔 မကြာမီ ရရှိနိုင်မည်</div>
+    </div>
+  </div>
+</div>
       <span id="docClappersTitle">👏 Clappers</span>
       <button onclick="window.closeDocClappersPopup()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
     </div>
@@ -830,6 +885,15 @@ footer {
 </div>
 
 <script>
+window.openWallet=function(){
+  document.getElementById('walletPopup').classList.add('on');
+  document.body.style.overflow='hidden';
+};
+window.closeWallet=function(){
+  document.getElementById('walletPopup').classList.remove('on');
+  document.body.style.overflow='';
+};
+
 function toast(msg) {
   var t = document.getElementById('toast');
   if (!t) return;
@@ -1225,32 +1289,20 @@ function renderClappedDocs(){
     return;
   }
   grid.innerHTML=docs.map(function(s){
-    var typeIcon=s.type==='story'?'📖':'🎬';
-    var genreLabel=s.genreLabel||typeIcon;
+    var gl=s.genreLabel||(s.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
     var letter=(s.title||'?').charAt(0);
-    /* author avatar */
-    var avHtml=s.authorAvatar
-      ?'<img src="'+s.authorAvatar+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
-      :'<span style="font-size:14px;">👤</span>';
-    return '<a href="/read?id='+s.id+'" style="text-decoration:none;color:inherit;">'+
-      '<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;background:var(--white);transition:all .15s;" onmouseover="this.style.borderColor=\'#000\'" onmouseout="this.style.borderColor=\'var(--border)\'">'+
-        /* left: author info */
-        '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;width:52px;">'+
-          '<div style="width:40px;height:40px;border-radius:50%;background:var(--slate-bg);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;">'+avHtml+'</div>'+
-          '<span style="font-size:10px;color:var(--slate-lt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:52px;text-align:center;">'+(s.authorUsername||'—')+'</span>'+
-        '</div>'+
-        /* center: title + meta */
-        '<div style="flex:1;min-width:0;">'+
-          '<div style="font-size:14px;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(s.title||'Untitled')+'</div>'+
-          '<div style="font-size:11px;color:var(--slate-lt);margin-top:2px;">'+genreLabel+' · 👏 '+(s.clapCount||0)+'</div>'+
-        '</div>'+
-        /* right: poster */
-        '<div style="width:48px;height:64px;border-radius:8px;background:#F0F0F0;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">'+
-          (s.coverUrl?'<img src="'+s.coverUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;">'
-            :'<span style="font-size:20px;font-weight:700;color:#C0C0C0;">'+letter+'</span>')+
-        '</div>'+
+    var cover=s.coverUrl?'<img src="'+s.coverUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;">':
+      '<div class="pc-letter">'+letter+'</div>';
+    return '<div class="pc-card" onclick="location.href=\'/read?id='+s.id+'\'">'+
+      '<div class="pc-poster">'+cover+
+        '<span class="pc-badge">'+gl+'</span>'+
+        '<span class="pc-clap">👏 '+(s.clapCount||0)+'</span>'+
       '</div>'+
-    '</a>';
+      '<div class="pc-body">'+
+        '<div class="pc-title">'+(s.title||'Untitled')+'</div>'+
+        '<div class="pc-meta">'+(s.authorUsername||s.authorName||'—')+'</div>'+
+      '</div>'+
+    '</div>';
   }).join('');
 }
 
@@ -1323,7 +1375,8 @@ async function renderActions(){
   var el=document.getElementById('profileActions');
   var newBtn=document.getElementById('newScriptBtn');
   if(isOwner){
-    el.innerHTML='<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
+    el.innerHTML='<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>'+
+      (isOwner?'<button class="btn btn-ghost btn-sm" onclick="openWallet()">💰 Wallet</button>':'');
     newBtn.innerHTML='<a class="btn btn-red btn-sm" href="/write">+ New</a>';
   }else{
     var clapped=false;
@@ -1338,53 +1391,68 @@ async function renderActions(){
   }
 }
 
-/* ══ RENDER SCRIPTS ══ */
+/* ══ RENDER SCRIPTS (3-col poster) ══ */
 function renderScripts(){
   var grid=document.getElementById('scriptsGrid');
-  var drafts=scripts.filter(function(s){return s.status==='draft';}).length;
-  var complete=scripts.filter(function(s){return s.status==='complete';}).length;
   document.getElementById('statScripts').textContent=scripts.length;
-  document.getElementById('statDrafts').textContent=drafts;
-  document.getElementById('statComplete').textContent=complete;
+  document.getElementById('statDrafts').textContent=scripts.filter(function(s){return s.status==='draft';}).length;
+  document.getElementById('statComplete').textContent=scripts.filter(function(s){return s.status==='complete';}).length;
 
-  if(scripts.length===0){
-    grid.innerHTML='<div class="empty-state"><span class="icon">📝</span>'+(isOwner?'Doc မရှိသေးပါ<br><small>+ New နှိပ်ပြီး စတင်ပါ</small>':'Public doc မရှိသေးပါ')+'</div>';
-    return;
+  if(scripts.length===0&&!isOwner){
+    grid.innerHTML='<div class="empty-state"><span class="icon">📝</span>Public doc မရှိသေးပါ</div>';return;
   }
+
   var html=scripts.map(function(s){
-    var typeIcon=s.type==='story'?'📖':'🎬';
-    var typeName=s.type==='story'?'Story':'Screenplay';
-    var ownerBtns=isOwner?(
-      '<button class="script-menu-btn" onclick="window._toggleMenu(\''+s.id+'\', event)">⋯</button>'+
-      '<div class="script-dropdown" id="menu-'+s.id+'">'+
-        '<button class="script-dd-item" onclick="window._editScript(\''+s.id+'\')">✏ ဖွင့်မည်</button>'+
-        '<button class="script-dd-item" onclick="window._toggleStatus(\''+s.id+'\')">'+(s.status==='draft'?'✅ Complete မှတ်မည်':'📝 Draft ပြန်မည်')+'</button>'+
-        '<button class="script-dd-item" onclick="window._togglePrivacy(\''+s.id+'\')">'+(s.privacy==='public'?'🔒 Private ပြောင်းမည်':'🌐 Public ပြောင်းမည်')+'</button>'+
-        '<button class="script-dd-item danger" onclick="window._deleteScript(\''+s.id+'\')">🗑 ဖျက်မည်</button>'+
-      '</div>'
-    ):'';
-    var actionBtns = isOwner
-      ?'<button class="script-act-btn primary" onclick="window._editScript(\''+s.id+'\')">✍ ဆက်ရေးမည်</button>'+
-       '<button class="script-act-btn black" onclick="window.location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>'
-      :'<button class="script-act-btn black" onclick="window.location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>';
-    var clapBtn='<button class="clap-count-btn" onclick="window._openDocClappers(\''+s.id+'\',event)">👏 '+(s.clapCount||0)+'</button>';
-    return '<div class="script-card" id="sc-'+s.id+'">'+
-      '<div class="script-card-top">'+
-        '<div class="script-card-title">'+typeIcon+' '+(s.title||'Untitled')+'</div>'+
-        '<div class="script-card-menu">'+ownerBtns+'</div>'+
+    var gl=s.genreLabel||(s.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
+    var letter=(s.title||'?').charAt(0);
+    var cover=s.coverUrl?'<img src="'+s.coverUrl+'" alt="">':'<div class="pc-letter">'+letter+'</div>';
+    var privIcon=s.privacy==='private'?'<span class="pc-priv">🔒</span>':'';
+    return '<div class="pc-card" onclick="openDocPopup(\''+s.id+'\')">'+
+      '<div class="pc-poster">'+cover+
+        '<span class="pc-badge">'+gl+'</span>'+
+        privIcon+
+        '<span class="pc-clap">👏 '+(s.clapCount||0)+'</span>'+
       '</div>'+
-      '<div class="script-card-meta">'+typeName+' · '+s.updated+'</div>'+
-      '<div style="display:flex;gap:6px;margin-top:4px;align-items:center;flex-wrap:wrap;">'+
-        '<span class="script-tag '+s.status+'">'+(s.status==='draft'?'Draft':(s.genreLabel||'Complete'))+'</span>'+
-        '<span class="script-tag" style="background:var(--slate-bg);color:var(--slate);">'+(s.privacy==='public'?'🌐 Public':'🔒 Private')+'</span>'+
-        clapBtn+
+      '<div class="pc-body">'+
+        '<div class="pc-title">'+(s.title||'Untitled')+'</div>'+
+        '<div class="pc-meta">'+(s.updated||'')+'</div>'+
       '</div>'+
-      '<div class="script-card-actions">'+actionBtns+'</div>'+
     '</div>';
   }).join('');
-  if(isOwner) html+='<a class="script-card-new" href="/write"><span class="plus">+</span><span class="new-label">New Doc</span></a>';
+  if(isOwner) html+='<a class="pc-new" href="/write"><span class="plus">+</span><span>New Doc</span></a>';
   grid.innerHTML=html;
 }
+
+/* doc popup */
+window.openDocPopup=function(id){
+  var s=scripts.find(function(x){return x.id===id;});
+  if(!s) return;
+  var gl=s.genreLabel||(s.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
+  var letter=(s.title||'?').charAt(0);
+  var cv=document.getElementById('dpCover');
+  cv.innerHTML=s.coverUrl?'<img src="'+s.coverUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;">':letter;
+  document.getElementById('dpTitle').textContent=s.title||'Untitled';
+  document.getElementById('dpMeta').textContent=gl+' · '+s.updated;
+  document.getElementById('dpClap').textContent='👏 '+(s.clapCount||0);
+  /* owner vs public actions */
+  var acts=document.getElementById('dpActions');
+  if(isOwner){
+    acts.innerHTML=
+      '<button class="popup-btn-read" onclick="location.href=\'/write?id='+s.id+'\'">✍ ဆက်ရေးမည်</button>'+
+      '<button class="popup-btn-read" style="background:var(--white);color:var(--black);border:1px solid var(--border);" onclick="location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>'+
+      '<button class="popup-btn-read" style="background:var(--slate-bg);color:var(--slate);font-size:12px;" onclick="window._togglePrivacy(\''+s.id+'\');closeDocPopup();">'+(s.privacy==='public'?'🔒 Private ပြောင်းမည်':'🌐 Public ပြောင်းမည်')+'</button>'+
+      '<button class="popup-btn-read" style="background:#FEE2E2;color:#DC2626;font-size:12px;" onclick="window._deleteScript(\''+s.id+'\');closeDocPopup();">🗑 ဖျက်မည်</button>';
+  }else{
+    acts.innerHTML=
+      '<button class="popup-btn-read" onclick="location.href=\'/read?id='+s.id+'\'">📖 ဖတ်မည်</button>';
+  }
+  document.getElementById('docPopup').classList.add('on');
+  document.body.style.overflow='hidden';
+};
+window.closeDocPopup=function(){
+  document.getElementById('docPopup').classList.remove('on');
+  document.body.style.overflow='';
+};
 
 /* ══ SCRIPT ACTIONS ══ */
 window._toggleMenu=function(id,e){
