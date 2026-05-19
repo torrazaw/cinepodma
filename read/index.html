@@ -201,7 +201,7 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 <div class="toast" id="toast"></div>
 
 <script>
-var fontSize=17;
+var fontSize=17; window.fontSize=17;
 
 function setTheme(t){
   document.body.className=t;
@@ -214,12 +214,10 @@ function setTheme(t){
 
 function chFS(d){
   fontSize=Math.min(24,Math.max(12,fontSize+d));
-  window.fontSize=fontSize; /* expose to module script */
+  window.fontSize=fontSize;
   document.getElementById('fsNum').textContent=fontSize;
   try{localStorage.setItem('cp_fs',fontSize);}catch(e){}
-  if(window._rebuildPages){
-    setTimeout(window._rebuildPages,30);
-  }
+  if(window._rebuildPages) window._rebuildPages();
 }
 
 /* restore settings */
@@ -328,7 +326,7 @@ function renderEpub(){
   var W=reader.clientWidth;
   var H=reader.clientHeight;
   var PAD=22;
-  var fs=window.fontSize||fontSize; /* sync with global */
+  var fs=window.fontSize||17; /* read from global */
   var fg=getFg();
   var bg=getBg();
   /* update page background safely */
