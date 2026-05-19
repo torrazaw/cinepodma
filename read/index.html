@@ -349,38 +349,35 @@ function renderEpub(){
         '<div id="epubCol" style="'+
           'height:'+H+'px;'+
           'padding:'+PAD+'px '+PAD+'px '+(PAD+24)+'px;'+
-          'font-size:'+fs+'px;'+
+          'font-size:'+fs+'px !important;'+
           'line-height:2.1;color:'+fg+';'+
-          'column-width:'+(W-PAD*2)+'px;'+
-          'column-gap:'+(PAD*2)+'px;'+
+          'column-width:'+W+'px;'+
+          'column-gap:0px;'+
           'column-fill:auto;'+
           'overflow:hidden;'+
           'word-break:break-word;'+
           'box-sizing:border-box;'+
-          '-webkit-column-width:'+(W-PAD*2)+'px;'+
-          '-webkit-column-gap:'+(PAD*2)+'px;'+
-          '-moz-column-width:'+(W-PAD*2)+'px;'+
+          '-webkit-column-width:'+W+'px;'+
+          '-webkit-column-gap:0px;'+
+          '-moz-column-width:'+W+'px;'+
         '">'+titleHtml+allParas.join('')+'</div>'+
       '</div>'+
     '</div>'+
     '<div id="pgInd" style="position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:monospace;font-size:10px;color:'+fg+';opacity:.35;pointer-events:none;"></div>';
 
-  /* measure total pages after layout */
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){
-      var col=document.getElementById('epubCol');
-      var slider=document.getElementById('epubSlider');
-      if(!col||!slider) return;
-      /* each column = (W - PAD*2) + column-gap(PAD*2) = W */
-      var sw=col.scrollWidth;
-      totalPages=Math.max(1,Math.round(sw/W));
-      /* set col and slider width so columns lay out correctly */
-      col.style.width=(totalPages*W)+'px';
-      slider.style.width=(totalPages*W)+'px';
-      curPage=Math.min(curPage,totalPages-1);
-      goPage(curPage,true);
-    });
-  });
+  /* wait for layout then measure */
+  setTimeout(function(){
+    var col=document.getElementById('epubCol');
+    var slider=document.getElementById('epubSlider');
+    if(!col||!slider) return;
+    col.style.width='auto'; /* let it expand */
+    var sw=col.scrollWidth;
+    totalPages=Math.max(1,Math.round(sw/W));
+    col.style.width=(totalPages*W)+'px';
+    slider.style.width=(totalPages*W)+'px';
+    curPage=Math.min(curPage,totalPages-1);
+    goPage(curPage,true);
+  },120);
 }
 
 var totalPages=1;
@@ -388,12 +385,10 @@ var totalPages=1;
 function goPage(n,instant){
   var reader=document.getElementById('reader');
   var W=reader.clientWidth;
-  var PAD=22;
   curPage=Math.max(0,Math.min(n,totalPages-1));
   var slider=document.getElementById('epubSlider');
   var ind=document.getElementById('pgInd');
   if(slider){
-    /* each page step = column-width(W-PAD*2) + column-gap(PAD*2) = W */
     var x=curPage*W;
     slider.style.transition=instant?'none':'transform .3s cubic-bezier(.4,0,.2,1)';
     slider.style.transform='translateX('+(-x)+'px)';
