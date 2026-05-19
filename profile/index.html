@@ -819,9 +819,9 @@ footer {
 </div>
 
 <!-- DOC CLAPPERS POPUP -->
-<div class="clap-popup-overlay" id="docClappersPopup" onclick="window.closeDocClappersPopup()">
+<div class="clap-popup-ov" id="docClappersPopup" onclick="window.closeDocClappersPopup()">
   <div class="clap-popup" onclick="event.stopPropagation()">
-    <div class="clap-popup-header">
+    <div class="clap-popup-hdr">
       <span id="docClappersTitle">👏 Clappers</span>
       <button onclick="window.closeDocClappersPopup()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
     </div>
@@ -1106,13 +1106,17 @@ window._openDocClappers=async function(docId,e){
   try{
     var snap=await getDocs(collection(db,'docClaps',docId,'users'));
     if(snap.empty){body.innerHTML='<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';return;}
+    /* uid is stored as document key */
     var uids=[];
-    snap.forEach(function(d){uids.push(d.data().uid||d.id);});
+    snap.forEach(function(d){ uids.push(d.id); });
     var promises=uids.map(function(uid){return getDoc(doc(db,'users',uid));});
     var users=await Promise.all(promises);
     var html='';
-    users.forEach(function(u){
-      if(!u.exists())return;
+    users.forEach(function(u,i){
+      if(!u.exists()){
+        html+='<div class="clap-user-item"><div class="clap-user-av">👤</div><div><div class="clap-user-name">'+uids[i]+'</div></div></div>';
+        return;
+      }
       var ud=u.data();
       var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
       html+='<a class="clap-user-item" href="/profile?uid='+u.id+'">'+
@@ -1121,7 +1125,10 @@ window._openDocClappers=async function(docId,e){
         '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
     });
     body.innerHTML=html||'<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';
-  }catch(e){body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ</div>';}
+  }catch(err){
+    body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ — '+err.message+'</div>';
+    console.error('docClappers',err);
+  }
 };
 window.switchProfileTab=function(tab,btn){
   document.querySelectorAll('.profile-tab').forEach(function(b){b.classList.remove('active');});
