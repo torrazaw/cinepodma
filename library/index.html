@@ -447,7 +447,7 @@ onAuthStateChanged(auth,async function(user){
 /* load public docs */
 async function loadDocs(){
   try{
-    var q=query(collection(db,'docs'),where('privacy','==','public'),orderBy('clapCount','desc'),limit(100));
+    var q=query(collection(db,'docs'),where('privacy','==','public'),limit(100));
     var snap=await getDocs(q);
     pmDocs=[];
     var uids=new Set();
