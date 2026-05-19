@@ -794,6 +794,18 @@ footer {
       <input class="form-input" id="editUsername" type="text" placeholder="@username">
     </div>
     <div class="form-group">
+      <label class="form-label">Role</label>
+      <select class="form-input" id="editRole">
+        <option value="">— ရွေးပါ —</option>
+        <option value="Producer">🎬 Producer</option>
+        <option value="Director">🎥 Director</option>
+        <option value="Writer">✍️ Writer</option>
+        <option value="Filmmaker">🎞️ Filmmaker</option>
+        <option value="Actor">🎭 Actor</option>
+        <option value="Cinephile">🍿 Cinephile</option>
+      </select>
+    </div>
+    <div class="form-group">
       <label class="form-label">Bio</label>
       <textarea class="form-textarea" id="editBio" placeholder="သင့်အကြောင်း တိုတိုလေး..."></textarea>
     </div>
@@ -1132,7 +1144,15 @@ async function loadClappedDocs(){
         var data=d.data();
         clappedDocs.push({id:d.id,title:data.title,type:data.type,
           privacy:data.privacy,authorUsername:data.authorUsername,
-          authorName:data.authorName,uid:data.uid,genreLabel:data.genreLabel,clapCount:data.clapCount||0});
+        clappedDocs.push({
+          id:d.id,title:data.title,type:data.type,
+          privacy:data.privacy,genreLabel:data.genreLabel,
+          authorUsername:data.authorUsername,
+          authorName:data.authorName,uid:data.uid,
+          clapCount:data.clapCount||0,
+          coverUrl:data.coverUrl||'',
+          authorAvatar:data.authorAvatar||''
+        });
       }
     });
     renderClappedDocs();
@@ -1160,18 +1180,26 @@ function renderClappedDocs(){
     var typeIcon=s.type==='story'?'📖':'🎬';
     var genreLabel=s.genreLabel||typeIcon;
     var letter=(s.title||'?').charAt(0);
+    /* author avatar */
+    var avHtml=s.authorAvatar
+      ?'<img src="'+s.authorAvatar+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+      :'<span style="font-size:14px;">👤</span>';
     return '<a href="/read?id='+s.id+'" style="text-decoration:none;color:inherit;">'+
-      '<div class="script-card" style="padding:0;overflow:hidden;">'+
-        /* poster */
-        '<div style="width:100%;aspect-ratio:3/4;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;">'+
-          '<span style="font-size:36px;font-weight:700;color:#C0C0C0;">'+letter+'</span>'+
-          '<span style="position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.65);color:white;font-size:10px;font-weight:600;">'+genreLabel+'</span>'+
-          '<span style="position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,.92);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:600;">👏 '+(s.clapCount||0)+'</span>'+
+      '<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;background:var(--white);transition:all .15s;" onmouseover="this.style.borderColor=\'#000\'" onmouseout="this.style.borderColor=\'var(--border)\'">'+
+        /* left: author info */
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;width:52px;">'+
+          '<div style="width:40px;height:40px;border-radius:50%;background:var(--slate-bg);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;">'+avHtml+'</div>'+
+          '<span style="font-size:10px;color:var(--slate-lt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:52px;text-align:center;">'+(s.authorUsername||'—')+'</span>'+
         '</div>'+
-        /* body */
-        '<div style="padding:10px 12px;">'+
-          '<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;">'+(s.title||'Untitled')+'</div>'+
-          '<div style="font-size:11px;color:var(--slate-lt);">'+(s.authorUsername||s.authorName||'—')+'</div>'+
+        /* center: title + meta */
+        '<div style="flex:1;min-width:0;">'+
+          '<div style="font-size:14px;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(s.title||'Untitled')+'</div>'+
+          '<div style="font-size:11px;color:var(--slate-lt);margin-top:2px;">'+genreLabel+' · 👏 '+(s.clapCount||0)+'</div>'+
+        '</div>'+
+        /* right: poster */
+        '<div style="width:48px;height:64px;border-radius:8px;background:#F0F0F0;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">'+
+          (s.coverUrl?'<img src="'+s.coverUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;">'
+            :'<span style="font-size:20px;font-weight:700;color:#C0C0C0;">'+letter+'</span>')+
         '</div>'+
       '</div>'+
     '</a>';
@@ -1346,6 +1374,8 @@ window.openEdit=function(){
   document.getElementById('editName').value=(currentProfile.name||'');
   document.getElementById('editUsername').value=(currentProfile.username||'').replace('@','');
   document.getElementById('editBio').value=(currentProfile.bio||'');
+  var roleEl=document.getElementById('editRole');
+  if(roleEl) roleEl.value=currentProfile.role||'';
   var av=document.getElementById('avatarDiv');
   av.style.cursor='pointer';av.onclick=function(){document.getElementById('avatarInput').click();};
   document.getElementById('editModal').classList.add('open');
@@ -1357,12 +1387,19 @@ window.closeEdit=function(){
 window.saveProfile=async function(){
   var name=document.getElementById('editName').value.trim();
   var bio=document.getElementById('editBio').value.trim();
+  var role=document.getElementById('editRole')?document.getElementById('editRole').value:'';
   if(!name){alert('အမည် ထည့်ပါ');return;}
-  await updateDoc(doc(db,'users',currentUser.uid),{name:name,bio:bio});
+  await updateDoc(doc(db,'users',currentUser.uid),{name:name,bio:bio,role:role});
   await updateProfile(currentUser,{displayName:name});
-  currentProfile.name=name;currentProfile.bio=bio;
+  currentProfile.name=name;currentProfile.bio=bio;currentProfile.role=role;
   document.getElementById('dispName').textContent=name;
   document.getElementById('dispBio').textContent=bio;
+  /* update role badge */
+  if(role){
+    var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
+    document.getElementById('dispRole').innerHTML=
+      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">'+(roleIcons[role]||'')+' '+role+'</span>';
+  }
   window.closeEdit();toast('✅ Profile သိမ်းပြီး');
 };
 
