@@ -71,8 +71,8 @@ main{flex:1;padding:80px 24px 60px;max-width:960px;margin:0 auto;width:100%;}
 .lib-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);text-decoration:none;color:var(--black);display:flex;flex-direction:column;}
 .lib-card:hover{border-color:#CCC;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
 
-/* Poster — solid light gray bg */
-.lib-poster{width:100%;aspect-ratio:2/3;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+/* Poster — shorter vertical */
+.lib-poster{width:100%;aspect-ratio:3/4;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .lib-poster-letter{font-family:var(--font-my);font-size:36px;font-weight:700;color:#C0C0C0;}
 .lib-poster img{width:100%;height:100%;object-fit:cover;}
 
@@ -284,30 +284,29 @@ function setSort(s,btn){sortBy=s;document.querySelectorAll('.sort-btn').forEach(
 function onSearch(q){searchQ=q.toLowerCase().trim();refresh();}
 
 /* CLAP */
-async function toggleDocClap(doc,btn){
-  if(!currentUser){toast('👏 Clap လုပ်ရန် အကောင့်ဝင်ပါ');return;}
-  if(!window._db){toast('ချိတ်ဆက်မှု မရှိသေးပါ');return;}
-  var docId=doc.id;
-  var clapRef=window._docRef(window._db,'docClaps',docId,'users',currentUser.uid);
-  var already=myClaps[docId];
-  try{
-    if(already){
+async function toggleDocClap(doc, btn){
+  if(!currentUser){ toast('👏 Clap လုပ်ရန် အကောင့်ဝင်ပါ'); return; }
+  var docId = doc.id;
+  try {
+    var clapPath = 'docClaps/' + docId + '/users/' + currentUser.uid;
+    var clapRef  = window._getRef(clapPath);
+    var snap     = await window._getDoc2(clapRef);
+    if(snap.exists()){
       await window._deleteDoc(clapRef);
-      myClaps[docId]=false;
-      doc.clapCount=Math.max(0,(doc.clapCount||1)-1);
-      btn.className='card-clap';
+      myClaps[docId] = false;
+      doc.clapCount  = Math.max(0,(doc.clapCount||1)-1);
+      btn.className  = 'card-clap';
       toast('👏 Clap ဖြုတ်ပြီး');
-    }else{
-      await window._setDoc(clapRef,{uid:currentUser.uid,clappedAt:new Date().toISOString()});
-      /* increment clapCount on doc */
-      await window._updateDoc(window._docRef2(window._db,'docs',docId),{clapCount:window._inc(1)});
-      myClaps[docId]=true;
-      doc.clapCount=(doc.clapCount||0)+1;
-      btn.className='card-clap clapped';
+    } else {
+      await window._setDoc(clapRef, {uid:currentUser.uid, clappedAt:new Date().toISOString()});
+      try { await window._updateDoc(window._getRef('docs/'+docId), {clapCount:window._inc(1)}); }catch(e){}
+      myClaps[docId] = true;
+      doc.clapCount  = (doc.clapCount||0)+1;
+      btn.className  = 'card-clap clapped';
       toast('👏 Clap လုပ်ပြီး');
     }
-    btn.innerHTML='👏 '+doc.clapCount;
-  }catch(e){toast('❌ Error: '+e.message);}
+    btn.innerHTML = '👏 '+doc.clapCount;
+  } catch(e){ toast('❌ Error: '+e.message); console.error(e); }
 }
 </script>
 
@@ -334,17 +333,16 @@ const auth=getAuth(app);
 const db=getFirestore(app);
 
 /* expose helpers */
-window._db=db;
-window._docRef=function(db,...path){
-  /* docClaps/docId/users/uid */
-  if(path.length===4) return doc(db,path[0],path[1],path[2],path[3]);
-  return doc(db,...path);
+window._db = db;
+window._getRef = function(path){
+  var parts = path.split('/');
+  return doc(db, ...parts);
 };
-window._docRef2=function(db,col,id){return doc(db,col,id);};
-window._setDoc=function(ref,data){return setDoc(ref,data);};
-window._deleteDoc=function(ref){return deleteDoc(ref);};
-window._updateDoc=function(ref,data){return updateDoc(ref,data);};
-window._inc=increment;
+window._getDoc2  = function(ref){ return getDoc(ref); };
+window._setDoc   = function(ref,data){ return setDoc(ref,data); };
+window._deleteDoc= function(ref){ return deleteDoc(ref); };
+window._updateDoc= function(ref,data){ return updateDoc(ref,data); };
+window._inc      = increment;
 
 /* nav auth state */
 onAuthStateChanged(auth,async function(user){
