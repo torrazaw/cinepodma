@@ -91,7 +91,7 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
   color:var(--fg);
   overflow:hidden;
 }
-.rpage-body *{color:inherit;}
+.rpage-body *{color:inherit !important;}
 .rpage-body p{margin-bottom:12px;}
 .rpage-body h1{font-size:calc(var(--rfs) + 4px);font-weight:700;margin-bottom:14px;line-height:1.6;}
 .rpage-body h2{font-size:calc(var(--rfs) + 2px);font-weight:700;margin-bottom:10px;line-height:1.6;}
@@ -319,7 +319,10 @@ function initStory(){
   }
   div.childNodes.forEach(walk);
   if(!blocks.length) blocks=['<p>Content မရှိပါ</p>'];
-  allParas=blocks;
+  /* strip inline color styles so theme colors work */
+  allParas=blocks.map(function(h){
+    return h.replace(/\s*color\s*:[^;"}]+[;"]?/gi,'').replace(/\s*style\s*=\s*"(\s*)"/gi,'');
+  });
 
   /* restore page */
   try{curPage=Math.min(parseInt(localStorage.getItem('cprd_'+docId))||0,999);}catch(e){curPage=0;}
@@ -401,7 +404,7 @@ function showPage(){
   var bodyHtml=indices.map(function(i){return allParas[i]||'';}).join('');
   reader.innerHTML=
     '<div class="rpage">'+
-      '<div class="rpage-body" style="font-size:'+fs+';color:'+fg+'">'+
+      '<div class="rpage-body" style="font-size:'+fs+';color:'+fg+' !important">'+
         titleHtml+bodyHtml+
       '</div>'+
       '<div class="rpage-num" style="color:'+fg+';opacity:.4;">'+
