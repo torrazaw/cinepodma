@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — CinePodma Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--white:#fff;--black:#0A0A0A;--slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;--border:#E5E7EB;--red:#DC2626;--red-h:#B91C1C;--green:#16A34A;--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-my);background:var(--slate-bg);color:var(--black);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:14px 24px;background:var(--black);border-bottom:1px solid #222;}
+.nav-inner{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;}
+.brand{font-family:var(--font-en);font-size:13px;color:var(--white);text-decoration:none;line-height:1.3;}
+.brand span{display:block;color:var(--red);font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.nav-tag{font-family:var(--font-en);font-size:10px;letter-spacing:2px;color:var(--slate-lt);text-transform:uppercase;padding:3px 10px;border:1px solid #333;border-radius:4px;}
+.nav-user{font-family:var(--font-my);font-size:12px;color:var(--slate-lt);}
+
+/* AUTH GATE */
+.auth-gate{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+.auth-card{background:var(--white);border-radius:16px;padding:32px 28px;width:100%;max-width:360px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+.auth-icon{font-size:48px;margin-bottom:16px;}
+.auth-title{font-family:var(--font-en);font-size:20px;color:var(--black);margin-bottom:6px;}
+.auth-sub{font-size:13px;color:var(--slate);line-height:1.8;margin-bottom:24px;}
+.auth-err{color:var(--red);font-size:12px;margin-top:10px;line-height:1.8;min-height:18px;}
+
+/* MAIN */
+main{max-width:960px;margin:0 auto;padding:88px 20px 60px;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+.stat-card{background:var(--white);border-radius:12px;padding:18px 16px;border:1px solid var(--border);}
+.stat-num{font-family:var(--font-en);font-size:28px;font-weight:700;color:var(--black);line-height:1;}
+.stat-lbl{font-size:11px;color:var(--slate);margin-top:4px;line-height:1.6;}
+.stat-card.red .stat-num{color:var(--red);}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}}
+
+/* FORM CARD */
+.card{background:var(--white);border-radius:16px;padding:24px;border:1px solid var(--border);}
+.card-title{font-family:var(--font-en);font-size:15px;letter-spacing:.5px;color:var(--black);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.card-title .dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
+
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--slate);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase;}
+.fi{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--font-my);font-size:13px;color:var(--black);outline:none;transition:border-color .15s;background:var(--white);line-height:1.8;}
+.fi:focus{border-color:var(--black);}
+textarea.fi{resize:vertical;min-height:80px;}
+select.fi{cursor:pointer;}
+
+/* Drive helper */
+.drive-hint{font-size:11px;color:var(--slate-lt);margin-top:4px;line-height:1.6;}
+.drive-hint code{background:var(--slate-bg);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:10px;}
+
+/* Preview */
+.preview-wrap{display:flex;gap:12px;margin-bottom:14px;padding:12px;background:var(--slate-bg);border-radius:10px;border:1px solid var(--border);}
+.preview-cover{width:60px;height:80px;border-radius:8px;background:#E5E7EB;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#C0C0C0;font-family:var(--font-my);}
+.preview-cover img{width:100%;height:100%;object-fit:cover;}
+.preview-info{flex:1;min-width:0;}
+.preview-title{font-size:13px;font-weight:700;color:var(--black);line-height:1.5;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.preview-meta{font-size:11px;color:var(--slate);line-height:1.6;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font-my);font-size:13px;font-weight:600;line-height:1.6;transition:all .15s;width:100%;}
+.btn-red{background:var(--red);color:var(--white);}
+.btn-red:hover{background:var(--red-h);}
+.btn-red:disabled{background:var(--border);color:var(--slate-lt);cursor:not-allowed;}
+.btn-ghost{background:transparent;color:var(--slate);border:1px solid var(--border);margin-top:8px;}
+.btn-ghost:hover{background:var(--slate-bg);color:var(--black);}
+.btn-danger{background:#FEE2E2;color:var(--red);border:none;}
+.btn-danger:hover{background:#FECACA;}
+
+/* Doc list */
+.doc-list{display:flex;flex-direction:column;gap:8px;}
+.doc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);border-radius:10px;border:1px solid var(--border);transition:border-color .15s;}
+.doc-item:hover{border-color:#CCC;}
+.doc-item-cover{width:36px;height:48px;border-radius:6px;background:var(--slate-bg);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#C0C0C0;}
+.doc-item-cover img{width:100%;height:100%;object-fit:cover;}
+.doc-item-info{flex:1;min-width:0;}
+.doc-item-title{font-size:12px;font-weight:600;color:var(--black);line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.doc-item-meta{font-size:10px;color:var(--slate-lt);line-height:1.6;}
+.doc-item-del{width:28px;height:28px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--slate-lt);font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;}
+.doc-item-del:hover{background:#FEE2E2;color:var(--red);}
+.doc-item-edit{width:28px;height:28px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--slate-lt);font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;}
+.doc-item-edit:hover{background:var(--slate-bg);color:var(--black);}
+
+/* Badge */
+.cat-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:600;}
+.cat-badge.mm{background:rgba(220,38,38,.15);color:var(--red);}
+.cat-badge.int{background:rgba(10,10,10,.08);color:var(--black);}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--black);color:var(--white);font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;}
+.toast.on{transform:translateY(0);opacity:1;}
+
+/* Success */
+.success-bar{background:#DCFCE7;border:1px solid #86EFAC;border-radius:10px;padding:10px 14px;font-size:13px;color:var(--green);margin-bottom:14px;display:none;}
+.success-bar.on{display:block;}
+
+/* Empty */
+.empty-msg{text-align:center;padding:32px 16px;color:var(--slate-lt);font-size:13px;line-height:2;}
+
+/* Filter tabs */
+.filter-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.ftab{padding:4px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font-my);font-size:11px;color:var(--slate);cursor:pointer;transition:all .12s;line-height:1.8;}
+.ftab.active{background:var(--black);border-color:var(--black);color:var(--white);}
+
+/* Loading spinner */
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;margin:20px auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="/home">cine<br><span>podma</span></a>
+    <span class="nav-tag">Admin Panel</span>
+    <span class="nav-user" id="navUser">စစ်ဆေးနေသည်...</span>
+  </div>
+</nav>
+
+<!-- AUTH GATE -->
+<div class="auth-gate" id="authGate">
+  <div class="auth-card">
+    <div class="auth-icon">🔐</div>
+    <div class="auth-title">Admin Only</div>
+    <div class="auth-sub">CinePodma Admin account ဖြင့် Login ဝင်ပါ</div>
+    <button class="btn btn-red" onclick="signInGoogle()" style="margin-top:4px;">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.96 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Google နဲ့ ဝင်မည်
+    </button>
+    <div class="auth-err" id="authErr"></div>
+  </div>
+</div>
+
+<!-- MAIN PANEL -->
+<main id="mainPanel" style="display:none;">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card red">
+      <div class="stat-num" id="statTotal">—</div>
+      <div class="stat-lbl">စုစုပေါင်း Docs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statMM">—</div>
+      <div class="stat-lbl">🇲🇲 ပြည်တွင်း</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statInt">—</div>
+      <div class="stat-lbl">🌐 ပြည်ပ</div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT: Form -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span><span id="formTitle">Doc အသစ် ထည့်မည်</span></div>
+
+        <div class="success-bar" id="successBar">✅ သိမ်းပြီးပါပြီ — Library မှာ ပေါ်နေပြီ</div>
+
+        <!-- Preview -->
+        <div class="preview-wrap" id="previewWrap">
+          <div class="preview-cover" id="previewCover">?</div>
+          <div class="preview-info">
+            <div class="preview-title" id="previewTitle">Doc ခေါင်းစဉ်</div>
+            <div class="preview-meta" id="previewMeta">Author · Genre</div>
+          </div>
+        </div>
+
+        <input type="hidden" id="editDocId">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fg">
+            <label class="fl">ခေါင်းစဉ် *</label>
+            <input class="fi" id="fTitle" type="text" placeholder="ဥပမာ — Parasite" oninput="updatePreview()">
+          </div>
+          <div class="fg">
+            <label class="fl">Author *</label>
+            <input class="fi" id="fAuthor" type="text" placeholder="ဥပမာ — Bong Joon-ho" oninput="updatePreview()">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fg">
+            <label class="fl">အမျိုးအစား</label>
+            <select class="fi" id="fCat" onchange="updatePreview()">
+              <option value="int">🌐 ပြည်ပ</option>
+              <option value="mm">🇲🇲 ပြည်တွင်း</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Genre Label</label>
+            <input class="fi" id="fGenre" type="text" placeholder="ဇာတ်ညွှန်း / ဝတ္ထု" value="ဇာတ်ညွှန်း" oninput="updatePreview()">
+          </div>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Synopsis / အကြောင်းအကျဉ်း</label>
+          <textarea class="fi" id="fSynopsis" placeholder="ဇာတ်ကား အကြောင်းအကျဉ်း..."></textarea>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Google Drive PDF Link *</label>
+          <input class="fi" id="fPdfUrl" type="url" placeholder="https://drive.google.com/file/d/xxx/view">
+          <div class="drive-hint">
+            Drive မှာ PDF ကို "Anyone with the link" → Share → Copy link<br>
+            Link ကို paste လုပ်ရုံပဲ — auto convert လုပ်မည်
+          </div>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Cover Image URL (optional)</label>
+          <input class="fi" id="fCoverUrl" type="url" placeholder="https://..." oninput="updatePreview()">
+          <div class="drive-hint">
+            Drive image ဆိုရင် — share link ထဲမှ FILE_ID ယူပြီး<br>
+            <code>https://drive.google.com/uc?id=FILE_ID</code> format သုံးပါ
+          </div>
+        </div>
+
+        <button class="btn btn-red" id="submitBtn" onclick="submitDoc()">
+          ➕ Library မှာ ထည့်မည်
+        </button>
+        <button class="btn btn-ghost" id="cancelEditBtn" style="display:none;" onclick="cancelEdit()">
+          ✕ ပယ်ဖျက်မည်
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Doc list -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Library Docs (<span id="listCount">0</span>)</div>
+
+        <div class="filter-tabs">
+          <button class="ftab active" onclick="setListFilter('all',this)">အားလုံး</button>
+          <button class="ftab" onclick="setListFilter('mm',this)">🇲🇲 ပြည်တွင်း</button>
+          <button class="ftab" onclick="setListFilter('int',this)">🌐 ပြည်ပ</button>
+        </div>
+
+        <div class="doc-list" id="docList">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc,
+         doc, serverTimestamp, query, orderBy }
+  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+
+const cfg = {
+  apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",
+  storageBucket:"cinepodma.firebasestorage.app",
+  messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+};
+
+const app      = initializeApp(cfg);
+const auth     = getAuth(app);
+const db       = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+/* ── ADMIN UID LIST — သင့် UID ထည့်ပါ ── */
+const ADMIN_UIDS = [
+  'YOUR_UID_HERE'   /* ← Firebase Console → Auth မှာ သင့် UID ကို ကူးထည့်ပါ */
+];
+
+var allDocs   = [];
+var listFilter = 'all';
+
+/* ── Auth ── */
+onAuthStateChanged(auth, async function(user) {
+  if (!user) {
+    showGate(); return;
+  }
+  if (!ADMIN_UIDS.includes(user.uid)) {
+    document.getElementById('authErr').textContent = '❌ Admin access မရှိပါ — ' + user.email;
+    await signOut(auth);
+    showGate(); return;
+  }
+  document.getElementById('navUser').textContent = user.displayName || user.email;
+  showPanel();
+  loadDocs();
+});
+
+function showGate()  { document.getElementById('authGate').style.display='flex'; document.getElementById('mainPanel').style.display='none'; }
+function showPanel() { document.getElementById('authGate').style.display='none'; document.getElementById('mainPanel').style.display='block'; }
+
+window.signInGoogle = async function() {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    document.getElementById('authErr').textContent = '❌ ' + e.message;
+  }
+};
+
+/* ── Convert Drive view link → embed/preview link ── */
+function convertDriveLink(url) {
+  if (!url) return '';
+  /* extract file ID */
+  var match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (match) {
+    return 'https://drive.google.com/file/d/' + match[1] + '/preview';
+  }
+  /* already preview format */
+  if (url.includes('/preview')) return url;
+  return url;
+}
+
+/* ── Live preview ── */
+window.updatePreview = function() {
+  var title   = document.getElementById('fTitle').value   || 'Doc ခေါင်းစဉ်';
+  var author  = document.getElementById('fAuthor').value  || 'Author';
+  var genre   = document.getElementById('fGenre').value   || 'Genre';
+  var cover   = document.getElementById('fCoverUrl').value;
+  var cv      = document.getElementById('previewCover');
+  var catVal  = document.getElementById('fCat').value;
+
+  document.getElementById('previewTitle').textContent = title;
+  document.getElementById('previewMeta').textContent  = author + ' · ' + genre + ' · ' + (catVal==='mm'?'ပြည်တွင်း':'ပြည်ပ');
+
+  if (cover) {
+    cv.innerHTML = '<img src="'+cover+'" alt="" onerror="this.parentNode.textContent=\'?\'">';
+  } else {
+    cv.textContent = title.charAt(0) || '?';
+  }
+};
+
+/* ── Load docs ── */
+async function loadDocs() {
+  try {
+    var snap = await getDocs(query(collection(db,'adminDocs'), orderBy('createdAt','desc')));
+    allDocs = [];
+    snap.forEach(function(d){ allDocs.push({id:d.id, ...d.data()}); });
+    updateStats();
+    renderList();
+  } catch(e) {
+    document.getElementById('docList').innerHTML = '<div class="empty-msg">ဖွင့်မရပါ — '+e.message+'</div>';
+  }
+}
+
+function updateStats() {
+  var mm  = allDocs.filter(function(d){ return d.cat==='mm'; }).length;
+  var int = allDocs.filter(function(d){ return d.cat==='int'; }).length;
+  document.getElementById('statTotal').textContent = allDocs.length;
+  document.getElementById('statMM').textContent    = mm;
+  document.getElementById('statInt').textContent   = int;
+}
+
+/* ── Render list ── */
+window.setListFilter = function(f, btn) {
+  listFilter = f;
+  document.querySelectorAll('.ftab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderList();
+};
+
+function renderList() {
+  var docs = listFilter === 'all' ? allDocs : allDocs.filter(function(d){ return d.cat===listFilter; });
+  document.getElementById('listCount').textContent = docs.length;
+  var list = document.getElementById('docList');
+  if (!docs.length) { list.innerHTML='<div class="empty-msg">Doc မရှိသေးပါ</div>'; return; }
+  list.innerHTML = '';
+  docs.forEach(function(d) {
+    var item = document.createElement('div');
+    item.className = 'doc-item';
+    var cvHtml = d.coverUrl
+      ? '<img src="'+d.coverUrl+'" alt="" onerror="this.parentNode.textContent=\''+(d.title||'?').charAt(0)+'\'">'
+      : (d.title||'?').charAt(0);
+    item.innerHTML =
+      '<div class="doc-item-cover">'+cvHtml+'</div>'+
+      '<div class="doc-item-info">'+
+        '<div class="doc-item-title">'+d.title+'</div>'+
+        '<div class="doc-item-meta">'+d.author+' · <span class="cat-badge '+d.cat+'">'+d.genreLabel+'</span></div>'+
+      '</div>'+
+      '<button class="doc-item-edit" onclick="editDoc(\''+d.id+'\')" title="Edit">✏️</button>'+
+      '<button class="doc-item-del"  onclick="deleteDoc2(\''+d.id+'\',\''+d.title+'\')" title="Delete">🗑</button>';
+    list.appendChild(item);
+  });
+}
+
+/* ── Submit ── */
+window.submitDoc = async function() {
+  var title    = document.getElementById('fTitle').value.trim();
+  var author   = document.getElementById('fAuthor').value.trim();
+  var cat      = document.getElementById('fCat').value;
+  var genre    = document.getElementById('fGenre').value.trim() || 'ဇာတ်ညွှန်း';
+  var synopsis = document.getElementById('fSynopsis').value.trim();
+  var pdfRaw   = document.getElementById('fPdfUrl').value.trim();
+  var coverUrl = document.getElementById('fCoverUrl').value.trim();
+  var editId   = document.getElementById('editDocId').value;
+
+  if (!title)  { toast('❌ ခေါင်းစဉ် ထည့်ပါ'); return; }
+  if (!author) { toast('❌ Author ထည့်ပါ');  return; }
+  if (!pdfRaw) { toast('❌ PDF link ထည့်ပါ'); return; }
+
+  var pdfUrl = convertDriveLink(pdfRaw);
+  var btn    = document.getElementById('submitBtn');
+  btn.textContent = 'သိမ်းနေသည်...'; btn.disabled = true;
+
+  var data = {
+    title, author, cat,
+    genreLabel: genre,
+    synopsis, pdfUrl, coverUrl,
+    clapCount: 0,
+    updatedAt: new Date().toISOString()
+  };
+
+  try {
+    if (editId) {
+      /* Update existing */
+      await updateDoc(doc(db,'adminDocs',editId), data);
+      toast('✅ Update ပြီးပါပြီ');
+      cancelEdit();
+    } else {
+      /* Add new */
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db,'adminDocs'), data);
+      toast('✅ Library မှာ ထည့်ပြီးပါပြီ');
+      resetForm();
+      document.getElementById('successBar').classList.add('on');
+      setTimeout(function(){ document.getElementById('successBar').classList.remove('on'); }, 4000);
+    }
+    await loadDocs();
+  } catch(e) {
+    toast('❌ ' + e.message);
+  }
+  btn.textContent = editId ? '💾 Update မည်' : '➕ Library မှာ ထည့်မည်';
+  btn.disabled = false;
+};
+
+/* ── Edit ── */
+window.editDoc = function(id) {
+  var d = allDocs.find(function(x){ return x.id===id; });
+  if (!d) return;
+  document.getElementById('editDocId').value   = id;
+  document.getElementById('fTitle').value      = d.title   || '';
+  document.getElementById('fAuthor').value     = d.author  || '';
+  document.getElementById('fCat').value        = d.cat     || 'int';
+  document.getElementById('fGenre').value      = d.genreLabel || 'ဇာတ်ညွှန်း';
+  document.getElementById('fSynopsis').value   = d.synopsis || '';
+  document.getElementById('fPdfUrl').value     = d.pdfUrl  || '';
+  document.getElementById('fCoverUrl').value   = d.coverUrl|| '';
+  document.getElementById('formTitle').textContent   = '✏️ Doc ပြင်မည်';
+  document.getElementById('submitBtn').textContent   = '💾 Update မည်';
+  document.getElementById('cancelEditBtn').style.display = '';
+  updatePreview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.cancelEdit = function() {
+  document.getElementById('editDocId').value = '';
+  document.getElementById('formTitle').textContent   = 'Doc အသစ် ထည့်မည်';
+  document.getElementById('submitBtn').textContent   = '➕ Library မှာ ထည့်မည်';
+  document.getElementById('cancelEditBtn').style.display = 'none';
+  resetForm();
+};
+
+/* ── Delete ── */
+window.deleteDoc2 = async function(id, title) {
+  if (!confirm('"'+title+'" ကို ဖျက်မည်လား?')) return;
+  try {
+    await deleteDoc(doc(db,'adminDocs',id));
+    toast('🗑 ဖျက်ပြီးပါပြီ');
+    await loadDocs();
+  } catch(e) { toast('❌ ' + e.message); }
+};
+
+/* ── Helpers ── */
+function resetForm() {
+  ['fTitle','fAuthor','fSynopsis','fPdfUrl','fCoverUrl'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('fCat').value   = 'int';
+  document.getElementById('fGenre').value = 'ဇာတ်ညွှန်း';
+  updatePreview();
+}
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(function(){ t.classList.remove('on'); }, 3000);
+}
+</script>
+</body>
+</html>
