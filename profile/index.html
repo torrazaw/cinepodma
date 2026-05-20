@@ -1102,7 +1102,7 @@ function buildProfileCard(s){
   /* Poster */
   var poster = document.createElement('div'); poster.className='lib-poster';
   if (s.coverUrl) {
-    var img = document.createElement('img'); img.src=s.coverUrl; img.alt=''; poster.appendChild(img);
+    var img = document.createElement('img'); img.src=convertCoverUrl(s.coverUrl); img.alt=''; img.onerror=function(){this.style.display='none';var l=document.createElement('div');l.className='lib-poster-letter';l.textContent=letter;poster.appendChild(l);};poster.appendChild(img);
   } else {
     var lEl = document.createElement('div'); lEl.className='lib-poster-letter'; lEl.textContent=letter; poster.appendChild(lEl);
   }
@@ -1180,7 +1180,7 @@ window.openDocPopup = function(id){
   if (!s) return;
   var gl = s.genreLabel || (s.type==='story' ? 'ဝတ္ထု' : 'ဇာတ်ညွှန်း');
   var cv = document.getElementById('dpCoverEl');
-  cv.innerHTML = s.coverUrl ? '<img src="'+s.coverUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;">' : (s.title||'?').charAt(0);
+  cv.innerHTML = s.coverUrl ? '<img src="'+convertCoverUrl(s.coverUrl)+'" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'">' : (s.title||'?').charAt(0);
   document.getElementById('dpTitleEl').textContent = s.title||'Untitled';
   document.getElementById('dpMetaEl').textContent  = gl + ' · ' + (s.authorUsername||s.updated||'');
   document.getElementById('dpClapEl').textContent  = '👏 '+(s.clapCount||0);
