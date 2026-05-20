@@ -315,13 +315,21 @@ window.signInGoogle = async function() {
 /* ── Convert Drive view link → embed/preview link ── */
 function convertDriveLink(url) {
   if (!url) return '';
-  /* extract file ID */
+  /* extract file ID for PDF preview */
   var match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (match) {
-    return 'https://drive.google.com/file/d/' + match[1] + '/preview';
-  }
-  /* already preview format */
+  if (match) return 'https://drive.google.com/file/d/' + match[1] + '/preview';
   if (url.includes('/preview')) return url;
+  return url;
+}
+
+/* Convert cover image URL → lh3 direct format */
+function convertCoverUrl(url) {
+  if (!url) return url;
+  if (url.includes('lh3.googleusercontent.com')) return url;
+  var m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://lh3.googleusercontent.com/d/' + m[1];
+  var m2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m2) return 'https://lh3.googleusercontent.com/d/' + m2[1];
   return url;
 }
 
