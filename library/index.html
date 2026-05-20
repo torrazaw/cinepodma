@@ -214,11 +214,7 @@ var genreFilters={
   story:['novel','short','poem','essay']
 };
 
-var adminDocs=[
-  {id:'ad1',cat:'mm',type:'screenplay',title:'နမူနာဇာတ်ညွှန်း',author:'Admin',genreLabel:'ဇာတ်ညွှန်း',clapCount:0,synopsis:''},
-  {id:'ad2',cat:'int',type:'screenplay',title:'Parasite',author:'Bong Joon-ho',genreLabel:'ဇာတ်ညွှန်း',clapCount:0,synopsis:''},
-  {id:'ad3',cat:'int',type:'screenplay',title:'Pulp Fiction',author:'Quentin Tarantino',genreLabel:'ဇာတ်ညွှန်း',clapCount:0,synopsis:''},
-];
+var adminDocs=[];  /* Firestore မှ load မည် */
 
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -338,11 +334,11 @@ function setTab(tab,btn){
   btn.classList.add('active');
   document.getElementById('pmFilters').style.display=tab==='podmates'?'':'none';
   document.getElementById('adminFilters').style.display=tab==='admin'?'':'none';
-  /* subtitle ကို tab အလိုက်ပြောင်း — ရုပ်ရှင် tab မှာ subtitle ရှိပြီးသား (header မှာ) */
   document.getElementById('libSub').textContent=tab==='podmates'
     ?'CinePodma တွင် ရေးသားထားသော ဝတ္ထုနှင့် ဇာတ်ညွှန်းများ'
     :'မြန်မာ့ရုပ်ရှင်အပါအဝင် နိုင်ငံတကာရုပ်ရှင်များ၏ ဇာတ်ညွှန်းများ';
-  refresh();
+  if(tab==='admin' && adminDocs.length===0) loadAdminDocs();
+  else refresh();
 }
 function setPmFilter(f,btn){pmFilter=f;document.querySelectorAll('#pmFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyPm();}
 function setAdminFilter(f,btn){adminFilter=f;document.querySelectorAll('#adminFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyAdmin();}
@@ -351,12 +347,38 @@ function onSearch(q){searchQ=q.toLowerCase().trim();refresh();}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closePopupBtn();});
 </script>
 
+<script>
+/* loadAdminDocs — called from setTab; uses window._db exposed by Firebase module */
+async function loadAdminDocs(){
+  var grid=document.getElementById('libGrid');
+  grid.innerHTML='<div class="state-msg"><div class="spinner"></div>ဖွင့်နေသည်...</div>';
+  try{
+    /* dynamic import to access Firestore after module loads */
+    var snap=await window._adminDocsSnap();
+    adminDocs=[];
+    snap.forEach(function(d){
+      var dt=d.data();
+      adminDocs.push({
+        id:d.id,cat:dt.cat||'int',type:'screenplay',
+        title:dt.title||'Untitled',author:dt.author||'',
+        genreLabel:dt.genreLabel||'ဇာတ်ညွှန်း',
+        pdfUrl:dt.pdfUrl||'',coverUrl:dt.coverUrl||'',
+        synopsis:dt.synopsis||'',clapCount:dt.clapCount||0
+      });
+    });
+    applyAdmin();
+  }catch(e){
+    grid.innerHTML='<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';
+  }
+}
+</script>
+
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
 import { getAuth, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
-import { getFirestore, collection, query, where, limit, getDocs,
+import { getFirestore, collection, query, where, orderBy, limit, getDocs,
          doc, getDoc, setDoc, deleteDoc, updateDoc }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
@@ -387,6 +409,11 @@ onAuthStateChanged(auth,async function(user){
     }catch(e){}
   }
 });
+
+/* expose adminDocs fetcher for inline script */
+window._adminDocsSnap=function(){
+  return getDocs(query(collection(db,'adminDocs'),orderBy('createdAt','desc')));
+};
 
 async function loadDocs(){
   try{
