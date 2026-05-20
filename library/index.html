@@ -221,11 +221,25 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function getGenreLabel(d){return d.genreLabel||genreLabels[d.genre]||(d.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');}
 function stripHtml(html){if(!html)return '';var tmp=document.createElement('div');tmp.innerHTML=html;return tmp.textContent||tmp.innerText||'';}
 
+/* Convert Drive share/view link → direct image URL */
+function convertCoverUrl(url){
+  if(!url) return '';
+  /* already uc?id format */
+  if(url.includes('uc?id=') || url.includes('uc?export=')) return url;
+  /* extract file ID from /file/d/ID/... */
+  var m=url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if(m) return 'https://drive.google.com/uc?id='+m[1];
+  /* /open?id=ID */
+  var m2=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(m2) return 'https://drive.google.com/uc?id='+m2[1];
+  return url;
+}
+
 function buildCard(doc){
   var div=document.createElement('div');div.className='lib-card';
   div.onclick=function(){openPopup(doc);};
   var poster=document.createElement('div');poster.className='lib-poster';
-  if(doc.coverUrl){var img=document.createElement('img');img.src=doc.coverUrl;img.alt=doc.title;poster.appendChild(img);}
+  if(doc.coverUrl){var img=document.createElement('img');img.src=convertCoverUrl(doc.coverUrl);img.alt=doc.title;img.onerror=function(){this.style.display='none';var l=document.createElement('div');l.className='lib-poster-letter';l.textContent=(doc.title||'?').charAt(0);poster.appendChild(l);};poster.appendChild(img);}
   else{var letter=document.createElement('div');letter.className='lib-poster-letter';letter.textContent=(doc.title||'?').charAt(0);poster.appendChild(letter);}
   var badge=document.createElement('div');badge.className='lib-badge';badge.textContent=getGenreLabel(doc);poster.appendChild(badge);
   var clap=document.createElement('button');
@@ -244,7 +258,7 @@ function buildCard(doc){
 function openPopup(doc){
   activeDoc=doc;
   var cv=document.getElementById('popupCover');
-  if(doc.coverUrl){cv.innerHTML='<img src="'+esc(doc.coverUrl)+'" alt="">';}
+  if(doc.coverUrl){cv.innerHTML='<img src="'+esc(convertCoverUrl(doc.coverUrl))+'" alt="" onerror="this.style.display='none'">';}
   else{cv.textContent=(doc.title||'?').charAt(0);}
   document.getElementById('popupTitle').textContent=doc.title||'Untitled';
   document.getElementById('popupAuthor').textContent=(doc.authorName||doc.author||'—')+(doc.authorUsername?' · '+doc.authorUsername:'');
@@ -255,6 +269,13 @@ function openPopup(doc){
   document.getElementById('popupSynopsis').textContent=stripHtml(doc.synopsis||doc.logline||'');
   var cb=document.getElementById('popupClapBtn');
   cb.className='popup-btn-clap'+(myClaps[doc.id]?' clapped':'');
+  /* Change button label for admin docs */
+  var readBtn = document.getElementById('popupReadBtn');
+  if(doc.pdfUrl){
+    readBtn.textContent = '📄 PDF ဖတ်မည်';
+  } else {
+    readBtn.textContent = '📖 ဖတ်မည်';
+  }
   document.getElementById('detailPopup').classList.add('on');
   document.body.style.overflow='hidden';
 }
@@ -264,7 +285,14 @@ function closePopup(e){
   document.body.style.overflow='';activeDoc=null;
 }
 window.closePopupBtn=function(){document.getElementById('detailPopup').classList.remove('on');document.body.style.overflow='';activeDoc=null;};
-window.goRead=function(){if(activeDoc)window.location.href='/read?id='+activeDoc.id;};
+window.goRead=function(){
+  if(!activeDoc) return;
+  if(activeDoc.pdfUrl){
+    window.open(activeDoc.pdfUrl,'_blank');
+  } else {
+    window.location.href='/read?id='+activeDoc.id;
+  }
+};
 window.doPopupClap=async function(){
   if(!activeDoc)return;
   await toggleClap(activeDoc,null,document.getElementById('popupClapBtn'));
