@@ -1151,10 +1151,9 @@ async function profileToggleClap(s, btn){
   var docId = s.id;
   try {
     var cRef  = doc(db,'docClaps',docId,'users',currentUser.uid);
-    var gRef  = doc(db,'clapping',currentUser.uid,'users',docId);
     var snap  = await getDoc(cRef);
     if (snap.exists()) {
-      await deleteDoc(cRef); try{ await deleteDoc(gRef); }catch(e){}
+      await deleteDoc(cRef);
       var ds = await getDoc(doc(db,'docs',docId));
       var n  = ds.exists() ? (ds.data().clapCount||0) : 0;
       await updateDoc(doc(db,'docs',docId),{clapCount:Math.max(0,n-1)});
@@ -1163,7 +1162,6 @@ async function profileToggleClap(s, btn){
     } else {
       var now = new Date().toISOString();
       await setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
-      await setDoc(gRef,{docId:docId,clappedAt:now});
       var ds2= await getDoc(doc(db,'docs',docId));
       var n2 = ds2.exists() ? (ds2.data().clapCount||0) : 0;
       await updateDoc(doc(db,'docs',docId),{clapCount:n2+1});
@@ -1274,8 +1272,37 @@ async function loadClappedDocs(){
   }
   try {
     var snap = await getDocs(collection(db,'clapping',profileUid,'users'));
-    if (snap.empty) { grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Clapped doc မရှိသေးပါ</div>'; return; }
-    var docIds=[]; snap.forEach(function(d){ docIds.push(d.data().docId||d.id); });
+    /* adminDocClaps — load separately */
+    var adminClapSnap = null;
+    try{ adminClapSnap = await getDocs(collection(db,'adminDocClaps')); }catch(e){}
+
+    var docIds=[];
+    snap.forEach(function(d){ docIds.push(d.data().docId||d.id); });
+
+    /* add admin doc IDs where current profile user clapped */
+    if(adminClapSnap){
+      adminClapSnap.forEach(function(parentDoc){
+        /* parentDoc.id = adminDocId, check sub-collection */
+      });
+    }
+
+    /* Better approach: query adminDocClaps subcollection for profileUid */
+    try{
+      var adminClappedSnap = await getDocs(
+        collection(db,'adminDocClaps')
+      );
+      /* We need to check each adminDoc's users subcollection */
+      /* Use collectionGroup if available, else query known adminDocs */
+      var adminDocsSnap = await getDocs(collection(db,'adminDocs'));
+      var adminDocIds = [];
+      adminDocsSnap.forEach(function(d){ adminDocIds.push(d.id); });
+      var adminClapChecks = await Promise.all(adminDocIds.map(function(aid){
+        return getDoc(doc(db,'adminDocClaps',aid,'users',profileUid));
+      }));
+      adminClapChecks.forEach(function(cs, i){
+        if(cs.exists()) docIds.push(adminDocIds[i]);
+      });
+    }catch(e){}
     /* docs + adminDocs နှစ်ခုလုံးမှ ရှာမည် */
     var results = await Promise.all(docIds.map(async function(id){
       var d = await getDoc(doc(db,'docs',id));
