@@ -131,17 +131,6 @@ main {
 }
 .avatar:hover { border-color: var(--black); }
 .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.avatar-edit-hint {
-  position: absolute;
-  bottom: 2px; right: 2px;
-  width: 26px; height: 26px;
-  background: var(--black);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px;
-  cursor: pointer;
-  border: 2px solid var(--white);
-}
 #avatarInput { display: none; }
 
 /* Profile info */
@@ -173,11 +162,6 @@ main {
   color: var(--slate);
   margin-top: 8px;
   max-width: 480px;
-}
-.profile-bio:empty::before {
-  content: 'Bio မရှိသေးပါ — Edit နှိပ်ပြီး ထည့်နိုင်သည်';
-  color: var(--slate-lt);
-  font-style: italic;
 }
 
 .profile-stats {
@@ -289,184 +273,101 @@ main {
   margin-left: 8px;
 }
 
-/* Scripts grid */
+/* ── FIX 1: Scripts grid — uniform 3-col, all cells same height ── */
 .scripts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   margin-bottom: 24px;
+  align-items: start; /* ← KEY FIX: prevents tall cards from stretching neighbours */
 }
-/* pc-new card */
-.pc-new{border:2px dashed var(--border);border-radius:12px;aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;text-decoration:none;color:var(--slate);transition:all .15s;font-size:11px;font-family:var(--font-en);}
-.pc-new:hover{border-color:var(--black);color:var(--black);}
-.pc-new .plus{font-size:28px;line-height:1;}
 
-/* 3-col poster card */
-.lib-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);display:flex;flex-direction:column;}
-.lib-card:hover{border-color:#CCC;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
-.lib-poster{width:100%;aspect-ratio:3/4;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.lib-poster img{width:100%;height:100%;object-fit:cover;}
-.lib-poster-letter{font-family:var(--font-my);font-size:28px;font-weight:700;color:#C0C0C0;}
-.lib-badge{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:600;background:rgba(0,0,0,.7);color:#fff;backdrop-filter:blur(4px);}
-.lib-clap-btn{position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.92);border-radius:99px;padding:2px 7px;font-size:10px;font-weight:600;color:var(--black);cursor:pointer;border:none;transition:all .15s;backdrop-filter:blur(4px);}
-.lib-clap-btn.clapped{background:var(--red);color:#fff;}
-.lib-priv{position:absolute;top:6px;right:6px;font-size:10px;opacity:.8;}
-.lib-body{padding:8px 10px;}
-.lib-title{font-size:11px;font-weight:600;color:var(--black);margin-bottom:2px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lib-author{font-size:10px;color:var(--slate-lt);line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pc-new{border:2px dashed var(--border);border-radius:12px;aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;text-decoration:none;color:var(--slate);transition:all .15s;font-size:11px;}
-.pc-new:hover{border-color:var(--black);color:var(--black);}
-.pc-new .plus{font-size:24px;line-height:1;}
-/* detail popup */
-.dp-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:400;display:none;align-items:flex-end;justify-content:center;}
-.dp-ov.on{display:flex;}
-.dp-card{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:640px;padding:20px 20px 40px;animation:slideUp2 .3s cubic-bezier(.34,1.2,.64,1);}
-@keyframes slideUp2{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
-.dp-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
-.dp-row{display:flex;gap:14px;margin-bottom:14px;}
-.dp-cover{width:72px;height:96px;border-radius:10px;background:#F0F0F0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px;font-weight:700;color:#C0C0C0;font-family:var(--font-my);}
-.dp-cover img{width:100%;height:100%;object-fit:cover;}
-.dp-info{flex:1;min-width:0;}
-.dp-title{font-size:16px;font-weight:700;color:var(--black);line-height:1.5;margin-bottom:4px;}
-.dp-meta{font-size:12px;color:var(--slate);line-height:1.6;margin-bottom:6px;}
-.dp-clap-row{font-size:12px;color:var(--slate);display:flex;align-items:center;gap:8px;}
-.dp-clap-toggle{background:none;border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:11px;cursor:pointer;transition:all .15s;}
-.dp-clap-toggle.clapped{background:var(--red);border-color:var(--red);color:#fff;}
-.dp-synopsis{font-size:13px;color:var(--slate);line-height:2.0;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.dp-btns{display:flex;flex-direction:column;gap:8px;}
-.dp-btn{width:100%;padding:12px;border-radius:12px;border:none;font-family:var(--font-my);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;line-height:1.6;text-align:center;}
-.dp-btn.black{background:var(--black);color:#fff;}
-.dp-btn.ghost{background:var(--slate-bg);color:var(--black);border:1px solid var(--border);}
-.dp-btn.danger{background:#FEE2E2;color:#DC2626;}
-.script-card:hover {
-  border-color: var(--black);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.07);
-}
-.script-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.script-card-title {
-  font-family: var(--font-my);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--black);
-  line-height: 1.6;
-}
-.script-card-menu {
-  position: relative;
-  flex-shrink: 0;
-}
-.script-menu-btn {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 1px solid transparent;
-  background: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  color: var(--slate-lt);
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.12s;
-}
-.script-menu-btn:hover { background: var(--slate-bg); border-color: var(--border); color: var(--black); }
-
-.script-dropdown {
-  display: none;
-  position: absolute;
-  right: 0; top: 32px;
-  background: var(--white);
+/* lib-card — poster-first card */
+.lib-card {
   border: 1px solid var(--border);
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-  z-index: 50;
-  min-width: 130px;
   overflow: hidden;
-}
-.script-dropdown.open { display: block; }
-.script-dd-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 14px;
-  font-family: var(--font-my);
-  font-size: 12px;
-  color: var(--black);
-  cursor: pointer;
-  transition: background 0.12s;
-  line-height: 1.6;
-  border: none; background: none; width: 100%; text-align: left;
-}
-.script-dd-item:hover { background: var(--slate-bg); }
-.script-dd-item.danger { color: var(--red); }
-.script-dd-item.danger:hover { background: rgba(220,38,38,0.06); }
-
-.script-card-meta {
-  font-size: 11px;
-  color: var(--slate-lt);
-  line-height: 1.8;
-  margin-bottom: 12px;
-}
-.script-tag {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 99px;
-  font-family: var(--font-en);
-  font-size: 10px;
-  letter-spacing: 0.3px;
-  border: 1px solid var(--border);
-  color: var(--slate);
-  margin-right: 4px;
-}
-.script-tag.draft { border-color: var(--slate-lt); }
-.script-tag.complete { background: var(--black); color: var(--white); border-color: var(--black); }
-
-.script-card-actions {
-  display: flex;
-  gap: 6px;
-  margin-top: 12px;
-}
-.script-act-btn {
-  flex: 1;
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--white);
-  font-family: var(--font-my);
-  font-size: 11px;
-  color: var(--black);
-  cursor: pointer;
-  transition: all 0.12s;
-  text-align: center;
-  line-height: 1.6;
-}
-.script-act-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
-.script-act-btn.black { background: var(--black); color: var(--white); border-color: var(--black); }
-.script-act-btn.black:hover { background: #222; }
-.script-act-btn.primary:hover { background: var(--red); border-color: var(--red); }
-.clap-count-btn{padding:3px 10px;border-radius:99px;border:1px solid var(--border);background:var(--white);font-size:12px;color:var(--slate);cursor:pointer;transition:all .12s;line-height:1.8;}
-.clap-count-btn:hover{background:var(--slate-bg);border-color:var(--black);color:var(--black);}
-
-/* New script card */
-.script-card-new {
-  border: 1.5px dashed var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 160px;
   cursor: pointer;
   transition: all 0.18s;
-  gap: 8px;
-  text-decoration: none;
-  color: var(--slate);
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
 }
-.script-card-new:hover { border-color: var(--black); background: var(--slate-bg); color: var(--black); }
-.script-card-new .plus { font-size: 28px; line-height: 1; }
-.script-card-new .new-label { font-family: var(--font-en); font-size: 12px; letter-spacing: 0.5px; }
+.lib-card:hover { border-color: #CCC; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.lib-poster {
+  width: 100%;
+  aspect-ratio: 3/4;      /* ← forces every poster same ratio */
+  background: #F0F0F0;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.lib-poster img { width: 100%; height: 100%; object-fit: cover; }
+.lib-poster-letter { font-family: var(--font-my); font-size: 28px; font-weight: 700; color: #C0C0C0; }
+.lib-badge {
+  position: absolute; top: 6px; left: 6px;
+  padding: 2px 7px; border-radius: 5px;
+  font-size: 9px; font-weight: 600;
+  background: rgba(0,0,0,.7); color: #fff;
+  backdrop-filter: blur(4px);
+  max-width: calc(100% - 36px); /* don't overlap lock icon */
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.lib-clap-btn {
+  position: absolute; bottom: 6px; right: 6px;
+  display: flex; align-items: center; gap: 2px;
+  background: rgba(255,255,255,.92);
+  border-radius: 99px; padding: 2px 7px;
+  font-size: 10px; font-weight: 600; color: var(--black);
+  cursor: pointer; border: none;
+  transition: all .15s; backdrop-filter: blur(4px);
+}
+.lib-clap-btn.clapped { background: var(--red); color: #fff; }
+.lib-priv { position: absolute; top: 6px; right: 6px; font-size: 10px; opacity: .8; }
+.lib-body { padding: 8px 10px; }
+.lib-title {
+  font-size: 11px; font-weight: 600; color: var(--black);
+  margin-bottom: 2px; line-height: 1.5;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.lib-author {
+  font-size: 10px; color: var(--slate-lt); line-height: 1.6;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* New card placeholder */
+.pc-new {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  aspect-ratio: 3/4;   /* ← same ratio as poster so grid stays uniform */
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer;
+  text-decoration: none; color: var(--slate);
+  transition: all .15s; font-size: 11px;
+}
+.pc-new:hover { border-color: var(--black); color: var(--black); }
+.pc-new .plus { font-size: 24px; line-height: 1; }
+
+/* detail popup */
+.dp-ov { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); z-index: 600; display: none; align-items: flex-end; justify-content: center; }
+.dp-ov.on { display: flex; }
+.dp-card { background: var(--white); border-radius: 20px 20px 0 0; width: 100%; max-width: 640px; padding: 20px 20px 40px; animation: slideUp3 .3s cubic-bezier(.34,1.2,.64,1); }
+@keyframes slideUp3 { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.dp-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+.dp-row { display: flex; gap: 14px; margin-bottom: 14px; }
+.dp-cover { width: 72px; height: 96px; border-radius: 10px; background: #F0F0F0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 26px; font-weight: 700; color: #C0C0C0; font-family: var(--font-my); }
+.dp-cover img { width: 100%; height: 100%; object-fit: cover; }
+.dp-info { flex: 1; min-width: 0; }
+.dp-title { font-size: 16px; font-weight: 700; color: var(--black); line-height: 1.5; margin-bottom: 4px; }
+.dp-meta { font-size: 12px; color: var(--slate); line-height: 1.6; margin-bottom: 4px; }
+.dp-clap-row { font-size: 12px; color: var(--slate); }
+.dp-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.dp-btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-family: var(--font-my); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; line-height: 1.6; text-align: center; }
+.dp-btn.black { background: var(--black); color: #fff; }
+.dp-btn.black:hover { background: #222; }
+.dp-btn.ghost { background: var(--slate-bg); color: var(--black); border: 1px solid var(--border); }
+.dp-btn.danger { background: #FEE2E2; color: #DC2626; }
 
 /* Empty state */
 .empty-state {
@@ -487,12 +388,7 @@ footer {
   padding: 18px 32px;
   text-align: center;
 }
-.footer-text {
-  font-family: var(--font-en);
-  font-size: 11px;
-  color: var(--slate);
-  letter-spacing: 0.5px;
-}
+.footer-text { font-family: var(--font-en); font-size: 11px; color: var(--slate); letter-spacing: 0.5px; }
 
 /* Toast */
 .toast {
@@ -510,182 +406,54 @@ footer {
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
   z-index: 9999;
+  pointer-events: none;
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 
 /* ── Clap stats (big) ── */
-.clap-stats {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 10px;
-}
-.clap-stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.clap-num {
-  font-family: var(--font-en);
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--black);
-  line-height: 1.1;
-  letter-spacing: -0.5px;
-}
-.clap-label {
-  font-size: 12px;
-  color: var(--slate);
-  margin-top: 2px;
-  line-height: 1.4;
-}
-.clap-stat-divider {
-  width: 1px;
-  height: 36px;
-  background: var(--border);
-}
+.clap-stats { display: flex; align-items: center; gap: 20px; margin-bottom: 10px; }
+.clap-stat-item { display: flex; flex-direction: column; align-items: flex-start; }
+.clap-num { font-family: var(--font-en); font-size: 32px; font-weight: 700; color: var(--black); line-height: 1.1; letter-spacing: -0.5px; cursor: pointer; transition: opacity .15s; }
+.clap-num:hover { opacity: .7; }
+.clap-label { font-size: 12px; color: var(--slate); margin-top: 2px; line-height: 1.4; }
+.clap-stat-divider { width: 1px; height: 36px; background: var(--border); }
 
 /* ── Script stats (small) ── */
-.script-stats {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-.script-stat-item {
-  font-size: 12px;
-  color: var(--slate);
-  line-height: 1.6;
-}
-.script-stat-item strong {
-  color: var(--black);
-  font-weight: 700;
-}
-.script-stat-sep {
-  color: var(--border);
-  font-size: 12px;
-}
+.script-stats { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.script-stat-item { font-size: 12px; color: var(--slate); line-height: 1.6; }
+.script-stat-item strong { color: var(--black); font-weight: 700; }
+.script-stat-sep { color: var(--border); font-size: 12px; }
 
 /* ── Profile tabs ── */
-.profile-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 24px;
-  gap: 0;
-}
-.profile-tab {
-  padding: 12px 20px;
-  border: none; background: transparent;
-  font-family: var(--font-my); font-size: 14px;
-  color: var(--slate); cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all .15s; line-height: 1.6;
-  white-space: nowrap;
-}
+.profile-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.profile-tab { padding: 12px 20px; border: none; background: transparent; font-family: var(--font-my); font-size: 14px; color: var(--slate); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; line-height: 1.6; white-space: nowrap; }
 .profile-tab:hover { color: var(--black); }
 .profile-tab.active { color: var(--black); border-bottom-color: var(--black); font-weight: 600; }
 
 /* ── Clapped privacy buttons ── */
-.clap-priv-btn {
-  padding: 5px 12px; border-radius: 99px;
-  border: 1.5px solid var(--border);
-  background: var(--white); font-family: var(--font-my);
-  font-size: 12px; color: var(--slate); cursor: pointer;
-  transition: all .15s; line-height: 1.8;
-}
+.clap-priv-btn { padding: 5px 12px; border-radius: 99px; border: 1.5px solid var(--border); background: var(--white); font-family: var(--font-my); font-size: 12px; color: var(--slate); cursor: pointer; transition: all .15s; line-height: 1.8; }
 .clap-priv-btn.active { background: var(--black); border-color: var(--black); color: var(--white); }
 
-/* ── Clapper count — clickable ── */
-.clap-num { cursor: pointer; transition: opacity .15s; }
-.clap-num:hover { opacity: .7; }
-
 /* ── New clapper badge ── */
-.new-clap-badge {
-  display: inline-flex; align-items: center;
-  padding: 1px 6px; border-radius: 99px;
-  background: var(--red); color: var(--white);
-  font-family: var(--font-en); font-size: 10px; font-weight: 700;
-  margin-left: 6px; vertical-align: middle;
-  animation: pulse 1.5s ease infinite;
-}
+.new-clap-badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 99px; background: var(--red); color: var(--white); font-family: var(--font-en); font-size: 10px; font-weight: 700; margin-left: 6px; vertical-align: middle; animation: pulse 1.5s ease infinite; }
 @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.6;} }
 
 /* ── Clappers/Clapping popup ── */
-.clap-popup-ov {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
-  z-index: 600; align-items: center; justify-content: center; padding: 20px;
-}
+.clap-popup-ov { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); z-index: 600; align-items: center; justify-content: center; padding: 20px; }
 .clap-popup-ov.open { display: flex; }
-/* doc detail popup - bottom sheet */
-.dp-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:600;align-items:flex-end;justify-content:center;}
-.dp-ov.on{display:flex;}
-.dp-card{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:640px;padding:20px 20px 40px;animation:slideUp3 .3s cubic-bezier(.34,1.2,.64,1);}
-@keyframes slideUp3{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
-.dp-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
-.dp-row{display:flex;gap:14px;margin-bottom:14px;}
-.dp-cover{width:72px;height:96px;border-radius:10px;background:#F0F0F0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px;font-weight:700;color:#C0C0C0;font-family:var(--font-my);}
-.dp-cover img{width:100%;height:100%;object-fit:cover;}
-.dp-info{flex:1;min-width:0;}
-.dp-title{font-size:16px;font-weight:700;color:var(--black);line-height:1.5;margin-bottom:4px;}
-.dp-meta{font-size:12px;color:var(--slate);line-height:1.6;margin-bottom:4px;}
-.dp-clap-row{font-size:12px;color:var(--slate);}
-.dp-btns{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
-.dp-btn{width:100%;padding:12px;border-radius:12px;border:none;font-family:var(--font-my);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;line-height:1.6;text-align:center;}
-.dp-btn.black{background:var(--black);color:#fff;}
-.dp-btn.black:hover{background:#222;}
-.dp-btn.ghost{background:var(--slate-bg);color:var(--black);border:1px solid var(--border);}
-.dp-btn.danger{background:#FEE2E2;color:#DC2626;}
-.clap-popup {
-  background: var(--white); border-radius: 20px;
-  padding: 0; width: 100%; max-width: 380px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.2);
-  animation: popIn .25s cubic-bezier(.34,1.56,.64,1);
-  overflow: hidden; max-height: 80vh; display: flex; flex-direction: column;
-}
-@keyframes popIn { from{opacity:0;transform:scale(.95) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);} }
-.clap-popup-hdr {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-}
+.clap-popup { background: var(--white); border-radius: 20px; padding: 0; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.2); animation: popIn .25s cubic-bezier(.34,1.56,.64,1); overflow: hidden; max-height: 80vh; display: flex; flex-direction: column; }
+.clap-popup-hdr { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .clap-popup-title { font-family: var(--font-my); font-size: 15px; font-weight: 600; color: var(--black); line-height: 1.6; }
-.clap-popup-close {
-  width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
-  background: transparent; cursor: pointer; font-size: 14px;
-  display: flex; align-items: center; justify-content: center; color: var(--slate);
-}
+.clap-popup-close { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; color: var(--slate); }
 .clap-popup-close:hover { background: var(--slate-bg); }
 .clap-popup-body { overflow-y: auto; flex: 1; padding: 8px 0; }
-.clap-user-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 20px; text-decoration: none; color: var(--black);
-  transition: background .12s;
-}
+.clap-user-item { display: flex; align-items: center; gap: 12px; padding: 10px 20px; text-decoration: none; color: var(--black); transition: background .12s; }
 .clap-user-item:hover { background: var(--slate-bg); }
-.clap-user-av {
-  width: 40px; height: 40px; border-radius: 50%;
-  background: var(--slate-bg); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; overflow: hidden; flex-shrink: 0;
-}
+.clap-user-av { width: 40px; height: 40px; border-radius: 50%; background: var(--slate-bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; overflow: hidden; flex-shrink: 0; }
 .clap-user-av img { width: 100%; height: 100%; object-fit: cover; }
 .clap-user-name { font-size: 14px; font-weight: 600; line-height: 1.5; }
 .clap-user-uname { font-family: var(--font-en); font-size: 12px; color: var(--slate-lt); }
 .clap-popup-empty { padding: 32px; text-align: center; color: var(--slate-lt); font-size: 13px; line-height: 2; }
-
-/* ── Role badge ── */
-.role-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 12px;
-  background: var(--slate-bg);
-  border-radius: 99px;
-  font-size: 12px;
-  color: var(--slate);
-  border: 1px solid var(--border);
-}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {
@@ -701,6 +469,9 @@ footer {
 </head>
 <body>
 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <!-- NAV -->
 <nav>
   <a class="brand" href="/home">
@@ -708,7 +479,6 @@ footer {
   </a>
   <div class="nav-right" id="navRight">
     <a class="btn btn-ghost btn-sm" href="/home">← Home</a>
-    <!-- JS က owner/public အလိုက် ဖြည့်မည် -->
   </div>
 </nav>
 
@@ -716,18 +486,15 @@ footer {
 
   <!-- PROFILE HEADER -->
   <div class="profile-header">
-
-    <!-- Avatar -->
     <div class="avatar-wrap">
       <div class="avatar" id="avatarDiv">
         <span id="avatarEmoji">👤</span>
         <img id="avatarImg" src="" alt="" style="display:none;">
         <div class="av-edit-badge" id="avEditBadge" style="display:none;" onclick="document.getElementById('avatarInput').click()">📷</div>
       </div>
-      <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+      <input type="file" id="avatarInput" accept="image/*">
     </div>
 
-    <!-- Info -->
     <div class="profile-info">
       <div class="profile-name-row">
         <span class="profile-name" id="dispName">—</span>
@@ -737,10 +504,10 @@ footer {
       <p id="dispBio" style="font-size:13px;color:var(--slate);margin-bottom:6px;line-height:1.8;"></p>
       <p id="dispEmail" style="font-size:12px;color:var(--slate);margin-bottom:16px;line-height:1.8;"></p>
 
-      <!-- Clappers / Clapping — ကြီးကြီး -->
       <div class="clap-stats">
         <div class="clap-stat-item" onclick="openClappersPopup()" style="cursor:pointer;">
-          <span class="clap-num" id="statClappers">0</span><span id="newClapBadge" style="display:none;" class="new-clap-badge"></span>
+          <span class="clap-num" id="statClappers">0</span>
+          <span id="newClapBadge" style="display:none;" class="new-clap-badge"></span>
           <span class="clap-label">👏 Clappers</span>
         </div>
         <div class="clap-stat-divider"></div>
@@ -750,33 +517,23 @@ footer {
         </div>
       </div>
 
-      <!-- Scripts — သေးသေး -->
       <div class="script-stats">
-        <span class="script-stat-item">
-          <strong id="statScripts">0</strong> Scripts
-        </span>
+        <span class="script-stat-item"><strong id="statScripts">0</strong> Scripts</span>
         <span class="script-stat-sep">·</span>
-        <span class="script-stat-item">
-          <strong id="statDrafts">0</strong> Drafts
-        </span>
+        <span class="script-stat-item"><strong id="statDrafts">0</strong> Drafts</span>
         <span class="script-stat-sep">·</span>
-        <span class="script-stat-item">
-          <strong id="statComplete">0</strong> Complete
-        </span>
+        <span class="script-stat-item"><strong id="statComplete">0</strong> Complete</span>
       </div>
 
+      <!-- FIX 2: profile-actions always in DOM; renderActions() fills it -->
       <div class="profile-actions" id="profileActions"></div>
     </div>
   </div>
 
   <!-- PROFILE TABS -->
   <div class="profile-tabs">
-    <button class="profile-tab active" id="tabDocs" onclick="switchProfileTab('docs',this)">
-      Story / Screenplay
-    </button>
-    <button class="profile-tab" id="tabClapped" onclick="switchProfileTab('clapped',this)">
-      👏 Clapped
-    </button>
+    <button class="profile-tab active" onclick="switchProfileTab('docs',this)">Story / Screenplay</button>
+    <button class="profile-tab" onclick="switchProfileTab('clapped',this)">👏 Clapped</button>
   </div>
 
   <!-- DOCS TAB -->
@@ -811,33 +568,29 @@ footer {
 </footer>
 
 <!-- CLAPPERS POPUP -->
-<div class="clap-popup-ov" id="clappersPopup">
+<div class="clap-popup-ov" id="clappersPopup" onclick="if(event.target===this)closeClappersPopup()">
   <div class="clap-popup">
     <div class="clap-popup-hdr">
       <span class="clap-popup-title">👏 Clappers</span>
       <button class="clap-popup-close" onclick="closeClappersPopup()">✕</button>
     </div>
-    <div class="clap-popup-body" id="clappersBody">
-      <div class="clap-popup-empty">ဖွင့်နေသည်...</div>
-    </div>
+    <div class="clap-popup-body" id="clappersBody"><div class="clap-popup-empty">ဖွင့်နေသည်...</div></div>
   </div>
 </div>
 
 <!-- CLAPPING POPUP -->
-<div class="clap-popup-ov" id="clappingPopup">
+<div class="clap-popup-ov" id="clappingPopup" onclick="if(event.target===this)closeClappingPopup()">
   <div class="clap-popup">
     <div class="clap-popup-hdr">
       <span class="clap-popup-title">Clapping</span>
       <button class="clap-popup-close" onclick="closeClappingPopup()">✕</button>
     </div>
-    <div class="clap-popup-body" id="clappingBody">
-      <div class="clap-popup-empty">ဖွင့်နေသည်...</div>
-    </div>
+    <div class="clap-popup-body" id="clappingBody"><div class="clap-popup-empty">ဖွင့်နေသည်...</div></div>
   </div>
 </div>
 
 <!-- EDIT PROFILE MODAL -->
-<div class="modal-overlay" id="editModal">
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEdit()">
   <div class="modal-card">
     <div class="modal-title">Edit Profile</div>
     <div class="form-group">
@@ -872,18 +625,18 @@ footer {
 </div>
 
 <!-- DOC CLAPPERS POPUP -->
-<div class="clap-popup-ov" id="docClappersPopup" onclick="window.closeDocClappersPopup()">
+<div class="clap-popup-ov" id="docClappersPopup" onclick="if(event.target===this)closeDocClappersPopup()">
   <div class="clap-popup" onclick="event.stopPropagation()">
     <div class="clap-popup-hdr">
       <span id="docClappersTitle">👏 Clappers</span>
-      <button onclick="window.closeDocClappersPopup()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
+      <button class="clap-popup-close" onclick="closeDocClappersPopup()">✕</button>
     </div>
     <div class="clap-popup-body" id="docClappersBody"></div>
   </div>
 </div>
 
 <!-- DOC DETAIL POPUP -->
-<div class="dp-ov" id="docDetailPopup" onclick="if(event.target===this)window.closeDp()">
+<div class="dp-ov" id="docDetailPopup" onclick="if(event.target===this)closeDp()">
   <div class="dp-card" onclick="event.stopPropagation()">
     <div class="dp-handle"></div>
     <div class="dp-row">
@@ -903,7 +656,7 @@ footer {
   <div class="clap-popup" onclick="event.stopPropagation()">
     <div class="clap-popup-hdr">
       <span>💰 CinePodma Wallet</span>
-      <button onclick="closeWallet()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
+      <button class="clap-popup-close" onclick="closeWallet()">✕</button>
     </div>
     <div style="padding:20px;line-height:2.0;">
       <div style="margin-bottom:16px;padding:14px;background:var(--slate-bg);border-radius:12px;">
@@ -920,23 +673,44 @@ footer {
 </div>
 
 <script>
-window.openWallet=function(){
-  document.getElementById('walletPopup').classList.add('on');
-  document.body.style.overflow='hidden';
-};
-window.closeWallet=function(){
-  document.getElementById('walletPopup').classList.remove('on');
-  document.body.style.overflow='';
-};
-
+/* ── Utility ── */
 function toast(msg) {
   var t = document.getElementById('toast');
-  if (!t) return;
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2800);
+  clearTimeout(t._tid);
+  t._tid = setTimeout(function(){ t.classList.remove('show'); }, 2800);
 }
-window.toast=toast;
+window.toast = toast;
+
+/* ── Wallet ── */
+window.openWallet  = function(){ document.getElementById('walletPopup').classList.add('open'); document.body.style.overflow='hidden'; };
+window.closeWallet = function(){ document.getElementById('walletPopup').classList.remove('open'); document.body.style.overflow=''; };
+
+/* ── Doc detail ── */
+window.closeDp = function(){ document.getElementById('docDetailPopup').classList.remove('on'); document.body.style.overflow=''; };
+
+/* ── Doc clappers ── */
+window.closeDocClappersPopup = function(){ document.getElementById('docClappersPopup').classList.remove('open'); document.body.style.overflow=''; };
+
+/* ── ESC ── */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  ['editModal','clappersPopup','clappingPopup','walletPopup','docClappersPopup'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.classList.remove('open'); }
+  });
+  document.getElementById('docDetailPopup').classList.remove('on');
+  document.body.style.overflow = '';
+});
+
+window.switchProfileTab = function(tab, btn){
+  document.querySelectorAll('.profile-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('tabDocsContent').style.display    = tab==='docs'    ? '' : 'none';
+  document.getElementById('tabClappedContent').style.display = tab==='clapped' ? '' : 'none';
+  if (tab === 'clapped') loadClappedDocs();
+};
 </script>
 
 <script type="module">
@@ -944,7 +718,7 @@ import { initializeApp }   from 'https://www.gstatic.com/firebasejs/12.13.0/fire
 import { getAuth, onAuthStateChanged, signOut, updateProfile }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
-         collection, query, where, getDocs, getCountFromServer, orderBy }
+         collection, query, where, getDocs, getCountFromServer }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 import { getStorage, ref, uploadBytes, getDownloadURL }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js';
@@ -958,30 +732,30 @@ const firebaseConfig = {
   appId:"1:587916526322:web:d00775311fb92fa1c8466b"
 };
 
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
 const storage = getStorage(app);
 
-/* Avatar upload */
 var currentUser    = null;
 var currentProfile = {};
 var scripts        = [];
+var clappedDocs    = [];
 var clappedPrivacy = 'public';
 var initialized    = false;
+var myClaps        = {};
 
-/* uid from URL or own profile */
-var urlParams = new URLSearchParams(window.location.search);
-var uidParam  = urlParams.get('uid');
+var urlParams  = new URLSearchParams(window.location.search);
+var uidParam   = urlParams.get('uid');
 var profileUid = null;
 var isOwner    = false;
 
-/* Avatar upload — declare after vars so isOwner/currentUser accessible */
+/* ── Avatar upload ── */
 document.getElementById('avatarInput').addEventListener('change', async function(){
-  if(!isOwner || !this.files[0] || !currentUser) return;
+  if (!isOwner || !this.files[0] || !currentUser) return;
   var file = this.files[0];
-  if(!file.type.startsWith('image/')) { toast('ပုံ file ထည့်ပါ'); return; }
-  if(file.size > 2*1024*1024) { toast('ပုံ 2MB အောက်ဖြစ်ရမည်'); return; }
+  if (!file.type.startsWith('image/')) { toast('ပုံ file ထည့်ပါ'); return; }
+  if (file.size > 2*1024*1024) { toast('ပုံ 2MB အောက်ဖြစ်ရမည်'); return; }
   toast('📤 Upload လုပ်နေသည်...');
   try {
     var storageRef = ref(storage, 'avatars/' + currentUser.uid);
@@ -990,16 +764,15 @@ document.getElementById('avatarInput').addEventListener('change', async function
     await updateDoc(doc(db,'users',currentUser.uid), { avatar: url });
     await updateProfile(currentUser, { photoURL: url });
     currentProfile.avatar = url;
+    document.getElementById('avatarEmoji').style.display = 'none';
     var img = document.getElementById('avatarImg');
-    var em  = document.getElementById('avatarEmoji');
-    if(img){ img.src=url; img.style.display='block'; }
-    if(em) em.style.display='none';
+    img.src = url; img.style.display = 'block';
     toast('✅ Profile ပုံ ပြောင်းပြီး');
   } catch(e) { toast('❌ Upload မရပါ — ' + e.message); }
 });
 
-/* ══ AUTH ══ */
-onAuthStateChanged(auth, async function(user) {
+/* ── Auth ── */
+onAuthStateChanged(auth, async function(user){
   if (initialized) return;
   initialized = true;
   currentUser = user;
@@ -1013,323 +786,485 @@ onAuthStateChanged(auth, async function(user) {
     isOwner    = true;
   }
 
-  try { await loadProfile(); }    catch(e) { console.error('loadProfile',e); }
-  try { await loadScripts(); }    catch(e) { console.error('loadScripts',e); }
-  try { await loadClappers(); }   catch(e) { console.error('loadClappers',e); }
+  await Promise.all([loadProfile(), loadScripts(), loadClappers()]);
   renderNav();
-  renderActions();
+  renderActions();   /* ← called after isOwner known */
 
-  /* owner: show privacy row in clapped tab */
   if (isOwner) {
     var row = document.getElementById('clappedPrivacyRow');
     if (row) row.style.display = 'flex';
-    /* check new clappers notification */
     checkNewClappers();
   }
+
+  /* load myClaps for doc cards */
+  if (currentUser) {
+    try {
+      var cSnap = await getDocs(collection(db,'clapping',currentUser.uid,'users'));
+      cSnap.forEach(function(d){ myClaps[d.data().docId || d.id] = true; });
+    } catch(e) {}
+  }
+  renderScripts();
 });
 
-/* ══ LOAD PROFILE ══ */
-async function loadProfile() {
-  var snap = await getDoc(doc(db, 'users', profileUid));
-  if (!snap.exists()) { document.getElementById('dispName').textContent='User မတွေ့ပါ'; return; }
+/* ── Load profile ── */
+async function loadProfile(){
+  var snap = await getDoc(doc(db,'users',profileUid));
+  if (!snap.exists()) { document.getElementById('dispName').textContent = 'User မတွေ့ပါ'; return; }
   currentProfile = snap.data();
   document.getElementById('dispName').textContent     = currentProfile.name     || '—';
   document.getElementById('dispUsername').textContent = currentProfile.username  || '';
   document.getElementById('dispBio').textContent      = currentProfile.bio       || '';
   if (currentProfile.role) {
-    var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
+    var icons = {Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
     document.getElementById('dispRole').innerHTML =
-      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">' +
-      (roleIcons[currentProfile.role]||'') + ' ' + currentProfile.role + '</span>';
+      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">'+(icons[currentProfile.role]||'')+' '+currentProfile.role+'</span>';
   }
   if (currentProfile.contactEmail) {
     document.getElementById('dispEmail').innerHTML =
       '✉ <a href="mailto:'+currentProfile.contactEmail+'" style="color:var(--black)">'+currentProfile.contactEmail+'</a>';
   }
   if (currentProfile.avatar) {
-    document.getElementById('avatarEmoji').style.display='none';
-    var img=document.getElementById('avatarImg');img.src=currentProfile.avatar;img.style.display='block';
+    document.getElementById('avatarEmoji').style.display = 'none';
+    var img = document.getElementById('avatarImg');
+    img.src = currentProfile.avatar; img.style.display = 'block';
   }
 }
 
-/* ══ LOAD SCRIPTS ══ */
-async function loadScripts() {
+/* ── Load scripts ── */
+async function loadScripts(){
   try {
-    var q = query(collection(db,'docs'), where('uid','==',profileUid));
+    var q    = query(collection(db,'docs'), where('uid','==',profileUid));
     var snap = await getDocs(q);
-    scripts = [];
-    snap.forEach(function(d) {
-      var data=d.data();
-      scripts.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',
-        status:data.status||'draft',privacy:data.privacy||'private',
-        genre:data.genre||'',genreLabel:data.genreLabel||'',
-        scenes:data.screenplay?data.screenplay.length:0,
-        updated:data.updatedAt?data.updatedAt.substring(0,10):'—',
-        uid:data.uid, clapCount:data.clapCount||0});
+    scripts  = [];
+    snap.forEach(function(d){
+      var data = d.data();
+      scripts.push({
+        id: d.id, title: data.title||'Untitled', type: data.type||'screenplay',
+        status: data.status||'draft', privacy: data.privacy||'private',
+        genre: data.genre||'', genreLabel: data.genreLabel||'',
+        updated: data.updatedAt ? data.updatedAt.substring(0,10) : '—',
+        uid: data.uid, clapCount: data.clapCount||0,
+        coverUrl: data.coverUrl||''
+      });
     });
-    console.log('loadScripts: total='+scripts.length+', isOwner='+isOwner+', profileUid='+profileUid);
-    if (!isOwner) {
-      scripts=scripts.filter(function(s){return s.privacy==='public';});
-      console.log('loadScripts: public only='+scripts.length);
-    }
-    scripts.sort(function(a,b){return b.updated.localeCompare(a.updated);});
-    renderScripts();
-  } catch(e) {
-    console.error('loadScripts error:',e);
-    scripts=[];
-    renderScripts();
-  }
+    if (!isOwner) scripts = scripts.filter(function(s){ return s.privacy === 'public'; });
+    scripts.sort(function(a,b){ return b.updated.localeCompare(a.updated); });
+  } catch(e) { console.error('loadScripts', e); scripts = []; }
 }
 
-/* ══ LOAD CLAPPERS ══ */
-async function loadClappers() {
-  /* Clappers count */
+/* ── Load clappers / clapping counts ── */
+async function loadClappers(){
   try {
-    var coll = collection(db,'clappers',profileUid,'users');
-    var snap = await getCountFromServer(coll);
-    var count = snap.data().count;
-    document.getElementById('statClappers').textContent =
-      count>=1000?(count/1000).toFixed(1)+'K':count;
-  } catch(e) { document.getElementById('statClappers').textContent='0'; }
+    var snap = await getCountFromServer(collection(db,'clappers',profileUid,'users'));
+    var n    = snap.data().count;
+    document.getElementById('statClappers').textContent = n >= 1000 ? (n/1000).toFixed(1)+'K' : n;
+  } catch(e) { document.getElementById('statClappers').textContent = '0'; }
 
-  /* Clapping count — public မြင်ရမည် */
   try {
-    var coll2 = collection(db,'clapping',profileUid,'users');
-    var snap2 = await getCountFromServer(coll2);
-    var count2 = snap2.data().count;
-    document.getElementById('statClapping').textContent =
-      count2>=1000?(count2/1000).toFixed(1)+'K':count2;
+    var snap2 = await getCountFromServer(collection(db,'clapping',profileUid,'users'));
+    var n2    = snap2.data().count;
+    document.getElementById('statClapping').textContent = n2 >= 1000 ? (n2/1000).toFixed(1)+'K' : n2;
   } catch(e) {
-    /* clapping collection may need different approach */
     try {
       var snap3 = await getDocs(collection(db,'clapping',profileUid,'users'));
-      var count3 = snap3.size;
-      document.getElementById('statClapping').textContent =
-        count3>=1000?(count3/1000).toFixed(1)+'K':count3;
-    } catch(e2) {
-      document.getElementById('statClapping').textContent='0';
-    }
+      document.getElementById('statClapping').textContent = snap3.size;
+    } catch(e2) { document.getElementById('statClapping').textContent = '0'; }
   }
 }
 
-/* ══ NEW CLAPPER NOTIFICATION ══ */
-async function checkNewClappers() {
+/* ── New clappers badge ── */
+async function checkNewClappers(){
   if (!isOwner || !currentUser) return;
   try {
     var snap = await getDoc(doc(db,'users',currentUser.uid));
-    var newCount = snap.exists() ? (snap.data().newClappers||0) : 0;
-    if (newCount > 0) {
+    var n    = snap.exists() ? (snap.data().newClappers||0) : 0;
+    if (n > 0) {
       var badge = document.getElementById('newClapBadge');
-      badge.textContent = '+' + newCount;
+      badge.textContent = '+' + n;
       badge.style.display = 'inline-flex';
     }
   } catch(e) {}
 }
-
-async function clearNewClappers() {
+async function clearNewClappers(){
   if (!isOwner || !currentUser) return;
   try {
-    await updateDoc(doc(db,'users',currentUser.uid),{newClappers:0});
-    document.getElementById('newClapBadge').style.display='none';
+    await updateDoc(doc(db,'users',currentUser.uid), {newClappers:0});
+    document.getElementById('newClapBadge').style.display = 'none';
   } catch(e) {}
 }
 
-/* ══ CLAPPERS POPUP ══ */
-window.openClappersPopup = async function() {
+/* ── Clappers popup ── */
+window.openClappersPopup = async function(){
   document.getElementById('clappersPopup').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
   if (isOwner) clearNewClappers();
   var body = document.getElementById('clappersBody');
-  body.innerHTML='<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
+  body.innerHTML = '<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
   try {
     var snap = await getDocs(collection(db,'clappers',profileUid,'users'));
     if (snap.empty) { body.innerHTML='<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>'; return; }
-    var html='';
-    var promises=[];
-    snap.forEach(function(d){ promises.push(getDoc(doc(db,'users',d.id))); });
-    var users=await Promise.all(promises);
+    var uids = []; snap.forEach(function(d){ uids.push(d.id); });
+    var users = await Promise.all(uids.map(function(id){ return getDoc(doc(db,'users',id)); }));
+    var html = '';
     users.forEach(function(u){
-      if(!u.exists())return;
-      var ud=u.data();
-      var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
-      html+='<a class="clap-user-item" href="/profile?uid='+u.id+'">'+
-        '<div class="clap-user-av">'+av+'</div>'+
-        '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
-        '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
+      if (!u.exists()) return;
+      var ud = u.data();
+      var av = ud.avatar ? '<img src="'+ud.avatar+'" alt="">' : '👤';
+      html += '<a class="clap-user-item" href="/profile?uid='+u.id+'">'
+            + '<div class="clap-user-av">'+av+'</div>'
+            + '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'
+            + '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
     });
-    body.innerHTML=html||'<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';
+    body.innerHTML = html || '<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';
   } catch(e) { body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ</div>'; }
 };
-window.closeClappersPopup=function(){document.getElementById('clappersPopup').classList.remove('open');document.body.style.overflow='';};
+window.closeClappersPopup = function(){ document.getElementById('clappersPopup').classList.remove('open'); document.body.style.overflow=''; };
 
-/* ══ CLAPPING POPUP ══ */
-window.openClappingPopup = async function() {
+/* ── Clapping popup ── */
+window.openClappingPopup = async function(){
   document.getElementById('clappingPopup').classList.add('open');
-  document.body.style.overflow='hidden';
-  var body=document.getElementById('clappingBody');
-  body.innerHTML='<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
+  document.body.style.overflow = 'hidden';
+  var body = document.getElementById('clappingBody');
+  body.innerHTML = '<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
   try {
-    var snap=await getDocs(collection(db,'clapping',profileUid,'users'));
-    if(snap.empty){body.innerHTML='<div class="clap-popup-empty">Clapping မရှိသေးပါ</div>';return;}
-    var html='';
-    var promises=[];
-    snap.forEach(function(d){promises.push(getDoc(doc(db,'users',d.data().uid||d.id)));});
-    var users=await Promise.all(promises);
+    var snap = await getDocs(collection(db,'clapping',profileUid,'users'));
+    if (snap.empty) { body.innerHTML='<div class="clap-popup-empty">Clapping မရှိသေးပါ</div>'; return; }
+    var uids = []; snap.forEach(function(d){ uids.push(d.data().uid || d.id); });
+    var users = await Promise.all(uids.map(function(id){ return getDoc(doc(db,'users',id)); }));
+    var html = '';
     users.forEach(function(u){
-      if(!u.exists())return;
-      var ud=u.data();
-      var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
-      html+='<a class="clap-user-item" href="/profile?uid='+u.id+'">'+
-        '<div class="clap-user-av">'+av+'</div>'+
-        '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
-        '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
+      if (!u.exists()) return;
+      var ud = u.data();
+      var av = ud.avatar ? '<img src="'+ud.avatar+'" alt="">' : '👤';
+      html += '<a class="clap-user-item" href="/profile?uid='+u.id+'">'
+            + '<div class="clap-user-av">'+av+'</div>'
+            + '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'
+            + '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
     });
-    body.innerHTML=html||'<div class="clap-popup-empty">Clapping မရှိသေးပါ</div>';
-  }catch(e){body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ</div>';}
+    body.innerHTML = html || '<div class="clap-popup-empty">Clapping မရှိသေးပါ</div>';
+  } catch(e) { body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ</div>'; }
 };
-window.closeClappingPopup=function(){document.getElementById('clappingPopup').classList.remove('open');document.body.style.overflow='';};
+window.closeClappingPopup = function(){ document.getElementById('clappingPopup').classList.remove('open'); document.body.style.overflow=''; };
 
-window.closeDocClappersPopup=function(){
-  document.getElementById('docClappersPopup').classList.remove('open');
-  document.body.style.overflow='';
-};
-
-window._openDocClappers=async function(docId,e){
-  if(e) e.stopPropagation();
-  var s=scripts.find(function(x){return x.id===docId;});
-  var title=s?s.title:'Doc';
-  document.getElementById('docClappersTitle').textContent='👏 '+title+' — Clappers';
+/* ── Doc clappers popup ── */
+window._openDocClappers = async function(docId, e){
+  if (e) e.stopPropagation();
+  var s = scripts.find(function(x){ return x.id===docId; });
+  document.getElementById('docClappersTitle').textContent = '👏 ' + (s ? s.title : 'Doc') + ' — Clappers';
   document.getElementById('docClappersPopup').classList.add('open');
-  document.body.style.overflow='hidden';
-  var body=document.getElementById('docClappersBody');
-  body.innerHTML='<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
-  try{
-    var snap=await getDocs(collection(db,'docClaps',docId,'users'));
-    if(snap.empty){body.innerHTML='<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';return;}
-    /* uid is stored as document key */
-    var uids=[];
-    snap.forEach(function(d){ uids.push(d.id); });
-    var promises=uids.map(function(uid){return getDoc(doc(db,'users',uid));});
-    var users=await Promise.all(promises);
-    var html='';
-    users.forEach(function(u,i){
-      if(!u.exists()){
-        html+='<div class="clap-user-item"><div class="clap-user-av">👤</div><div><div class="clap-user-name">'+uids[i]+'</div></div></div>';
-        return;
-      }
-      var ud=u.data();
-      var av=ud.avatar?'<img src="'+ud.avatar+'" alt="">':'👤';
-      html+='<a class="clap-user-item" href="/profile?uid='+u.id+'">'+
-        '<div class="clap-user-av">'+av+'</div>'+
-        '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'+
-        '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
+  document.body.style.overflow = 'hidden';
+  var body = document.getElementById('docClappersBody');
+  body.innerHTML = '<div class="clap-popup-empty">ဖွင့်နေသည်...</div>';
+  try {
+    var snap = await getDocs(collection(db,'docClaps',docId,'users'));
+    if (snap.empty) { body.innerHTML='<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>'; return; }
+    var uids = []; snap.forEach(function(d){ uids.push(d.id); });
+    var users = await Promise.all(uids.map(function(id){ return getDoc(doc(db,'users',id)); }));
+    var html = '';
+    users.forEach(function(u, i){
+      if (!u.exists()) { html+='<div class="clap-user-item"><div class="clap-user-av">👤</div><div><div class="clap-user-name">'+uids[i]+'</div></div></div>'; return; }
+      var ud = u.data();
+      var av = ud.avatar ? '<img src="'+ud.avatar+'" alt="">' : '👤';
+      html += '<a class="clap-user-item" href="/profile?uid='+u.id+'">'
+            + '<div class="clap-user-av">'+av+'</div>'
+            + '<div><div class="clap-user-name">'+(ud.name||'—')+'</div>'
+            + '<div class="clap-user-uname">'+(ud.username||'')+'</div></div></a>';
     });
-    body.innerHTML=html||'<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';
-  }catch(err){
-    body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ — '+err.message+'</div>';
-    console.error('docClappers',err);
+    body.innerHTML = html || '<div class="clap-popup-empty">Clappers မရှိသေးပါ</div>';
+  } catch(err) { body.innerHTML='<div class="clap-popup-empty">ဖွင့်မရပါ — '+err.message+'</div>'; }
+};
+
+/* ── Render Nav ── */
+function renderNav(){
+  var navRight = document.getElementById('navRight');
+  if (isOwner) {
+    navRight.innerHTML =
+      '<a class="btn btn-ghost btn-sm" href="/home">← Home</a>'
+    + '<button class="btn btn-ghost btn-sm" onclick="window._signOut()">ထွက်မည်</button>'
+    + '<button class="btn btn-red btn-sm" onclick="openEdit()">✏ Edit</button>';
+    document.getElementById('avEditBadge').style.display = 'flex';
+  } else {
+    navRight.innerHTML = '<a class="btn btn-ghost btn-sm" href="/home">← Home</a>';
+  }
+}
+
+/* ── FIX 2: Render Actions — copyProfileLink uses correct field ── */
+async function renderActions(){
+  var el     = document.getElementById('profileActions');
+  var newBtn = document.getElementById('newScriptBtn');
+
+  if (isOwner) {
+    el.innerHTML =
+      '<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>'
+    + '<button class="btn btn-ghost btn-sm" onclick="openWallet()">💰 Wallet</button>';
+    newBtn.innerHTML = '<a class="btn btn-red btn-sm" href="/write">+ New</a>';
+  } else {
+    var clapped = false;
+    if (currentUser) {
+      try {
+        var cs = await getDoc(doc(db,'clappers',profileUid,'users',currentUser.uid));
+        clapped = cs.exists();
+      } catch(e) {}
+    }
+    el.innerHTML =
+      '<button class="btn btn-red btn-sm" id="clapBtn" onclick="toggleClap()">'+(clapped?'👏 Clapped':'👏 Clap')+'</button>'
+    + '<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
+    newBtn.innerHTML = '';
+  }
+}
+
+/* ── FIX 2b: copyProfileLink — reads username properly ── */
+window.copyProfileLink = function(){
+  /* try usernameRaw → username → uid fallback */
+  var raw = (currentProfile.usernameRaw || currentProfile.username || profileUid || '').replace(/^@/,'');
+  var url = window.location.origin + '/@' + raw;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function(){ toast('🔗 Link ကူးပြီး — ' + url); })
+      .catch(function(){ fallbackCopy(url); });
+  } else { fallbackCopy(url); }
+};
+function fallbackCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('🔗 Link ကူးပြီး — ' + text); }
+  catch(e) { toast('Link: ' + text); }
+  document.body.removeChild(ta);
+}
+
+/* ── Profile clap toggle ── */
+window.toggleClap = async function(){
+  if (!currentUser) {
+    if (confirm('Clap လုပ်ရန် အကောင့်ဖွင့်ရန် လိုသည်။ အကောင့်ဖွင့်မည်လား?')) window.location.href='/home';
+    return;
+  }
+  var btn      = document.getElementById('clapBtn');
+  var clapRef  = doc(db,'clappers',profileUid,'users',currentUser.uid);
+  var clapSnap = await getDoc(clapRef);
+  var el       = document.getElementById('statClappers');
+  var count    = parseInt(el.textContent)||0;
+
+  if (clapSnap.exists()) {
+    await deleteDoc(clapRef);
+    try { await deleteDoc(doc(db,'clapping',currentUser.uid,'users',profileUid)); } catch(e){}
+    try {
+      var os = await getDoc(doc(db,'users',profileUid));
+      if (os.exists()) await updateDoc(doc(db,'users',profileUid),{newClappers:Math.max(0,(os.data().newClappers||0)-1)});
+    } catch(e){}
+    btn.textContent = '👏 Clap'; btn.classList.remove('clapped');
+    el.textContent  = Math.max(0, count-1);
+  } else {
+    var now = new Date().toISOString();
+    await setDoc(clapRef, {clappedAt:now, uid:currentUser.uid});
+    try {
+      await setDoc(doc(db,'clapping',currentUser.uid,'users',profileUid),{uid:profileUid,clappedAt:now});
+      var os2 = await getDoc(doc(db,'users',profileUid));
+      if (os2.exists()) await updateDoc(doc(db,'users',profileUid),{newClappers:(os2.data().newClappers||0)+1});
+    } catch(e){}
+    btn.textContent = '👏 Clapped'; btn.classList.add('clapped');
+    el.textContent  = count + 1;
   }
 };
-window.switchProfileTab=function(tab,btn){
-  document.querySelectorAll('.profile-tab').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  document.getElementById('tabDocsContent').style.display   = tab==='docs'    ? '' : 'none';
-  document.getElementById('tabClappedContent').style.display= tab==='clapped' ? '' : 'none';
-  if(tab==='clapped') loadClappedDocs();
+
+/* ── Render scripts grid ── */
+function buildProfileCard(s){
+  var gl     = s.genreLabel || (s.type==='story' ? 'ဝတ္ထု' : 'ဇာတ်ညွှန်း');
+  var letter = (s.title||'?').charAt(0);
+  var div    = document.createElement('div'); div.className='lib-card';
+  div.onclick = function(){ window.openDocPopup(s.id); };
+
+  /* Poster */
+  var poster = document.createElement('div'); poster.className='lib-poster';
+  if (s.coverUrl) {
+    var img = document.createElement('img'); img.src=s.coverUrl; img.alt=''; poster.appendChild(img);
+  } else {
+    var lEl = document.createElement('div'); lEl.className='lib-poster-letter'; lEl.textContent=letter; poster.appendChild(lEl);
+  }
+  var badge = document.createElement('span'); badge.className='lib-badge'; badge.textContent=gl; poster.appendChild(badge);
+  if (isOwner && s.privacy==='private') {
+    var prv = document.createElement('span'); prv.className='lib-priv'; prv.textContent='🔒'; poster.appendChild(prv);
+  }
+  var clap = document.createElement('button');
+  clap.className = 'lib-clap-btn' + (myClaps[s.id] ? ' clapped' : '');
+  clap.innerHTML  = '👏 '+(s.clapCount||0);
+  clap.onclick    = function(e){ e.stopPropagation(); profileToggleClap(s, clap); };
+  poster.appendChild(clap);
+
+  /* Body */
+  var body = document.createElement('div'); body.className='lib-body';
+  var tEl  = document.createElement('div'); tEl.className='lib-title'; tEl.textContent=s.title||'Untitled';
+  var aEl  = document.createElement('div'); aEl.className='lib-author'; aEl.textContent=s.updated||'';
+  body.appendChild(tEl); body.appendChild(aEl);
+
+  div.appendChild(poster); div.appendChild(body);
+  return div;
+}
+
+function renderScripts(){
+  var grid = document.getElementById('scriptsGrid');
+  document.getElementById('statScripts').textContent  = scripts.length;
+  document.getElementById('statDrafts').textContent   = scripts.filter(function(s){ return s.status==='draft'; }).length;
+  document.getElementById('statComplete').textContent = scripts.filter(function(s){ return s.status==='complete'; }).length;
+
+  if (scripts.length===0 && !isOwner) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><span class="icon">📝</span>Public doc မရှိသေးပါ</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  scripts.forEach(function(s){ grid.appendChild(buildProfileCard(s)); });
+  if (isOwner) {
+    var a = document.createElement('a'); a.className='pc-new'; a.href='/write';
+    a.innerHTML='<span class="plus">+</span><span>New</span>';
+    grid.appendChild(a);
+  }
+}
+
+/* ── Doc clap toggle ── */
+async function profileToggleClap(s, btn){
+  if (!currentUser) { toast('👏 Login ဝင်ပြီး Clap လုပ်ပါ'); return; }
+  var docId = s.id;
+  try {
+    var cRef  = doc(db,'docClaps',docId,'users',currentUser.uid);
+    var gRef  = doc(db,'clapping',currentUser.uid,'users',docId);
+    var snap  = await getDoc(cRef);
+    if (snap.exists()) {
+      await deleteDoc(cRef); try{ await deleteDoc(gRef); }catch(e){}
+      var ds = await getDoc(doc(db,'docs',docId));
+      var n  = ds.exists() ? (ds.data().clapCount||0) : 0;
+      await updateDoc(doc(db,'docs',docId),{clapCount:Math.max(0,n-1)});
+      s.clapCount=Math.max(0,n-1); myClaps[docId]=false;
+      btn.className='lib-clap-btn'; btn.innerHTML='👏 '+s.clapCount; toast('👏 Clap ဖြုတ်ပြီး');
+    } else {
+      var now = new Date().toISOString();
+      await setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
+      await setDoc(gRef,{docId:docId,clappedAt:now});
+      var ds2= await getDoc(doc(db,'docs',docId));
+      var n2 = ds2.exists() ? (ds2.data().clapCount||0) : 0;
+      await updateDoc(doc(db,'docs',docId),{clapCount:n2+1});
+      s.clapCount=n2+1; myClaps[docId]=true;
+      btn.className='lib-clap-btn clapped'; btn.innerHTML='👏 '+s.clapCount; toast('👏 Clap လုပ်ပြီး');
+    }
+  } catch(e){ toast('❌ '+e.message); }
+}
+
+/* ── Doc detail popup ── */
+window.openDocPopup = function(id){
+  var allDocs = scripts.concat(clappedDocs);
+  var s = allDocs.find(function(x){ return x.id===id; });
+  if (!s) return;
+  var gl = s.genreLabel || (s.type==='story' ? 'ဝတ္ထု' : 'ဇာတ်ညွှန်း');
+  var cv = document.getElementById('dpCoverEl');
+  cv.innerHTML = s.coverUrl ? '<img src="'+s.coverUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;">' : (s.title||'?').charAt(0);
+  document.getElementById('dpTitleEl').textContent = s.title||'Untitled';
+  document.getElementById('dpMetaEl').textContent  = gl + ' · ' + (s.authorUsername||s.updated||'');
+  document.getElementById('dpClapEl').textContent  = '👏 '+(s.clapCount||0);
+  var btns = document.getElementById('dpBtnsEl');
+  if (isOwner && scripts.find(function(x){ return x.id===id; })) {
+    btns.innerHTML =
+      '<button class="dp-btn black" onclick="location.href=\'/write?id='+id+'\'">✍ ဆက်ရေးမည်</button>'
+    + '<button class="dp-btn ghost" onclick="location.href=\'/read?id='+id+'\'">📖 ဖတ်မည်</button>'
+    + '<button class="dp-btn ghost" onclick="window._togglePrivacy(\''+id+'\');window.closeDp();">'+(s.privacy==='public'?'🔒 Private ပြောင်းမည်':'🌐 Public ပြောင်းမည်')+'</button>'
+    + '<button class="dp-btn danger" onclick="window._deleteScript(\''+id+'\');window.closeDp();">🗑 ဖျက်မည်</button>';
+  } else {
+    btns.innerHTML = '<button class="dp-btn black" onclick="location.href=\'/read?id='+id+'\'">📖 ဖတ်မည်</button>';
+  }
+  document.getElementById('docDetailPopup').classList.add('on');
+  document.body.style.overflow = 'hidden';
 };
 
-/* ══ CLAPPED TAB ══ */
-var clappedDocs=[];
-window.setClappedPrivacy=async function(p,btn){
-  clappedPrivacy=p;
-  document.querySelectorAll('.clap-priv-btn').forEach(function(b){b.classList.remove('active');});
+/* ── Script actions ── */
+window._togglePrivacy = async function(id){
+  var s = scripts.find(function(x){ return x.id===id; }); if(!s)return;
+  s.privacy = s.privacy==='public' ? 'private' : 'public';
+  await updateDoc(doc(db,'docs',id),{privacy:s.privacy});
+  renderScripts(); toast((s.privacy==='public'?'🌐 Public':'🔒 Private')+' ပြောင်းပြီး');
+};
+window._deleteScript = async function(id){
+  var s = scripts.find(function(x){ return x.id===id; });
+  if (!s || !confirm('"'+s.title+'" ကို ဖျက်မည်?')) return;
+  await deleteDoc(doc(db,'docs',id));
+  scripts = scripts.filter(function(x){ return x.id!==id; });
+  renderScripts(); toast('🗑 ဖျက်ပြီး');
+};
+
+/* ── Edit profile ── */
+window.openEdit = function(){
+  document.getElementById('editName').value     = currentProfile.name    || '';
+  document.getElementById('editUsername').value = (currentProfile.username||'').replace('@','');
+  document.getElementById('editBio').value      = currentProfile.bio     || '';
+  document.getElementById('editRole').value     = currentProfile.role    || '';
+  document.getElementById('editModal').classList.add('open');
+};
+window.closeEdit = function(){ document.getElementById('editModal').classList.remove('open'); };
+window.saveProfile = async function(){
+  var name = document.getElementById('editName').value.trim();
+  var bio  = document.getElementById('editBio').value.trim();
+  var role = document.getElementById('editRole').value;
+  if (!name) { alert('အမည် ထည့်ပါ'); return; }
+  await updateDoc(doc(db,'users',currentUser.uid),{name,bio,role});
+  await updateProfile(currentUser,{displayName:name});
+  currentProfile.name=name; currentProfile.bio=bio; currentProfile.role=role;
+  document.getElementById('dispName').textContent = name;
+  document.getElementById('dispBio').textContent  = bio;
+  if (role) {
+    var icons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
+    document.getElementById('dispRole').innerHTML=
+      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">'+(icons[role]||'')+' '+role+'</span>';
+  }
+  window.closeEdit(); toast('✅ Profile သိမ်းပြီး');
+};
+
+/* ── Sign out ── */
+window._signOut = async function(){ await signOut(auth); window.location.href='/home'; };
+
+/* ── Clapped tab ── */
+window.setClappedPrivacy = async function(p, btn){
+  clappedPrivacy = p;
+  document.querySelectorAll('.clap-priv-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
-  try{
-    await updateDoc(doc(db,'users',currentUser.uid),{clappedPrivacy:p});
-    toast(p==='public'?'🌐 Clapped list Public ဖြစ်ပြီ':'🔒 Clapped list Private ဖြစ်ပြီ');
-  }catch(e){}
+  try { await updateDoc(doc(db,'users',currentUser.uid),{clappedPrivacy:p}); } catch(e){}
+  toast(p==='public'?'🌐 Clapped list Public ဖြစ်ပြီ':'🔒 Clapped list Private ဖြစ်ပြီ');
   renderClappedDocs();
 };
 
 async function loadClappedDocs(){
-  var grid=document.getElementById('clappedGrid');
-  grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်နေသည်...</div>';
-
-  /* load clappedPrivacy setting */
-  try{
-    var usnap=await getDoc(doc(db,'users',profileUid));
-    if(usnap.exists()){
-      var savedPriv=usnap.data().clappedPrivacy||'public';
-      clappedPrivacy=savedPriv;
-      var btn=document.getElementById(savedPriv==='public'?'cpPublic':'cpPrivate');
-      if(btn){
-        document.querySelectorAll('.clap-priv-btn').forEach(function(b){b.classList.remove('active');});
-        btn.classList.add('active');
-      }
+  var grid = document.getElementById('clappedGrid');
+  grid.innerHTML = '<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်နေသည်...</div>';
+  try {
+    var usnap = await getDoc(doc(db,'users',profileUid));
+    if (usnap.exists()) {
+      clappedPrivacy = usnap.data().clappedPrivacy || 'public';
+      var btn = document.getElementById(clappedPrivacy==='public'?'cpPublic':'cpPrivate');
+      if (btn) { document.querySelectorAll('.clap-priv-btn').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
     }
-  }catch(e){}
+  } catch(e){}
 
-  /* non-owner: check if allowed to see */
-  if(!isOwner && clappedPrivacy==='private'){
-    grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">🔒 Private — ကိုယ်ပဲမြင်ရမည်</div>';
-    return;
+  if (!isOwner && clappedPrivacy==='private') {
+    grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">🔒 Private — ကိုယ်ပဲမြင်ရမည်</div>'; return;
   }
-
-  try{
-    var snap=await getDocs(collection(db,'clapping',profileUid,'users'));
-    if(snap.empty){
-      grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Clapped doc မရှိသေးပါ</div>';
-      return;
-    }
-    var docIds=[];
-    snap.forEach(function(d){
-      var data=d.data();
-      docIds.push(data.docId||d.id);
-    });
-    var promises=docIds.map(function(id){return getDoc(doc(db,'docs',id));});
-    var docs=await Promise.all(promises);
-    clappedDocs=[];
-    docs.forEach(function(d){
-      if(d.exists()){
-        var data=d.data();
-        clappedDocs.push({
-          id:d.id,title:data.title,type:data.type,
-          privacy:data.privacy,genreLabel:data.genreLabel,
-          authorUsername:data.authorUsername,
-          authorName:data.authorName,uid:data.uid,
-          clapCount:data.clapCount||0,
-          coverUrl:data.coverUrl||'',
-          authorAvatar:data.authorAvatar||''
-        });
-      }
-    });
+  try {
+    var snap = await getDocs(collection(db,'clapping',profileUid,'users'));
+    if (snap.empty) { grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Clapped doc မရှိသေးပါ</div>'; return; }
+    var docIds=[]; snap.forEach(function(d){ docIds.push(d.data().docId||d.id); });
+    var docs = await Promise.all(docIds.map(function(id){ return getDoc(doc(db,'docs',id)); }));
+    clappedDocs = [];
+    docs.forEach(function(d){ if(d.exists()){ var dt=d.data(); clappedDocs.push({id:d.id,title:dt.title,type:dt.type,privacy:dt.privacy,genreLabel:dt.genreLabel,authorUsername:dt.authorUsername,authorName:dt.authorName,uid:dt.uid,clapCount:dt.clapCount||0,coverUrl:dt.coverUrl||''}); }});
     renderClappedDocs();
-  }catch(e){
-    grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်မရပါ — '+e.message+'</div>';
-    console.error('loadClappedDocs',e);
-  }
+  } catch(e){ grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်မရပါ — '+e.message+'</div>'; }
 }
 
 function renderClappedDocs(){
-  var grid=document.getElementById('clappedGrid');
-  var docs=clappedDocs;
-  /* privacy filter — owner only sees private, public sees all public */
-  if(!isOwner){
-    docs=docs.filter(function(d){return d.privacy==='public';});
-  } else {
-    if(clappedPrivacy==='public') docs=docs.filter(function(d){return d.privacy==='public';});
-    /* private = show all (owner) */
-  }
-  if(docs.length===0){
-    grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Doc မရှိသေးပါ</div>';
-    return;
-  }
+  var grid = document.getElementById('clappedGrid');
+  var docs = clappedDocs.slice();
+  if (!isOwner) { docs = docs.filter(function(d){ return d.privacy==='public'; }); }
+  else if (clappedPrivacy==='public') { docs = docs.filter(function(d){ return d.privacy==='public'; }); }
+  if (docs.length===0) { grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Doc မရှိသေးပါ</div>'; return; }
   grid.innerHTML='';
   docs.forEach(function(s){
-    var div=document.createElement('div');div.className='lib-card';
-    div.onclick=function(){window.openDocPopup(s.id);};
     var gl=s.genreLabel||(s.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
     var letter=(s.title||'?').charAt(0);
+    var div=document.createElement('div');div.className='lib-card';
+    div.onclick=function(){window.openDocPopup(s.id);};
     var poster=document.createElement('div');poster.className='lib-poster';
     if(s.coverUrl){var img=document.createElement('img');img.src=s.coverUrl;img.alt='';poster.appendChild(img);}
     else{var lEl=document.createElement('div');lEl.className='lib-poster-letter';lEl.textContent=letter;poster.appendChild(lEl);}
@@ -1344,265 +1279,7 @@ function renderClappedDocs(){
   });
 }
 
-/* ══ CLAP TOGGLE ══ */
-window.toggleClap=async function(){
-  if(!currentUser){
-    /* show sign up prompt instead of redirect */
-    if(confirm('Clap လုပ်ရန် အကောင့်ဖွင့်ရန် လိုသည်။ အကောင့်ဖွင့်မည်လား?')){
-      window.location.href='/home';
-    }
-    return;
-  }
-  var btn      =document.getElementById('clapBtn');
-  var clapRef  =doc(db,'clappers',profileUid,'users',currentUser.uid);
-  var clapSnap =await getDoc(clapRef);
-  var el       =document.getElementById('statClappers');
-  var count    =parseInt(el.textContent.replace('K',''))||0;
-
-  if(clapSnap.exists()){
-    await deleteDoc(clapRef);
-    try{await deleteDoc(doc(db,'clapping',currentUser.uid,'users',profileUid));}catch(e){}
-    /* decrease newClappers for profile owner */
-    try{
-      var ownerSnap=await getDoc(doc(db,'users',profileUid));
-      if(ownerSnap.exists()){
-        var nc=Math.max(0,(ownerSnap.data().newClappers||0)-1);
-        await updateDoc(doc(db,'users',profileUid),{newClappers:nc});
-      }
-    }catch(e){}
-    btn.textContent='👏 Clap';btn.classList.remove('clapped');
-    el.textContent=Math.max(0,count-1);
-  }else{
-    await setDoc(clapRef,{clappedAt:new Date().toISOString(),uid:currentUser.uid});
-    try{
-      /* get my profile for clapping record */
-      var mySnap=await getDoc(doc(db,'users',currentUser.uid));
-      var myData=mySnap.exists()?mySnap.data():{};
-      await setDoc(doc(db,'clapping',currentUser.uid,'users',profileUid),
-        {uid:profileUid,clappedAt:new Date().toISOString()});
-      /* increment newClappers for profile owner */
-      var ownerSnap2=await getDoc(doc(db,'users',profileUid));
-      if(ownerSnap2.exists()){
-        var nc2=(ownerSnap2.data().newClappers||0)+1;
-        await updateDoc(doc(db,'users',profileUid),{newClappers:nc2});
-      }
-    }catch(e){}
-    btn.textContent='👏 Clapped';btn.classList.add('clapped');
-    el.textContent=count+1;
-  }
-};
-
-/* ══ RENDER NAV ══ */
-function renderNav(){
-  var navRight=document.getElementById('navRight');
-  if(isOwner){
-    navRight.innerHTML=
-      '<a class="btn btn-ghost btn-sm" href="/home">← Home</a>'+
-      '<button class="btn btn-ghost btn-sm" onclick="window._signOut()">ထွက်မည်</button>'+
-      '<button class="btn btn-red btn-sm" onclick="openEdit()">✏ Edit</button>';
-    /* show avatar edit badge */
-    var badge=document.getElementById('avEditBadge');
-    if(badge) badge.style.display='flex';
-  }else{
-    navRight.innerHTML='<a class="btn btn-ghost btn-sm" href="/home">← Home</a>';
-  }
-}
-
-/* ══ RENDER ACTIONS ══ */
-async function renderActions(){
-  var el=document.getElementById('profileActions');
-  var newBtn=document.getElementById('newScriptBtn');
-  if(isOwner){
-    el.innerHTML='<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>'+
-      (isOwner?'<button class="btn btn-ghost btn-sm" onclick="openWallet()">💰 Wallet</button>':'');
-    newBtn.innerHTML='<a class="btn btn-red btn-sm" href="/write">+ New</a>';
-  }else{
-    var clapped=false;
-    if(currentUser){
-      var cs=await getDoc(doc(db,'clappers',profileUid,'users',currentUser.uid));
-      clapped=cs.exists();
-    }
-    el.innerHTML=
-      '<button class="btn btn-red btn-sm" id="clapBtn" onclick="toggleClap()">'+(clapped?'👏 Clapped':'👏 Clap')+'</button>'+
-      '<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
-    newBtn.innerHTML='';
-  }
-}
-
-
-/* myClaps for profile page */
-var myClaps={};
-
-/* ══ RENDER SCRIPTS (lib-card 3-col) ══ */
-function buildProfileCard(s,showPriv){
-  var gl=s.genreLabel||(s.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
-  var letter=(s.title||'?').charAt(0);
-  var div=document.createElement('div');div.className='lib-card';
-  div.onclick=function(){window.openDocPopup(s.id);};
-  var poster=document.createElement('div');poster.className='lib-poster';
-  if(s.coverUrl){var img=document.createElement('img');img.src=s.coverUrl;img.alt='';poster.appendChild(img);}
-  else{var lEl=document.createElement('div');lEl.className='lib-poster-letter';lEl.textContent=letter;poster.appendChild(lEl);}
-  var badge=document.createElement('span');badge.className='lib-badge';badge.textContent=gl;poster.appendChild(badge);
-  if(showPriv&&s.privacy==='private'){var prv=document.createElement('span');prv.className='lib-priv';prv.textContent='🔒';poster.appendChild(prv);}
-  var clap=document.createElement('button');
-  clap.className='lib-clap-btn'+(myClaps[s.id]?' clapped':'');
-  clap.innerHTML='👏 '+(s.clapCount||0);
-  clap.onclick=function(e){e.stopPropagation();profileToggleClap(s,clap);};
-  poster.appendChild(clap);
-  var body=document.createElement('div');body.className='lib-body';
-  var tEl=document.createElement('div');tEl.className='lib-title';tEl.textContent=s.title||'Untitled';
-  var aEl=document.createElement('div');aEl.className='lib-author';aEl.textContent=s.updated||'';
-  body.appendChild(tEl);body.appendChild(aEl);
-  div.appendChild(poster);div.appendChild(body);
-  return div;
-}
-
-function renderScripts(){
-  var grid=document.getElementById('scriptsGrid');
-  document.getElementById('statScripts').textContent=scripts.length;
-  document.getElementById('statDrafts').textContent=scripts.filter(function(s){return s.status==='draft';}).length;
-  document.getElementById('statComplete').textContent=scripts.filter(function(s){return s.status==='complete';}).length;
-  if(scripts.length===0&&!isOwner){grid.innerHTML='<div class="empty-state"><span class="icon">📝</span>Public doc မရှိသေးပါ</div>';return;}
-  grid.innerHTML='';
-  scripts.forEach(function(s){grid.appendChild(buildProfileCard(s,isOwner));});
-  if(isOwner){var a=document.createElement('a');a.className='pc-new';a.href='/write';a.innerHTML='<span class="plus">+</span><span>New</span>';grid.appendChild(a);}
-}
-
-async function profileToggleClap(s,btn){
-  if(!currentUser){toast('👏 Login ဝင်ပြီး Clap လုပ်ပါ');return;}
-  var docId=s.id;
-  try{
-    var cRef=doc(db,'docClaps',docId,'users',currentUser.uid);
-    var gRef=doc(db,'clapping',currentUser.uid,'users',docId);
-    var snap=await getDoc(cRef);
-    if(snap.exists()){
-      await deleteDoc(cRef);try{await deleteDoc(gRef);}catch(e){}
-      var ds=await getDoc(doc(db,'docs',docId));var n=ds.exists()?(ds.data().clapCount||0):0;
-      await updateDoc(doc(db,'docs',docId),{clapCount:Math.max(0,n-1)});
-      s.clapCount=Math.max(0,n-1);myClaps[docId]=false;
-      btn.className='lib-clap-btn';btn.innerHTML='👏 '+s.clapCount;toast('👏 Clap ဖြုတ်ပြီး');
-    }else{
-      var now=new Date().toISOString();
-      await setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
-      await setDoc(gRef,{docId:docId,clappedAt:now});
-      var ds2=await getDoc(doc(db,'docs',docId));var n2=ds2.exists()?(ds2.data().clapCount||0):0;
-      await updateDoc(doc(db,'docs',docId),{clapCount:n2+1});
-      s.clapCount=n2+1;myClaps[docId]=true;
-      btn.className='lib-clap-btn clapped';btn.innerHTML='👏 '+s.clapCount;toast('👏 Clap လုပ်ပြီး');
-    }
-  }catch(e){toast('❌ '+e.message);}
-}
-
-window.openDocPopup=function(id){
-  var allDocs=scripts.concat(clappedDocs||[]);
-  var s=allDocs.find(function(x){return x.id===id;});
-  if(!s) return;
-  var gl=s.genreLabel||(s.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
-  var cv=document.getElementById('dpCoverEl');
-  cv.innerHTML=s.coverUrl?'<img src="'+s.coverUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;">':(s.title||'?').charAt(0);
-  document.getElementById('dpTitleEl').textContent=s.title||'Untitled';
-  document.getElementById('dpMetaEl').textContent=gl+' · '+(s.authorUsername||s.updated||'');
-  document.getElementById('dpClapEl').textContent='👏 '+(s.clapCount||0);
-  var btns=document.getElementById('dpBtnsEl');
-  if(isOwner&&scripts.find(function(x){return x.id===id;})){
-    btns.innerHTML=
-      '<button class="dp-btn black" onclick="location.href=\'/write?id='+id+'\'">✍ ဆက်ရေးမည်</button>'+
-      '<button class="dp-btn ghost" onclick="location.href=\'/read?id='+id+'\'">📖 ဖတ်မည်</button>'+
-      '<button class="dp-btn ghost" onclick="window._togglePrivacy(\''+id+'\');window.closeDp();">'+(s.privacy==='public'?'🔒 Private ပြောင်းမည်':'🌐 Public ပြောင်းမည်')+'</button>'+
-      '<button class="dp-btn danger" onclick="window._deleteScript(\''+id+'\');window.closeDp();">🗑 ဖျက်မည်</button>';
-  }else{
-    btns.innerHTML='<button class="dp-btn black" onclick="location.href=\'/read?id='+id+'\'">📖 ဖတ်မည်</button>';
-  }
-  document.getElementById('docDetailPopup').classList.add('on');
-  document.body.style.overflow='hidden';
-};
-window.closeDp=function(){
-  document.getElementById('docDetailPopup').classList.remove('on');
-  document.body.style.overflow='';
-};
-
-/* ══ SCRIPT ACTIONS ══ */
-window._toggleMenu=function(id,e){
-  e.stopPropagation();
-  document.querySelectorAll('.script-dropdown').forEach(function(d){if(d.id!=='menu-'+id)d.classList.remove('open');});
-  document.getElementById('menu-'+id).classList.toggle('open');
-};
-document.addEventListener('click',function(){document.querySelectorAll('.script-dropdown').forEach(function(d){d.classList.remove('open');});});
-window._editScript=function(id){window.location.href='/write?id='+id;};
-window._toggleStatus=async function(id){
-  var s=scripts.find(function(x){return x.id===id;});if(!s)return;
-  s.status=s.status==='draft'?'complete':'draft';
-  await updateDoc(doc(db,'docs',id),{status:s.status});
-  renderScripts();toast('✅ '+(s.status==='complete'?'Complete':'Draft')+' မှတ်ပြီး');
-};
-window._togglePrivacy=async function(id){
-  var s=scripts.find(function(x){return x.id===id;});if(!s)return;
-  s.privacy=s.privacy==='public'?'private':'public';
-  await updateDoc(doc(db,'docs',id),{privacy:s.privacy});
-  renderScripts();toast((s.privacy==='public'?'🌐 Public':'🔒 Private')+' ပြောင်းပြီး');
-};
-window._deleteScript=async function(id){
-  var s=scripts.find(function(x){return x.id===id;});
-  if(!s||!confirm('"'+s.title+'" ကို ဖျက်မည်?'))return;
-  await deleteDoc(doc(db,'docs',id));
-  scripts=scripts.filter(function(x){return x.id!==id;});
-  renderScripts();toast('🗑 ဖျက်ပြီး');
-};
-
-/* ══ EDIT PROFILE ══ */
-window.openEdit=function(){
-  document.getElementById('editName').value=(currentProfile.name||'');
-  document.getElementById('editUsername').value=(currentProfile.username||'').replace('@','');
-  document.getElementById('editBio').value=(currentProfile.bio||'');
-  var roleEl=document.getElementById('editRole');
-  if(roleEl) roleEl.value=currentProfile.role||'';
-  var av=document.getElementById('avatarDiv');
-  av.style.cursor='pointer';av.onclick=function(){document.getElementById('avatarInput').click();};
-  document.getElementById('editModal').classList.add('open');
-};
-window.closeEdit=function(){
-  document.getElementById('editModal').classList.remove('open');
-  var av=document.getElementById('avatarDiv');av.style.cursor='default';av.onclick=null;
-};
-window.saveProfile=async function(){
-  var name=document.getElementById('editName').value.trim();
-  var bio=document.getElementById('editBio').value.trim();
-  var role=document.getElementById('editRole')?document.getElementById('editRole').value:'';
-  if(!name){alert('အမည် ထည့်ပါ');return;}
-  await updateDoc(doc(db,'users',currentUser.uid),{name:name,bio:bio,role:role});
-  await updateProfile(currentUser,{displayName:name});
-  currentProfile.name=name;currentProfile.bio=bio;currentProfile.role=role;
-  document.getElementById('dispName').textContent=name;
-  document.getElementById('dispBio').textContent=bio;
-  /* update role badge */
-  if(role){
-    var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
-    document.getElementById('dispRole').innerHTML=
-      '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">'+(roleIcons[role]||'')+' '+role+'</span>';
-  }
-  window.closeEdit();toast('✅ Profile သိမ်းပြီး');
-};
-
-/* ══ SHARE ══ */
-window.copyProfileLink=function(){
-  var u=(currentProfile.usernameRaw||currentProfile.username||'').replace('@','');
-  var url=window.location.origin+'/@'+u;
-  navigator.clipboard.writeText(url).then(function(){toast('🔗 Link ကူးပြီး — '+url);});
-};
-
-/* ══ SIGN OUT ══ */
-window._signOut=async function(){await signOut(auth);window.location.href='/home';};
-
-/* ══ ESC ══ */
-document.addEventListener('keydown',function(e){
-  if(e.key!=='Escape')return;
-  window.closeEdit&&window.closeEdit();
-  window.closeClappersPopup&&window.closeClappersPopup();
-  window.closeClappingPopup&&window.closeClappingPopup();
-});
-document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)window.closeEdit();});
-document.getElementById('clappersPopup').addEventListener('click',function(e){if(e.target===this)window.closeClappersPopup();});
-document.getElementById('clappingPopup').addEventListener('click',function(e){if(e.target===this)window.closeClappingPopup();});
+window.loadClappedDocs = loadClappedDocs;
 </script>
 </body>
 </html>
