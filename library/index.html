@@ -303,17 +303,23 @@ window.doPopupClap=async function(){
 };
 
 async function toggleClap(doc,cardBtn,popupBtn){
-  var currentUser=window._currentUser||null;if(!currentUser){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
+  var currentUser=window._currentUser||null;
+  if(!currentUser){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
   var docId=doc.id;
+  /* admin doc (has pdfUrl) — use adminDocClaps + adminDocs collections */
+  var isAdmin = !!doc.pdfUrl;
+  var clapsCol = isAdmin ? 'adminDocClaps' : 'docClaps';
+  var docsCol  = isAdmin ? 'adminDocs'     : 'docs';
   try{
-    var cRef=window._getRef('docClaps/'+docId+'/users/'+currentUser.uid);
+    var cRef=window._getRef(clapsCol+'/'+docId+'/users/'+currentUser.uid);
     var gRef=window._getRef('clapping/'+currentUser.uid+'/users/'+docId);
     var snap=await window._getDoc2(cRef);
     if(snap.exists()){
-      await window._deleteDoc(cRef);try{await window._deleteDoc(gRef);}catch(e){}
-      var s=await window._getDoc2(window._getRef('docs/'+docId));
+      await window._deleteDoc(cRef);
+      try{await window._deleteDoc(gRef);}catch(e){}
+      var s=await window._getDoc2(window._getRef(docsCol+'/'+docId));
       var n=s.exists()?(s.data().clapCount||0):0;
-      await window._updateDoc(window._getRef('docs/'+docId),{clapCount:Math.max(0,n-1)});
+      await window._updateDoc(window._getRef(docsCol+'/'+docId),{clapCount:Math.max(0,n-1)});
       doc.clapCount=Math.max(0,n-1);myClaps[docId]=false;
       if(cardBtn){cardBtn.className='card-clap';cardBtn.innerHTML='👏 '+doc.clapCount;}
       if(popupBtn){popupBtn.className='popup-btn-clap';}
@@ -322,9 +328,9 @@ async function toggleClap(doc,cardBtn,popupBtn){
       var now=new Date().toISOString();
       await window._setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
       await window._setDoc(gRef,{docId:docId,clappedAt:now});
-      var s2=await window._getDoc2(window._getRef('docs/'+docId));
+      var s2=await window._getDoc2(window._getRef(docsCol+'/'+docId));
       var n2=s2.exists()?(s2.data().clapCount||0):0;
-      await window._updateDoc(window._getRef('docs/'+docId),{clapCount:n2+1});
+      await window._updateDoc(window._getRef(docsCol+'/'+docId),{clapCount:n2+1});
       doc.clapCount=n2+1;myClaps[docId]=true;
       if(cardBtn){cardBtn.className='card-clap clapped';cardBtn.innerHTML='👏 '+doc.clapCount;}
       if(popupBtn){popupBtn.className='popup-btn-clap clapped';}
