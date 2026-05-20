@@ -90,6 +90,7 @@ main{flex:1;width:100%;padding-top:0;}
 .fc-wrap{position:relative;min-height:240px;margin-bottom:32px;}
 .fc-card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:36px 28px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(255,255,255,.04);backdrop-filter:blur(4px);opacity:0;transform:translateY(24px) scale(.97);transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;}
 .fc-card.active{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.fc-card[data-link]{cursor:pointer;}
 .fc-card.exit{opacity:0;transform:translateY(-18px) scale(.97);transition:opacity .35s ease,transform .35s ease;}
 .fc-icon{font-size:44px;line-height:1;filter:drop-shadow(0 0 16px rgba(220,38,38,.35));}
 .fc-label{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);}
@@ -328,37 +329,37 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20p
     <div class="showcase-rule"></div>
 
     <div class="fc-wrap" id="fcWrap">
-      <div class="fc-card active" data-index="0">
+      <div class="fc-card active" data-index="0" data-link="/write">
         <div class="fc-icon">✍️</div>
         <div class="fc-label">Write</div>
         <div class="fc-title">Screenplay ရေးသားပါ</div>
         <div class="fc-desc">Industry standard format — INT/EXT scene, action line, dialogue တို့ကို မြန်မာဘာသာဖြင့် တစ်နေရာတည်းတွင် ရေးသားနိုင်သည်</div>
       </div>
-      <div class="fc-card" data-index="1">
+      <div class="fc-card" data-index="1" data-link="/library">
         <div class="fc-icon">📖</div>
         <div class="fc-label">Read</div>
         <div class="fc-title">Screenplay များ ဖတ်ရှုပါ</div>
         <div class="fc-desc">ပြည်တွင်း ပြည်ပ ကျော်ကြားသော screenplay များကို Library တွင် အခမဲ့ ဖတ်ရှုနိုင်သည်</div>
       </div>
-      <div class="fc-card" data-index="2">
+      <div class="fc-card" data-index="2" data-link="/write">
         <div class="fc-icon">🖊️</div>
         <div class="fc-label">Write</div>
         <div class="fc-title">ဝတ္ထု · ကဗျာ · ဆောင်းပါး ရေးပါ</div>
         <div class="fc-desc">Screenplay သာမက ဝတ္ထု၊ ကဗျာ၊ ဆောင်းပါးများကိုလည်း မြန်မာဘာသာဖြင့် တစ်နေရာတည်းတွင် ဖန်တီးရေးသားနိုင်သည်</div>
       </div>
-      <div class="fc-card" data-index="3">
+      <div class="fc-card" data-index="3" data-link="/library">
         <div class="fc-icon">📚</div>
         <div class="fc-label">Read</div>
         <div class="fc-title">ဝတ္ထု · ကဗျာ · ဆောင်းပါး ဖတ်ပါ</div>
         <div class="fc-desc">အခြားသော ရေးသားသူများ၏ ဝတ္ထု၊ ကဗျာ၊ ဆောင်းပါးများကို Library တွင် ရှာဖွေဖတ်ရှုနိုင်သည်</div>
       </div>
-      <div class="fc-card" data-index="4">
+      <div class="fc-card" data-index="4" data-link="/podmates">
         <div class="fc-icon">👏</div>
         <div class="fc-label">Clap</div>
         <div class="fc-title">ကြိုက်ရင် Clap လုပ်ပါ</div>
-        <div class="fc-desc">ကြိုက်နှစ်သက်သော ဇာတ်ညွှန်း၊ ဝတ္ထု၊ ကဗျာများကို Clap လုပ်ကာ ရေးသားသူများကို လက်ခုပ်တီးအားပေးနိုင်သည်</div>
+        <div class="fc-desc">ကြိုက်နှစ်သက်သော ဇာတ်ညွှန်း၊ ဝတ္ထု၊ ကဗျာများကို Clap လုပ်ကာ ရေးသားသူများကို အားပေးကိုင်မတ်နိုင်သည်</div>
       </div>
-      <div class="fc-card" data-index="5">
+      <div class="fc-card" data-index="5" data-link="/podmates">
         <div class="fc-icon">👥</div>
         <div class="fc-label">Connect</div>
         <div class="fc-title">Podmates နဲ့ ချိတ်ဆက်ပါ</div>
@@ -645,6 +646,11 @@ function showPage(id){
     var tx=0;
     wrap.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;clearInterval(timer);},{passive:true});
     wrap.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)goTo(dx<0?(current+1)%total:(current-1+total)%total);resetTimer();},{passive:true});
+    /* card click → navigate */
+    wrap.addEventListener('click',function(e){
+      var link=cards[current].dataset.link;
+      if(link) window.location.href=link;
+    });
   }
   resetTimer();
 })();
