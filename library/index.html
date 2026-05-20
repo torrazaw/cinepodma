@@ -258,7 +258,7 @@ function buildCard(doc){
 function openPopup(doc){
   activeDoc=doc;
   var cv=document.getElementById('popupCover');
-  if(doc.coverUrl){cv.innerHTML='<img src="'+esc(convertCoverUrl(doc.coverUrl))+'" alt="" onerror="this.style.display='none'">';}
+  if(doc.coverUrl){cv.innerHTML='<img src="'+esc(convertCoverUrl(doc.coverUrl))+'" alt="" onerror="this.parentNode.textContent=(activeDoc?activeDoc.title:\'?\').charAt(0)">';}
   else{cv.textContent=(doc.title||'?').charAt(0);}
   document.getElementById('popupTitle').textContent=doc.title||'Untitled';
   document.getElementById('popupAuthor').textContent=(doc.authorName||doc.author||'—')+(doc.authorUsername?' · '+doc.authorUsername:'');
@@ -300,7 +300,7 @@ window.doPopupClap=async function(){
 };
 
 async function toggleClap(doc,cardBtn,popupBtn){
-  if(!currentUser){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
+  var currentUser=window._currentUser||null;if(!currentUser){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
   var docId=doc.id;
   try{
     var cRef=window._getRef('docClaps/'+docId+'/users/'+currentUser.uid);
@@ -427,6 +427,7 @@ window._updateDoc=function(r,d){return updateDoc(r,d);};
 
 onAuthStateChanged(auth,async function(user){
   currentUser=user;
+  window._currentUser=user;
   var navR=document.getElementById('navR');
   if(user){
     try{
