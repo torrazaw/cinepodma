@@ -696,6 +696,19 @@ function toast(msg) {
 }
 window.toast = toast;
 
+/* Convert Drive share link → lh3 direct image URL */
+function convertCoverUrl(url){
+  if(!url) return '';
+  if(url.includes('lh3.googleusercontent.com')) return url;
+  var m=url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if(m) return 'https://lh3.googleusercontent.com/d/'+m[1];
+  var m2=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(m2) return 'https://lh3.googleusercontent.com/d/'+m2[1];
+  var m3=url.match(/uc\?id=([a-zA-Z0-9_-]+)/);
+  if(m3) return 'https://lh3.googleusercontent.com/d/'+m3[1];
+  return url;
+}
+
 /* ── Wallet ── */
 window.openWallet  = function(){ document.getElementById('walletPopup').classList.add('open'); document.body.style.overflow='hidden'; };
 window.closeWallet = function(){ document.getElementById('walletPopup').classList.remove('open'); document.body.style.overflow=''; };
@@ -1303,7 +1316,7 @@ function renderClappedDocs(){
     var div=document.createElement('div');div.className='lib-card';
     div.onclick=function(){window.openDocPopup(s.id);};
     var poster=document.createElement('div');poster.className='lib-poster';
-    if(s.coverUrl){var img=document.createElement('img');img.src=s.coverUrl;img.alt='';poster.appendChild(img);}
+    if(s.coverUrl){var img=document.createElement('img');img.src=convertCoverUrl(s.coverUrl);img.alt='';img.onerror=function(){this.style.display='none';var l=document.createElement('div');l.className='lib-poster-letter';l.textContent=(s.title||'?').charAt(0);poster.appendChild(l);};poster.appendChild(img);}
     else{var lEl=document.createElement('div');lEl.className='lib-poster-letter';lEl.textContent=letter;poster.appendChild(lEl);}
     var badge=document.createElement('span');badge.className='lib-badge';badge.textContent=gl;poster.appendChild(badge);
     var clap=document.createElement('span');clap.className='lib-clap-btn';clap.textContent='👏 '+(s.clapCount||0);poster.appendChild(clap);
