@@ -12,10 +12,9 @@
   --slate:#6B7280; --slate-lt:#9CA3AF; --slate-bg:#F3F4F6;
   --border:#E5E7EB; --red:#DC2626; --red-h:#B91C1C;
   --bg:#C8C5C0;
-  --font-en:'Special Elite','Courier New',monospace;
+  --font-en:'Courier New',Courier,monospace;
   --font-my:'Noto Sans Myanmar',sans-serif;
   --font-mys:'Noto Serif Myanmar',serif;
-  /* A4 at 96dpi */
   --pw:794px; --ph:1123px; --pad:96px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -39,7 +38,6 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .btn-g{background:transparent;color:var(--slate);border:1px solid var(--border);}
 .btn-g:hover{background:var(--slate-bg);color:var(--black);}
 .btn-s{padding:5px 10px;font-size:11px;}
-.hm{} /* hide-mobile placeholder */
 
 /* TABS */
 .tabs{background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
@@ -60,8 +58,7 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .scaler{display:flex;flex-direction:column;align-items:center;gap:20px;transform-origin:top center;flex-shrink:0;}
 
 /* A4 PAGE */
-.page{width:var(--pw);min-height:var(--ph);background:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.14),0 8px 28px rgba(0,0,0,.16);position:relative;flex-shrink:0;}
-.page.fixed-h{height:var(--ph);overflow:hidden;}
+.page{width:var(--pw);height:var(--ph);background:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.14),0 8px 28px rgba(0,0,0,.16);position:relative;flex-shrink:0;overflow:hidden;}
 .page-num{position:absolute;top:18px;right:32px;font-family:var(--font-en);font-size:9px;color:var(--slate-lt);letter-spacing:.5px;pointer-events:none;}
 
 /* COVER */
@@ -75,48 +72,76 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .cv-draft{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:1px;margin-top:36px;border:none;outline:none;background:transparent;text-align:center;}
 .cv-draft::placeholder{color:#CCC;}
 
-/* SECTION — textarea scrolls inside fixed page */
+/* SECTION — textarea inside fixed page */
 .sec{width:100%;height:100%;padding:var(--pad);box-sizing:border-box;display:flex;flex-direction:column;}
 .sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .sec-ta{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);resize:none;overflow-y:auto;}
 .sec-ta::placeholder{color:#CCC;font-style:normal;}
 
-/* SCREENPLAY AREA — grows with content, no page split */
+/* SCREENPLAY PAGE CONTENT AREA */
 .sp-area{
+  position:absolute;
+  top:var(--pad);
+  left:var(--pad);
+  right:var(--pad);
+  bottom:var(--pad);
+  overflow:hidden;
+}
+
+/* Screenplay elements — NO auto bold, NO auto background */
+.el{margin-bottom:0;}
+.el-ce{
+  display:block;
   width:100%;
-  min-height:calc(var(--ph) - var(--pad)*2);
-  padding:var(--pad);
-  box-sizing:border-box;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-family:var(--font-en);
+  font-size:12px;
+  font-style:normal;
+  font-weight:normal;
+  line-height:1.8;
+  color:var(--black);
+  cursor:text;
+  word-break:break-word;
+  min-height:1.5em;
+  white-space:pre-wrap;
+}
+/* Myanmar characters automatically render in Noto Sans Myanmar */
+.el-ce:focus{outline:none;background:transparent;}
+.el-ce[data-ph]:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;font-weight:normal;}
+
+/* Element type layouts — ONLY positioning, no visual decoration */
+.el-scene .el-ce{
+  padding:2px 0;
+  text-transform:uppercase;
+  font-weight:bold;
+  margin-top:16px;
+}
+.el-action .el-ce{
+  padding:2px 0;
+}
+.el-char .el-ce{
+  padding-left:34%;
+  margin-top:10px;
+  text-transform:uppercase;
+}
+.el-paren .el-ce{
+  padding-left:26%;
+  padding-right:26%;
+}
+.el-dial .el-ce{
+  padding-left:20%;
+  padding-right:20%;
+}
+.el-trans .el-ce{
+  text-align:right;
+  margin-top:10px;
+  text-transform:uppercase;
 }
 
-/* page height auto for screenplay */
-.page.sp-page{
-  height:auto;
-  min-height:var(--ph);
-}
-
-/* Screenplay elements */
-.el{margin-bottom:2px;}
-.el-ce{display:block;width:100%;border:none;outline:none;background:transparent;font-style:normal;line-height:2.0;color:var(--black);cursor:text;word-break:break-word;min-height:1.8em;}
-.el-ce:focus{background:rgba(220,38,38,.03);border-radius:2px;}
-.el-ce[data-ph]:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;}
-
-.el-scene .el-ce{font-family:var(--font-my);font-size:13px;font-weight:700;padding:4px 10px;background:rgba(0,0,0,.03);border-left:2px solid var(--black);border-radius:0 3px 3px 0;margin:20px 0 4px;}
-.el-action .el-ce{font-family:var(--font-my);font-size:13px;padding:2px 0;}
-.el-char .el-ce{font-family:var(--font-my);font-size:13px;font-weight:700;padding-left:34%;margin-top:12px;}
-.el-paren .el-ce{font-family:var(--font-my);font-size:12px;padding-left:26%;padding-right:26%;color:var(--slate);}
-.el-dial .el-ce{font-family:var(--font-my);font-size:13px;padding-left:20%;padding-right:20%;}
-.el-trans .el-ce{font-family:var(--font-my);font-size:12px;font-weight:700;text-align:right;color:var(--slate);margin-top:12px;}
-
-/* AUTH MODAL */
-.auth-tab{flex:1;padding:10px;border:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:13px;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;line-height:1.6;}
-.auth-tab.act{color:var(--black);border-bottom-color:var(--black);font-weight:600;}
-.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid var(--border);border-radius:12px;background:var(--white);font-family:var(--font-my);font-style:normal;font-size:13px;color:var(--black);cursor:pointer;transition:all .15s;margin-bottom:12px;line-height:1.6;}
-.btn-google:hover{background:var(--slate-bg);}
-.auth-div{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--slate-lt);font-size:12px;}
-.auth-div::before,.auth-div::after{content:'';flex:1;height:1px;background:var(--border);}
-.auth-err{font-size:12px;color:var(--red);min-height:18px;margin-top:4px;line-height:1.6;}
+/* STORY */
 .story-wrap{
   flex:1;overflow-y:auto;
   background:var(--white);
@@ -124,10 +149,7 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
   padding:32px 24px 100px;
   scrollbar-width:thin;
 }
-.story-paper{
-  width:100%;max-width:680px;
-  min-height:100%;
-}
+.story-paper{width:100%;max-width:680px;min-height:100%;}
 .story-ed{
   width:100%;min-height:calc(100vh - 200px);
   border:none;outline:none;background:transparent;
@@ -171,6 +193,9 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .bt{font-family:var(--font-en);font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--slate-lt);text-transform:uppercase;}
 .bl{font-family:var(--font-my);font-style:normal;font-size:11px;color:var(--black);line-height:1.5;}
 .bs{width:1px;height:22px;background:var(--border);flex-shrink:0;margin:0 3px;}
+.ur-btns{display:flex;gap:2px;}
+.ur-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:7px;background:transparent;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--black);transition:all .12s;}
+.ur-btn:hover{background:var(--slate-bg);}
 
 /* NEW DOC */
 .newdoc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:var(--white);overflow-y:auto;}
@@ -218,38 +243,21 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .fi:focus{border-color:var(--black);}
 .sb{display:flex;gap:8px;align-items:center;padding:10px 14px;background:var(--slate-bg);border-radius:10px;margin-bottom:12px;}
 .su{flex:1;font-family:var(--font-en);font-size:11px;color:var(--slate);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.auth-tab{flex:1;padding:10px;border:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:13px;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;line-height:1.6;}
+.auth-tab.act{color:var(--black);border-bottom-color:var(--black);font-weight:600;}
+.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid var(--border);border-radius:12px;background:var(--white);font-family:var(--font-my);font-style:normal;font-size:13px;color:var(--black);cursor:pointer;transition:all .15s;margin-bottom:12px;line-height:1.6;}
+.btn-google:hover{background:var(--slate-bg);}
+.auth-div{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--slate-lt);font-size:12px;}
+.auth-div::before,.auth-div::after{content:'';flex:1;height:1px;background:var(--border);}
+.auth-err{font-size:12px;color:var(--red);min-height:18px;margin-top:4px;line-height:1.6;}
 
 /* TOAST */
 .toast{position:fixed;bottom:68px;right:20px;background:var(--black);color:var(--white);font-family:var(--font-my);font-style:normal;font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;transform:translateY(40px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;}
 .toast.on{transform:translateY(0);opacity:1;}
 
-/* PAGE BOUNDARY — dashed line between A4 pages */
-.page-boundary{
-  width:calc(100% - var(--pad)*2);
-  margin:0 auto;
-  border-top:1.5px dashed #CCC;
-  position:relative;
-}
-.page-boundary::before{
-  content:attr(data-pg);
-  position:absolute;
-  right:0;
-  top:-9px;
-  font-family:var(--font-en);
-  font-size:8px;
-  color:#BBB;
-  background:var(--white);
-  padding:0 4px;
-  letter-spacing:.5px;
-}
+/* Page indicator */
+.pg-ind{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:.5px;white-space:nowrap;}
 
-/* UNDO/REDO mobile */
-.ur-btns{display:flex;gap:2px;}
-.ur-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:7px;background:transparent;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--black);transition:all .12s;}
-.ur-btn:hover{background:var(--slate-bg);}
-.ur-btn:disabled{opacity:.3;cursor:not-allowed;}
-
-/* RESPONSIVE */
 @media(max-width:860px){.ws{padding:20px 0 80px;}.zr{display:none;}}
 @media(max-width:600px){.topbar{padding:0 10px;gap:6px;}.hm{display:none;}}
 @media print{body{background:white;overflow:visible;}.topbar,.tabs,.btb{display:none!important;}.ws{padding:0;overflow:visible;background:white;}.page{box-shadow:none;break-after:page;overflow:visible;height:auto;}}
@@ -267,18 +275,13 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
     <input class="title-in" id="docTitle" type="text" placeholder="ခေါင်းစဉ်" autocomplete="off" oninput="syncTitle()">
   </div>
   <div class="tb-r" id="tbr">
-    <!-- page indicator (screenplay only) -->
-    <span class="pg-ind" id="pgInd" style="display:none;font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:.5px;white-space:nowrap;"></span>
-    <!-- undo/redo -->
-    <button class="btn btn-g btn-s hm" id="undoBtn" onclick="doUndo()" title="Undo Ctrl+Z" style="display:none;">↩</button>
-    <button class="btn btn-g btn-s hm" id="redoBtn" onclick="doRedo()" title="Redo Ctrl+Y" style="display:none;">↪</button>
+    <span class="pg-ind" id="pgInd" style="display:none;"></span>
   </div>
 </div>
 
 <!-- NEW DOC -->
 <div class="newdoc" id="newdoc">
   <div class="nd">
-    <!-- Step 1: Type -->
     <div class="nd-step on" id="s1">
       <div class="nd-sl">Step 1 / 3</div>
       <div class="nd-h">ဘာရေးမလဲ?</div>
@@ -289,8 +292,6 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
       </div>
       <button class="btn btn-r" style="width:100%;" id="nb1" onclick="toS2()" disabled>ဆက်သွားမည် →</button>
     </div>
-
-    <!-- Step 2: Genre -->
     <div class="nd-step" id="s2">
       <div class="nd-sl">Step 2 / 3</div>
       <div class="nd-h">ဘာမျိုးရေးမလဲ?</div>
@@ -299,8 +300,6 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
       <button class="btn btn-r" style="width:100%;" id="nb2" onclick="toS3()" disabled>ဆက်သွားမည် →</button>
       <button class="btn btn-g" style="width:100%;margin-top:8px;" onclick="toS1()">← ပြန်သွားမည်</button>
     </div>
-
-    <!-- Step 3: Privacy -->
     <div class="nd-step" id="s3">
       <div class="nd-sl">Step 3 / 3</div>
       <div class="nd-h">ဘယ်သူမြင်မလဲ?</div>
@@ -353,25 +352,24 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
   <button class="bb" onclick="ins('dial')"><span class="bt">DIAL</span><span class="bl">ဒိုင်ယာ</span></button>
   <button class="bb" onclick="ins('trans')"><span class="bt">TRANS</span><span class="bl">ပြောင်းကူး</span></button>
   <div class="bs"></div>
-  <button class="bb" onclick="addFO()"><span class="bt">F.OUT</span><span class="bl">Fade Out</span></button>
+  <button class="bb" onclick="addFadeOut()"><span class="bt">F.OUT</span><span class="bl">Fade Out</span></button>
 </div>
 
 <!-- STORY BOTTOM TOOLBAR -->
 <div class="story-btb" id="storyBtb">
-  <button class="sfb" id="sfb-bold" onmousedown="ev(event)" onclick="storyFmt('bold')"><b>B</b></button>
-  <button class="sfb" id="sfb-italic" onmousedown="ev(event)" onclick="storyFmt('italic')"><i>I</i></button>
-  <button class="sfb" id="sfb-underline" onmousedown="ev(event)" onclick="storyFmt('underline')"><u>U</u></button>
+  <button class="sfb" id="sfb-bold" onmousedown="evP(event)" onclick="storyFmt('bold')"><b>B</b></button>
+  <button class="sfb" id="sfb-italic" onmousedown="evP(event)" onclick="storyFmt('italic')"><i>I</i></button>
+  <button class="sfb" id="sfb-underline" onmousedown="evP(event)" onclick="storyFmt('underline')"><u>U</u></button>
   <div class="sfsep"></div>
-  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('h1')" style="font-size:11px;font-weight:700;">H1</button>
-  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('h2')" style="font-size:11px;font-weight:700;">H2</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('h1')" style="font-size:11px;font-weight:700;">H1</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('h2')" style="font-size:11px;font-weight:700;">H2</button>
   <div class="sfsep"></div>
-  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('justifyLeft')" title="Left">⬅</button>
-  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('justifyCenter')" title="Center">↔</button>
-  <button class="sfb" onmousedown="ev(event)" onclick="storyFmt('justifyRight')" title="Right">➡</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyLeft')" title="Left">⬅</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyCenter')" title="Center">↔</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyRight')" title="Right">➡</button>
 </div>
 
 <!-- MODALS -->
-<!-- GENRE MODAL -->
 <div class="ov" id="mGenre">
   <div class="mc">
     <div class="mt">🎭 Genre ရွေးပါ</div>
@@ -417,23 +415,17 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
   </div>
 </div>
 
-<!-- AUTH MODAL (inline login/signup/forgot) -->
 <div class="ov" id="mAuth">
   <div class="mc" style="max-width:420px;">
-    <!-- Tab switcher -->
     <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;">
       <button class="auth-tab act" id="atSignin" onclick="switchAuthTab('signin')">ဝင်မည်</button>
       <button class="auth-tab" id="atSignup" onclick="switchAuthTab('signup')">အကောင့်ဖွင့်မည်</button>
     </div>
-
-    <!-- Google -->
     <button class="btn-google" onclick="authWithGoogle()">
       <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.96 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Google နဲ့ ဆက်သွားမည်
     </button>
     <div class="auth-div"><span>သို့မဟုတ်</span></div>
-
-    <!-- SIGNIN -->
     <div id="authSignin">
       <div class="fg"><label class="fl">Email</label><input class="fi" id="siEmail" type="email" placeholder="email@example.com"></div>
       <div class="fg"><label class="fl">Password</label><input class="fi" id="siPass" type="password" placeholder="Password"></div>
@@ -441,8 +433,6 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
       <button class="btn btn-r" style="width:100%;margin-top:4px;" onclick="doSignIn()">ဝင်မည်</button>
       <div style="text-align:center;margin-top:12px;"><a href="#" style="font-size:12px;color:var(--slate);text-decoration:none;" onclick="switchAuthTab('forgot');return false;">Password မေ့သွားပြီလား?</a></div>
     </div>
-
-    <!-- SIGNUP -->
     <div id="authSignup" style="display:none;">
       <div class="fg"><label class="fl">အမည်</label><input class="fi" id="suName" type="text" placeholder="သင့်နာမည်"></div>
       <div class="fg"><label class="fl">Email</label><input class="fi" id="suEmail" type="email" placeholder="email@example.com"></div>
@@ -450,8 +440,6 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
       <div class="auth-err" id="suErr"></div>
       <button class="btn btn-r" style="width:100%;margin-top:4px;" onclick="doSignUp()">အကောင့်ဖွင့်မည်</button>
     </div>
-
-    <!-- FORGOT -->
     <div id="authForgot" style="display:none;">
       <p style="font-size:13px;color:var(--slate);margin-bottom:16px;line-height:1.8;">Email ထည့်ပါ — password reset link ပို့ပေးမည်</p>
       <div class="fg"><label class="fl">Email</label><input class="fi" id="fgEmail" type="email" placeholder="email@example.com"></div>
@@ -459,16 +447,14 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
       <button class="btn btn-r" style="width:100%;margin-top:4px;" onclick="doForgot()">Reset Link ပို့မည်</button>
       <div style="text-align:center;margin-top:12px;"><a href="#" style="font-size:12px;color:var(--slate);text-decoration:none;" onclick="switchAuthTab('signin');return false;">← ပြန်သွားမည်</a></div>
     </div>
-
     <button onclick="closeM('mAuth')" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);">✕</button>
   </div>
 </div>
 
-<!-- PDF MODAL -->
 <div class="ov" id="mPDF">
   <div class="mc">
     <div class="mt">⬇ PDF Export</div>
-    <p class="ms">Watermark ထည့်လိုရင် ထည့်ပါ — ထည့်မလိုရင် ချန်ထားနိုင်</p>
+    <p class="ms">Watermark ထည့်လိုရင် ထည့်ပါ</p>
     <div class="fg"><label class="fl">Watermark (optional)</label><input class="fi" id="wmText" type="text" placeholder="ဥပမာ — Draft Only · CinePodma"></div>
     <div class="mr">
       <button class="btn btn-r" style="flex:1;" onclick="confirmPDF()">📄 PDF ထုတ်မည်</button>
@@ -480,582 +466,774 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 <div class="toast" id="toast"></div>
 
 <script>
-/* STATE */
-var docType='', docPriv='private', savePriv='private', docId='', docGenre='';
-var selType='', selPriv='private', selGenre='';
-var curTab='cover', zoomLv=100;
-var els=[], lastEl=null;
-var spPages=[];
-var autoT=null, ovT=null;
+/* =====================================================================
+   STATE
+   ===================================================================== */
+var docType = '', docPriv = 'private', savePriv = 'private';
+var docId = '', docGenre = '';
+var selType = '', selPriv = 'private', selGenre = '';
+var curTab = 'cover', zoomLv = 100;
+var currentUser = null;
+var autoT = null;
 
-/* UNDO/REDO STACK */
-var undoStack=[], redoStack=[], MAX_UNDO=50;
-var isUndoRedo=false;
+/* =====================================================================
+   SCREENPLAY — PAGE + ELEMENT SYSTEM
+   Google Doc style: fixed A4 pages, elements flow across pages
+   ===================================================================== */
 
-function pushUndo(){
-  if(isUndoRedo) return;
-  var state=collectSpState();
+/*
+  Data model:
+  els[] = array of {id, type, wrap, ce, pageIdx}
+  pages[] = array of {pageEl, areaEl, num}
+
+  Layout constants (at 96dpi):
+  A4 height = 1123px
+  Top pad    = 96px
+  Bottom pad = 96px
+  Usable     = 931px
+
+  Line height in px = fontSize * lineHeight = 12 * 1.8 = ~21.6px
+  We measure actual element height via offsetHeight.
+*/
+
+var SP_USABLE = 931; /* px usable per page */
+var pages = [];      /* screenplay pages */
+var els = [];        /* screenplay elements */
+var lastEl = null;   /* last focused element wrap */
+
+/* UNDO/REDO */
+var undoStack = [], redoStack = [], MAX_UNDO = 50;
+var isUndoRedo = false;
+
+function pushUndo() {
+  if (isUndoRedo) return;
+  var state = els.map(function(e) {
+    return { id: e.id, type: e.type, text: e.ce.textContent };
+  });
   undoStack.push(state);
-  if(undoStack.length>MAX_UNDO) undoStack.shift();
-  redoStack=[];
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
+  redoStack = [];
 }
 
-function collectSpState(){
-  return els.map(function(e){return{id:e.id,type:e.type,text:e.ce.textContent};});
-}
-
-function applySpState(state){
-  isUndoRedo=true;
-  /* clear current elements */
-  els=[];lastEl=null;
-  spPages.forEach(function(p){p.areaEl.innerHTML='';});
-  /* rebuild */
-  state.forEach(function(s){ ins(s.type); });
-  var ces=document.querySelectorAll('.el .el-ce');
-  state.forEach(function(s,i){if(ces[i])ces[i].textContent=s.text;});
-  isUndoRedo=false;
+function applyUndoState(state) {
+  isUndoRedo = true;
+  /* Save scroll */
+  var ws = document.getElementById('ws');
+  var scrollY = ws ? ws.scrollTop : 0;
+  /* Rebuild all elements from scratch */
+  clearAllSpElements();
+  state.forEach(function(s) {
+    insRaw(s.type, s.text);
+  });
+  isUndoRedo = false;
+  if (ws) ws.scrollTop = scrollY;
   updatePageIndicator();
+  autoSave();
 }
 
-function doUndo(){
-  if(undoStack.length===0) return;
-  var cur=collectSpState();
+function doUndo() {
+  if (undoStack.length === 0) return;
+  var cur = els.map(function(e) { return { id: e.id, type: e.type, text: e.ce.textContent }; });
   redoStack.push(cur);
-  var prev=undoStack.pop();
-  applySpState(prev);
+  var prev = undoStack.pop();
+  applyUndoState(prev);
   toast('↩ Undo');
 }
 
-function doRedo(){
-  if(redoStack.length===0) return;
-  var cur=collectSpState();
+function doRedo() {
+  if (redoStack.length === 0) return;
+  var cur = els.map(function(e) { return { id: e.id, type: e.type, text: e.ce.textContent }; });
   undoStack.push(cur);
-  var next=redoStack.pop();
-  applySpState(next);
+  var next = redoStack.pop();
+  applyUndoState(next);
   toast('↪ Redo');
 }
 
-/* PAGE INDICATOR + BOUNDARY */
-var A4_H=1123, PAD_V=96;
-var USABLE_H=A4_H - PAD_V*2; /* 931px */
+/* =====================================================================
+   PAGE MANAGEMENT
+   ===================================================================== */
 
-function updatePageIndicator(){
-  if(curTab!=='screenplay') return;
-  var area=document.querySelector('.sp-area');
-  if(!area) return;
-  var totalH=area.scrollHeight;
-  var totalPages=Math.max(1,Math.ceil(totalH/USABLE_H));
-  /* current page from scroll */
-  var ws=document.getElementById('ws');
-  var scrollY=ws?ws.scrollTop:0;
-  var curPage=Math.min(totalPages,Math.max(1,Math.ceil((scrollY/zoomLv*100+1)/USABLE_H)));
-  var ind=document.getElementById('pgInd');
-  if(ind){ind.style.display='';ind.textContent='p. '+curPage+' / '+totalPages;}
-  renderBoundaries(area,totalH,totalPages);
+function getOrCreatePage(idx) {
+  while (pages.length <= idx) {
+    addPage();
+  }
+  return pages[idx];
 }
 
-function renderBoundaries(area,totalH,totalPages){
-  /* remove old boundaries */
-  area.querySelectorAll('.page-boundary').forEach(function(b){b.remove();});
-  if(totalPages<=1) return;
-  /* find elements that cross page boundaries */
-  var areaTop=area.getBoundingClientRect().top;
-  for(var pg=1;pg<totalPages;pg++){
-    var boundaryY=pg*USABLE_H;
-    /* find element after boundary */
-    var elems=Array.from(area.querySelectorAll('.el'));
-    for(var i=0;i<elems.length;i++){
-      var elTop=elems[i].getBoundingClientRect().top - areaTop + (document.getElementById('ws')||{scrollTop:0}).scrollTop;
-      if(elTop>boundaryY){
-        var div=document.createElement('div');
-        div.className='page-boundary';
-        div.setAttribute('data-pg','p.'+(pg+1));
-        area.insertBefore(div,elems[i]);
-        break;
-      }
+function addPage() {
+  var num = pages.length + 1;
+  var scaler = document.getElementById('scaler');
+  var pg = document.createElement('div');
+  pg.className = 'page';
+  pg.id = 'sp-pg-' + num;
+
+  var pn = document.createElement('div');
+  pn.className = 'page-num';
+  pn.textContent = 'p. ' + num;
+  pg.appendChild(pn);
+
+  var area = document.createElement('div');
+  area.className = 'sp-area';
+  area.id = 'sp-area-' + num;
+
+  /* Click blank area → focus last element on this page */
+  area.addEventListener('click', function(e) {
+    if (e.target !== area && e.target !== pg) return;
+    var allCes = area.querySelectorAll('.el-ce');
+    if (allCes.length > 0) {
+      var last = allCes[allCes.length - 1];
+      focusEnd(last);
+    }
+  });
+
+  pg.appendChild(area);
+  scaler.appendChild(pg);
+  pages.push({ pageEl: pg, areaEl: area, num: num });
+  return pages[pages.length - 1];
+}
+
+function removeTrailingEmptyPages() {
+  /* Remove pages that have no elements, from the end */
+  while (pages.length > 1) {
+    var last = pages[pages.length - 1];
+    if (last.areaEl.children.length === 0) {
+      last.pageEl.remove();
+      pages.pop();
+    } else {
+      break;
+    }
+  }
+  /* Renumber */
+  pages.forEach(function(p, i) {
+    p.num = i + 1;
+    var pn = p.pageEl.querySelector('.page-num');
+    if (pn) pn.textContent = 'p. ' + (i + 1);
+  });
+}
+
+/* =====================================================================
+   REFLOW — distribute els[] across pages based on height
+   ===================================================================== */
+
+var reflowScheduled = false;
+function scheduleReflow() {
+  if (reflowScheduled) return;
+  reflowScheduled = true;
+  requestAnimationFrame(function() {
+    reflowScheduled = false;
+    reflow();
+  });
+}
+
+function reflow() {
+  if (curTab !== 'screenplay') return;
+  if (els.length === 0) {
+    removeTrailingEmptyPages();
+    updatePageIndicator();
+    return;
+  }
+
+  /* Step 1: move all elements into a single off-screen measuring div */
+  var measureDiv = document.createElement('div');
+  measureDiv.style.cssText =
+    'position:absolute;visibility:hidden;width:602px;' + /* 794 - 96*2 */
+    'top:-9999px;left:-9999px;';
+  document.body.appendChild(measureDiv);
+
+  /* Move all element wraps into measureDiv to measure heights */
+  els.forEach(function(e) {
+    measureDiv.appendChild(e.wrap);
+  });
+
+  /* Step 2: Distribute into pages */
+  /* Ensure at least page 0 exists */
+  if (pages.length === 0) addPage();
+
+  var pageIdx = 0;
+  var usedHeight = 0;
+  var assignments = []; /* [{el, pageIdx}] */
+
+  els.forEach(function(e) {
+    var h = e.wrap.offsetHeight;
+    if (h === 0) h = 22; /* fallback */
+
+    /* Will this element fit on current page? */
+    if (usedHeight + h > SP_USABLE && usedHeight > 0) {
+      /* Overflow → next page */
+      pageIdx++;
+      usedHeight = 0;
+    }
+
+    assignments.push({ el: e, pageIdx: pageIdx });
+    usedHeight += h;
+  });
+
+  /* Step 3: Ensure we have enough pages */
+  var neededPages = pageIdx + 1;
+  while (pages.length < neededPages) addPage();
+
+  /* Step 4: Clear all page areas */
+  pages.forEach(function(p) {
+    p.areaEl.innerHTML = '';
+  });
+
+  /* Step 5: Place elements into correct pages */
+  assignments.forEach(function(a) {
+    a.el.pageIdx = a.pageIdx;
+    pages[a.pageIdx].areaEl.appendChild(a.el.wrap);
+  });
+
+  /* Step 6: Remove trailing empty pages */
+  removeTrailingEmptyPages();
+
+  /* Cleanup measure div */
+  document.body.removeChild(measureDiv);
+
+  updatePageIndicator();
+}
+
+/* =====================================================================
+   ELEMENT CREATION
+   ===================================================================== */
+
+var elCfg = {
+  scene:  { ph: 'INT. နေရာ — နေ့ / ည', next: 'action' },
+  action: { ph: 'ဖြစ်ပျက်မှု...',         next: 'action' },
+  char:   { ph: 'ဇာတ်ကောင်',             next: 'dial'   },
+  paren:  { ph: '(ခံစားချက်)',            next: 'dial'   },
+  dial:   { ph: 'ပြောစကား...',            next: 'char'   },
+  trans:  { ph: 'CUT TO:',               next: 'scene'  }
+};
+
+/* insRaw — insert element with given text, no undo push, used for restore/undo */
+function insRaw(type, text) {
+  var cfg = elCfg[type];
+  if (!cfg) return;
+  var id = 'el_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+
+  var wrap = document.createElement('div');
+  wrap.className = 'el el-' + type;
+  wrap.dataset.id = id;
+  wrap.dataset.type = type;
+
+  var ce = document.createElement('div');
+  ce.className = 'el-ce';
+  ce.contentEditable = 'true';
+  ce.setAttribute('data-ph', cfg.ph);
+  ce.spellcheck = false;
+  if (text) ce.textContent = text;
+
+  ce.addEventListener('input', onElInput);
+  ce.addEventListener('focus', function() { lastEl = wrap; });
+  ce.addEventListener('keydown', function(e) { onElKeydown(e, wrap, id, type, cfg); });
+
+  wrap.appendChild(ce);
+
+  /* Append to last page initially; reflow will correct placement */
+  var pg = pages.length > 0 ? pages[pages.length - 1] : addPage();
+
+  /* Insert after lastEl if possible */
+  if (lastEl && lastEl.parentNode && lastEl.parentNode.classList.contains('sp-area')) {
+    lastEl.after(wrap);
+  } else {
+    pg.areaEl.appendChild(wrap);
+  }
+
+  var elObj = { id: id, type: type, wrap: wrap, ce: ce, pageIdx: pages.length - 1 };
+  /* Insert into els[] after lastEl */
+  if (lastEl) {
+    var idx = els.findIndex(function(e) { return e.wrap === lastEl; });
+    if (idx >= 0) {
+      els.splice(idx + 1, 0, elObj);
+    } else {
+      els.push(elObj);
+    }
+  } else {
+    els.push(elObj);
+  }
+
+  lastEl = wrap;
+  return elObj;
+}
+
+/* ins — public insert with focus + undo */
+function ins(type) {
+  if (!elCfg[type]) return;
+  pushUndo();
+  var elObj = insRaw(type, '');
+  scheduleReflow();
+  autoSave();
+  /* Focus after reflow */
+  setTimeout(function() {
+    focusStart(elObj.ce);
+    scheduleReflow();
+  }, 50);
+}
+
+function onElInput() {
+  pushUndo();
+  autoSave();
+  scheduleReflow();
+}
+
+function onElKeydown(e, wrap, id, type, cfg) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    ins(cfg.next);
+    return;
+  }
+  if (e.key === 'Backspace') {
+    var ce = wrap.querySelector('.el-ce');
+    if (ce && ce.textContent === '') {
+      e.preventDefault();
+      removeEl(wrap, id);
+      return;
+    }
+  }
+  /* Arrow up/down: navigate between elements */
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    var idx = els.findIndex(function(e2) { return e2.wrap === wrap; });
+    var target = e.key === 'ArrowUp' ? els[idx - 1] : els[idx + 1];
+    if (target) {
+      e.preventDefault();
+      focusEnd(target.ce);
     }
   }
 }
 
-/* scroll → update page indicator */
-function initPageIndicatorScroll(){
-  var ws=document.getElementById('ws');
-  if(ws) ws.addEventListener('scroll',function(){updatePageIndicator();});
+function removeEl(wrap, id) {
+  var idx = els.findIndex(function(e) { return e.id === id; });
+  /* Focus previous element */
+  var prevEl = idx > 0 ? els[idx - 1] : null;
+  wrap.remove();
+  els.splice(idx, 1);
+  if (prevEl) {
+    lastEl = prevEl.wrap;
+    focusEnd(prevEl.ce);
+  } else if (els.length > 0) {
+    lastEl = els[0].wrap;
+    focusStart(els[0].ce);
+  } else {
+    lastEl = null;
+  }
+  pushUndo();
+  scheduleReflow();
+  autoSave();
 }
 
-var storyGenres=[
-  {id:'novel',icon:'📗',name:'ဝတ္ထု'},
-  {id:'short',icon:'📄',name:'ဝတ္ထုတို'},
-  {id:'essay',icon:'✍️',name:'ဆောင်းပါး'},
-  {id:'poem', icon:'🌸',name:'ကဗျာ'},
-];
-var spGenres=[
-  {id:'feature',icon:'🎬',name:'ဇာတ်ညွှန်း (Feature)'},
-  {id:'shortfilm',icon:'🎞️',name:'ဇာတ်ညွှန်း (Short)'},
-  {id:'series',icon:'📺',name:'စီးရီး'},
-];
+/* Add FADE OUT + THE END manually (user action, not auto) */
+function addFadeOut() {
+  pushUndo();
+  insRaw('trans', 'FADE OUT.');
+  insRaw('action', 'THE END');
+  scheduleReflow();
+  autoSave();
+  toast('FADE OUT. ထည့်ပြီး');
+}
 
-/* GENRE LABELS for display */
-var genreLabels={
+function clearAllSpElements() {
+  els = [];
+  lastEl = null;
+  pages.forEach(function(p) { p.areaEl.innerHTML = ''; });
+}
+
+/* =====================================================================
+   FOCUS HELPERS
+   ===================================================================== */
+
+function focusEnd(ce) {
+  ce.focus();
+  try {
+    var r = document.createRange();
+    r.selectNodeContents(ce);
+    r.collapse(false);
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  } catch(ex) {}
+}
+
+function focusStart(ce) {
+  ce.focus();
+  try {
+    var r = document.createRange();
+    r.setStart(ce, 0);
+    r.collapse(true);
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  } catch(ex) {}
+}
+
+/* =====================================================================
+   PAGE INDICATOR
+   ===================================================================== */
+
+function updatePageIndicator() {
+  var ind = document.getElementById('pgInd');
+  if (!ind) return;
+  if (curTab !== 'screenplay') { ind.style.display = 'none'; return; }
+  ind.style.display = '';
+  ind.textContent = 'p. 1 / ' + Math.max(1, pages.length);
+}
+
+/* =====================================================================
+   NEW DOC WIZARD
+   ===================================================================== */
+
+var storyGenres = [
+  { id: 'novel',    icon: '📗', name: 'ဝတ္ထု' },
+  { id: 'short',    icon: '📄', name: 'ဝတ္ထုတို' },
+  { id: 'essay',    icon: '✍️', name: 'ဆောင်းပါး' },
+  { id: 'poem',     icon: '🌸', name: 'ကဗျာ' },
+];
+var spGenres = [
+  { id: 'feature',   icon: '🎬', name: 'ဇာတ်ညွှန်း (Feature)' },
+  { id: 'shortfilm', icon: '🎞️', name: 'ဇာတ်ညွှန်း (Short)' },
+  { id: 'series',    icon: '📺', name: 'စီးရီး' },
+];
+var genreLabels = {
   novel:'ဝတ္ထု', short:'ဝတ္ထုတို', essay:'ဆောင်းပါး', poem:'ကဗျာ',
   feature:'ဇာတ်ညွှန်း (Feature)', shortfilm:'ဇာတ်ညွှန်း (Short)', series:'စီးရီး'
 };
-var curTab='cover', zoomLv=100;
-var els=[], lastEl=null; /* screenplay elements */
-var autoT=null, ovT=null;
-/* sp page tracking */
-var spPages=[]; /* [{pageEl, areaEl}] */
 
-/* UTILS */
-function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2800);}
-/* NEW DOC */
-function pickT(t,el){selType=t;document.querySelectorAll('.tc').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');document.getElementById('nb1').disabled=false;}
+function pickT(t, el) {
+  selType = t;
+  document.querySelectorAll('.tc').forEach(function(c) { c.classList.remove('sel'); });
+  el.classList.add('sel');
+  document.getElementById('nb1').disabled = false;
+}
 
-function toS2(){
-  if(!selType)return;
-  /* build genre grid */
-  var genres=selType==='story'?storyGenres:spGenres;
-  var grid=document.getElementById('genreGrid');
-  selGenre='';
-  document.getElementById('nb2').disabled=true;
-  grid.innerHTML=genres.map(function(g){
-    return '<div class="tc" onclick="pickGenre(\''+g.id+'\',this)" style="padding:14px 10px;text-align:center;">'+
-      '<span class="ti" style="font-size:22px;">'+g.icon+'</span>'+
-      '<span class="tn" style="font-size:12px;margin-top:4px;display:block;">'+g.name+'</span>'+
+function toS2() {
+  if (!selType) return;
+  var genres = selType === 'story' ? storyGenres : spGenres;
+  var grid = document.getElementById('genreGrid');
+  selGenre = '';
+  document.getElementById('nb2').disabled = true;
+  grid.innerHTML = genres.map(function(g) {
+    return '<div class="tc" onclick="pickGenre(\'' + g.id + '\',this)" style="padding:14px 10px;text-align:center;">' +
+      '<span class="ti" style="font-size:22px;">' + g.icon + '</span>' +
+      '<span class="tn" style="font-size:12px;margin-top:4px;display:block;">' + g.name + '</span>' +
     '</div>';
   }).join('');
   document.getElementById('s1').classList.remove('on');
   document.getElementById('s2').classList.add('on');
 }
 
-function pickGenre(g,el){
-  selGenre=g;
-  document.querySelectorAll('#genreGrid .tc').forEach(function(c){c.classList.remove('sel');});
+function pickGenre(g, el) {
+  selGenre = g;
+  document.querySelectorAll('#genreGrid .tc').forEach(function(c) { c.classList.remove('sel'); });
   el.classList.add('sel');
-  document.getElementById('nb2').disabled=false;
+  document.getElementById('nb2').disabled = false;
 }
 
-function toS3(){
-  if(!selGenre)return;
+function toS3() {
+  if (!selGenre) return;
   document.getElementById('s2').classList.remove('on');
   document.getElementById('s3').classList.add('on');
 }
 
-function toS2back(){
+function toS2back() {
   document.getElementById('s3').classList.remove('on');
   document.getElementById('s2').classList.add('on');
 }
 
-function toS1(){
+function toS1() {
   document.getElementById('s2').classList.remove('on');
   document.getElementById('s3').classList.remove('on');
   document.getElementById('s1').classList.add('on');
 }
 
-function pickP(p,el){selPriv=p;document.querySelectorAll('.pc').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');}
-function startDoc(){
-  docType=selType;docPriv=selPriv;savePriv=selPriv;docGenre=selGenre;
-  if(!docId) docId='doc_'+Date.now();
-  document.getElementById('newdoc').style.display='none';
-  var e=document.getElementById('ed');e.style.display='flex';e.style.flexDirection='column';e.style.overflow='hidden';e.style.flex='1';
-  renderTBR();
-  if(docType==='screenplay') initSP();
-  else initStory();
-  fitZoom(); setSv('unsaved');
+function pickP(p, el) {
+  selPriv = p;
+  document.querySelectorAll('.pc').forEach(function(c) { c.classList.remove('sel'); });
+  el.classList.add('sel');
 }
 
-/* TOPBAR RIGHT */
-function renderTBR(){
-  var e=document.getElementById('tbr');
-  var co=docType==='screenplay'?'<button class="btn btn-g btn-s hm" onclick="openM(\'mCollab\')">👥</button>':'';
-  e.innerHTML=
-    co+
-    '<button class="btn btn-g btn-s hm" onclick="downloadPDF()">⬇ PDF</button>'+
-    '<button class="btn btn-g btn-s" onclick="openShareM()">🔗</button>'+
+function startDoc() {
+  docType = selType; docPriv = selPriv; savePriv = selPriv; docGenre = selGenre;
+  if (!docId) docId = 'doc_' + Date.now();
+  document.getElementById('newdoc').style.display = 'none';
+  var e = document.getElementById('ed');
+  e.style.display = 'flex';
+  e.style.flexDirection = 'column';
+  e.style.overflow = 'hidden';
+  e.style.flex = '1';
+  renderTBR();
+  if (docType === 'screenplay') initSP();
+  else initStory();
+  fitZoom();
+  setSv('unsaved');
+}
+
+/* =====================================================================
+   TOPBAR
+   ===================================================================== */
+
+function renderTBR() {
+  var e = document.getElementById('tbr');
+  var co = docType === 'screenplay' ? '<button class="btn btn-g btn-s hm" onclick="openM(\'mCollab\')">👥</button>' : '';
+  e.innerHTML =
+    '<span class="pg-ind" id="pgInd" style="display:none;"></span>' +
+    co +
+    '<button class="btn btn-g btn-s hm" onclick="downloadPDF()">⬇ PDF</button>' +
+    '<button class="btn btn-g btn-s" onclick="openShareM()">🔗</button>' +
     '<button class="btn btn-r btn-s" onclick="openSaveModal()">💾 Save</button>';
 }
 
-/* ZOOM */
-function applyZ(){var s=document.getElementById('scaler');var sc=zoomLv/100;s.style.transform='scale('+sc+')';s.style.marginBottom=((sc-1)*1123)+'px';document.getElementById('zl').textContent=zoomLv+'%';}
-function zm(d){zoomLv=Math.min(200,Math.max(25,zoomLv+d));applyZ();}
-function fitZoom(){var w=document.getElementById('ws');if(!w)return;var a=w.clientWidth-80;zoomLv=a<794?Math.max(25,Math.min(100,Math.floor(a/794*100))):100;applyZ();}
-window.addEventListener('resize',fitZoom);
+/* =====================================================================
+   ZOOM
+   ===================================================================== */
 
-/* TITLE */
-function syncTitle(){var v=document.getElementById('docTitle').value;var ct=document.getElementById('cvTitle');if(ct)ct.value=v;autoSave();}
-function syncFromCV(el){document.getElementById('docTitle').value=el.value;autoResize(el);autoSave();}
-function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function applyZ() {
+  var s = document.getElementById('scaler');
+  var sc = zoomLv / 100;
+  s.style.transform = 'scale(' + sc + ')';
+  s.style.marginBottom = ((sc - 1) * 1123) + 'px';
+  document.getElementById('zl').textContent = zoomLv + '%';
+}
 
-/* SCREENPLAY INIT */
-function initSP(){
-  document.getElementById('spTabs').style.display='flex';
-  document.getElementById('stTabs').style.display='none';
+function zm(d) { zoomLv = Math.min(200, Math.max(25, zoomLv + d)); applyZ(); }
+
+function fitZoom() {
+  var w = document.getElementById('ws');
+  if (!w) return;
+  var a = w.clientWidth - 80;
+  zoomLv = a < 794 ? Math.max(25, Math.min(100, Math.floor(a / 794 * 100))) : 100;
+  applyZ();
+}
+window.addEventListener('resize', fitZoom);
+
+/* =====================================================================
+   TITLE SYNC
+   ===================================================================== */
+
+function syncTitle() {
+  var v = document.getElementById('docTitle').value;
+  var ct = document.getElementById('cvTitle');
+  if (ct) ct.value = v;
+  autoSave();
+}
+
+function syncFromCV(el) {
+  document.getElementById('docTitle').value = el.value;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+  autoSave();
+}
+
+/* =====================================================================
+   SCREENPLAY INIT + TABS
+   ===================================================================== */
+
+var tabPages = {};
+
+function initSP() {
+  document.getElementById('spTabs').style.display = 'flex';
+  document.getElementById('stTabs').style.display = 'none';
   document.getElementById('storyBtb').classList.remove('on');
-  goTab('cover',document.querySelector('.tb.act'));
+  /* Build cover page */
+  goTab('cover', document.querySelector('#spTabs .tb.act'));
 }
 
-/* TAB SWITCHING */
-var tabPages={}; /* tab→pageEl */
-function goTab(tab,btn){
-  curTab=tab;
-  document.querySelectorAll('.tb').forEach(function(b){b.classList.remove('act');});
-  if(btn)btn.classList.add('act');
-  var scaler=document.getElementById('scaler');
-  /* hide all */
-  Array.from(scaler.children).forEach(function(c){c.style.display='none';});
+function goTab(tab, btn) {
+  curTab = tab;
+  document.querySelectorAll('.tb').forEach(function(b) { b.classList.remove('act'); });
+  if (btn) btn.classList.add('act');
+
+  var scaler = document.getElementById('scaler');
+  /* Hide all pages */
+  Array.from(scaler.children).forEach(function(c) { c.style.display = 'none'; });
   document.getElementById('btb').classList.remove('on');
-  if(tab==='screenplay'){
-    spPages.forEach(function(p){p.pageEl.style.display='';});
-    if(spPages.length===0){
-      addSpPage();
-      setTimeout(function(){if(els.length===0) ins('action');},50);
-    }
+
+  var ind = document.getElementById('pgInd');
+  if (ind) ind.style.display = 'none';
+
+  if (tab === 'screenplay') {
+    /* Show all screenplay pages */
+    pages.forEach(function(p) { p.pageEl.style.display = ''; });
+    /* Create first page if none */
+    if (pages.length === 0) addPage();
     document.getElementById('btb').classList.add('on');
-    document.getElementById('pgInd').style.display='';
-    if(els.length>0){var last=els[els.length-1].ce;setTimeout(function(){last.focus();},50);}
-    initPageIndicatorScroll();
-    setTimeout(updatePageIndicator,100);
+    updatePageIndicator();
+    /* Focus last element */
+    if (els.length > 0) {
+      setTimeout(function() { focusEnd(els[els.length - 1].ce); }, 50);
+    }
   } else {
-    var pg=tabPages[tab];
-    if(!pg) pg=buildSecPage(tab);
-    pg.style.display='';
+    var pg = tabPages[tab];
+    if (!pg) pg = buildSecPage(tab);
+    pg.style.display = '';
   }
 }
 
-/* SECTION PAGES (Cover / Logline / Synopsis / Treatment) */
-var secLabels={logline:'Logline',synopsis:'Synopsis',treatment:'Treatment'};
-var secPH={logline:'ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ...',synopsis:'ဇာတ်ကားဇာတ်လမ်း အကျဉ်းချုပ် — ဇာတ်ဆုံးပါမှ...',treatment:'မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ...'};
+/* SECTION PAGES */
+var secLabels = { logline: 'Logline', synopsis: 'Synopsis', treatment: 'Treatment' };
+var secPH = {
+  logline:   'ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ...',
+  synopsis:  'ဇာတ်ကားဇာတ်လမ်း အကျဉ်းချုပ် — ဇာတ်ဆုံးပါမှ...',
+  treatment: 'မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ...'
+};
 
-function buildSecPage(tab){
-  var scaler=document.getElementById('scaler');
-  var pg=document.createElement('div');
-  pg.className='page fixed-h';
-  pg.id='pg-'+tab;pg.style.display='none';
-  var pn=document.createElement('div');pn.className='page-num';
-  if(tab==='cover'){
-    pn.textContent='Cover';pg.appendChild(pn);
-    var cv=document.createElement('div');cv.className='cv';
-    cv.innerHTML='<textarea class="cv-title" id="cvTitle" placeholder="ဇာတ်ကားနာမည်" rows="1" oninput="syncFromCV(this)"></textarea><div class="cv-hr"></div><div class="cv-by">Written by</div><input class="cv-author" id="cvAuth" type="text" placeholder="သင့်နာမည်" oninput="autoSave()"><input class="cv-draft" id="cvDraft" type="text" placeholder="Draft 1 · 2026" oninput="autoSave()">';
+function buildSecPage(tab) {
+  var scaler = document.getElementById('scaler');
+  var pg = document.createElement('div');
+  pg.className = 'page';
+  pg.id = 'pg-' + tab;
+  pg.style.display = 'none';
+
+  var pn = document.createElement('div');
+  pn.className = 'page-num';
+
+  if (tab === 'cover') {
+    pn.textContent = 'Cover';
+    pg.appendChild(pn);
+    var cv = document.createElement('div');
+    cv.className = 'cv';
+    cv.innerHTML =
+      '<textarea class="cv-title" id="cvTitle" placeholder="ဇာတ်ကားနာမည်" rows="1" oninput="syncFromCV(this)"></textarea>' +
+      '<div class="cv-hr"></div>' +
+      '<div class="cv-by">Written by</div>' +
+      '<input class="cv-author" id="cvAuth" type="text" placeholder="သင့်နာမည်" oninput="autoSave()">' +
+      '<input class="cv-draft" id="cvDraft" type="text" placeholder="Draft 1 · 2026" oninput="autoSave()">';
     pg.appendChild(cv);
-    setTimeout(function(){var d=new Date();var dd=document.getElementById('cvDraft');if(dd&&!dd.value)dd.value='Draft 1 · '+d.getFullYear();},50);
+    /* Set default draft year */
+    setTimeout(function() {
+      var dd = document.getElementById('cvDraft');
+      if (dd && !dd.value) dd.value = 'Draft 1 · ' + new Date().getFullYear();
+    }, 50);
   } else {
-    pn.textContent=secLabels[tab]||tab;pg.appendChild(pn);
-    var sec=document.createElement('div');sec.className='sec';
-    var lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent=secLabels[tab]||tab;
-    var ta=document.createElement('textarea');ta.className='sec-ta';ta.id=tab+'Ta';ta.placeholder=secPH[tab]||'';
-    ta.addEventListener('input',function(){
+    pn.textContent = secLabels[tab] || tab;
+    pg.appendChild(pn);
+    var sec = document.createElement('div');
+    sec.className = 'sec';
+    var lbl = document.createElement('div');
+    lbl.className = 'sec-lbl';
+    lbl.textContent = secLabels[tab] || tab;
+    var ta = document.createElement('textarea');
+    ta.className = 'sec-ta';
+    ta.id = tab + 'Ta';
+    ta.placeholder = secPH[tab] || '';
+    ta.addEventListener('input', function() {
       autoSave();
-      var tb=document.getElementById(tab==='logline'?'tL':tab==='synopsis'?'tSy':'tTr');
-      if(tb){if(ta.value.trim())tb.classList.add('has');else tb.classList.remove('has');}
+      var dotTab = document.getElementById(
+        tab === 'logline' ? 'tL' : tab === 'synopsis' ? 'tSy' : 'tTr'
+      );
+      if (dotTab) {
+        if (ta.value.trim()) dotTab.classList.add('has');
+        else dotTab.classList.remove('has');
+      }
     });
-    sec.appendChild(lbl);sec.appendChild(ta);pg.appendChild(sec);
+    sec.appendChild(lbl);
+    sec.appendChild(ta);
+    pg.appendChild(sec);
   }
+
   scaler.appendChild(pg);
-  tabPages[tab]=pg;
+  tabPages[tab] = pg;
   return pg;
 }
 
-/* SCREENPLAY PAGES */
-var PAGE_H=1123, PAD=96, USABLE=1123-96*2; /* 931px usable */
+/* =====================================================================
+   STORY
+   ===================================================================== */
 
-function addSpPage(){
-  var num=spPages.length+1;
-  var scaler=document.getElementById('scaler');
-  var pg=document.createElement('div');pg.className='page';pg.id='sp-pg-'+num;
-  if(curTab!=='screenplay')pg.style.display='none';
-  var pn=document.createElement('div');pn.className='page-num';pn.textContent='p. '+num;pg.appendChild(pn);
-  var area=document.createElement('div');area.className='sp-area';area.id='sp-area-'+num;
-  /* click on blank area → focus last element in this page */
-  area.addEventListener('click',function(e){
-    if(e.target!==area&&e.target!==pg) return;
-    var lastCe=area.querySelector('.el:last-child .el-ce');
-    if(lastCe){
-      lastCe.focus();
-      try{var r=document.createRange();r.selectNodeContents(lastCe);r.collapse(false);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(ex){}
-    }
-  });
-  pg.appendChild(area);scaler.appendChild(pg);
-  spPages.push({pageEl:pg,areaEl:area,num:num});
-  return spPages[spPages.length-1];
-}
+function initStory() {
+  document.getElementById('stTabs').style.display = 'flex';
+  document.getElementById('spTabs').style.display = 'none';
+  var scaler = document.getElementById('scaler');
+  scaler.style.display = 'none';
 
-function getLastPage(){
-  if(spPages.length===0) return addSpPage();
-  return spPages[spPages.length-1];
-}
+  var ws = document.getElementById('ws');
+  ws.style.padding = '0';
+  ws.style.background = 'var(--white)';
+  ws.style.display = 'flex';
+  ws.style.justifyContent = 'center';
 
-/* SCREENPLAY ELEMENTS */
-var elCfg={
-  scene: {cls:'el-scene', ph:'INT. နေရာ — နေ့ / ည', next:'action'},
-  action:{cls:'el-action',ph:'ဖြစ်ပျက်မှု...',       next:'action'},
-  char:  {cls:'el-char',  ph:'ဇာတ်ကောင်',           next:'dial'},
-  paren: {cls:'el-paren', ph:'(ခံစားချက်)',          next:'dial'},
-  dial:  {cls:'el-dial',  ph:'ပြောစကား...',          next:'char'},
-  trans: {cls:'el-trans', ph:'CUT TO:',              next:'scene'}
-};
-
-/* Usable height = A4 height minus top+bottom padding */
-var USABLE = 1123 - 96 - 96;  /* 931px */
-
-function ins(type){
-  var cfg=elCfg[type];var id='el_'+Date.now();
-  var wrap=document.createElement('div');wrap.className='el '+cfg.cls;wrap.dataset.id=id;wrap.dataset.type=type;
-  var ce=document.createElement('div');ce.className='el-ce';ce.contentEditable='true';
-  ce.setAttribute('data-ph',cfg.ph);ce.spellcheck=false;
-  ce.addEventListener('input',function(){
-    pushUndo();
-    autoSave();
-    scheduleOverflow(800);
-    updatePageIndicator();
-  });
-  ce.addEventListener('focus',function(){lastEl=wrap;});
-  ce.addEventListener('keydown',function(e){
-    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ins(cfg.next);return;}
-    if(e.key==='Backspace'&&ce.textContent===''){e.preventDefault();removeEl(wrap,id);return;}
-  });
-  wrap.appendChild(ce);
-
-  /* insert position */
-  if(lastEl&&lastEl.parentNode&&lastEl.parentNode.classList.contains('sp-area')){
-    lastEl.after(wrap);
-  } else {
-    getLastPage().areaEl.appendChild(wrap);
-  }
-  els.push({id:id,type:type,wrap:wrap,ce:ce});
-  lastEl=wrap;
-  setTimeout(function(){
-    ce.focus();
-    /* place cursor at start so user can type immediately */
-    try{
-      var r=document.createRange();
-      r.setStart(ce,0);r.collapse(true);
-      var s=window.getSelection();s.removeAllRanges();s.addRange(r);
-    }catch(ex){}
-  },10);
-  autoSave();
-}
-
-/* OVERFLOW — disabled, sp-area grows with content */
-function scheduleOverflow(delay){ /* noop */ }
-function checkOverflow(){ /* noop */ }
-function cleanEmptyPages(){ /* noop */ }
-
-function removeEl(wrap,id){
-  var prev=wrap.previousElementSibling;
-  wrap.remove();
-  els=els.filter(function(e){return e.id!==id;});
-  if(prev&&prev.classList.contains('el')){
-    var pce=prev.querySelector('.el-ce');
-    if(pce){pce.focus();var r=document.createRange();r.selectNodeContents(pce);r.collapse(false);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}
-  }
-  cleanEmptyPages();
-  autoSave();
-}
-
-function addFO(){
-  var area=getLastPage().areaEl;
-  var fo=document.createElement('div');fo.className='el-ce';fo.style.cssText='text-align:right;font-family:var(--font-en);font-size:11px;font-weight:600;color:var(--black);padding:4px 0;margin-top:20px;';fo.textContent='FADE OUT.';fo.contentEditable='false';
-  var end=document.createElement('div');end.className='el-ce';end.style.cssText='text-align:center;font-family:var(--font-en);font-size:11px;font-weight:600;color:var(--black);margin-top:16px;';end.textContent='THE END';end.contentEditable='false';
-  area.appendChild(fo);area.appendChild(end);toast('FADE OUT. ထည့်ပြီး');
-}
-
-/* STORY */
-function initStory(){
-  document.getElementById('stTabs').style.display='flex';
-  document.getElementById('spTabs').style.display='none';
-  var scaler=document.getElementById('scaler');
-  scaler.style.display='none'; /* hide scaler — story uses own layout */
-
-  /* build story area directly in workspace */
-  var ws=document.getElementById('ws');
-  ws.style.padding='0';
-  ws.style.background='var(--white)';
-  ws.style.display='flex';
-  ws.style.justifyContent='center';
-
-  var existing=document.getElementById('storyWrap');
-  if(!existing){
-    var wrap=document.createElement('div');wrap.className='story-wrap';wrap.id='storyWrap';
-    wrap.style.cssText='flex:1;overflow-y:auto;background:var(--white);display:flex;justify-content:center;padding:32px 24px 100px;width:100%;';
-    var paper=document.createElement('div');paper.className='story-paper';
-    var ed=document.createElement('div');ed.className='story-ed';ed.contentEditable='true';
-    ed.id='stEd';ed.spellcheck=false;
-    ed.addEventListener('input',function(){autoSave();updateStoryFmtState();});
-    ed.addEventListener('keyup',updateStoryFmtState);
-    ed.addEventListener('mouseup',updateStoryFmtState);
-    paper.appendChild(ed);wrap.appendChild(paper);
+  if (!document.getElementById('storyWrap')) {
+    var wrap = document.createElement('div');
+    wrap.className = 'story-wrap';
+    wrap.id = 'storyWrap';
+    wrap.style.cssText = 'flex:1;overflow-y:auto;background:var(--white);display:flex;justify-content:center;padding:32px 24px 100px;width:100%;';
+    var paper = document.createElement('div');
+    paper.className = 'story-paper';
+    var ed = document.createElement('div');
+    ed.className = 'story-ed';
+    ed.contentEditable = 'true';
+    ed.id = 'stEd';
+    ed.spellcheck = false;
+    ed.addEventListener('input', function() { autoSave(); updateStoryFmtState(); });
+    ed.addEventListener('keyup', updateStoryFmtState);
+    ed.addEventListener('mouseup', updateStoryFmtState);
+    paper.appendChild(ed);
+    wrap.appendChild(paper);
     ws.appendChild(wrap);
   }
 
-  /* show story bottom toolbar */
   document.getElementById('storyBtb').classList.add('on');
-  setTimeout(function(){document.getElementById('stEd').focus();},100);
+  setTimeout(function() { document.getElementById('stEd').focus(); }, 100);
 }
 
-function storyFmt(cmd){
-  var ed=document.getElementById('stEd');if(!ed)return;
-  if(cmd==='h1'||cmd==='h2'){document.execCommand('formatBlock',false,cmd);}
-  else{document.execCommand(cmd,false,null);}
+function storyFmt(cmd) {
+  var ed = document.getElementById('stEd');
+  if (!ed) return;
+  if (cmd === 'h1' || cmd === 'h2') document.execCommand('formatBlock', false, cmd);
+  else document.execCommand(cmd, false, null);
   ed.focus();
   updateStoryFmtState();
 }
 
-function updateStoryFmtState(){
-  var cmds={
-    'sfb-bold':'bold','sfb-italic':'italic','sfb-underline':'underline'
-  };
-  Object.keys(cmds).forEach(function(id){
-    var el=document.getElementById(id);
-    if(el) el.classList.toggle('active',document.queryCommandState(cmds[id]));
+function updateStoryFmtState() {
+  var cmds = { 'sfb-bold': 'bold', 'sfb-italic': 'italic', 'sfb-underline': 'underline' };
+  Object.keys(cmds).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('active', document.queryCommandState(cmds[id]));
   });
 }
 
-function ev(e){e.preventDefault();}
-function fmt(cmd){storyFmt(cmd);} /* backward compat */
+function evP(e) { e.preventDefault(); }
 
-/* SAVE */
-var pendSP='private';
-var currentUser=null;
+/* =====================================================================
+   SAVE
+   ===================================================================== */
 
-function pickSP(p,el){
-  pendSP=p;
-  document.querySelectorAll('#mSave .po').forEach(function(o){o.classList.remove('sel');});
+var pendSP = 'private';
+
+function pickSP(p, el) {
+  pendSP = p;
+  document.querySelectorAll('#mSave .po').forEach(function(o) { o.classList.remove('sel'); });
   el.classList.add('sel');
 }
 
-function openSaveModal(){
-  if(!currentUser){ switchAuthTab('signin'); openM('mAuth'); return; }
-  if(!docGenre){ openGenreModal(); return; }
-  document.querySelectorAll('#mSave .po').forEach(function(o){
+function openSaveModal() {
+  if (!currentUser) { switchAuthTab('signin'); openM('mAuth'); return; }
+  if (!docGenre) { openGenreModal(); return; }
+  document.querySelectorAll('#mSave .po').forEach(function(o) {
     o.classList.remove('sel');
-    if(o.dataset.priv===savePriv) o.classList.add('sel');
+    if (o.dataset.priv === savePriv) o.classList.add('sel');
   });
-  pendSP=savePriv;
+  pendSP = savePriv;
   openM('mSave');
 }
 
-/* AUTH TAB SWITCH */
-function switchAuthTab(tab){
-  document.getElementById('authSignin').style.display='none';
-  document.getElementById('authSignup').style.display='none';
-  document.getElementById('authForgot').style.display='none';
-  document.getElementById('siErr').textContent='';
-  document.getElementById('suErr').textContent='';
-  document.getElementById('fgErr').textContent='';
-  document.querySelectorAll('.auth-tab').forEach(function(b){b.classList.remove('act');});
-  if(tab==='signin'){
-    document.getElementById('authSignin').style.display='';
-    document.getElementById('atSignin').classList.add('act');
-  } else if(tab==='signup'){
-    document.getElementById('authSignup').style.display='';
-    document.getElementById('atSignup').classList.add('act');
-  } else {
-    document.getElementById('authForgot').style.display='';
-  }
-}
-
-/* AUTH ACTIONS — Firebase handles in module, expose via window */
-function doSignIn(){
-  var email=document.getElementById('siEmail').value.trim();
-  var pass=document.getElementById('siPass').value;
-  var err=document.getElementById('siErr');
-  err.textContent='';
-  if(!email||!pass){err.textContent='Email နဲ့ Password ထည့်ပါ';return;}
-  if(!window._firebaseAuth){err.textContent='Firebase မချိတ်ရသေးပါ';return;}
-  window._signInEmail(email,pass).then(function(){
-    closeM('mAuth'); doSave();
-  }).catch(function(e){
-    var msgs={'auth/user-not-found':'Email မတွေ့ပါ','auth/wrong-password':'Password မှားနေသည်','auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'};
-    err.textContent=msgs[e.code]||e.message;
-  });
-}
-
-function doSignUp(){
-  var name=document.getElementById('suName').value.trim();
-  var email=document.getElementById('suEmail').value.trim();
-  var pass=document.getElementById('suPass').value;
-  var err=document.getElementById('suErr');
-  err.textContent='';
-  if(!name||!email||!pass){err.textContent='အကုန်ထည့်ပါ';return;}
-  if(!window._firebaseAuth){err.textContent='Firebase မချိတ်ရသေးပါ';return;}
-  window._signUpEmail(name,email,pass).then(function(){
-    closeM('mAuth'); doSave();
-  }).catch(function(e){
-    var msgs={'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်','auth/weak-password':'Password အနည်းဆုံး ၆ လုံး'};
-    err.textContent=msgs[e.code]||e.message;
-  });
-}
-
-function doForgot(){
-  var email=document.getElementById('fgEmail').value.trim();
-  var err=document.getElementById('fgErr');
-  err.textContent='';
-  if(!email){err.textContent='Email ထည့်ပါ';err.style.color='var(--red)';return;}
-  if(!window._firebaseAuth){err.textContent='Firebase မချိတ်ရသေးပါ';err.style.color='var(--red)';return;}
-  window._resetPassword(email).then(function(){
-    err.textContent='✅ Reset link ပို့ပြီး — Email စစ်ပါ';
-    err.style.color='#16A34A';
-  }).catch(function(e){
-    err.textContent='Error: '+e.message;
-    err.style.color='var(--red)';
-  });
-}
-
-function authWithGoogle(){
-  if(!window._firebaseAuth){toast('Firebase မချိတ်ရသေးပါ');return;}
-  window._signInGoogle().then(function(){
-    closeM('mAuth'); doSave();
-  }).catch(function(e){toast('Google sign in မအောင်မြင်ပါ');});
-}
-
-function openGenreModal(){
-  var genres=docType==='story'?storyGenres:spGenres;
-  var html=genres.map(function(g){
-    return '<div class="po" style="cursor:pointer;" onclick="pickSaveGenre(\''+g.id+'\',this)">'+
-      '<span class="poi">'+g.icon+'</span>'+
-      '<div class="pot"><div>'+g.name+'</div></div>'+
-    '</div>';
-  }).join('');
-  document.getElementById('genreModalList').innerHTML=html;
-  openM('mGenre');
-}
-
-function pickSaveGenre(g,el){
-  docGenre=g;
-  document.querySelectorAll('#genreModalList .po').forEach(function(o){o.classList.remove('sel');});
-  el.classList.add('sel');
-}
-
-function confirmGenre(){
-  if(!docGenre){toast('Genre ရွေးပါ');return;}
-  closeM('mGenre');
-  openSaveModal();
-}
-
-function confirmSave(){
-  savePriv=pendSP;
+function confirmSave() {
+  savePriv = pendSP;
   closeM('mSave');
   doSave();
 }
 
-function doSave(){
-  /* local backup always */
-  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
-
-  if(currentUser && window._db){
+function doSave() {
+  try { localStorage.setItem('cp_' + docId, JSON.stringify(collect())); } catch(e) {}
+  if (currentUser && window._db) {
     setSv('unsaved');
     toast('💾 သိမ်းနေသည်...');
-    cloudSave().then(function(){
+    cloudSave().then(function() {
       setSv('ok');
-      toast('✅ သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));
-      /* redirect after toast visible */
-      setTimeout(function(){
-        window.location.href='/profile';
-      },1800);
-    }).catch(function(e){
-      console.error('cloudSave error',e);
+      toast('✅ သိမ်းပြီး · ' + (savePriv === 'public' ? '🌐 Public' : '🔒 Private'));
+      setTimeout(function() { window.location.href = '/profile'; }, 1800);
+    }).catch(function(e) {
       setSv('ok');
-      toast('⚠️ Local သိမ်းပြီး — cloud error: '+e.message);
+      toast('⚠️ Local သိမ်းပြီး — cloud error: ' + e.message);
     });
   } else {
     setSv('ok');
@@ -1063,281 +1241,386 @@ function doSave(){
   }
 }
 
-async function cloudSave(){
-  var data=collect();
-  data.uid=currentUser.uid;
-  data.authorName=currentUser.displayName||'';
-  data.authorUsername='';
-  data.updatedAt=new Date().toISOString();
-
-  /* get username */
-  try{
-    var usnap=await window._getDoc(window._doc(window._db,'users',currentUser.uid));
-    if(usnap.exists()) data.authorUsername=usnap.data().username||'';
-  }catch(e){}
-
-  /* preserve createdAt from existing doc */
-  try{
-    var existing=await window._getDoc(window._doc(window._db,'docs',docId));
-    if(existing.exists() && existing.data().createdAt){
-      data.createdAt=existing.data().createdAt;
-    } else {
-      data.createdAt=data.updatedAt;
-    }
-  }catch(e){
-    data.createdAt=data.updatedAt;
-  }
-
-  console.log('cloudSave: docId='+docId+', privacy='+data.privacy);
-  await window._setDoc(window._doc(window._db,'docs',docId),data);
+async function cloudSave() {
+  var data = collect();
+  data.uid = currentUser.uid;
+  data.authorName = currentUser.displayName || '';
+  data.authorUsername = '';
+  data.updatedAt = new Date().toISOString();
+  try {
+    var usnap = await window._getDoc(window._doc(window._db, 'users', currentUser.uid));
+    if (usnap.exists()) data.authorUsername = usnap.data().username || '';
+  } catch(e) {}
+  try {
+    var existing = await window._getDoc(window._doc(window._db, 'docs', docId));
+    data.createdAt = (existing.exists() && existing.data().createdAt) ? existing.data().createdAt : data.updatedAt;
+  } catch(e) { data.createdAt = data.updatedAt; }
+  await window._setDoc(window._doc(window._db, 'docs', docId), data);
 }
 
-function autoSave(){
+function autoSave() {
   setSv('unsaved');
   clearTimeout(autoT);
-  autoT=setTimeout(function(){
-    try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
-    if(currentUser && window._db){
-      cloudSave().then(function(){setSv('ok');}).catch(function(){setSv('local');});
+  autoT = setTimeout(function() {
+    try { localStorage.setItem('cp_' + docId, JSON.stringify(collect())); } catch(e) {}
+    if (currentUser && window._db) {
+      cloudSave().then(function() { setSv('ok'); }).catch(function() { setSv('local'); });
     } else {
       setSv('local');
     }
-  },2000);
+  }, 2000);
 }
 
-function setSv(s){
-  var e=document.getElementById('sv');
-  if(s==='ok'){e.textContent='Cloud Saved ✓';e.className='sv ok';}
-  else if(s==='local'){e.textContent='Local only';e.className='sv';}
-  else{e.textContent='Unsaved…';e.className='sv';}
+function setSv(s) {
+  var e = document.getElementById('sv');
+  if (s === 'ok')        { e.textContent = 'Cloud Saved ✓'; e.className = 'sv ok'; }
+  else if (s === 'local'){ e.textContent = 'Local only';    e.className = 'sv'; }
+  else                   { e.textContent = 'Unsaved…';      e.className = 'sv'; }
 }
 
-function collect(){
-  var spEls=els.map(function(e){return{type:e.type,text:e.ce.textContent};});
-  return{
-    id:docId,type:docType,privacy:savePriv,
-    genre:docGenre,
-    genreLabel:genreLabels[docGenre]||docGenre,
-    title:document.getElementById('docTitle').value,
-    author:(document.getElementById('cvAuth')||{}).value||'',
-    draft:(document.getElementById('cvDraft')||{}).value||'',
-    logline:(document.getElementById('loglineTa')||{}).value||'',
-    synopsis:(document.getElementById('synopsisTa')||{}).value||'',
-    treatment:(document.getElementById('treatmentTa')||{}).value||'',
-    screenplay:spEls,
-    story:(document.getElementById('stEd')||{}).innerHTML||'',
-    saved:new Date().toISOString()
+function collect() {
+  var spEls = els.map(function(e) { return { type: e.type, text: e.ce.textContent }; });
+  return {
+    id: docId,
+    type: docType,
+    privacy: savePriv,
+    genre: docGenre,
+    genreLabel: genreLabels[docGenre] || docGenre,
+    title: document.getElementById('docTitle').value,
+    author: (document.getElementById('cvAuth') || {}).value || '',
+    draft:  (document.getElementById('cvDraft') || {}).value || '',
+    logline:   (document.getElementById('loglineTa') || {}).value || '',
+    synopsis:  (document.getElementById('synopsisTa') || {}).value || '',
+    treatment: (document.getElementById('treatmentTa') || {}).value || '',
+    screenplay: spEls,
+    story: (document.getElementById('stEd') || {}).innerHTML || '',
+    saved: new Date().toISOString()
   };
 }
 
-/* PDF DOWNLOAD — pages only + watermark */
-function downloadPDF(){
-  if(docType==='story'){ toast('Story PDF မထုတ်ပါ — CinePodma မှာပဲ ဖတ်ပါ'); return; }
+/* =====================================================================
+   RESTORE DOC — fixed: no tab switching during restore
+   ===================================================================== */
+
+function restoreDoc(data) {
+  if (!data) return;
+  docType  = data.type || 'screenplay';
+  savePriv = data.privacy || 'private';
+  docGenre = data.genre || '';
+  selType  = docType;
+  selPriv  = savePriv;
+
+  document.getElementById('docTitle').value = data.title || '';
+
+  if (!window._docStarted) {
+    window._docStarted = true;
+    startDoc();
+  }
+
+  /* Restore content after DOM is ready */
+  setTimeout(function() {
+    if (docType === 'screenplay') {
+      /* Cover fields */
+      var ca = document.getElementById('cvAuth');
+      if (ca && data.author) ca.value = data.author;
+      var cd = document.getElementById('cvDraft');
+      if (cd && data.draft) cd.value = data.draft;
+
+      /* Section textareas */
+      ['logline', 'synopsis', 'treatment'].forEach(function(k) {
+        var ta = document.getElementById(k + 'Ta');
+        if (ta && data[k]) {
+          ta.value = data[k];
+          /* Mark dot if has content */
+          var dotMap = { logline: 'tL', synopsis: 'tSy', treatment: 'tTr' };
+          var dotTab = document.getElementById(dotMap[k]);
+          if (dotTab && data[k].trim()) dotTab.classList.add('has');
+        }
+      });
+
+      /* Screenplay elements — restore WITHOUT switching tabs */
+      if (data.screenplay && data.screenplay.length > 0) {
+        /* Clear existing */
+        clearAllSpElements();
+        /* Ensure screenplay pages are cleared */
+        pages.forEach(function(p) { p.pageEl.remove(); });
+        pages = [];
+        /* Add first page */
+        addPage();
+        /* Insert elements directly */
+        data.screenplay.forEach(function(s) {
+          if (!elCfg[s.type]) return;
+          lastEl = els.length > 0 ? els[els.length - 1].wrap : null;
+          insRaw(s.type, s.text);
+        });
+        /* Reflow now */
+        reflow();
+        /* If currently on screenplay tab, show pages */
+        if (curTab === 'screenplay') {
+          pages.forEach(function(p) { p.pageEl.style.display = ''; });
+        } else {
+          pages.forEach(function(p) { p.pageEl.style.display = 'none'; });
+        }
+      }
+    } else {
+      var se = document.getElementById('stEd');
+      if (se && data.story) se.innerHTML = data.story;
+    }
+    setSv('ok');
+  }, 400);
+}
+
+/* =====================================================================
+   GENRE MODAL
+   ===================================================================== */
+
+function openGenreModal() {
+  var genres = docType === 'story' ? storyGenres : spGenres;
+  document.getElementById('genreModalList').innerHTML = genres.map(function(g) {
+    return '<div class="po" style="cursor:pointer;" onclick="pickSaveGenre(\'' + g.id + '\',this)">' +
+      '<span class="poi">' + g.icon + '</span>' +
+      '<div class="pot"><div>' + g.name + '</div></div>' +
+    '</div>';
+  }).join('');
+  openM('mGenre');
+}
+
+function pickSaveGenre(g, el) {
+  docGenre = g;
+  document.querySelectorAll('#genreModalList .po').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+function confirmGenre() {
+  if (!docGenre) { toast('Genre ရွေးပါ'); return; }
+  closeM('mGenre');
+  openSaveModal();
+}
+
+/* =====================================================================
+   AUTH
+   ===================================================================== */
+
+function switchAuthTab(tab) {
+  document.getElementById('authSignin').style.display  = 'none';
+  document.getElementById('authSignup').style.display  = 'none';
+  document.getElementById('authForgot').style.display  = 'none';
+  document.getElementById('siErr').textContent = '';
+  document.getElementById('suErr').textContent = '';
+  document.getElementById('fgErr').textContent = '';
+  document.querySelectorAll('.auth-tab').forEach(function(b) { b.classList.remove('act'); });
+  if (tab === 'signin') {
+    document.getElementById('authSignin').style.display = '';
+    document.getElementById('atSignin').classList.add('act');
+  } else if (tab === 'signup') {
+    document.getElementById('authSignup').style.display = '';
+    document.getElementById('atSignup').classList.add('act');
+  } else {
+    document.getElementById('authForgot').style.display = '';
+  }
+}
+
+function doSignIn() {
+  var email = document.getElementById('siEmail').value.trim();
+  var pass  = document.getElementById('siPass').value;
+  var err   = document.getElementById('siErr');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Email နဲ့ Password ထည့်ပါ'; return; }
+  if (!window._firebaseAuth) { err.textContent = 'Firebase မချိတ်ရသေးပါ'; return; }
+  window._signInEmail(email, pass).then(function() {
+    closeM('mAuth'); doSave();
+  }).catch(function(e) {
+    var msgs = { 'auth/user-not-found': 'Email မတွေ့ပါ', 'auth/wrong-password': 'Password မှားနေသည်', 'auth/invalid-credential': 'Email သို့မဟုတ် Password မမှန်ပါ' };
+    err.textContent = msgs[e.code] || e.message;
+  });
+}
+
+function doSignUp() {
+  var name  = document.getElementById('suName').value.trim();
+  var email = document.getElementById('suEmail').value.trim();
+  var pass  = document.getElementById('suPass').value;
+  var err   = document.getElementById('suErr');
+  err.textContent = '';
+  if (!name || !email || !pass) { err.textContent = 'အကုန်ထည့်ပါ'; return; }
+  if (!window._firebaseAuth) { err.textContent = 'Firebase မချိတ်ရသေးပါ'; return; }
+  window._signUpEmail(name, email, pass).then(function() {
+    closeM('mAuth'); doSave();
+  }).catch(function(e) {
+    var msgs = { 'auth/email-already-in-use': 'Email ကို အသုံးပြုပြီးသားဖြစ်သည်', 'auth/weak-password': 'Password အနည်းဆုံး ၆ လုံး' };
+    err.textContent = msgs[e.code] || e.message;
+  });
+}
+
+function doForgot() {
+  var email = document.getElementById('fgEmail').value.trim();
+  var err   = document.getElementById('fgErr');
+  err.textContent = '';
+  if (!email) { err.textContent = 'Email ထည့်ပါ'; err.style.color = 'var(--red)'; return; }
+  if (!window._firebaseAuth) { err.textContent = 'Firebase မချိတ်ရသေးပါ'; err.style.color = 'var(--red)'; return; }
+  window._resetPassword(email).then(function() {
+    err.textContent = '✅ Reset link ပို့ပြီး — Email စစ်ပါ';
+    err.style.color = '#16A34A';
+  }).catch(function(e) {
+    err.textContent = 'Error: ' + e.message;
+    err.style.color = 'var(--red)';
+  });
+}
+
+function authWithGoogle() {
+  if (!window._firebaseAuth) { toast('Firebase မချိတ်ရသေးပါ'); return; }
+  window._signInGoogle().then(function() {
+    closeM('mAuth'); doSave();
+  }).catch(function() { toast('Google sign in မအောင်မြင်ပါ'); });
+}
+
+/* =====================================================================
+   SHARE / COLLAB / PDF
+   ===================================================================== */
+
+function openShareM() {
+  document.getElementById('sUrl').textContent = 'cinepodma.com/read/' + docId;
+  openM('mShare');
+}
+
+function cpLink() {
+  navigator.clipboard.writeText(document.getElementById('sUrl').textContent)
+    .then(function() { toast('🔗 Link ကူးပြီး'); });
+}
+
+function invC() {
+  var e = document.getElementById('clEmail').value.trim();
+  if (!e) return;
+  var l = document.getElementById('clList');
+  var i = document.createElement('div');
+  i.className = 'ci';
+  i.innerHTML = '<div class="ca">✉</div><div style="flex:1;font-size:13px;line-height:1.6;">' + e + '</div><span class="cr">INVITED</span>';
+  l.appendChild(i);
+  document.getElementById('clEmail').value = '';
+  toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');
+}
+
+function downloadPDF() {
+  if (docType === 'story') { toast('Story PDF မထုတ်ပါ — CinePodma မှာပဲ ဖတ်ပါ'); return; }
   openM('mPDF');
 }
 
-function confirmPDF(){
-  var wmText=document.getElementById('wmText').value.trim();
+function confirmPDF() {
+  var wmText = document.getElementById('wmText').value.trim();
   closeM('mPDF');
   doPrint(wmText);
 }
 
-function doPrint(wmText){
-  /* build print-only pages from current content */
-  var pages=[];
+function doPrint(wmText) {
+  var cvTitle  = (document.getElementById('cvTitle')  || {}).value || document.getElementById('docTitle').value || '';
+  var cvAuth   = (document.getElementById('cvAuth')   || {}).value || '';
+  var cvDraft  = (document.getElementById('cvDraft')  || {}).value || '';
+  var pgs = [];
 
-  /* Cover */
-  var cvTitle=(document.getElementById('cvTitle')||{}).value||document.getElementById('docTitle').value||'';
-  var cvAuth=(document.getElementById('cvAuth')||{}).value||'';
-  var cvDraft=(document.getElementById('cvDraft')||{}).value||'';
-  pages.push(
-    '<div class="pp-page pp-cover">'+
-      (wmText?'<div class="pp-wm">'+wmText+'</div>':'')+
-      '<div class="pp-cover-title">'+esc(cvTitle)+'</div>'+
-      '<div class="pp-cover-hr"></div>'+
-      '<div class="pp-cover-by">Written by</div>'+
-      '<div class="pp-cover-author">'+esc(cvAuth)+'</div>'+
-      '<div class="pp-cover-draft">'+esc(cvDraft)+'</div>'+
+  pgs.push(
+    '<div class="pp-page pp-cover">' +
+    (wmText ? '<div class="pp-wm">' + esc(wmText) + '</div>' : '') +
+    '<div class="pp-cover-title">' + esc(cvTitle) + '</div>' +
+    '<div class="pp-cover-hr"></div>' +
+    '<div class="pp-cover-by">Written by</div>' +
+    '<div class="pp-cover-author">' + esc(cvAuth) + '</div>' +
+    '<div class="pp-cover-draft">' + esc(cvDraft) + '</div>' +
     '</div>'
   );
 
-  /* Sections */
-  var secs=[
-    {id:'loglineTa',label:'Logline'},
-    {id:'synopsisTa',label:'Synopsis'},
-    {id:'treatmentTa',label:'Treatment'}
-  ];
-  secs.forEach(function(sec){
-    var el=document.getElementById(sec.id);
-    if(el&&el.value.trim()){
-      pages.push(
-        '<div class="pp-page pp-sec">'+
-          (wmText?'<div class="pp-wm">'+wmText+'</div>':'')+
-          '<div class="pp-sec-lbl">'+sec.label+'</div>'+
-          '<div class="pp-sec-text">'+esc(el.value)+'</div>'+
-        '</div>'
-      );
+  [{ id:'loglineTa', label:'Logline' }, { id:'synopsisTa', label:'Synopsis' }, { id:'treatmentTa', label:'Treatment' }].forEach(function(sec) {
+    var el = document.getElementById(sec.id);
+    if (el && el.value.trim()) {
+      pgs.push('<div class="pp-page pp-sec">' + (wmText ? '<div class="pp-wm">' + esc(wmText) + '</div>' : '') + '<div class="pp-sec-lbl">' + sec.label + '</div><div class="pp-sec-text">' + esc(el.value) + '</div></div>');
     }
   });
 
-  /* Screenplay pages */
-  spPages.forEach(function(sp,i){
-    var els2=sp.areaEl.querySelectorAll('.el');
-    if(els2.length===0&&i>0) return;
-    var elHtml='';
-    els2.forEach(function(el){
-      var type=el.dataset.type||'action';
-      var text=el.querySelector('.el-ce')?el.querySelector('.el-ce').textContent:'';
-      elHtml+='<div class="pp-el pp-'+type+'">'+esc(text)+'</div>';
+  pages.forEach(function(sp, i) {
+    var elems = sp.areaEl.querySelectorAll('.el');
+    if (elems.length === 0 && i > 0) return;
+    var elHtml = '';
+    elems.forEach(function(el) {
+      var type = el.dataset.type || 'action';
+      var text = el.querySelector('.el-ce') ? el.querySelector('.el-ce').textContent : '';
+      elHtml += '<div class="pp-el pp-' + type + '">' + esc(text) + '</div>';
     });
-    pages.push(
-      '<div class="pp-page pp-script">'+
-        (wmText?'<div class="pp-wm">'+wmText+'</div>':'')+
-        '<div class="pp-pnum">p. '+(i+1)+'</div>'+
-        (i===0?'<div class="pp-fade">FADE IN:</div>':'')+
-        elHtml+
-      '</div>'
-    );
+    pgs.push('<div class="pp-page pp-script">' + (wmText ? '<div class="pp-wm">' + esc(wmText) + '</div>' : '') + '<div class="pp-pnum">p. ' + (i + 1) + '</div>' + (i === 0 ? '<div class="pp-fade">FADE IN:</div>' : '') + elHtml + '</div>');
   });
 
-  /* Open print window */
-  var win=window.open('','_blank','width=900,height=700');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>`+esc(cvTitle||'CinePodma')+`</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans Myanmar',sans-serif;background:#fff;}
-.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;overflow:hidden;background:#fff;}
-.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;user-select:none;z-index:0;}
-.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
-.pp-cover-title{font-size:28px;font-weight:700;margin-bottom:24px;line-height:1.8;}
-.pp-cover-hr{width:60px;height:1px;background:#000;margin:0 auto 20px;}
-.pp-cover-by{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:6px;}
-.pp-cover-author{font-size:16px;font-weight:600;margin-bottom:8px;line-height:1.8;}
-.pp-cover-draft{font-size:11px;color:#999;margin-top:32px;letter-spacing:1px;}
-.pp-sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:8px;}
-.pp-sec-text{font-size:14px;line-height:2.0;white-space:pre-wrap;}
-.pp-pnum{position:absolute;top:20px;right:2.54cm;font-size:9px;color:#999;}
-.pp-fade{font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:8px;}
-.pp-el{font-size:13px;line-height:2.0;margin-bottom:2px;}
-.pp-scene{font-weight:700;padding:3px 8px;background:rgba(0,0,0,.04);border-left:2px solid #000;margin:20px 0 4px;}
-.pp-action{padding:2px 0;}
-.pp-char{font-weight:700;padding-left:34%;margin-top:12px;}
-.pp-paren{padding-left:26%;padding-right:26%;color:#666;font-style:italic;}
-.pp-dial{padding-left:20%;padding-right:20%;margin-bottom:4px;}
-.pp-trans{text-align:right;color:#666;font-weight:700;margin-top:12px;}
-@media print{body{-webkit-print-color-adjust:exact;}}
-</style></head><body>`+pages.join('')+`</body></html>`);
+  var win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(cvTitle || 'CinePodma') + '</title><style>@import url(\'https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap\');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:\'Courier New\',Courier,monospace;background:#fff;}.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;overflow:hidden;background:#fff;}.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;user-select:none;z-index:0;}.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}.pp-cover-title{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:28px;font-weight:700;margin-bottom:24px;line-height:1.8;}.pp-cover-hr{width:60px;height:1px;background:#000;margin:0 auto 20px;}.pp-cover-by{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:6px;}.pp-cover-author{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:16px;font-weight:600;margin-bottom:8px;line-height:1.8;}.pp-cover-draft{font-size:11px;color:#999;margin-top:32px;letter-spacing:1px;}.pp-sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:8px;}.pp-sec-text{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:14px;line-height:2.0;white-space:pre-wrap;}.pp-pnum{position:absolute;top:20px;right:2.54cm;font-size:9px;color:#999;}.pp-fade{font-size:12px;font-weight:600;letter-spacing:.5px;margin-bottom:8px;}.pp-el{font-size:12px;line-height:1.8;margin-bottom:2px;}.pp-scene{font-weight:bold;margin:16px 0 4px;text-transform:uppercase;}.pp-action{padding:2px 0;}.pp-char{font-weight:normal;padding-left:34%;margin-top:10px;text-transform:uppercase;}.pp-paren{padding-left:26%;padding-right:26%;}.pp-dial{padding-left:20%;padding-right:20%;margin-bottom:4px;}.pp-trans{text-align:right;margin-top:10px;text-transform:uppercase;}@media print{body{-webkit-print-color-adjust:exact;}}</style></head><body>' + pgs.join('') + '</body></html>');
   win.document.close();
   win.focus();
-  setTimeout(function(){win.print();},800);
+  setTimeout(function() { win.print(); }, 800);
 }
 
-function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-/* SHARE / COLLAB */
-function openShareM(){
-  document.getElementById('sUrl').textContent='cinepodma.com/read/'+docId;
-  openM('mShare');
-}
-function cpLink(){
-  navigator.clipboard.writeText(document.getElementById('sUrl').textContent)
-    .then(function(){toast('🔗 Link ကူးပြီး');});
-}
-function invC(){
-  var e=document.getElementById('clEmail').value.trim();if(!e)return;
-  var l=document.getElementById('clList');
-  var i=document.createElement('div');i.className='ci';
-  i.innerHTML='<div class="ca">✉</div><div style="flex:1;font-size:13px;line-height:1.6;">'+e+'</div><span class="cr">INVITED</span>';
-  l.appendChild(i);document.getElementById('clEmail').value='';
-  toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');
+/* =====================================================================
+   MODALS
+   ===================================================================== */
+
+function openM(id)  { document.getElementById(id).classList.add('on'); }
+function closeM(id) { document.getElementById(id).classList.remove('on'); }
+function toast(m) {
+  var t = document.getElementById('toast');
+  t.textContent = m;
+  t.classList.add('on');
+  setTimeout(function() { t.classList.remove('on'); }, 2800);
 }
 
-/* MODALS */
-function openM(id){document.getElementById(id).classList.add('on');}
-function closeM(id){document.getElementById(id).classList.remove('on');}
-document.addEventListener('click',function(e){
-  ['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(function(id){
-    var el=document.getElementById(id);if(el&&e.target===el)closeM(id);
+document.addEventListener('click', function(e) {
+  ['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && e.target === el) closeM(id);
   });
 });
-document.addEventListener('keydown',function(e){
-  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openSaveModal();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();doUndo();}
-  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();doRedo();}
-  if(e.key==='Escape')['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);
+
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); openSaveModal(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); doUndo(); }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); doRedo(); }
+  if (e.key === 'Escape') ['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);
 });
 
-/* LOAD — Firestore first, localStorage fallback */
-window.addEventListener('DOMContentLoaded',function(){
-  var p=new URLSearchParams(window.location.search);
-  var id=p.get('id');if(!id)return;
-  docId=id;
-  /* try localStorage first for instant load */
-  var raw=localStorage.getItem('cp_'+id)||localStorage.getItem('cp_doc_'+id);
-  if(raw){
-    try{
-      var data=JSON.parse(raw);
+/* =====================================================================
+   ON LOAD
+   ===================================================================== */
+
+window.addEventListener('DOMContentLoaded', function() {
+  var p = new URLSearchParams(window.location.search);
+  var id = p.get('id');
+  if (!id) return;
+  docId = id;
+
+  /* Try localStorage first for instant load */
+  var raw = localStorage.getItem('cp_' + id) || localStorage.getItem('cp_doc_' + id);
+  if (raw) {
+    try {
+      var data = JSON.parse(raw);
       restoreDoc(data);
-    }catch(e){console.error(e);}
+    } catch(e) { console.error('localStorage restore error', e); }
   }
-  /* Firestore load happens in Firebase module after auth */
-  window._pendingDocId=id;
+  window._pendingDocId = id;
 });
-
-function restoreDoc(data){
-  if(!data)return;
-  docType=data.type||'screenplay';
-  savePriv=data.privacy||'private';
-  selType=docType;selPriv=savePriv;
-  document.getElementById('docTitle').value=data.title||'';
-  if(!window._docStarted){
-    window._docStarted=true;
-    startDoc();
-  }
-  setTimeout(function(){
-    if(docType==='screenplay'){
-      var ca=document.getElementById('cvAuth');if(ca&&data.author)ca.value=data.author;
-      var cd=document.getElementById('cvDraft');if(cd&&data.draft)cd.value=data.draft;
-      ['logline','synopsis','treatment'].forEach(function(k){
-        var ta=document.getElementById(k+'Ta');if(ta&&data[k])ta.value=data[k];
-      });
-      if(data.screenplay&&data.screenplay.length){
-        /* clear existing elements first */
-        els=[];lastEl=null;spPages=[];
-        document.getElementById('scaler').innerHTML='';
-        goTab('screenplay',document.getElementById('tSp'));
-        data.screenplay.forEach(function(el){ins(el.type);});
-        var ces=document.querySelectorAll('.el .el-ce');
-        data.screenplay.forEach(function(el,i){if(ces[i])ces[i].textContent=el.text;});
-        goTab('cover',document.querySelector('.tb.act'));
-      }
-    } else {
-      var se=document.getElementById('stEd');if(se&&data.story)se.innerHTML=data.story;
-    }
-    setSv('ok');
-  },300);
-}
 </script>
 
 <!-- FIREBASE -->
 <script type="module">
-import { initializeApp }  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
          createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,
          sendPasswordResetEmail, updateProfile }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, collection }
+import { getFirestore, doc, setDoc, getDoc }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
-const firebaseConfig={
-  apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-  authDomain:"cinepodma.firebaseapp.com",
-  projectId:"cinepodma",
-  storageBucket:"cinepodma.firebasestorage.app",
-  messagingSenderId:"587916526322",
-  appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+const firebaseConfig = {
+  apiKey: "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain: "cinepodma.firebaseapp.com",
+  projectId: "cinepodma",
+  storageBucket: "cinepodma.firebasestorage.app",
+  messagingSenderId: "587916526322",
+  appId: "1:587916526322:web:d00775311fb92fa1c8466b"
 };
 
 const app      = initializeApp(firebaseConfig);
@@ -1345,61 +1628,80 @@ const auth     = getAuth(app);
 const db       = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-/* expose Firestore helpers */
-window._db     = db;
-window._doc    = doc;
-window._setDoc = setDoc;
-window._getDoc = getDoc;
+window._db         = db;
+window._doc        = doc;
+window._setDoc     = setDoc;
+window._getDoc     = getDoc;
 window._firebaseAuth = auth;
 
-/* expose auth functions */
-window._signInEmail = function(email, pass){
+window._signInEmail = function(email, pass) {
   return signInWithEmailAndPassword(auth, email, pass);
 };
-window._signUpEmail = async function(name, email, pass){
+
+window._signUpEmail = async function(name, email, pass) {
   var cred = await createUserWithEmailAndPassword(auth, email, pass);
-  await updateProfile(cred.user, {displayName: name});
-  /* create user doc */
-  try{
-    await setDoc(doc(db,'users',cred.user.uid),{
-      name:name, email:email, username:'@'+email.split('@')[0],
-      bio:'', avatar:'', role:'', onboarded:false,
-      createdAt:new Date().toISOString()
+  await updateProfile(cred.user, { displayName: name });
+  try {
+    await setDoc(doc(db, 'users', cred.user.uid), {
+      name, email,
+      username: '@' + email.split('@')[0],
+      bio: '', avatar: '', role: '', onboarded: false,
+      createdAt: new Date().toISOString()
     });
-  }catch(e){}
+  } catch(e) {}
   return cred;
 };
-window._signInGoogle = function(){
+
+window._signInGoogle = function() {
   return signInWithPopup(auth, provider);
 };
-window._resetPassword = function(email){
+
+window._resetPassword = function(email) {
   return sendPasswordResetEmail(auth, email);
 };
 
-/* auth state */
-onAuthStateChanged(auth, async function(user){
+onAuthStateChanged(auth, async function(user) {
   currentUser = user;
   renderTBR();
 
-  /* load doc from Firestore if id param exists and logged in */
   var pendId = window._pendingDocId;
-  if(pendId && user && !window._cloudLoaded){
+  if (pendId && user && !window._cloudLoaded) {
     window._cloudLoaded = true;
-    try{
-      var snap = await getDoc(doc(db,'docs',pendId));
-      if(snap.exists()){
+    try {
+      var snap = await getDoc(doc(db, 'docs', pendId));
+      if (snap.exists()) {
         var data = snap.data();
         data.id = pendId;
-        try{localStorage.setItem('cp_'+pendId, JSON.stringify(data));}catch(e){}
-        if(!window._docStarted){
+        try { localStorage.setItem('cp_' + pendId, JSON.stringify(data)); } catch(e) {}
+        if (!window._docStarted) {
           restoreDoc(data);
         } else {
           savePriv = data.privacy || 'private';
           selPriv  = savePriv;
           docGenre = data.genre || '';
+          /* Re-restore screenplay content from cloud (fresher than localStorage) */
+          if (data.type === 'screenplay' && data.screenplay && data.screenplay.length > 0) {
+            clearAllSpElements();
+            pages.forEach(function(p) { p.pageEl.remove(); });
+            pages = [];
+            addPage();
+            data.screenplay.forEach(function(s) {
+              if (!elCfg[s.type]) return;
+              lastEl = els.length > 0 ? els[els.length - 1].wrap : null;
+              insRaw(s.type, s.text);
+            });
+            reflow();
+            if (curTab === 'screenplay') {
+              pages.forEach(function(p) { p.pageEl.style.display = ''; });
+            } else {
+              pages.forEach(function(p) { p.pageEl.style.display = 'none'; });
+            }
+            updatePageIndicator();
+          }
         }
+        setSv('ok');
       }
-    }catch(e){ console.error('Firestore load error', e); }
+    } catch(e) { console.error('Firestore load error', e); }
   }
 });
 </script>
