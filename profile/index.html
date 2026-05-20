@@ -1179,7 +1179,11 @@ window.openDocPopup = function(id){
     + '<button class="dp-btn ghost" onclick="window._togglePrivacy(\''+id+'\');window.closeDp();">'+(s.privacy==='public'?'🔒 Private ပြောင်းမည်':'🌐 Public ပြောင်းမည်')+'</button>'
     + '<button class="dp-btn danger" onclick="window._deleteScript(\''+id+'\');window.closeDp();">🗑 ဖျက်မည်</button>';
   } else {
-    btns.innerHTML = '<button class="dp-btn black" onclick="location.href=\'/read?id='+id+'\'">📖 ဖတ်မည်</button>';
+    if(s.pdfUrl){
+      btns.innerHTML = '<button class="dp-btn black" onclick="window.open(\''+s.pdfUrl+'\',\'_blank\')">📄 PDF ဖတ်မည်</button>';
+    } else {
+      btns.innerHTML = '<button class="dp-btn black" onclick="location.href=\'/read?id='+id+'\'">📖 ဖတ်မည်</button>';
+    }
   }
   document.getElementById('docDetailPopup').classList.add('on');
   document.body.style.overflow = 'hidden';
@@ -1259,9 +1263,26 @@ async function loadClappedDocs(){
     var snap = await getDocs(collection(db,'clapping',profileUid,'users'));
     if (snap.empty) { grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Clapped doc မရှိသေးပါ</div>'; return; }
     var docIds=[]; snap.forEach(function(d){ docIds.push(d.data().docId||d.id); });
-    var docs = await Promise.all(docIds.map(function(id){ return getDoc(doc(db,'docs',id)); }));
+    /* docs + adminDocs နှစ်ခုလုံးမှ ရှာမည် */
+    var results = await Promise.all(docIds.map(async function(id){
+      var d = await getDoc(doc(db,'docs',id));
+      if(d.exists()) return d;
+      return getDoc(doc(db,'adminDocs',id));
+    }));
     clappedDocs = [];
-    docs.forEach(function(d){ if(d.exists()){ var dt=d.data(); clappedDocs.push({id:d.id,title:dt.title,type:dt.type,privacy:dt.privacy,genreLabel:dt.genreLabel,authorUsername:dt.authorUsername,authorName:dt.authorName,uid:dt.uid,clapCount:dt.clapCount||0,coverUrl:dt.coverUrl||''}); }});
+    results.forEach(function(d){
+      if(!d||!d.exists()) return;
+      var dt=d.data();
+      clappedDocs.push({
+        id:d.id, title:dt.title, type:dt.type||'screenplay',
+        privacy:dt.privacy||'public',
+        genreLabel:dt.genreLabel||'ဇာတ်ညွှန်း',
+        authorUsername:dt.authorUsername||dt.author||'',
+        authorName:dt.authorName||dt.author||'',
+        uid:dt.uid||'', clapCount:dt.clapCount||0,
+        coverUrl:dt.coverUrl||'', pdfUrl:dt.pdfUrl||''
+      });
+    });
     renderClappedDocs();
   } catch(e){ grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);">ဖွင့်မရပါ — '+e.message+'</div>'; }
 }
@@ -1269,8 +1290,11 @@ async function loadClappedDocs(){
 function renderClappedDocs(){
   var grid = document.getElementById('clappedGrid');
   var docs = clappedDocs.slice();
-  if (!isOwner) { docs = docs.filter(function(d){ return d.privacy==='public'; }); }
-  else if (clappedPrivacy==='public') { docs = docs.filter(function(d){ return d.privacy==='public'; }); }
+  if (!isOwner) {
+    docs = docs.filter(function(d){ return d.privacy==='public' || !!d.pdfUrl; });
+  } else if (clappedPrivacy==='public') {
+    docs = docs.filter(function(d){ return d.privacy==='public' || !!d.pdfUrl; });
+  }
   if (docs.length===0) { grid.innerHTML='<div style="padding:32px;text-align:center;color:var(--slate-lt);font-size:13px;">Doc မရှိသေးပါ</div>'; return; }
   grid.innerHTML='';
   docs.forEach(function(s){
