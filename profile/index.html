@@ -617,9 +617,13 @@ footer {
         <option value="Producer">🎬 Producer</option>
         <option value="Director">🎥 Director</option>
         <option value="Writer">✍️ Writer</option>
+        <option value="Screenwriter">📝 Screenwriter</option>
         <option value="Filmmaker">🎞️ Filmmaker</option>
+        <option value="Cinematographer">📷 Cinematographer</option>
+        <option value="Film Crew">🎙️ Film Crew</option>
         <option value="Actor">🎭 Actor</option>
         <option value="Cinephile">🍿 Cinephile</option>
+        <option value="Fan">⭐ Fan</option>
       </select>
     </div>
     <div class="form-group">
@@ -824,7 +828,7 @@ async function loadProfile(){
   document.getElementById('dispUsername').textContent = currentProfile.username  || '';
   document.getElementById('dispBio').textContent      = currentProfile.bio       || '';
   if (currentProfile.role) {
-    var icons = {Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
+    var icons = {Producer:'🎬',Director:'🎥',Writer:'✍️',Screenwriter:'📝',Filmmaker:'🎞️',Cinematographer:'📷','Film Crew':'🎙️',Actor:'🎭',Cinephile:'🍿',Fan:'⭐'};
     document.getElementById('dispRole').innerHTML =
       '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">'+(icons[currentProfile.role]||'')+' '+currentProfile.role+'</span>';
   }
@@ -1216,7 +1220,7 @@ window.saveProfile = async function(){
   document.getElementById('dispName').textContent = name;
   document.getElementById('dispBio').textContent  = bio;
   if (role) {
-    var icons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
+    var icons={Producer:'🎬',Director:'🎥',Writer:'✍️',Screenwriter:'📝',Filmmaker:'🎞️',Cinematographer:'📷','Film Crew':'🎙️',Actor:'🎭',Cinephile:'🍿',Fan:'⭐'};
     document.getElementById('dispRole').innerHTML=
       '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--slate-bg);border-radius:99px;font-size:12px;color:var(--slate);">'+(icons[role]||'')+' '+role+'</span>';
   }
