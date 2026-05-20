@@ -315,6 +315,9 @@ async function toggleClap(doc,cardBtn,popupBtn){
     var snap=await window._getDoc2(cRef);
     if(snap.exists()){
       await window._deleteDoc(cRef);
+      try{
+        if(!isAdmin) await window._deleteDoc(window._getRef('userDocClaps/'+currentUser.uid+'/docs/'+docId));
+      }catch(e){}
       var s=await window._getDoc2(window._getRef(docsCol+'/'+docId));
       var n=s.exists()?(s.data().clapCount||0):0;
       await window._updateDoc(window._getRef(docsCol+'/'+docId),{clapCount:Math.max(0,n-1)});
@@ -325,6 +328,16 @@ async function toggleClap(doc,cardBtn,popupBtn){
     }else{
       var now=new Date().toISOString();
       await window._setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
+      /* track in userDocClaps for profile Clapped tab */
+      try{
+        var histCol = isAdmin ? 'adminDocClaps_user' : 'userDocClaps';
+        if(!isAdmin){
+          await window._setDoc(
+            window._getRef('userDocClaps/'+currentUser.uid+'/docs/'+docId),
+            {docId:docId,clappedAt:now,type:isAdmin?'admin':'podmate'}
+          );
+        }
+      }catch(e){}
       var s2=await window._getDoc2(window._getRef(docsCol+'/'+docId));
       var n2=s2.exists()?(s2.data().clapCount||0):0;
       await window._updateDoc(window._getRef(docsCol+'/'+docId),{clapCount:n2+1});
