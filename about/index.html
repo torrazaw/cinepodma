@@ -10,17 +10,34 @@
 :root{--white:#fff;--black:#0A0A0A;--slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;--border:#E5E7EB;--red:#DC2626;--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+
+/* ── NAV — centered max-width (home page ကဲ့သို့) ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px 28px;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  width:100%;max-width:900px;
+  display:flex;align-items:center;justify-content:space-between;
+}
 .brand{font-family:var(--font-en);font-size:13px;color:var(--black);text-decoration:none;line-height:1.3;}
 .brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
 .back-btn{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
 .back-btn:hover{background:var(--slate-bg);color:var(--black);}
+
 main{flex:1;max-width:680px;margin:0 auto;width:100%;padding:100px 24px 60px;}
+
 .hero{text-align:center;padding:40px 0 48px;border-bottom:1px solid var(--border);margin-bottom:48px;}
 .hero-en{font-family:var(--font-en);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:12px;}
 .hero-title{font-family:var(--font-en);font-size:48px;line-height:1.2;margin-bottom:6px;}
 .hero-red{color:var(--red);}
+/* မြန်မာလို ခေါင်းစဉ် */
+.hero-my{font-family:var(--font-my);font-size:18px;font-weight:600;color:var(--slate);letter-spacing:2px;margin-top:10px;}
 .hero-sub{font-size:15px;color:var(--slate);line-height:2.0;margin-top:16px;}
+
 .section{margin-bottom:48px;}
 .sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -38,18 +55,24 @@ main{flex:1;max-width:680px;margin:0 auto;width:100%;padding:100px 24px 60px;}
 .btn-r{display:inline-flex;align-items:center;gap:6px;padding:14px 28px;border-radius:99px;border:none;cursor:pointer;font-family:var(--font-my);font-size:14px;font-weight:700;line-height:1.6;background:var(--red);color:var(--white);text-decoration:none;transition:all .15s;}
 .btn-r:hover{opacity:.9;transform:translateY(-2px);}
 footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16px 28px;text-align:center;font-family:var(--font-en);font-size:11px;color:var(--slate);letter-spacing:.5px;}
-@media(max-width:600px){.feature-grid{grid-template-columns:1fr;}.hero-title{font-size:36px;}}
+@media(max-width:600px){.feature-grid{grid-template-columns:1fr;}.hero-title{font-size:36px;}.hero-my{font-size:15px;}}
 </style>
 </head>
 <body>
+
 <nav>
-  <a class="brand" href="/home">cine<br><span>podma</span></a>
-  <a class="back-btn" href="/home">← Home</a>
+  <div class="nav-inner">
+    <a class="brand" href="/home">cine<br><span>podma</span></a>
+    <a class="back-btn" href="/home">← ပြန်</a>
+  </div>
 </nav>
+
 <main>
   <div class="hero">
     <div class="hero-en">Myanmar Screenplay Editor</div>
     <h1 class="hero-title">Cine<span class="hero-red">.</span><br>Podma</h1>
+    <!-- မြန်မာလို ခေါင်းစဉ် -->
+    <div class="hero-my">စီနီပုဒ်မ</div>
     <p class="hero-sub">မြန်မာဘာသာဖြင့် screenplay ရေးသားနိုင်သော<br>professional script editor platform</p>
   </div>
 
@@ -64,7 +87,7 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
       <div class="feat"><div class="feat-icon">🎬</div><div class="feat-title">Industry Format</div><div class="feat-desc">Scene, Action, Character, Dialogue — standard screenplay format</div></div>
       <div class="feat"><div class="feat-icon">📖</div><div class="feat-title">Story Editor</div><div class="feat-desc">ဝတ္ထု၊ ဝတ္ထုတို၊ ဆောင်းပါး — rich text editor</div></div>
       <div class="feat"><div class="feat-icon">☁️</div><div class="feat-title">Cloud Save</div><div class="feat-desc">Firebase Firestore — ဘယ် device မှမဆို access</div></div>
-      <div class="feat"><div class="feat-icon">👥</div><div class="feat-title">Podmates</div><div class="feat-icon-sm">Community of filmmakers</div></div>
+      <div class="feat"><div class="feat-icon">👥</div><div class="feat-title">Podmates</div><div class="feat-desc">Community of filmmakers</div></div>
       <div class="feat"><div class="feat-icon">📄</div><div class="feat-title">PDF Export</div><div class="feat-desc">Watermark option ပါသော A4 PDF export</div></div>
       <div class="feat"><div class="feat-icon">🌐</div><div class="feat-title">Public Library</div><div class="feat-desc">Public docs — Library မှ ဖတ်ရှုနိုင်</div></div>
     </div>
@@ -87,11 +110,12 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:16p
     <a class="btn-r" href="/write">✍ ဇာတ်လမ်းစရေးမည်</a>
   </div>
 </main>
+
 <footer>© 2026 CinePodma. All rights reserved.</footer>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getFirestore, doc, getDoc, collection, query, where, getDocs }
+import { getFirestore, doc, getDoc }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -108,36 +132,24 @@ const db  = getFirestore(app);
 
 async function loadRaZaw() {
   try {
-    /* get uid from usernames collection */
     var usnap = await getDoc(doc(db,'usernames','razaw'));
     if (!usnap.exists()) return;
     var uid = usnap.data().uid;
-
-    /* get profile */
     var psnap = await getDoc(doc(db,'users',uid));
     if (!psnap.exists()) return;
     var p = psnap.data();
-
-    /* update link */
     document.getElementById('teamCard').href = '/profile?uid=' + uid;
-
-    /* avatar */
     var avEl = document.getElementById('teamAv');
     if (p.avatar) {
       avEl.innerHTML = '<img src="'+p.avatar+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
     } else {
       avEl.textContent = (p.name||'R').charAt(0);
     }
-
-    /* name */
     document.getElementById('teamName').textContent = p.name || 'Ra Zaw';
-
-    /* role + clappers */
     var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Filmmaker:'🎞️',Actor:'🎭',Cinephile:'🍿'};
     var roleIcon = roleIcons[p.role] || '';
     document.getElementById('teamRole').textContent =
       'Founder · ' + (roleIcon ? roleIcon+' ' : '') + (p.role || 'Cinephile');
-
   } catch(e) { console.error('loadRaZaw', e); }
 }
 
