@@ -224,14 +224,17 @@ function stripHtml(html){if(!html)return '';var tmp=document.createElement('div'
 /* Convert Drive share/view link → direct image URL */
 function convertCoverUrl(url){
   if(!url) return '';
-  /* already uc?id format */
-  if(url.includes('uc?id=') || url.includes('uc?export=')) return url;
+  /* already lh3 format — best */
+  if(url.includes('lh3.googleusercontent.com')) return url;
   /* extract file ID from /file/d/ID/... */
   var m=url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if(m) return 'https://drive.google.com/uc?id='+m[1];
-  /* /open?id=ID */
+  if(m) return 'https://lh3.googleusercontent.com/d/'+m[1];
+  /* /open?id=ID or ?id=ID */
   var m2=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if(m2) return 'https://drive.google.com/uc?id='+m2[1];
+  if(m2) return 'https://lh3.googleusercontent.com/d/'+m2[1];
+  /* uc?id= old format — convert */
+  var m3=url.match(/uc\?id=([a-zA-Z0-9_-]+)/);
+  if(m3) return 'https://lh3.googleusercontent.com/d/'+m3[1];
   return url;
 }
 
