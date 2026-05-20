@@ -390,7 +390,6 @@ async function loadAdminDocs(){
   var grid=document.getElementById('libGrid');
   grid.innerHTML='<div class="state-msg"><div class="spinner"></div>ဖွင့်နေသည်...</div>';
   try{
-    /* dynamic import to access Firestore after module loads */
     var snap=await window._adminDocsSnap();
     adminDocs=[];
     snap.forEach(function(d){
@@ -403,6 +402,16 @@ async function loadAdminDocs(){
         synopsis:dt.synopsis||'',clapCount:dt.clapCount||0
       });
     });
+    /* load myClaps for adminDocs */
+    var cu=window._currentUser||null;
+    if(cu && window._adminClapSnap){
+      for(var i=0;i<adminDocs.length;i++){
+        try{
+          var cs=await window._adminClapSnap(adminDocs[i].id, cu.uid);
+          if(cs.exists()) myClaps[adminDocs[i].id]=true;
+        }catch(e){}
+      }
+    }
     applyAdmin();
   }catch(e){
     grid.innerHTML='<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';
@@ -451,6 +460,9 @@ onAuthStateChanged(auth,async function(user){
 /* expose adminDocs fetcher for inline script */
 window._adminDocsSnap=function(){
   return getDocs(query(collection(db,'adminDocs'),orderBy('createdAt','desc')));
+};
+window._adminClapSnap=function(docId,uid){
+  return getDoc(doc(db,'adminDocClaps',docId,'users',uid));
 };
 
 async function loadDocs(){
