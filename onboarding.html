@@ -8,295 +8,106 @@
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --white:    #FFFFFF;
-  --black:    #0A0A0A;
-  --slate:    #6B7280;
-  --slate-lt: #9CA3AF;
-  --slate-bg: #F3F4F6;
-  --red:      #DC2626;
-  --red-h:    #B91C1C;
-  --border:   #E5E7EB;
-  --green:    #16A34A;
-  --radius:   16px;
-  --font-en:  'Special Elite', 'Courier New', monospace;
-  --font-my:  'Noto Sans Myanmar', sans-serif;
+  --white:#FFFFFF;--black:#0A0A0A;--slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;
+  --red:#DC2626;--red-h:#B91C1C;--border:#E5E7EB;--green:#16A34A;
+  --radius:16px;--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: var(--font-my);
-  background: var(--white);
-  color: var(--black);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  -webkit-font-smoothing: antialiased;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased;}
 
-/* ── CARD ── */
-.ob-card {
-  width: 100%;
-  max-width: 440px;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 36px 32px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.07);
-}
+.ob-card{width:100%;max-width:440px;background:var(--white);border:1px solid var(--border);border-radius:24px;padding:36px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.07);}
+.ob-brand{font-family:var(--font-en);font-size:14px;color:var(--black);margin-bottom:28px;display:block;line-height:1.3;}
+.ob-brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
 
-/* ── BRAND ── */
-.ob-brand {
-  font-family: var(--font-en);
-  font-size: 14px;
-  color: var(--black);
-  margin-bottom: 28px;
-  display: block;
-  line-height: 1.3;
-}
-.ob-brand span { display: block; color: var(--slate); font-size: 11px; letter-spacing: 1px; }
+.progress-bar{display:flex;align-items:center;gap:6px;margin-bottom:32px;}
+.prog-step{flex:1;height:3px;background:var(--border);border-radius:99px;transition:background .3s;}
+.prog-step.done{background:var(--black);}
+.prog-step.active{background:var(--red);}
+.prog-label{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
 
-/* ── PROGRESS ── */
-.progress-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 32px;
-}
-.prog-step {
-  flex: 1;
-  height: 3px;
-  background: var(--border);
-  border-radius: 99px;
-  transition: background 0.3s;
-}
-.prog-step.done { background: var(--black); }
-.prog-step.active { background: var(--red); }
-.prog-label {
-  font-family: var(--font-en);
-  font-size: 10px;
-  color: var(--slate-lt);
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
+.ob-title{font-family:var(--font-my);font-size:20px;font-weight:700;margin-bottom:6px;color:var(--black);line-height:1.6;}
+.ob-sub{font-size:13px;color:var(--slate);margin-bottom:24px;line-height:1.8;}
 
-/* ── STEP TITLE ── */
-.ob-title {
-  font-family: var(--font-my);
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--black);
-  line-height: 1.6;
-}
-.ob-sub {
-  font-size: 13px;
-  color: var(--slate);
-  margin-bottom: 24px;
-  line-height: 1.8;
-}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--black);}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;line-height:1.8;background:var(--white);}
+.form-input:focus{border-color:var(--black);}
+.form-input.valid{border-color:var(--green);}
+.form-input.invalid{border-color:var(--red);}
+.input-hint{font-size:11px;margin-top:5px;line-height:1.6;color:var(--slate-lt);}
+.input-hint.ok{color:var(--green);}
+.input-hint.err{color:var(--red);}
 
-/* ── FORM ── */
-.form-group { margin-bottom: 16px; }
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: var(--black);
-}
-.input-wrap { position: relative; }
-.form-input {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  font-family: var(--font-my);
-  font-size: 14px;
-  color: var(--black);
-  outline: none;
-  transition: border-color 0.15s;
-  line-height: 1.8;
-  background: var(--white);
-}
-.form-input:focus { border-color: var(--black); }
-.form-input.valid   { border-color: var(--green); }
-.form-input.invalid { border-color: var(--red); }
+.username-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s;}
+.username-wrap:focus-within{border-color:var(--black);}
+.username-wrap.valid{border-color:var(--green);}
+.username-wrap.invalid{border-color:var(--red);}
+.username-at{padding:11px 12px 11px 14px;font-family:var(--font-en);font-size:14px;color:var(--slate);background:var(--slate-bg);border-right:1px solid var(--border);user-select:none;}
+.username-input{flex:1;padding:11px 14px;border:none;outline:none;font-family:var(--font-en);font-size:14px;color:var(--black);background:transparent;letter-spacing:.3px;}
 
-.input-status {
-  position: absolute;
-  right: 12px; top: 50%;
-  transform: translateY(-50%);
-  font-size: 14px;
+/* ── ROLE GRID — 2 col, roles span naturally ── */
+.role-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:8px;
 }
-.input-hint {
-  font-size: 11px;
-  margin-top: 5px;
-  line-height: 1.6;
-  color: var(--slate-lt);
+.role-opt{
+  padding:12px 10px;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .15s;
+  text-align:center;
+  background:var(--white);
 }
-.input-hint.ok  { color: var(--green); }
-.input-hint.err { color: var(--red); }
+.role-opt:hover{border-color:var(--black);background:var(--slate-bg);}
+.role-opt.selected{border-color:var(--black);background:var(--black);color:var(--white);}
+.role-icon{font-size:20px;display:block;margin-bottom:3px;}
+.role-name{font-family:var(--font-en);font-size:10px;letter-spacing:.5px;font-weight:600;display:block;}
+.role-name-my{font-size:10px;opacity:.7;display:block;margin-top:1px;line-height:1.4;}
+/* Fan spans full width */
+.role-opt.full{grid-column:1 / -1;}
 
-/* ── USERNAME PREFIX ── */
-.username-wrap {
-  display: flex;
-  align-items: center;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: border-color 0.15s;
-}
-.username-wrap:focus-within { border-color: var(--black); }
-.username-wrap.valid   { border-color: var(--green); }
-.username-wrap.invalid { border-color: var(--red); }
-.username-at {
-  padding: 11px 12px 11px 14px;
-  font-family: var(--font-en);
-  font-size: 14px;
-  color: var(--slate);
-  background: var(--slate-bg);
-  border-right: 1px solid var(--border);
-  user-select: none;
-}
-.username-input {
-  flex: 1;
-  padding: 11px 14px;
-  border: none;
-  outline: none;
-  font-family: var(--font-en);
-  font-size: 14px;
-  color: var(--black);
-  background: transparent;
-  letter-spacing: 0.3px;
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 20px;border-radius:12px;border:none;cursor:pointer;font-family:var(--font-my);font-size:14px;font-weight:600;line-height:1.6;transition:all .15s;white-space:nowrap;width:100%;}
+.btn-red{background:var(--red);color:var(--white);margin-top:8px;}
+.btn-red:hover{background:var(--red-h);}
+.btn-red:disabled{background:var(--border);color:var(--slate-lt);cursor:not-allowed;}
+.btn-ghost{background:transparent;color:var(--slate);border:1px solid var(--border);margin-top:8px;}
+.btn-ghost:hover{background:var(--slate-bg);color:var(--black);}
+.ob-error{color:var(--red);font-size:12px;margin-top:8px;line-height:1.8;min-height:18px;text-align:center;}
 
-/* ── ROLE GRID ── */
-.role-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-.role-opt {
-  padding: 14px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-align: center;
-  background: var(--white);
-}
-.role-opt:hover { border-color: var(--black); background: var(--slate-bg); }
-.role-opt.selected { border-color: var(--black); background: var(--black); color: var(--white); }
-.role-opt.selected .role-icon { filter: grayscale(0); }
-.role-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-.role-name {
-  font-family: var(--font-en);
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  display: block;
-}
-.role-name-my {
-  font-size: 11px;
-  color: inherit;
-  opacity: 0.7;
-  display: block;
-  margin-top: 1px;
-  line-height: 1.4;
-}
-/* Cinephile spans full width */
-.role-opt.full { grid-column: 1 / -1; }
+.loading{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--slate);font-size:14px;gap:10px;}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── BUTTONS ── */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: none; cursor: pointer;
-  font-family: var(--font-my);
-  font-size: 14px; font-weight: 600;
-  line-height: 1.6;
-  transition: all 0.15s;
-  white-space: nowrap;
-  width: 100%;
-}
-.btn-red { background: var(--red); color: var(--white); margin-top: 8px; }
-.btn-red:hover { background: var(--red-h); }
-.btn-red:disabled { background: var(--border); color: var(--slate-lt); cursor: not-allowed; }
-.btn-ghost {
-  background: transparent; color: var(--slate);
-  border: 1px solid var(--border);
-  margin-top: 8px;
-}
-.btn-ghost:hover { background: var(--slate-bg); color: var(--black); }
+.step{display:none;}
+.step.active{display:block;}
 
-.ob-error {
-  color: var(--red);
-  font-size: 12px;
-  margin-top: 8px;
-  line-height: 1.8;
-  min-height: 18px;
-  text-align: center;
-}
-
-/* ── LOADING ── */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-  color: var(--slate);
-  font-size: 14px;
-  gap: 10px;
-}
-.spinner {
-  width: 20px; height: 20px;
-  border: 2px solid var(--border);
-  border-top-color: var(--black);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── STEP VISIBILITY ── */
-.step { display: none; }
-.step.active { display: block; }
-
-@media (max-width: 480px) {
-  .ob-card { padding: 28px 20px; border: none; box-shadow: none; }
-  body { justify-content: flex-start; padding-top: 40px; }
+@media(max-width:480px){
+  .ob-card{padding:28px 20px;border:none;box-shadow:none;}
+  body{justify-content:flex-start;padding-top:40px;}
 }
 </style>
 </head>
 <body>
 
 <div class="ob-card" id="obCard">
-
-  <!-- Loading state -->
   <div class="loading" id="loadingState">
     <div class="spinner"></div>
     <span>စစ်ဆေးနေသည်...</span>
   </div>
 
-  <!-- Onboarding content (hidden until auth check) -->
   <div id="obContent" style="display:none;">
+    <a class="ob-brand" href="/home">cine<br><span>podma</span></a>
 
-    <a class="ob-brand" href="index.html">
-      cine<br><span>podma</span>
-    </a>
-
-    <!-- Progress -->
     <div class="progress-bar">
       <div class="prog-step active" id="prog1"></div>
       <div class="prog-step" id="prog2"></div>
       <div class="prog-step" id="prog3"></div>
     </div>
 
-    <!-- ── STEP 1 — Name + Username ── -->
+    <!-- STEP 1 — Name + Username -->
     <div class="step active" id="step1">
       <div class="prog-label">Step 1 / 3</div>
       <div class="ob-title">မင်္ဂလာပါ! 👋</div>
@@ -305,8 +116,7 @@ body {
       <div class="form-group">
         <label class="form-label">အမည် (ဖော်ပြမည့်နာမည်)</label>
         <input class="form-input" id="inputName" type="text"
-          placeholder="ဥပမာ — Mg Mg" autocomplete="off"
-          oninput="validateName()">
+          placeholder="ဥပမာ — Mg Mg" autocomplete="off" oninput="validateName()">
         <div class="input-hint" id="hintName"></div>
       </div>
 
@@ -315,8 +125,7 @@ body {
         <div class="username-wrap" id="usernameWrap">
           <span class="username-at">@</span>
           <input class="username-input" id="inputUsername" type="text"
-            placeholder="yourname" autocomplete="off" maxlength="30"
-            oninput="validateUsername()">
+            placeholder="yourname" autocomplete="off" maxlength="30" oninput="validateUsername()">
         </div>
         <div class="input-hint" id="hintUsername"></div>
       </div>
@@ -325,43 +134,75 @@ body {
       <button class="btn btn-red" id="btnStep1" onclick="goStep2()" disabled>ဆက်သွားမည် →</button>
     </div>
 
-    <!-- ── STEP 2 — Role ── -->
+    <!-- STEP 2 — Role -->
     <div class="step" id="step2">
       <div class="prog-label">Step 2 / 3</div>
       <div class="ob-title">သင်ဘာလုပ်သလဲ?</div>
       <div class="ob-sub">သင့် role ကို ရွေးချယ်ပါ</div>
 
       <div class="role-grid" id="roleGrid">
-        <div class="role-opt" onclick="selectRole('Producer', this)">
+
+        <div class="role-opt" onclick="selectRole('Producer',this)">
           <span class="role-icon">🎬</span>
           <span class="role-name">Producer</span>
           <span class="role-name-my">ပရိုဒျူဆာ</span>
         </div>
-        <div class="role-opt" onclick="selectRole('Director', this)">
+
+        <div class="role-opt" onclick="selectRole('Director',this)">
           <span class="role-icon">🎥</span>
           <span class="role-name">Director</span>
           <span class="role-name-my">ဒါရိုက်တာ</span>
         </div>
-        <div class="role-opt" onclick="selectRole('Writer', this)">
+
+        <div class="role-opt" onclick="selectRole('Writer',this)">
           <span class="role-icon">✍️</span>
           <span class="role-name">Writer</span>
           <span class="role-name-my">ရေးသားသူ</span>
         </div>
-        <div class="role-opt" onclick="selectRole('Filmmaker', this)">
+
+        <div class="role-opt" onclick="selectRole('Screenwriter',this)">
+          <span class="role-icon">📝</span>
+          <span class="role-name">Screenwriter</span>
+          <span class="role-name-my">ဇာတ်ညွှန်းရေးသူ</span>
+        </div>
+
+        <div class="role-opt" onclick="selectRole('Filmmaker',this)">
           <span class="role-icon">🎞️</span>
           <span class="role-name">Filmmaker</span>
           <span class="role-name-my">ဇာတ်ကားဖန်တီးသူ</span>
         </div>
-        <div class="role-opt" onclick="selectRole('Actor', this)">
+
+        <div class="role-opt" onclick="selectRole('Cinematographer',this)">
+          <span class="role-icon">📷</span>
+          <span class="role-name">Cinematographer</span>
+          <span class="role-name-my">ကင်မရာသမား</span>
+        </div>
+
+        <div class="role-opt" onclick="selectRole('Film Crew',this)">
+          <span class="role-icon">🎙️</span>
+          <span class="role-name">Film Crew</span>
+          <span class="role-name-my">ရုပ်ရှင်အဖွဲ့ဝင်</span>
+        </div>
+
+        <div class="role-opt" onclick="selectRole('Actor',this)">
           <span class="role-icon">🎭</span>
           <span class="role-name">Actor</span>
           <span class="role-name-my">သရုပ်ဆောင်</span>
         </div>
-        <div class="role-opt" onclick="selectRole('Cinephile', this)">
+
+        <div class="role-opt" onclick="selectRole('Cinephile',this)">
           <span class="role-icon">🍿</span>
           <span class="role-name">Cinephile</span>
           <span class="role-name-my">ရုပ်ရှင်ချစ်သူ</span>
         </div>
+
+        <!-- Fan — full width -->
+        <div class="role-opt full" onclick="selectRole('Fan',this)">
+          <span class="role-icon">⭐</span>
+          <span class="role-name">Fan</span>
+          <span class="role-name-my">ပရိသတ်</span>
+        </div>
+
       </div>
 
       <div class="ob-error" id="errStep2"></div>
@@ -369,7 +210,7 @@ body {
       <button class="btn btn-ghost" onclick="backStep1()">← ပြန်သွားမည်</button>
     </div>
 
-    <!-- ── STEP 3 — Contact Email ── -->
+    <!-- STEP 3 — Contact Email -->
     <div class="step" id="step3">
       <div class="prog-label">Step 3 / 3</div>
       <div class="ob-title">ဆက်သွယ်ရန် Email</div>
@@ -383,76 +224,60 @@ body {
       </div>
 
       <div class="ob-error" id="errStep3"></div>
-      <button class="btn btn-red" id="btnStep3" onclick="finishOnboarding()">
-        🎬 စတင်မည်
-      </button>
+      <button class="btn btn-red" id="btnStep3" onclick="finishOnboarding()">🎬 စတင်မည်</button>
       <button class="btn btn-ghost" onclick="skipContact()">Contact မထည့်ဘဲ ဆက်သွားမည်</button>
     </div>
 
-  </div><!-- /obContent -->
-</div><!-- /obCard -->
+  </div>
+</div>
 
-<!-- ══════ FIREBASE ══════ -->
 <script type="module">
 import { initializeApp }  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
 import { getAuth, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, updateDoc }
+import { getFirestore, doc, getDoc, setDoc }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
 const firebaseConfig = {
-  apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-  authDomain:        "cinepodma.firebaseapp.com",
-  projectId:         "cinepodma",
-  storageBucket:     "cinepodma.firebasestorage.app",
-  messagingSenderId: "587916526322",
-  appId:             "1:587916526322:web:d00775311fb92fa1c8466b"
+  apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+  authDomain:"cinepodma.firebaseapp.com",
+  projectId:"cinepodma",
+  storageBucket:"cinepodma.firebasestorage.app",
+  messagingSenderId:"587916526322",
+  appId:"1:587916526322:web:d00775311fb92fa1c8466b"
 };
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-var currentUser = null;
+var currentUser  = null;
 var selectedRole = '';
 
 /* ── Auth check ── */
 onAuthStateChanged(auth, async function(user) {
-  if (!user) {
-    window.location.href = 'index.html';
-    return;
-  }
+  if (!user) { window.location.href = '/home'; return; }
   currentUser = user;
-
-  /* check if already onboarded */
-  var snap = await getDoc(doc(db, 'users', user.uid));
+  var snap = await getDoc(doc(db,'users',user.uid));
   if (snap.exists() && snap.data().onboarded === true) {
-    window.location.href = 'profile.html';
-    return;
+    window.location.href = '/profile'; return;
   }
-
-  /* show onboarding */
   document.getElementById('loadingState').style.display = 'none';
   document.getElementById('obContent').style.display    = 'block';
-
-  /* pre-fill name if available */
   if (user.displayName) {
     document.getElementById('inputName').value = user.displayName;
     validateName();
   }
 });
 
-/* ══ STEP 1 — Name + Username ══ */
+/* ── Step 1 ── */
 window.validateName = function() {
   var val  = document.getElementById('inputName').value.trim();
   var hint = document.getElementById('hintName');
-  if (val.length >= 2) {
-    hint.textContent = '';
-    checkStep1();
-  } else if (val.length > 0) {
-    hint.textContent = 'အနည်းဆုံး ၂ လုံး လိုသည်';
-    hint.className   = 'input-hint err';
-    document.getElementById('btnStep1').disabled = true;
+  if (val.length >= 2) { hint.textContent=''; checkStep1(); }
+  else if (val.length > 0) {
+    hint.textContent='အနည်းဆုံး ၂ လုံး လိုသည်'; hint.className='input-hint err';
+    document.getElementById('btnStep1').disabled=true;
   }
 };
 
@@ -461,35 +286,25 @@ window.validateUsername = function() {
   var val  = document.getElementById('inputUsername').value.trim().toLowerCase();
   var wrap = document.getElementById('usernameWrap');
   var hint = document.getElementById('hintUsername');
-
-  /* format check */
   if (!/^[a-z0-9_]*$/.test(val)) {
-    document.getElementById('inputUsername').value = val.replace(/[^a-z0-9_]/g, '');
-    return;
+    document.getElementById('inputUsername').value = val.replace(/[^a-z0-9_]/g,''); return;
   }
-
   if (val.length < 3) {
-    wrap.className = 'username-wrap';
-    hint.textContent = val.length > 0 ? 'အနည်းဆုံး ၃ လုံး' : '';
-    hint.className   = 'input-hint err';
-    document.getElementById('btnStep1').disabled = true;
-    return;
+    wrap.className='username-wrap';
+    hint.textContent=val.length>0?'အနည်းဆုံး ၃ လုံး':''; hint.className='input-hint err';
+    document.getElementById('btnStep1').disabled=true; return;
   }
-
-  hint.textContent = 'စစ်ဆေးနေသည်...';
-  hint.className   = 'input-hint';
+  hint.textContent='စစ်ဆေးနေသည်...'; hint.className='input-hint';
   clearTimeout(usernameTimer);
   usernameTimer = setTimeout(async function() {
-    var snap = await getDoc(doc(db, 'usernames', val));
+    var snap = await getDoc(doc(db,'usernames',val));
     if (snap.exists()) {
-      wrap.className   = 'username-wrap invalid';
-      hint.textContent = '@' + val + ' အသုံးပြုပြီးသားဖြစ်သည်';
-      hint.className   = 'input-hint err';
-      document.getElementById('btnStep1').disabled = true;
+      wrap.className='username-wrap invalid';
+      hint.textContent='@'+val+' အသုံးပြုပြီးသားဖြစ်သည်'; hint.className='input-hint err';
+      document.getElementById('btnStep1').disabled=true;
     } else {
-      wrap.className   = 'username-wrap valid';
-      hint.textContent = '✓ @' + val + ' အသုံးပြုနိုင်သည်';
-      hint.className   = 'input-hint ok';
+      wrap.className='username-wrap valid';
+      hint.textContent='✓ @'+val+' အသုံးပြုနိုင်သည်'; hint.className='input-hint ok';
       checkStep1();
     }
   }, 600);
@@ -499,91 +314,63 @@ function checkStep1() {
   var name = document.getElementById('inputName').value.trim();
   var user = document.getElementById('inputUsername').value.trim();
   var wrap = document.getElementById('usernameWrap');
-  var ok   = name.length >= 2 && user.length >= 3 && wrap.classList.contains('valid');
-  document.getElementById('btnStep1').disabled = !ok;
+  document.getElementById('btnStep1').disabled =
+    !(name.length>=2 && user.length>=3 && wrap.classList.contains('valid'));
 }
 
-window.goStep2 = function() {
-  document.getElementById('errStep1').textContent = '';
-  showStep('step2');
-  updateProgress(2);
-};
+window.goStep2   = function() { document.getElementById('errStep1').textContent=''; showStep('step2'); updateProgress(2); };
+window.backStep1 = function() { showStep('step1'); updateProgress(1); };
 
-window.backStep1 = function() {
-  showStep('step1');
-  updateProgress(1);
-};
-
-/* ══ STEP 2 — Role ══ */
+/* ── Step 2 — Role ── */
 window.selectRole = function(role, el) {
   selectedRole = role;
-  document.querySelectorAll('.role-opt').forEach(function(o) { o.classList.remove('selected'); });
+  document.querySelectorAll('.role-opt').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
   document.getElementById('btnStep2').disabled = false;
 };
 
 window.goStep3 = function() {
-  if (!selectedRole) {
-    document.getElementById('errStep2').textContent = 'Role တစ်ခု ရွေးပါ';
-    return;
-  }
-  showStep('step3');
-  updateProgress(3);
+  if (!selectedRole) { document.getElementById('errStep2').textContent='Role တစ်ခု ရွေးပါ'; return; }
+  showStep('step3'); updateProgress(3);
 };
 
-/* ══ STEP 3 — Contact + Finish ══ */
+/* ── Step 3 — Finish ── */
 window.finishOnboarding = async function() {
-  var contact = document.getElementById('inputContact').value.trim();
-  await saveAndRedirect(contact);
+  await saveAndRedirect(document.getElementById('inputContact').value.trim());
 };
-
-window.skipContact = async function() {
-  await saveAndRedirect('');
-};
+window.skipContact = async function() { await saveAndRedirect(''); };
 
 async function saveAndRedirect(contactEmail) {
   var btn = document.getElementById('btnStep3');
-  btn.textContent = 'သိမ်းဆည်းနေသည်...';
-  btn.disabled    = true;
+  btn.textContent='သိမ်းဆည်းနေသည်...'; btn.disabled=true;
 
   var name     = document.getElementById('inputName').value.trim();
   var username = document.getElementById('inputUsername').value.trim().toLowerCase();
 
   try {
-    /* save username mapping */
-    await setDoc(doc(db, 'usernames', username), { uid: currentUser.uid });
-
-    /* save user profile */
-    await setDoc(doc(db, 'users', currentUser.uid), {
-      name:         name,
-      username:     '@' + username,
-      usernameRaw:  username,
-      role:         selectedRole,
-      contactEmail: contactEmail,
-      avatar:       currentUser.photoURL || '',
-      email:        currentUser.email,
-      onboarded:    true,
-      createdAt:    new Date().toISOString()
+    await setDoc(doc(db,'usernames',username), { uid: currentUser.uid });
+    await setDoc(doc(db,'users',currentUser.uid), {
+      name, username:'@'+username, usernameRaw:username,
+      role:selectedRole, contactEmail,
+      avatar:currentUser.photoURL||'', email:currentUser.email,
+      onboarded:true, createdAt:new Date().toISOString()
     });
-
-    window.location.href = 'profile.html';
+    window.location.href = '/profile';
   } catch(e) {
-    document.getElementById('errStep3').textContent = '❌ သိမ်းမရပါ — ' + e.message;
-    btn.textContent = '🎬 စတင်မည်';
-    btn.disabled    = false;
+    document.getElementById('errStep3').textContent='❌ သိမ်းမရပါ — '+e.message;
+    btn.textContent='🎬 စတင်မည်'; btn.disabled=false;
   }
 }
 
-/* ══ HELPERS ══ */
+/* ── Helpers ── */
 function showStep(id) {
-  document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
 }
-
 function updateProgress(step) {
-  for (var i = 1; i <= 3; i++) {
-    var el = document.getElementById('prog' + i);
-    el.className = 'prog-step' + (i < step ? ' done' : i === step ? ' active' : '');
+  for (var i=1;i<=3;i++) {
+    var el=document.getElementById('prog'+i);
+    el.className='prog-step'+(i<step?' done':i===step?' active':'');
   }
 }
 </script>
