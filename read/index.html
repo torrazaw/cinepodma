@@ -85,10 +85,59 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
   text-align:center;
   font-family:var(--font-en);font-size:10px;
   color:var(--fg3);
-  pointer-events:none;
+  pointer-events:none; /* screenplay: not tappable */
   z-index:150;
   letter-spacing:.5px;
 }
+.pg-ind.tappable{
+  pointer-events:auto;
+  cursor:pointer;
+  padding:6px 0;
+}
+.pg-ind.tappable:active{opacity:.6;}
+
+/* TOC BOTTOM SHEET */
+.toc-overlay{
+  display:none;position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.45);
+}
+.toc-overlay.on{display:block;}
+.toc-sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:801;
+  background:var(--bg);border-radius:20px 20px 0 0;
+  max-height:60vh;display:flex;flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 -4px 24px rgba(0,0,0,.15);
+}
+.toc-sheet.on{transform:translateY(0);}
+.toc-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--border);margin:12px auto 4px;flex-shrink:0;
+}
+.toc-title{
+  font-size:11px;font-weight:600;color:var(--fg3);
+  text-align:center;letter-spacing:.5px;
+  padding:4px 0 12px;flex-shrink:0;
+  font-family:var(--font-en);text-transform:uppercase;
+}
+.toc-list{
+  flex:1;overflow-y:auto;padding:0 0 32px;
+  scrollbar-width:thin;
+}
+.toc-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;cursor:pointer;
+  border:none;background:transparent;width:100%;text-align:left;
+  transition:background .1s;
+}
+.toc-item:hover,.toc-item:active{background:var(--card);}
+.toc-item.h2{padding-left:36px;}
+.toc-num{
+  font-family:var(--font-en);font-size:10px;
+  color:var(--fg3);min-width:32px;flex-shrink:0;
+}
+.toc-name{font-size:14px;color:var(--fg);line-height:1.6;flex:1;}
 
 /* COVER slide */
 .cover-slide-inner{
@@ -209,6 +258,14 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 
 <div class="toast" id="toast"></div>
 
+<!-- TOC BOTTOM SHEET (story only) -->
+<div class="toc-overlay" id="tocOverlay" onclick="closeTOC()"></div>
+<div class="toc-sheet" id="tocSheet">
+  <div class="toc-handle"></div>
+  <div class="toc-title">မာတိကာ</div>
+  <div class="toc-list" id="tocList"></div>
+</div>
+
 <script>
 /* ===== THEME / FONT ===== */
 var fontSize = 14;
@@ -261,6 +318,15 @@ function toast(m) {
   setTimeout(function(){ t.classList.remove('on'); }, 2500);
 }
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function openTOC() {
+  document.getElementById('tocOverlay').classList.add('on');
+  document.getElementById('tocSheet').classList.add('on');
+}
+function closeTOC() {
+  document.getElementById('tocOverlay').classList.remove('on');
+  document.getElementById('tocSheet').classList.remove('on');
+}
 
 /* ===== SLIDE ENGINE ===== */
 var slides     = []; /* array of DOM elements (.slide) */
@@ -410,11 +476,12 @@ function initUI() {
   document.getElementById('clapN').textContent = docData.clapCount || 0;
 }
 
-/* ===== STORY (epub-style horizontal pages) ===== */
+/* ===== STORY (epub column pagination) ===== */
 function initStory() {
   var div = document.createElement('div');
   div.innerHTML = docData.story || '<p>Content မရှိပါ</p>';
 
+  /* Collect block-level nodes */
   var blocks = [];
   function walk(node) {
     if (node.nodeType === 3 && node.textContent.trim()) {
@@ -429,123 +496,224 @@ function initStory() {
   div.childNodes.forEach(walk);
   if (!blocks.length) blocks = ['<p>Content မရှိပါ</p>'];
 
-  /* ② Preserve text-align and other styles — only strip color so theme works */
+  /* Strip only color, keep text-align and other styles */
   var allParas = blocks.map(function(h){
     return h.replace(/\bcolor\s*:[^;"}]+(;|(?="))/gi, '');
   });
+
+  /* Track headings for TOC: {text, pageIdx, tag} */
+  var headings = [];
+
+  /* State shared between build() calls */
+  var totalPg = 1;
+  var curPg   = 0;
+  var sliderEl = null;
+  var indEl    = null;
+
+  /* Single set of event listeners — attached once to fixed overlay */
+  var overlayEl = null;
+  var listenersAttached = false;
+
+  function goStoryPage(dir) {
+    curPg = Math.max(0, Math.min(totalPg-1, curPg+dir));
+    if (sliderEl) {
+      var W = document.getElementById('reader').clientWidth;
+      sliderEl.style.transition = 'transform .32s cubic-bezier(.4,0,.2,1)';
+      sliderEl.style.transform  = 'translateX('+(-curPg*W)+'px)';
+    }
+    if (indEl) indEl.textContent = totalPg>1 ? 'p.'+(curPg+1)+' / '+totalPg : '';
+    try { localStorage.setItem('cprd_'+docId, curPg); } catch(e) {}
+  }
+
+  function goToPage(pgIdx) {
+    curPg = Math.max(0, Math.min(totalPg-1, pgIdx));
+    if (sliderEl) {
+      var W = document.getElementById('reader').clientWidth;
+      sliderEl.style.transition = 'transform .32s cubic-bezier(.4,0,.2,1)';
+      sliderEl.style.transform  = 'translateX('+(-curPg*W)+'px)';
+    }
+    if (indEl) indEl.textContent = totalPg>1 ? 'p.'+(curPg+1)+' / '+totalPg : '';
+    try { localStorage.setItem('cprd_'+docId, curPg); } catch(e) {}
+    closeTOC();
+  }
+
+  function attachListeners() {
+    if (listenersAttached) return;
+    listenersAttached = true;
+
+    /* Fixed overlay outside reader — never gets destroyed by build() */
+    overlayEl = document.createElement('div');
+    overlayEl.id = 'storyTapOverlay';
+    overlayEl.style.cssText =
+      'position:fixed;top:86px;left:0;right:0;bottom:0;z-index:50;';
+    document.body.appendChild(overlayEl);
+
+    var sx=0, sy=0, moved=false;
+
+    overlayEl.addEventListener('touchstart', function(e){
+      sx=e.touches[0].clientX; sy=e.touches[0].clientY; moved=false;
+    }, {passive:true});
+
+    overlayEl.addEventListener('touchmove', function(e){
+      if (Math.abs(e.touches[0].clientX-sx) > 8) moved=true;
+    }, {passive:true});
+
+    overlayEl.addEventListener('touchend', function(e){
+      var dx=e.changedTouches[0].clientX-sx;
+      var dy=e.changedTouches[0].clientY-sy;
+      if (Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>40) {
+        goStoryPage(dx<0?1:-1);
+      } else if (!moved) {
+        /* tap zones */
+        var x=e.changedTouches[0].clientX, w=window.innerWidth;
+        if (x < w*0.3) goStoryPage(-1);
+        else if (x > w*0.7) goStoryPage(1);
+      }
+    }, {passive:true});
+
+    overlayEl.addEventListener('click', function(e){
+      var x=e.clientX, w=window.innerWidth;
+      if (x < w*0.3) goStoryPage(-1);
+      else if (x > w*0.7) goStoryPage(1);
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') goStoryPage(1);
+      if(e.key==='ArrowLeft'||e.key==='ArrowUp')    goStoryPage(-1);
+    });
+
+    /* pg-ind tappable → open TOC */
+    var pgIndEl = document.getElementById('pgInd');
+    if (pgIndEl) {
+      pgIndEl.classList.add('tappable');
+      pgIndEl.addEventListener('click', function(e){
+        e.stopPropagation();
+        buildTOC();
+        openTOC();
+      });
+    }
+  }
+
+  function buildTOC() {
+    var list = document.getElementById('tocList');
+    if (!list) return;
+    if (!headings.length) {
+      /* No headings — show page numbers */
+      var html='';
+      for(var i=0;i<totalPg;i++){
+        html+='<button class="toc-item" onclick="(function(){goToPage('+i+');})()">'
+             +'<span class="toc-num">p.'+(i+1)+'</span>'
+             +'<span class="toc-name">စာမျက်နှာ '+(i+1)+'</span></button>';
+      }
+      list.innerHTML=html;
+    } else {
+      var html='';
+      headings.forEach(function(h){
+        html+='<button class="toc-item '+h.tag+'" onclick="(function(){goToPage('+h.pageIdx+');})()">'
+             +'<span class="toc-num">p.'+(h.pageIdx+1)+'</span>'
+             +'<span class="toc-name">'+esc(h.text)+'</span></button>';
+      });
+      list.innerHTML=html;
+    }
+  }
 
   function build() {
     var reader = document.getElementById('reader');
     if (!reader || reader.clientWidth===0 || reader.clientHeight===0) {
       setTimeout(build, 60); return;
     }
-    var W = reader.clientWidth;
-    var H = reader.clientHeight;
+    var W   = reader.clientWidth;
+    var H   = reader.clientHeight;
     var PAD = 22;
     var fg  = getFg();
     var bg  = getBg();
     var fs  = fontSize;
-    var saved = curSlide;
+    /* save page before rebuild */
+    var savedPg = curPg;
 
     reader.style.background = bg;
 
     var titleHtml = docData.title
-      ? '<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+';">'+esc(docData.title)+'</div>'
+      ? '<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;'
+        +'margin-bottom:18px;padding-bottom:14px;'
+        +'border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+';">'
+        +esc(docData.title)+'</div>'
       : '';
 
-    /* ② Apply font-size + color per tag, preserve existing styles (text-align etc) */
+    /* Style each block */
     var styledParas = allParas.map(function(h){
       var tag = (h.match(/^<(\w+)/) || [])[1] || 'p';
-      var extraStyle = 'color:'+fg+';';
-      if (tag === 'h1') extraStyle += 'font-size:'+(fs+6)+'px;font-weight:700;line-height:1.6;margin-bottom:14px;margin-top:24px;';
-      else if (tag === 'h2') extraStyle += 'font-size:'+(fs+3)+'px;font-weight:700;line-height:1.6;margin-bottom:10px;margin-top:20px;';
-      else extraStyle += 'font-size:'+fs+'px;line-height:2.1;margin-bottom:10px;';
-      /* inject into existing style or add new */
-      if (/style\s*=\s*"/i.test(h)) {
-        return h.replace(/style\s*=\s*"/i, 'style="'+extraStyle);
-      } else {
-        return h.replace(/^<(\w+)/, '<$1 style="'+extraStyle+'"');
-      }
+      var extra = 'color:'+fg+';';
+      if (tag==='h1') extra += 'font-size:'+(fs+6)+'px;font-weight:700;line-height:1.6;margin-bottom:14px;margin-top:24px;';
+      else if (tag==='h2') extra += 'font-size:'+(fs+3)+'px;font-weight:700;line-height:1.6;margin-bottom:10px;margin-top:20px;';
+      else extra += 'font-size:'+fs+'px;line-height:2.1;margin-bottom:10px;';
+      if (/style\s*=\s*"/i.test(h)) return h.replace(/style\s*=\s*"/i,'style="'+extra);
+      return h.replace(/^<(\w+)/,'<$1 style="'+extra+'"');
     });
 
     reader.innerHTML =
-      '<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s;">'+
-        '<div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;">'+
-          '<div id="epubCol" style="height:'+H+'px;padding:'+PAD+'px '+PAD+'px '+(PAD+20)+'px;font-size:'+fs+'px;line-height:2.1;color:'+fg+';column-width:'+(W-PAD*2)+'px;column-gap:'+(PAD*2)+'px;column-fill:auto;overflow:hidden;word-break:break-word;box-sizing:border-box;pointer-events:none;user-select:none;">'+
-            titleHtml+styledParas.join('')+
-          '</div>'+
-        '</div>'+
-        /* transparent overlay catches all taps/swipes */
-        '<div id="storyOverlay" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;"></div>'+
-      '</div>'+
-      '<div id="pgInd2" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-family:monospace;font-size:10px;color:'+fg+';opacity:.35;pointer-events:none;"></div>';
+      '<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s;">'
+        +'<div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;">'
+          +'<div id="epubCol" style="height:'+H+'px;padding:'+PAD+'px '+PAD+'px '+(PAD+20)+'px;'
+            +'font-size:'+fs+'px;line-height:2.1;color:'+fg+';'
+            +'column-width:'+(W-PAD*2)+'px;column-gap:'+(PAD*2)+'px;column-fill:auto;'
+            +'overflow:hidden;word-break:break-word;box-sizing:border-box;'
+            +'pointer-events:none;user-select:none;">'
+            +titleHtml+styledParas.join('')
+          +'</div>'
+        +'</div>'
+      +'</div>'
+      +'<div id="pgInd2" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;'
+        +'font-family:monospace;font-size:10px;color:'+fg+';opacity:.35;pointer-events:none;"></div>';
 
     setTimeout(function(){
-      var col     = document.getElementById('epubCol');
-      var slider  = document.getElementById('epubSlider');
-      var wrap    = document.getElementById('epubWrap');
-      var ind     = document.getElementById('pgInd2');
-      var overlay = document.getElementById('storyOverlay');
-      if (!col||!slider||!wrap||!overlay) return;
+      var col    = document.getElementById('epubCol');
+      var slider = document.getElementById('epubSlider');
+      var wrap   = document.getElementById('epubWrap');
+      var ind2   = document.getElementById('pgInd2');
+      if (!col||!slider||!wrap) return;
 
       var sw = col.scrollWidth;
-      var totalPg = Math.max(1, Math.round(sw/W));
-      col.style.width = (totalPg*W) + 'px';
-      slider.style.width = (totalPg*W) + 'px';
+      totalPg = Math.max(1, Math.round(sw/W));
+      col.style.width    = (totalPg*W)+'px';
+      slider.style.width = (totalPg*W)+'px';
 
-      var pg = Math.min(saved, totalPg-1);
+      sliderEl = slider;
+      indEl    = document.getElementById('pgInd'); /* fixed indicator */
+
+      /* Scan headings to build TOC page mapping */
+      headings = [];
+      var colW = W - PAD*2;
+      col.querySelectorAll('h1,h2').forEach(function(el){
+        var elLeft = el.getBoundingClientRect().left - col.getBoundingClientRect().left;
+        var pgIdx  = Math.max(0, Math.floor(elLeft / W));
+        headings.push({text:el.textContent.trim(), tag:el.tagName.toLowerCase(), pageIdx:pgIdx});
+      });
+
+      curPg = Math.min(savedPg, totalPg-1);
       slider.style.transition = 'none';
-      slider.style.transform  = 'translateX('+(-pg*W)+'px)';
-      if (ind) ind.textContent = totalPg>1 ? 'p.'+(pg+1)+' / '+totalPg : '';
+      slider.style.transform  = 'translateX('+(-curPg*W)+'px)';
+
+      var indText = totalPg>1 ? 'p.'+(curPg+1)+' / '+totalPg : '';
+      if (ind2) ind2.textContent = indText;
+      if (indEl) indEl.textContent = indText;
 
       requestAnimationFrame(function(){
-        wrap.style.opacity='1';
-        setTimeout(function(){
-          if(slider) slider.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';
-        },220);
+        wrap.style.opacity = '1';
       });
 
-      function goStoryPage(dir) {
-        pg = Math.max(0, Math.min(totalPg-1, pg+dir));
-        slider.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';
-        slider.style.transform='translateX('+(-pg*W)+'px)';
-        if(ind) ind.textContent=totalPg>1?'p.'+(pg+1)+' / '+totalPg:'';
-        try{localStorage.setItem('cprd_'+docId,pg);}catch(ex){}
-      }
-
-      /* Tap left 30% → prev, right 30% → next */
-      overlay.addEventListener('click', function(e){
-        var x = e.clientX, w = window.innerWidth;
-        if (x < w*0.3) goStoryPage(-1);
-        else if (x > w*0.7) goStoryPage(1);
-      });
-
-      /* Swipe */
-      var sx2=0, sy2=0;
-      overlay.addEventListener('touchstart', function(e){
-        sx2=e.touches[0].clientX; sy2=e.touches[0].clientY;
-      },{passive:true});
-      overlay.addEventListener('touchend', function(e){
-        var dx=e.changedTouches[0].clientX-sx2;
-        var dy=e.changedTouches[0].clientY-sy2;
-        if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>40){
-          goStoryPage(dx<0?1:-1);
-        }
-      },{passive:true});
-
-      /* Keyboard */
-      document.addEventListener('keydown', function(e){
-        if(e.key==='ArrowRight'||e.key==='ArrowDown') goStoryPage(1);
-        if(e.key==='ArrowLeft'||e.key==='ArrowUp')    goStoryPage(-1);
-      });
-
-      try{localStorage.setItem('cprd_'+docId,pg);}catch(e){}
+      attachListeners(); /* idempotent */
+      try { localStorage.setItem('cprd_'+docId, curPg); } catch(e) {}
     }, 150);
   }
 
-  try { curSlide = parseInt(localStorage.getItem('cprd_'+docId))||0; } catch(e){ curSlide=0; }
+  /* Expose goToPage globally for TOC buttons */
+  window.goToPage = goToPage;
+
+  try { curPg = parseInt(localStorage.getItem('cprd_'+docId))||0; } catch(e){ curPg=0; }
+  curSlide = curPg;
   document.fonts.ready.then(build);
-  window._onSettingChange = build;
+  window._onSettingChange = function(){ curPg=0; build(); };
 }
 
 /* ===== SCREENPLAY SLIDE-BY-SLIDE ===== */
