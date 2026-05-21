@@ -616,7 +616,7 @@ window.generateInvite = async function() {
       usedAt: null,
       createdAt: serverTimestamp()
     });
-    var link = window.location.origin + '/invitation/' + code;
+    var link = window.location.origin + '/invite.html?code=' + code;
     lastGenLink = link;
     document.getElementById('inviteLinkOut').value = link;
     document.getElementById('inviteGenBox').style.display = '';
@@ -638,7 +638,7 @@ window.copyInviteLink = function() {
 };
 
 window.copyInviteLinkById = function(code) {
-  var link = window.location.origin + '/invitation/' + code;
+  var link = window.location.origin + '/invite.html?code=' + code;
   navigator.clipboard.writeText(link).then(function(){ toast('🔗 Link ကူးပြီး'); }).catch(function(){
     var ta = document.createElement('textarea'); ta.value=link;
     document.body.appendChild(ta); ta.select(); document.execCommand('copy');
