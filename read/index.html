@@ -85,8 +85,8 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
   text-align:center;
   font-family:var(--font-en);font-size:10px;
   color:var(--fg3);
-  pointer-events:none; /* screenplay: not tappable */
-  z-index:150;
+  pointer-events:none;
+  z-index:195; /* above storyTapOverlay(190), below nav(200) */
   letter-spacing:.5px;
 }
 .pg-ind.tappable{
@@ -552,7 +552,7 @@ function initStory() {
     overlayEl = document.createElement('div');
     overlayEl.id = 'storyTapOverlay';
     overlayEl.style.cssText =
-      'position:fixed;top:86px;left:0;right:0;bottom:0;z-index:190;touch-action:pan-y;';
+      'position:fixed;top:86px;left:0;right:0;bottom:60px;z-index:190;touch-action:pan-y;';
     document.body.appendChild(overlayEl);
 
     var sx=0, sy=0, moved=false;
@@ -707,7 +707,7 @@ function initStory() {
   try { curPg = parseInt(localStorage.getItem('cprd_'+docId))||0; } catch(e){ curPg=0; }
   curSlide = curPg;
   document.fonts.ready.then(build);
-  window._onSettingChange = function(){ curPg=0; build(); };
+  window._onSettingChange = function(){ build(); };
 }
 
 /* ===== SCREENPLAY SLIDE-BY-SLIDE ===== */
