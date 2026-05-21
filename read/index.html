@@ -130,9 +130,9 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 .sp-dial  {font-size:13px;padding-left:14%;padding-right:8%;color:var(--fg);line-height:1.9;margin-bottom:2px;word-break:break-word;}
 .sp-trans {font-size:12px;font-weight:bold;text-transform:uppercase;text-align:right;margin-top:10px;color:var(--fg2);line-height:1.8;}
 
-/* CLAP FAB */
-.clap-fab{position:fixed;bottom:32px;right:16px;z-index:300;width:46px;height:46px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(220,38,38,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;transition:all .2s;}
-.clap-fab.clapped{background:#16A34A;box-shadow:0 4px 14px rgba(22,163,74,.4);}
+/* CLAP FAB — default grey, red only when clapped */
+.clap-fab{position:fixed;bottom:32px;right:16px;z-index:300;width:46px;height:46px;border-radius:50%;background:var(--card);color:var(--fg2);border:1.5px solid var(--border);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;transition:all .2s;}
+.clap-fab.clapped{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 4px 14px rgba(220,38,38,.4);}
 .clap-icon{font-size:18px;line-height:1;}
 .clap-n{font-size:9px;font-family:var(--font-en);line-height:1;margin-top:1px;}
 
@@ -429,8 +429,9 @@ function initStory() {
   div.childNodes.forEach(walk);
   if (!blocks.length) blocks = ['<p>Content မရှိပါ</p>'];
 
+  /* ② Preserve text-align and other styles — only strip color so theme works */
   var allParas = blocks.map(function(h){
-    return h.replace(/\s*color\s*:[^;"}]+[;"]?/gi,'').replace(/\s*style\s*=\s*"(\s*)"/gi,'');
+    return h.replace(/\bcolor\s*:[^;"}]+(;|(?="))/gi, '');
   });
 
   function build() {
@@ -452,10 +453,19 @@ function initStory() {
       ? '<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+';">'+esc(docData.title)+'</div>'
       : '';
 
+    /* ② Apply font-size + color per tag, preserve existing styles (text-align etc) */
     var styledParas = allParas.map(function(h){
-      return h.replace(/^<(\w+)/,function(m,tag){
-        return '<'+tag+' style="font-size:'+fs+'px;line-height:2.1;color:'+fg+';"';
-      });
+      var tag = (h.match(/^<(\w+)/) || [])[1] || 'p';
+      var extraStyle = 'color:'+fg+';';
+      if (tag === 'h1') extraStyle += 'font-size:'+(fs+6)+'px;font-weight:700;line-height:1.6;margin-bottom:14px;margin-top:24px;';
+      else if (tag === 'h2') extraStyle += 'font-size:'+(fs+3)+'px;font-weight:700;line-height:1.6;margin-bottom:10px;margin-top:20px;';
+      else extraStyle += 'font-size:'+fs+'px;line-height:2.1;margin-bottom:10px;';
+      /* inject into existing style or add new */
+      if (/style\s*=\s*"/i.test(h)) {
+        return h.replace(/style\s*=\s*"/i, 'style="'+extraStyle);
+      } else {
+        return h.replace(/^<(\w+)/, '<$1 style="'+extraStyle+'"');
+      }
     });
 
     reader.innerHTML =
@@ -492,24 +502,37 @@ function initStory() {
         },220);
       });
 
-      /* swipe for story */
-      var sx2=0,sy2=0,mv2=false;
-      reader.addEventListener('touchstart',function(e){sx2=e.touches[0].clientX;sy2=e.touches[0].clientY;mv2=false;},{passive:true});
-      reader.addEventListener('touchmove', function(e){if(Math.abs(e.touches[0].clientX-sx2)>8)mv2=true;},{passive:true});
-      reader.addEventListener('touchend',  function(e){
+      function goStoryPage(dir) {
+        pg = Math.max(0, Math.min(totalPg-1, pg+dir));
+        slider.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';
+        slider.style.transform='translateX('+(-pg*W)+'px)';
+        if(ind) ind.textContent=totalPg>1?'p.'+(pg+1)+' / '+totalPg:'';
+        try{localStorage.setItem('cprd_'+docId,pg);}catch(ex){}
+      }
+
+      /* ① Swipe */
+      var sx2=0, sy2=0;
+      reader.addEventListener('touchstart',function(e){sx2=e.touches[0].clientX;sy2=e.touches[0].clientY;},{passive:true});
+      reader.addEventListener('touchend',function(e){
         var dx=e.changedTouches[0].clientX-sx2;
         var dy=e.changedTouches[0].clientY-sy2;
         if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
-          pg=Math.max(0,Math.min(totalPg-1,pg+(dx<0?1:-1)));
-          slider.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';
-          slider.style.transform='translateX('+(-pg*W)+'px)';
-          if(ind) ind.textContent=totalPg>1?'p.'+(pg+1)+' / '+totalPg:'';
-          try{localStorage.setItem('cprd_'+docId,pg);}catch(ex){}
+          goStoryPage(dx<0?1:-1);
         }
       },{passive:true});
+
+      /* ① Tap left/right thirds */
+      reader.addEventListener('click',function(e){
+        /* ignore if target is inside epubCol text — only act on blank areas */
+        var x=e.clientX, w=window.innerWidth;
+        if(x < w*0.3) goStoryPage(-1);
+        else if(x > w*0.7) goStoryPage(1);
+      });
+
+      /* keyboard */
       document.addEventListener('keydown',function(e){
-        if(e.key==='ArrowRight'||e.key==='ArrowDown'){ pg=Math.min(totalPg-1,pg+1); slider.style.transform='translateX('+(-pg*W)+'px)'; if(ind)ind.textContent=totalPg>1?'p.'+(pg+1)+' / '+totalPg:''; }
-        if(e.key==='ArrowLeft'||e.key==='ArrowUp'){    pg=Math.max(0,pg-1);          slider.style.transform='translateX('+(-pg*W)+'px)'; if(ind)ind.textContent=totalPg>1?'p.'+(pg+1)+' / '+totalPg:''; }
+        if(e.key==='ArrowRight'||e.key==='ArrowDown') goStoryPage(1);
+        if(e.key==='ArrowLeft'||e.key==='ArrowUp')    goStoryPage(-1);
       });
 
       try{localStorage.setItem('cprd_'+docId,pg);}catch(e){}
@@ -586,14 +609,16 @@ function initScreenplay() {
 
     /* measure div */
     var mhost = document.createElement('div');
+    var spFs = fontSize; /* capture current font size */
     mhost.style.cssText =
       'position:fixed;top:-9999px;left:0;width:'+(W-36)+'px;'+
-      'visibility:hidden;pointer-events:none;font-family:Courier New,Courier,monospace;font-size:13px;';
+      'visibility:hidden;pointer-events:none;font-family:Courier New,Courier,monospace;font-size:'+spFs+'px;';
     document.body.appendChild(mhost);
 
     var elDivs = spEls.map(function(el){
       var d = document.createElement('div');
       d.className = elCls(el.type);
+      d.style.fontSize = spFs+'px';
       d.textContent = el.text || '';
       mhost.appendChild(d);
       return d;
@@ -602,17 +627,18 @@ function initScreenplay() {
     /* force layout */
     void mhost.offsetHeight;
 
-    var heights = elDivs.map(function(d){ return Math.max(d.offsetHeight, 22); });
+    var heights = elDivs.map(function(d){ return Math.max(d.offsetHeight, spFs*1.9); });
     document.body.removeChild(mhost);
 
     /* group into pages */
-    var pageGroups = []; /* each = array of spEls indices */
+    var PAGE_H_DYN = Math.floor(780 * (spFs / 13)); /* scale page height with font */
+    var pageGroups = [];
     var curGroup   = [];
     var usedH      = 0;
 
     spEls.forEach(function(el, i){
       var h = heights[i];
-      if (usedH + h > PAGE_H && curGroup.length > 0) {
+      if (usedH + h > PAGE_H_DYN && curGroup.length > 0) {
         pageGroups.push(curGroup);
         curGroup = [];
         usedH    = 0;
@@ -625,13 +651,13 @@ function initScreenplay() {
 
     /* build one slide per page */
     pageGroups.forEach(function(group, pi){
-      var html = '<div class="sp-slide-inner">';
+      var html = '<div class="sp-slide-inner" style="font-size:'+spFs+'px;">';
       html += '<div class="sp-pg-label">p. '+(pi+1)+' / '+pageGroups.length+'</div>';
       group.forEach(function(i){
         var el = spEls[i];
         var x  = esc(el.text || '');
         var cls= elCls(el.type);
-        html += '<div class="'+cls+'">'+x+'</div>';
+        html += '<div class="'+cls+'" style="font-size:'+spFs+'px;">'+x+'</div>';
       });
       html += '</div>';
       addSlide(html);
