@@ -199,7 +199,7 @@ body{
   <!-- To -->
   <div class="to-section">
     <div class="to-label">သို့</div>
-    <div class="to-name" id="toName">မင်းမင်း</div>
+    <div class="to-name" id="toName">—</div>
   </div>
 
   <div class="divider"><span class="divider-icon">🎬</span></div>
@@ -350,9 +350,21 @@ body{
 })();
 
 function acceptInvite(){
-  var code=new URLSearchParams(window.location.search).get('code')||'';
+  var params=new URLSearchParams(window.location.search);
+  var code=params.get('code')||'';
   window.location.href='/home?invite='+code;
 }
+
+/* ── Load invite data from URL params ── */
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var toName = params.get('to') || '';
+  if (toName) {
+    document.getElementById('toName').textContent = decodeURIComponent(toName);
+  } else {
+    document.getElementById('toName').textContent = 'မင်းမင်း';
+  }
+})();
 
 /* ── Load Ra Zaw profile from Firestore ── */
 (async function loadSenderProfile(){
