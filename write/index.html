@@ -1549,6 +1549,50 @@ window.addEventListener('beforeunload',function(){
   clearTimeout(autoT);
 });
 
+/* ===== KEYBOARD TOOLBAR LIFT (visualViewport API) =====
+   On iOS Safari, when keyboard appears the visual viewport shrinks.
+   We move fixed toolbars up so they sit just above the keyboard.
+   This is the best possible behavior in a web app — true keyboard
+   attachment (like native apps) requires a native app. */
+(function(){
+  var lastBottom=0;
+  function adjustToolbars(){
+    var vv=window.visualViewport;
+    if(!vv) return;
+    /* offsetTop = how far visual viewport top is from layout viewport top
+       height    = visible area height
+       We want toolbar bottom = layout height - (visual offset + visual height) */
+    var layoutH = document.documentElement.clientHeight;
+    var visTop  = vv.offsetTop;
+    var visH    = vv.height;
+    var keyboardH = Math.max(0, layoutH - (visTop + visH));
+    /* Add 1px fudge for subpixel */
+    var bottom = Math.round(keyboardH);
+    if(bottom === lastBottom) return;
+    lastBottom = bottom;
+    var targets = ['storyBtb','btb'];
+    targets.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && el.classList.contains('on')){
+        el.style.bottom = bottom + 'px';
+      }
+    });
+    /* Also pad editor bottom so content not hidden under lifted toolbar */
+    var edArea = document.getElementById('stEdArea');
+    if(edArea){
+      var tbH = bottom > 0 ? 52 + bottom : 120;
+      edArea.style.paddingBottom = tbH + 'px';
+    }
+  }
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',  adjustToolbars, {passive:true});
+    window.visualViewport.addEventListener('scroll',  adjustToolbars, {passive:true});
+  }
+  /* Fallback: window resize */
+  window.addEventListener('resize', adjustToolbars, {passive:true});
+})();
+
 function setSv(s){
   var e=document.getElementById('sv');
   if(!e) return;
