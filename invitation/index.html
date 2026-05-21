@@ -349,10 +349,63 @@ body{
   resetTimer();
 })();
 
-function acceptInvite(){
+async function acceptInvite(){
   var params=new URLSearchParams(window.location.search);
   var code=params.get('code')||'';
-  window.location.href='/home?invite='+code;
+  if(!code){ window.location.href='/home'; return; }
+
+  var btn=document.querySelector('.accept-btn');
+  btn.textContent='စစ်ဆေးနေသည်...';
+  btn.disabled=true;
+
+  try{
+    /* Firebase dynamic import */
+    var fa  = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js');
+    var fst = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js');
+    var fau = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js');
+
+    var app = fa.initializeApp({
+      apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+      authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",
+      storageBucket:"cinepodma.firebasestorage.app",
+      messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+    },'invite-app');
+    var db   = fst.getFirestore(app);
+    var auth = fau.getAuth(app);
+
+    /* Find invite by code */
+    var q    = fst.query(fst.collection(db,'invites'), fst.where('code','==',code));
+    var snap = await fst.getDocs(q);
+
+    if(snap.empty){
+      btn.textContent='❌ Invite မတွေ့ပါ';
+      return;
+    }
+
+    var invDoc = snap.docs[0];
+    var invData = invDoc.data();
+
+    if(invData.used){
+      btn.textContent='❌ Invite သုံးပြီးသားဖြစ်သည်';
+      return;
+    }
+
+    /* Mark as used with current user or anonymous */
+    var user = auth.currentUser;
+    await fst.updateDoc(invDoc.ref,{
+      used: true,
+      usedAt: new Date().toISOString(),
+      usedBy: user ? (user.email||user.uid) : 'anonymous'
+    });
+
+    /* Redirect to home/signup */
+    window.location.href='/home?invited=1';
+
+  }catch(e){
+    btn.textContent='🎬 ဖိတ်ကြားချက် လက်ခံမည်';
+    btn.disabled=false;
+    console.error(e);
+  }
 }
 
 /* ── Load invite data from URL params ── */
