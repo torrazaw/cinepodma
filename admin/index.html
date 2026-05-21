@@ -665,7 +665,7 @@ window.setInviteFilter = function(f, btn) {
 };
 
 function renderInvites() {
-  var invites = allInvites;
+  var invites = allInvites.slice();
   if (inviteFilter === 'unused') invites = invites.filter(function(i){ return !i.used; });
   if (inviteFilter === 'used')   invites = invites.filter(function(i){ return i.used; });
   document.getElementById('inviteCount').textContent = invites.length;
@@ -673,17 +673,37 @@ function renderInvites() {
   if (!invites.length) { list.innerHTML='<div class="empty-msg">Invite မရှိသေးပါ</div>'; return; }
   list.innerHTML = '';
   invites.forEach(function(inv) {
+    var date = inv.createdAt && inv.createdAt.toDate ? inv.createdAt.toDate().toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
     var item = document.createElement('div');
     item.className = 'invite-item';
-    var date = inv.createdAt && inv.createdAt.toDate ? inv.createdAt.toDate().toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
-    item.innerHTML =
-      '<div class="invite-item-info">' +
-        '<div class="invite-item-to">သို့ ' + inv.to + '</div>' +
-        '<div class="invite-item-meta">' + date + (inv.used ? ' · Used by: '+(inv.usedBy||'?') : ' · Unused') + '</div>' +
-      '</div>' +
-      '<span class="invite-badge '+(inv.used?'used':'unused')+'">'+(inv.used?'✅ Used':'⏳ Unused')+'</span>' +
-      (!inv.used ? '<button class="invite-copy-small" onclick="copyInviteLinkById(''+inv.code+'')" title="Link ကူးမည်">🔗</button>' : '') +
-      (!inv.used ? '<button class="invite-revoke" onclick="revokeInvite(''+inv.id+'',''+inv.to+'')" title="ဖျက်မည်">🗑</button>' : '');
+
+    var info = document.createElement('div');
+    info.className = 'invite-item-info';
+    info.innerHTML = '<div class="invite-item-to">သို့ '+inv.to+'</div>'
+      +'<div class="invite-item-meta">'+date+(inv.used?' · Used by: '+(inv.usedBy||'?'):' · Unused')+'</div>';
+    item.appendChild(info);
+
+    var badge = document.createElement('span');
+    badge.className = 'invite-badge '+(inv.used?'used':'unused');
+    badge.textContent = inv.used ? '✅ Used' : '⏳ Unused';
+    item.appendChild(badge);
+
+    if (!inv.used) {
+      var copyBtn = document.createElement('button');
+      copyBtn.className = 'invite-copy-small';
+      copyBtn.title = 'Link ကူးမည်';
+      copyBtn.textContent = '🔗';
+      copyBtn.onclick = (function(code){ return function(){ copyInviteLinkById(code); }; })(inv.code);
+      item.appendChild(copyBtn);
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'invite-revoke';
+      delBtn.title = 'ဖျက်မည်';
+      delBtn.textContent = '🗑';
+      delBtn.onclick = (function(id, to){ return function(){ revokeInvite(id, to); }; })(inv.id, inv.to);
+      item.appendChild(delBtn);
+    }
+
     list.appendChild(item);
   });
 }
