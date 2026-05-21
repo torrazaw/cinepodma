@@ -71,59 +71,30 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .cv-draft{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:1px;margin-top:36px;border:none;outline:none;background:transparent;text-align:center;}
 .cv-draft::placeholder{color:#CCC;}
 
-/* SECTION — logline fixed single page */
+/* SECTION */
 .sec{width:100%;height:100%;padding:var(--pad);box-sizing:border-box;display:flex;flex-direction:column;}
 .sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .sec-ta{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);resize:none;overflow-y:auto;}
 .sec-ta::placeholder{color:#CCC;}
-
-/* Synopsis / Treatment — contentEditable paginated area */
-.sec-ed{
-  flex:1;width:100%;
-  border:none;outline:none;background:transparent;
-  font-family:var(--font-my);font-style:normal;
-  font-size:14px;line-height:2.0;color:var(--black);
-  word-break:break-word;overflow:hidden;
-  min-height:1em;
-}
+.sec-ed{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);word-break:break-word;overflow:hidden;min-height:1em;}
 .sec-ed:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;}
 
-/* SCREENPLAY AREA — fixed inside page */
-.sp-area{
-  position:absolute;
-  top:var(--pad);left:var(--pad);right:var(--pad);bottom:var(--pad);
-  overflow:hidden;
-}
+/* SCREENPLAY AREA */
+.sp-area{position:absolute;top:var(--pad);left:var(--pad);right:var(--pad);bottom:var(--pad);overflow:hidden;}
 
 /* Screenplay elements */
 .el{margin:0;}
-.el-ce{
-  display:block;width:100%;
-  border:none;outline:none;background:transparent;
-  font-family:var(--font-en);
-  font-size:12px;font-style:normal;font-weight:normal;
-  line-height:1.8;color:var(--black);
-  cursor:text;word-break:break-word;
-  min-height:1.4em;white-space:pre-wrap;
-  -webkit-user-select:text;user-select:text;
-}
+.el-ce{display:block;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-en);font-size:12px;font-style:normal;font-weight:normal;line-height:1.8;color:var(--black);cursor:text;word-break:break-word;min-height:1.4em;white-space:pre-wrap;-webkit-user-select:text;user-select:text;}
 .el-ce[data-ph]:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;font-weight:normal;}
-
 .el-scene{display:flex;align-items:baseline;margin-top:14px;}
-.el-scene .el-scene-num{
-  font-family:var(--font-en);font-size:12px;font-weight:bold;
-  line-height:1.8;color:var(--black);
-  white-space:nowrap;flex-shrink:0;
-  width:48px; /* ~0.5in at screen scale */
-  pointer-events:none;user-select:none;
-}
+.el-scene .el-scene-num{font-family:var(--font-en);font-size:12px;font-weight:bold;line-height:1.8;color:var(--black);white-space:nowrap;flex-shrink:0;width:48px;pointer-events:none;user-select:none;}
 .el-scene .el-ce{text-transform:uppercase;font-weight:bold;flex:1;min-width:0;}
-.el-action .el-ce {padding:1px 0 1px 48px;}
-.el-char .el-ce   {padding-left:34%;margin-top:10px;text-transform:uppercase;}
-.el-paren .el-ce  {padding-left:26%;padding-right:26%;}
-.el-dial .el-ce   {padding-left:20%;padding-right:20%;}
-.el-trans .el-ce  {text-align:right;margin-top:10px;text-transform:uppercase;}
+.el-action .el-ce{padding:1px 0 1px 48px;}
+.el-char .el-ce{padding-left:34%;margin-top:10px;text-transform:uppercase;}
+.el-paren .el-ce{padding-left:26%;padding-right:26%;}
+.el-dial .el-ce{padding-left:20%;padding-right:20%;}
+.el-trans .el-ce{text-align:right;margin-top:10px;text-transform:uppercase;}
 
 /* STORY */
 .story-wrap{flex:1;overflow-y:auto;background:var(--white);display:flex;justify-content:center;padding:32px 24px 100px;width:100%;scrollbar-width:thin;}
@@ -132,87 +103,28 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .story-ed:empty::before{content:'ဤနေရာတွင် ရေးပါ...';color:#CCC;pointer-events:none;}
 .story-ed h1{font-size:24px;font-weight:700;margin:32px 0 12px;line-height:1.6;scroll-margin-top:80px;}
 .story-ed h2{font-size:19px;font-weight:700;margin:24px 0 10px;line-height:1.6;scroll-margin-top:80px;}
-
-/* STORY LAYOUT — sidebar + editor */
-.story-layout{
-  flex:1;display:flex;overflow:hidden;
-  background:var(--white);
-}
+.story-layout{flex:1;display:flex;overflow:hidden;background:var(--white);}
 
 /* CHAPTER SIDEBAR */
-.ch-sidebar{
-  width:220px;flex-shrink:0;
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  background:var(--white);
-  overflow:hidden;
-  transition:width .25s cubic-bezier(.4,0,.2,1);
-}
+.ch-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--white);overflow:hidden;transition:width .25s cubic-bezier(.4,0,.2,1);}
 .ch-sidebar.collapsed{width:0;border-right:none;}
 .ch-sidebar-inner{width:220px;flex-shrink:0;display:flex;flex-direction:column;height:100%;overflow:hidden;}
-
-.ch-header{
-  height:44px;display:flex;align-items:center;
-  padding:0 14px;gap:8px;flex-shrink:0;
-  border-bottom:1px solid var(--border);
-}
-.ch-header-title{
-  font-size:11px;font-weight:600;color:var(--slate);
-  text-transform:uppercase;letter-spacing:.5px;flex:1;
-}
-.ch-add{
-  width:26px;height:26px;border-radius:7px;border:1px solid var(--border);
-  background:transparent;cursor:pointer;font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--slate);transition:all .12s;flex-shrink:0;
-}
+.ch-header{height:44px;display:flex;align-items:center;padding:0 14px;gap:8px;flex-shrink:0;border-bottom:1px solid var(--border);}
+.ch-header-title{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.5px;flex:1;}
+.ch-add{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--slate);transition:all .12s;flex-shrink:0;}
 .ch-add:hover{background:var(--slate-bg);color:var(--black);}
-
 .ch-list{flex:1;overflow-y:auto;padding:8px 0;scrollbar-width:thin;}
-.ch-item{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 14px;cursor:pointer;
-  transition:background .1s;border:none;background:transparent;
-  width:100%;text-align:left;
-}
+.ch-item{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;transition:background .1s;border:none;background:transparent;width:100%;text-align:left;}
 .ch-item:hover{background:var(--slate-bg);}
 .ch-item.active{background:var(--slate-bg);}
-.ch-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--border);flex-shrink:0;
-}
+.ch-dot{width:5px;height:5px;border-radius:50%;background:var(--border);flex-shrink:0;}
 .ch-item.active .ch-dot{background:var(--red);}
 .ch-item.h2 .ch-dot{width:3px;height:3px;margin-left:6px;}
-.ch-name{
-  font-size:12px;color:var(--black);line-height:1.5;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;
-}
+.ch-name{font-size:12px;color:var(--black);line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
 .ch-item.h2 .ch-name{font-size:11px;color:var(--slate);}
-.ch-empty{
-  padding:24px 14px;text-align:center;
-  font-size:12px;color:var(--slate-lt);line-height:1.8;
-}
-
-/* STORY EDITOR AREA */
-.story-editor-area{
-  flex:1;overflow-y:auto;
-  padding:32px 32px 100px;
-  scrollbar-width:thin;
-}
-
-/* SIDEBAR TOGGLE BUTTON — arrow tab on sidebar edge, story only */
-.ch-toggle{
-  position:absolute;
-  right:-18px;top:50%;transform:translateY(-50%);
-  width:18px;height:48px;
-  background:var(--border);
-  border:none;border-radius:0 8px 8px 0;
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;color:var(--slate);
-  z-index:10;transition:background .15s;
-  flex-shrink:0;
-}
+.ch-empty{padding:24px 14px;text-align:center;font-size:12px;color:var(--slate-lt);line-height:1.8;}
+.story-editor-area{flex:1;overflow-y:auto;padding:32px 32px 100px;scrollbar-width:thin;}
+.ch-toggle{position:absolute;right:-18px;top:50%;transform:translateY(-50%);width:18px;height:48px;background:var(--border);border:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--slate);z-index:10;transition:background .15s;flex-shrink:0;}
 .ch-toggle:hover{background:var(--slate-bg);}
 
 @media(max-width:700px){
@@ -299,7 +211,7 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 
 .pg-ind{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:.5px;white-space:nowrap;}
 
-/* MEASURE DIV — visible but off-screen for accurate offsetHeight */
+/* MEASURE DIV */
 #measureHost{position:fixed;top:-9999px;left:0;width:602px;visibility:hidden;pointer-events:none;z-index:-1;}
 
 @media(max-width:860px){.ws{padding:20px 0 80px;}.zr{display:none;}}
@@ -309,7 +221,6 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 </head>
 <body>
 
-<!-- MEASURE HOST — always in DOM, off-screen, correct width for height measurement -->
 <div id="measureHost"></div>
 
 <!-- TOPBAR -->
@@ -532,25 +443,11 @@ function goBack(){
 }
 
 /* ===== SCREENPLAY DATA ===== */
-/*
-  pages[] = [{pageEl, areaEl, num}]
-  els[]   = [{id, type, wrap, ce, pageIdx}]
-
-  A4 usable height = 1123 - 96 - 96 = 931px
-  Line height: 12px * 1.8 = ~21.6px
-
-  Reflow strategy:
-  1. Move all .el wraps into #measureHost (fixed, off-screen, width=602px)
-  2. Read offsetHeight for each — browser paints correctly because measureHost is in DOM
-  3. Distribute into pages
-  4. Move wraps back into correct page areas
-  5. Restore focus to previously focused element
-*/
 var SP_USABLE = 931;
 var pages = [];
 var els   = [];
 var lastEl = null;
-var focusedElId = null; /* track which el has focus to restore after reflow */
+var focusedElId = null;
 
 /* ===== UNDO / REDO ===== */
 var undoStack=[], redoStack=[], MAX_UNDO=50;
@@ -565,7 +462,9 @@ function pushUndo(){
 
 function applyUndoState(state){
   isUndoRedo=true;
+  /* FIX: clear elements properly before restoring */
   clearAllSpElements();
+  if(pages.length===0) addPage();
   state.forEach(function(s){ insRaw(s.type, s.text); });
   reflow(null);
   isUndoRedo=false;
@@ -620,19 +519,20 @@ function removeTrailingEmptyPages(){
       last.pageEl.remove(); pages.pop();
     } else break;
   }
+  /* FIX: update page numbers after removal */
   pages.forEach(function(p,i){
     p.num=i+1;
     var pn=p.pageEl.querySelector('.page-num');
     if(pn) pn.textContent='p. '+(i+1);
+    p.pageEl.id='sp-pg-'+(i+1);
+    p.areaEl.id='sp-area-'+(i+1);
   });
 }
 
-/* ===== REFLOW — key fix: measure in #measureHost ===== */
-var reflowPending=false;
+/* ===== REFLOW ===== */
 var reflowTimer=null;
 
 function scheduleReflow(delay){
-  /* During typing we debounce to avoid constant reflow killing keyboard focus */
   clearTimeout(reflowTimer);
   reflowTimer=setTimeout(function(){ reflow(focusedElId); }, delay||600);
 }
@@ -643,10 +543,10 @@ function reflow(restoreFocusId){
 
   var host=document.getElementById('measureHost');
 
-  /* Move all wraps into measureHost */
+  /* FIX: move all wraps into measureHost for measurement */
   els.forEach(function(e){ host.appendChild(e.wrap); });
 
-  /* Force layout so CSS classes are applied before measuring */
+  /* Force layout */
   void host.offsetHeight;
 
   /* Measure heights */
@@ -679,10 +579,16 @@ function reflow(restoreFocusId){
   updateSceneNumbers();
   updatePageIndicator();
 
-  /* Restore focus without keyboard dismiss */
+  /* FIX: restore focus only if element still exists in DOM */
   if(restoreFocusId){
-    var target=els.find(function(e){ return e.id===restoreFocusId; });
-    if(target) focusEnd(target.ce);
+    var target=null;
+    for(var i=0;i<els.length;i++){
+      if(els[i].id===restoreFocusId){ target=els[i]; break; }
+    }
+    if(target && document.body.contains(target.ce)){
+      /* Use requestAnimationFrame to avoid keyboard dismiss on mobile */
+      requestAnimationFrame(function(){ focusEnd(target.ce); });
+    }
   }
 }
 
@@ -713,7 +619,8 @@ function updateSceneNumbers(){
 }
 
 function insRaw(type, text){
-  var cfg=elCfg[type]; if(!cfg) return;
+  if(!elCfg[type]) return null;
+  var cfg=elCfg[type];
   var id='el_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
 
   var wrap=document.createElement('div');
@@ -733,7 +640,6 @@ function insRaw(type, text){
   ce.addEventListener('input', function(){
     if(!isUndoRedo) pushUndo();
     autoSave();
-    /* Debounced reflow — doesn't steal focus immediately */
     scheduleReflow(800);
   });
 
@@ -751,7 +657,7 @@ function insRaw(type, text){
       return;
     }
     if(e.key==='ArrowUp'||e.key==='ArrowDown'){
-      var idx=els.findIndex(function(x){ return x.id===id; });
+      var idx=getElIndex(id);
       var t=e.key==='ArrowUp'? els[idx-1] : els[idx+1];
       if(t){ e.preventDefault(); focusEnd(t.ce); }
     }
@@ -759,17 +665,25 @@ function insRaw(type, text){
 
   wrap.appendChild(ce);
 
-  /* Insert after lastEl or append */
+  /* FIX: check lastEl is in a real sp-area (not in measureHost) */
+  var inserted=false;
   if(lastEl && lastEl.parentNode && lastEl.parentNode.classList.contains('sp-area')){
     lastEl.after(wrap);
-  } else {
+    inserted=true;
+  }
+  if(!inserted){
     var pg=pages.length>0? pages[pages.length-1] : addPage();
     pg.areaEl.appendChild(wrap);
   }
 
   var obj={id:id, type:type, wrap:wrap, ce:ce, pageIdx:0};
+
+  /* FIX: insert into els array at correct position */
   if(lastEl){
-    var li=els.findIndex(function(e){ return e.wrap===lastEl; });
+    var li=-1;
+    for(var i=0;i<els.length;i++){
+      if(els[i].wrap===lastEl){ li=i; break; }
+    }
     if(li>=0){ els.splice(li+1,0,obj); }
     else els.push(obj);
   } else {
@@ -779,9 +693,16 @@ function insRaw(type, text){
   return obj;
 }
 
+/* FIX: helper to find element index by id */
+function getElIndex(id){
+  for(var i=0;i<els.length;i++){ if(els[i].id===id) return i; }
+  return -1;
+}
+
 function ins(type){
   if(!elCfg[type]) return;
   var obj=insRaw(type,'');
+  if(!obj) return;
   reflow(null);
   updateSceneNumbers();
   setTimeout(function(){ focusStart(obj.ce); },30);
@@ -789,13 +710,22 @@ function ins(type){
 }
 
 function removeEl(wrap, id){
-  var idx=els.findIndex(function(e){ return e.id===id; });
+  var idx=getElIndex(id);
+  if(idx===-1) return;
   var prev=idx>0? els[idx-1] : null;
-  wrap.remove();
+  /* FIX: safely remove from DOM */
+  if(wrap.parentNode) wrap.parentNode.removeChild(wrap);
   els.splice(idx,1);
-  lastEl=prev? prev.wrap : (els.length? els[0].wrap : null);
-  if(prev) focusEnd(prev.ce);
-  else if(els.length) focusStart(els[0].ce);
+  /* FIX: correct lastEl handling when list is empty */
+  if(prev){
+    lastEl=prev.wrap;
+    focusEnd(prev.ce);
+  } else if(els.length>0){
+    lastEl=els[0].wrap;
+    focusStart(els[0].ce);
+  } else {
+    lastEl=null;
+  }
   reflow(null);
   updateSceneNumbers();
   autoSave();
@@ -810,24 +740,46 @@ function addFadeOut(){
   toast('FADE OUT. ထည့်ပြီး');
 }
 
+/* FIX: clearAllSpElements also removes page DOM elements cleanly */
 function clearAllSpElements(){
-  els=[]; lastEl=null;
+  els=[]; lastEl=null; focusedElId=null;
+  /* Remove element wraps from any parent */
+  var host=document.getElementById('measureHost');
+  if(host) host.innerHTML='';
   pages.forEach(function(p){ p.areaEl.innerHTML=''; });
 }
 
 /* ===== FOCUS HELPERS ===== */
 function focusEnd(ce){
+  if(!ce) return;
   ce.focus();
-  try{var r=document.createRange();r.selectNodeContents(ce);r.collapse(false);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(x){}
+  try{
+    var r=document.createRange();
+    r.selectNodeContents(ce);
+    r.collapse(false);
+    var s=window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  }catch(x){}
 }
 function focusStart(ce){
+  if(!ce) return;
   ce.focus();
-  try{var r=document.createRange();r.setStart(ce,0);r.collapse(true);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(x){}
+  try{
+    var r=document.createRange();
+    r.setStart(ce,0);
+    r.collapse(true);
+    var s=window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  }catch(x){}
 }
 
 /* ===== PAGE INDICATOR ===== */
 function updatePageIndicator(){
-  var ind=document.getElementById('pgInd'); if(!ind) return;
+  /* FIX: getElementById each time since renderTBR() replaces tbr innerHTML */
+  var ind=document.getElementById('pgInd');
+  if(!ind) return;
   if(curTab!=='screenplay'){ ind.style.display='none'; return; }
   ind.style.display='';
   ind.textContent='p. 1 / '+Math.max(1,pages.length);
@@ -902,6 +854,8 @@ function startDoc(){
 /* ===== TOPBAR ===== */
 function renderTBR(){
   var e=document.getElementById('tbr');
+  if(!e) return;
+  /* FIX: only show collab for screenplay, guard docType */
   var co=docType==='screenplay'?'<button class="btn btn-g btn-s hm" onclick="openM(\'mCollab\')">👥</button>':'';
   e.innerHTML=
     '<span class="pg-ind" id="pgInd" style="display:none;"></span>'+
@@ -914,10 +868,12 @@ function renderTBR(){
 /* ===== ZOOM ===== */
 function applyZ(){
   var s=document.getElementById('scaler');
+  if(!s) return;
   var sc=zoomLv/100;
   s.style.transform='scale('+sc+')';
   s.style.marginBottom=((sc-1)*1123)+'px';
-  document.getElementById('zl').textContent=zoomLv+'%';
+  var zl=document.getElementById('zl');
+  if(zl) zl.textContent=zoomLv+'%';
 }
 function zm(d){ zoomLv=Math.min(200,Math.max(25,zoomLv+d)); applyZ(); }
 function fitZoom(){
@@ -948,7 +904,6 @@ function initSP(){
   document.getElementById('spTabs').style.display='flex';
   document.getElementById('stTabs').style.display='none';
   document.getElementById('storyBtb').classList.remove('on');
-  /* Build cover immediately so cvTitle exists for restore */
   buildSecPage('cover');
   goTab('cover', document.getElementById('tabCover'));
 }
@@ -982,11 +937,6 @@ function goTab(tab, btn){
 }
 
 /* ===== SECTION PAGES ===== */
-/*
-  logline   → single fixed A4 page, textarea (no pagination)
-  synopsis  → multi-page contentEditable, paginated like screenplay
-  treatment → multi-page contentEditable, paginated like screenplay
-*/
 var secLabels={logline:'Logline',synopsis:'Synopsis',treatment:'Treatment'};
 var secPH={
   logline:  'ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ...',
@@ -994,9 +944,8 @@ var secPH={
   treatment:'မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ...'
 };
 
-/* Paginated section state */
-var secPages={}; /* tab → [{pageEl, areaEl}] */
-var SEC_USABLE=931; /* same as screenplay */
+var secPages={};
+var SEC_USABLE=931;
 
 function buildSecPage(tab){
   if(tabPages[tab]) return tabPages[tab];
@@ -1025,7 +974,6 @@ function buildSecPage(tab){
   }
 
   if(tab==='logline'){
-    /* Fixed single page — simple textarea, no pagination */
     var pg=document.createElement('div');
     pg.className='page'; pg.id='pg-logline'; pg.style.display='none';
     var pn=document.createElement('div'); pn.className='page-num'; pn.textContent='Logline';
@@ -1045,14 +993,12 @@ function buildSecPage(tab){
     return pg;
   }
 
-  /* Synopsis / Treatment — paginated contentEditable */
   return buildPaginatedSec(tab, scaler);
 }
 
 function buildPaginatedSec(tab, scaler){
-  /* Create first page with contentEditable editor */
   var pg=addSecPage(tab, scaler, 1);
-  tabPages[tab]=pg.pageEl; /* first page is the "anchor" */
+  tabPages[tab]=pg.pageEl;
 
   var ed=pg.areaEl.querySelector('.sec-ed');
   if(ed){
@@ -1098,7 +1044,7 @@ function addSecPage(tab, scaler, num){
   return obj;
 }
 
-/* Paginated reflow for synopsis / treatment */
+/* ===== SECTION REFLOW — fixed: collect from all pages before reflow ===== */
 var secReflowTimers={};
 function scheduleSecReflow(tab, delay){
   clearTimeout(secReflowTimers[tab]);
@@ -1110,23 +1056,26 @@ function reflowSec(tab){
   var firstEd=document.getElementById(tab+'Ed');
   if(!firstEd) return;
 
-  /* Collect all text from all pages into one string */
-  var allText=secPages[tab].map(function(p){ return p.edEl.innerHTML; }).join('');
+  /* FIX: collect innerHTML from ALL pages before overwriting first */
+  var allHTML='';
+  secPages[tab].forEach(function(p){
+    allHTML += p.edEl.innerHTML;
+  });
 
-  /* Measure how many lines fit in one page */
-  /* Strategy: put all content in first editor, check scrollHeight vs usable */
-  firstEd.innerHTML=allText;
+  /* Save selection position (caret) */
+  var sel=window.getSelection();
+  var savedRange=null;
+  if(sel && sel.rangeCount>0){
+    try{ savedRange=sel.getRangeAt(0).cloneRange(); }catch(x){}
+  }
 
-  /* Force layout */
+  firstEd.innerHTML=allHTML;
   void firstEd.offsetHeight;
 
   var lineH=parseFloat(getComputedStyle(firstEd).lineHeight)||28;
-  var usable=SEC_USABLE-18-36; /* minus label(36) on page1 */
-  var linesPerPage=Math.floor(usable/lineH);
+  var usable=SEC_USABLE-18-36;
 
-  /* If scrollHeight fits, remove extra pages */
   if(firstEd.scrollHeight<=usable+20){
-    /* remove extra pages */
     if(secPages[tab].length>1){
       for(var i=1;i<secPages[tab].length;i++){
         secPages[tab][i].pageEl.remove();
@@ -1136,43 +1085,42 @@ function reflowSec(tab){
     return;
   }
 
-  /* Need multiple pages — use column layout trick */
-  /* Simple approach: split by lines */
   var totalH=firstEd.scrollHeight;
   var needed=Math.ceil(totalH/usable);
 
-  /* Ensure enough pages exist */
   var scaler=document.getElementById('scaler');
   while(secPages[tab].length < needed){
     var n=secPages[tab].length+1;
     var newPg=addSecPage(tab, scaler, n);
-    newPg.edEl.addEventListener('input',function(){
-      autoSave();
-      scheduleSecReflow(tab, 1000);
-    });
+    /* FIX: use closure to capture tab correctly */
+    (function(t){
+      newPg.edEl.addEventListener('input',function(){
+        autoSave();
+        scheduleSecReflow(t, 1000);
+      });
+    })(tab);
     if(curTab===tab) newPg.pageEl.style.display='';
   }
-  /* Remove extra */
   while(secPages[tab].length > needed){
     secPages[tab][secPages[tab].length-1].pageEl.remove();
     secPages[tab].pop();
   }
 
-  /* Collect nodes and distribute */
+  /* Distribute child nodes across pages */
   var nodes=Array.from(firstEd.childNodes);
   secPages[tab].forEach(function(p){ p.edEl.innerHTML=''; });
 
   var pageIdx=0, curH=0;
+  var measureDiv=document.createElement('div');
+  measureDiv.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:'+firstEd.offsetWidth+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);';
+  document.body.appendChild(measureDiv);
+
   nodes.forEach(function(node){
     var clone=node.cloneNode(true);
-    var tmp=document.createElement('div');
-    tmp.style.cssText='position:absolute;visibility:hidden;width:'+firstEd.offsetWidth+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);';
-    document.body.appendChild(tmp);
-    tmp.appendChild(clone.cloneNode(true));
-    var h=tmp.offsetHeight||lineH;
-    document.body.removeChild(tmp);
+    measureDiv.innerHTML='';
+    measureDiv.appendChild(clone);
+    var h=measureDiv.offsetHeight||lineH;
 
-    var pg=secPages[tab][pageIdx];
     var pgUsable=pageIdx===0?usable:SEC_USABLE-18;
     if(curH+h>pgUsable && pageIdx<secPages[tab].length-1){
       pageIdx++; curH=0;
@@ -1180,6 +1128,8 @@ function reflowSec(tab){
     secPages[tab][pageIdx].edEl.appendChild(node.cloneNode(true));
     curH+=h;
   });
+
+  document.body.removeChild(measureDiv);
 }
 
 /* ===== STORY ===== */
@@ -1195,14 +1145,12 @@ function initStory(){
   ws.style.cssText='flex:1;overflow:hidden;background:var(--white);display:flex;padding:0;';
 
   if(!document.getElementById('storyLayout')){
-    /* Build layout: sidebar + editor area */
     var layout=document.createElement('div');
     layout.className='story-layout'; layout.id='storyLayout';
 
-    /* Sidebar */
     var sidebar=document.createElement('div');
     sidebar.className='ch-sidebar'; sidebar.id='chSidebar';
-    sidebar.style.position='relative'; /* for toggle positioning */
+    sidebar.style.position='relative';
     var sInner=document.createElement('div');
     sInner.className='ch-sidebar-inner';
 
@@ -1218,14 +1166,12 @@ function initStory(){
     sInner.appendChild(sHead); sInner.appendChild(sList);
     sidebar.appendChild(sInner);
 
-    /* Toggle arrow — embedded in sidebar right edge */
     var toggleBtn=document.createElement('button');
     toggleBtn.className='ch-toggle'; toggleBtn.id='chToggle';
     toggleBtn.onclick=toggleSidebar;
     toggleBtn.textContent='◀';
     sidebar.appendChild(toggleBtn);
 
-    /* Editor area */
     var edArea=document.createElement('div');
     edArea.className='story-editor-area'; edArea.id='stEdArea';
 
@@ -1237,16 +1183,26 @@ function initStory(){
     ed.className='story-ed'; ed.contentEditable='true';
     ed.id='stEd'; ed.spellcheck=false;
 
+    /* FIX: track IME composition — Myanmar keyboard uses compositionstart/end */
+    var isComposing=false;
+    ed.addEventListener('compositionstart',function(){ isComposing=true; });
+    ed.addEventListener('compositionend',function(){
+      isComposing=false;
+      /* Run deferred tasks after composition finishes */
+      autoSave();
+      scheduleChapterScan();
+    });
+
     ed.addEventListener('input',function(){
+      /* FIX: skip scan/save triggers during IME composition to prevent caret jump */
+      if(isComposing) return;
       autoSave();
       updateStoryFmtState();
       scheduleChapterScan();
     });
-    ed.addEventListener('keyup',function(){
-      updateStoryFmtState();
-      scheduleChapterScan();
-    });
+    /* FIX: removed keyup scan — it caused double-scan and re-triggered during composition */
     ed.addEventListener('mouseup',updateStoryFmtState);
+    ed.addEventListener('selectionchange',function(){ if(!isComposing) updateStoryFmtState(); });
 
     paper.appendChild(ed);
     edArea.appendChild(paper);
@@ -1257,7 +1213,6 @@ function initStory(){
 
   document.getElementById('storyBtb').classList.add('on');
 
-  /* Mobile: collapse sidebar initially */
   if(window.innerWidth<=700){
     sidebarOpen=false;
     var sb=document.getElementById('chSidebar');
@@ -1267,7 +1222,8 @@ function initStory(){
   }
 
   setTimeout(function(){
-    document.getElementById('stEd').focus();
+    var se=document.getElementById('stEd');
+    if(se) se.focus();
     scanChapters();
   },100);
   initStoryScroll();
@@ -1281,29 +1237,37 @@ function toggleSidebar(){
   if(tg) tg.textContent=sidebarOpen?'◀':'▶';
 }
 
-/* ===== CHAPTER: + New Chapter ===== */
+/* ===== CHAPTER: + New Chapter — fixed: no orphan <br> ===== */
 function addChapter(){
   var ed=document.getElementById('stEd'); if(!ed) return;
-  /* Insert H1 at cursor or end */
   ed.focus();
-  var sel=window.getSelection();
+
   var h1=document.createElement('h1');
   h1.textContent='အခန်း';
+
+  var sel=window.getSelection();
   if(sel && sel.rangeCount>0 && ed.contains(sel.anchorNode)){
     var r=sel.getRangeAt(0);
-    r.collapse(false);
-    /* Go to end of current block then insert */
-    r.insertNode(document.createElement('br'));
-    r.insertNode(h1);
+    /* FIX: collapse to end of current block, then insert after it — no orphan <br> */
+    var anchor=sel.anchorNode;
+    /* Walk up to find direct child of editor */
+    var block=anchor;
+    while(block && block.parentNode !== ed) block=block.parentNode;
+    if(block && block !== ed){
+      block.after(h1);
+    } else {
+      r.collapse(false);
+      r.insertNode(h1);
+    }
   } else {
-    /* Append at end */
-    if(ed.lastChild) ed.appendChild(document.createElement('br'));
     ed.appendChild(h1);
   }
+
   /* Place cursor inside h1 */
   try{
     var r2=document.createRange();
-    r2.setStart(h1,0); r2.collapse(true);
+    r2.selectNodeContents(h1);
+    r2.collapse(false);
     sel.removeAllRanges(); sel.addRange(r2);
   }catch(x){}
   h1.scrollIntoView({behavior:'smooth',block:'center'});
@@ -1311,7 +1275,7 @@ function addChapter(){
   scheduleChapterScan();
 }
 
-/* ===== CHAPTER SCAN — detect H1/H2 headings ===== */
+/* ===== CHAPTER SCAN ===== */
 var chScanTimer=null;
 function scheduleChapterScan(){
   clearTimeout(chScanTimer);
@@ -1329,44 +1293,50 @@ function scanChapters(){
     return;
   }
 
-  /* Assign ids to headings for scroll targeting */
-  headings.forEach(function(h,i){
-    if(!h.id) h.id='ch-heading-'+i;
-  });
-
+  /* FIX: do NOT assign h.id during editing — mutating heading DOM resets
+     Myanmar IME composition and jumps the caret. Use index-based scroll. */
   var html='';
-  headings.forEach(function(h){
+  headings.forEach(function(h,i){
     var tag=h.tagName.toLowerCase();
     var txt=h.textContent.trim()||'(အမည်မဲ့)';
     html+=
-      '<button class="ch-item '+tag+'" onclick="scrollToHeading(\''+h.id+'\')">'+
+      '<button class="ch-item '+tag+'" onclick="scrollToHeadingIdx('+i+')">'+
         '<span class="ch-dot"></span>'+
         '<span class="ch-name">'+esc(txt)+'</span>'+
       '</button>';
   });
   list.innerHTML=html;
-
-  /* Highlight active chapter based on scroll */
   highlightActiveChapter();
 }
 
-function scrollToHeading(id){
-  var el=document.getElementById(id);
+function scrollToHeadingIdx(idx){
+  var ed=document.getElementById('stEd');
   var area=document.getElementById('stEdArea');
-  if(!el||!area) return;
-  var top=el.offsetTop - 20;
+  if(!ed||!area) return;
+  var headings=ed.querySelectorAll('h1,h2');
+  var h=headings[idx];
+  if(!h) return;
+  /* Use offsetTop relative to the editor area scroll container */
+  var top=h.offsetTop-20;
   area.scrollTo({top:top, behavior:'smooth'});
-  /* Close sidebar on mobile after tap */
-  if(window.innerWidth<=700){ sidebarOpen=false; document.getElementById('chSidebar').classList.add('collapsed'); }
+  if(window.innerWidth<=700){
+    sidebarOpen=false;
+    var sb=document.getElementById('chSidebar');
+    if(sb) sb.classList.add('collapsed');
+    var tg=document.getElementById('chToggle');
+    if(tg) tg.textContent='▶';
+  }
 }
+
 
 function highlightActiveChapter(){
   var area=document.getElementById('stEdArea');
   var list=document.getElementById('chList');
-  if(!area||!list) return;
+  var ed=document.getElementById('stEd');
+  if(!area||!list||!ed) return;
   var scrollTop=area.scrollTop;
   var items=list.querySelectorAll('.ch-item');
-  var headings=document.getElementById('stEd').querySelectorAll('h1,h2');
+  var headings=ed.querySelectorAll('h1,h2');
   var activeIdx=0;
   headings.forEach(function(h,i){
     if(h.offsetTop-40 <= scrollTop) activeIdx=i;
@@ -1374,23 +1344,33 @@ function highlightActiveChapter(){
   items.forEach(function(it,i){ it.classList.toggle('active',i===activeIdx); });
 }
 
-/* Update active chapter on scroll */
 function initStoryScroll(){
   var area=document.getElementById('stEdArea');
   if(area) area.addEventListener('scroll',highlightActiveChapter,{passive:true});
 }
 
+/* FIX: storyFmt with safe execCommand wrapper */
 function storyFmt(cmd){
   var ed=document.getElementById('stEd'); if(!ed) return;
-  if(cmd==='h1'||cmd==='h2') document.execCommand('formatBlock',false,cmd);
-  else document.execCommand(cmd,false,null);
-  ed.focus(); updateStoryFmtState();
+  ed.focus();
+  try{
+    if(cmd==='h1'||cmd==='h2'){
+      document.execCommand('formatBlock',false,cmd);
+    } else {
+      document.execCommand(cmd,false,null);
+    }
+  }catch(e){ console.warn('execCommand error:',e); }
+  updateStoryFmtState();
+  autoSave();
 }
+
 function updateStoryFmtState(){
   var cmds={'sfb-bold':'bold','sfb-italic':'italic','sfb-underline':'underline'};
   Object.keys(cmds).forEach(function(id){
     var el=document.getElementById(id);
-    if(el) el.classList.toggle('active',document.queryCommandState(cmds[id]));
+    if(el){
+      try{ el.classList.toggle('active',document.queryCommandState(cmds[id])); }catch(e){}
+    }
   });
 }
 function evP(e){e.preventDefault();}
@@ -1416,7 +1396,9 @@ function openSaveModal(){
 function confirmSave(){ savePriv=pendSP; closeM('mSave'); doSave(); }
 
 function doSave(){
-  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
+  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){
+    console.warn('localStorage save failed:',e);
+  }
   if(currentUser&&window._db){
     setSv('unsaved'); toast('💾 သိမ်းနေသည်...');
     cloudSave().then(function(){
@@ -1424,10 +1406,11 @@ function doSave(){
       toast('✅ သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));
       setTimeout(function(){ window.location.href='/profile'; },1800);
     }).catch(function(e){
-      setSv('ok'); toast('⚠️ Local သိမ်းပြီး — cloud error: '+e.message);
+      setSv('local');
+      toast('⚠️ Local သိမ်းပြီး — cloud error: '+e.message);
     });
   } else {
-    setSv('ok'); toast('💾 Local သိမ်းပြီး — login ဝင်ပါ');
+    setSv('local'); toast('💾 Local သိမ်းပြီး — login ဝင်ပါ');
   }
 }
 
@@ -1437,52 +1420,78 @@ async function cloudSave(){
   data.authorName=currentUser.displayName||'';
   data.authorUsername='';
   data.updatedAt=new Date().toISOString();
+  /* FIX: parallel Firestore reads with Promise.all for speed */
   try{
-    var us=await window._getDoc(window._doc(window._db,'users',currentUser.uid));
+    var results=await Promise.all([
+      window._getDoc(window._doc(window._db,'users',currentUser.uid)),
+      window._getDoc(window._doc(window._db,'docs',docId))
+    ]);
+    var us=results[0];
+    var ex=results[1];
     if(us.exists()) data.authorUsername=us.data().username||'';
-  }catch(e){}
-  try{
-    var ex=await window._getDoc(window._doc(window._db,'docs',docId));
     data.createdAt=(ex.exists()&&ex.data().createdAt)?ex.data().createdAt:data.updatedAt;
-  }catch(e){data.createdAt=data.updatedAt;}
+  }catch(e){
+    data.createdAt=data.updatedAt;
+  }
   await window._setDoc(window._doc(window._db,'docs',docId),data);
 }
 
+/* ===== AUTO SAVE ===== */
 function autoSave(){
   setSv('unsaved');
   clearTimeout(autoT);
   autoT=setTimeout(function(){
-    try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
+    var data=collect();
+    try{localStorage.setItem('cp_'+docId,JSON.stringify(data));}catch(e){
+      console.warn('localStorage autoSave failed:',e);
+    }
     if(currentUser&&window._db){
-      cloudSave().then(function(){setSv('ok');}).catch(function(){setSv('local');});
-    } else { setSv('local'); }
+      cloudSave().then(function(){setSv('ok');}).catch(function(){ setSv('local'); });
+    } else {
+      setSv('local');
+    }
   },2000);
 }
 
+/* FIX: clear autoSave timer on unload to prevent orphaned saves */
+window.addEventListener('beforeunload',function(){
+  clearTimeout(autoT);
+});
+
 function setSv(s){
   var e=document.getElementById('sv');
+  if(!e) return;
   if(s==='ok'){e.textContent='Cloud Saved ✓';e.className='sv ok';}
   else if(s==='local'){e.textContent='Local only';e.className='sv';}
   else{e.textContent='Unsaved…';e.className='sv';}
 }
 
+/* ===== COLLECT — fixed: gather all sec pages ===== */
 function collect(){
-  /* synopsis/treatment: gather text from all pages */
   function getSecText(tab){
-    if(!secPages[tab]) {
-      /* fallback: textarea for logline */
-      var ta=document.getElementById(tab+'Ta');
+    /* logline is a textarea */
+    if(tab==='logline'){
+      var ta=document.getElementById('loglineTa');
       return ta?ta.value:'';
     }
-    return secPages[tab].map(function(p){ return p.edEl.innerText||''; }).join('\n').trim();
+    /* synopsis/treatment: gather from all sec pages */
+    if(secPages[tab] && secPages[tab].length>0){
+      return secPages[tab].map(function(p){
+        return p.edEl.innerText||'';
+      }).join('\n').trim();
+    }
+    /* fallback: single editor */
+    var ed=document.getElementById(tab+'Ed');
+    return ed?(ed.innerText||''):'';
   }
+
   return{
     id:docId, type:docType, privacy:savePriv, genre:docGenre,
     genreLabel:genreLabels[docGenre]||docGenre,
-    title:document.getElementById('docTitle').value,
+    title:(document.getElementById('docTitle')||{}).value||'',
     author:(document.getElementById('cvAuth')||{}).value||'',
-    draft: (document.getElementById('cvDraft')||{}).value||'',
-    logline:  (document.getElementById('loglineTa')||{}).value||'',
+    draft:(document.getElementById('cvDraft')||{}).value||'',
+    logline:  getSecText('logline'),
     synopsis: getSecText('synopsis'),
     treatment:getSecText('treatment'),
     screenplay:els.map(function(e){return{type:e.type,text:e.ce.textContent};}),
@@ -1491,7 +1500,7 @@ function collect(){
   };
 }
 
-/* ===== RESTORE — fixed: cover built first, no tab switch ===== */
+/* ===== RESTORE — fixed race condition with _docStarted flag ===== */
 function restoreDoc(data){
   if(!data) return;
   docType=data.type||'screenplay';
@@ -1499,67 +1508,84 @@ function restoreDoc(data){
   docGenre=data.genre||'';
   selType=docType; selPriv=savePriv;
 
-  document.getElementById('docTitle').value=data.title||'';
+  var titleEl=document.getElementById('docTitle');
+  if(titleEl) titleEl.value=data.title||'';
 
   if(!window._docStarted){
     window._docStarted=true;
-    startDoc(); /* builds cover page inside initSP() */
+    startDoc();
   }
 
+  /* FIX: use a single delayed restore — avoids double-restore race */
   setTimeout(function(){
-    if(docType==='screenplay'){
-      /* Cover — cvTitle now exists because buildSecPage('cover') called in initSP */
-      var ct=document.getElementById('cvTitle');
-      if(ct && data.title){ ct.value=data.title; ct.style.height='auto'; ct.style.height=ct.scrollHeight+'px'; }
-      var ca=document.getElementById('cvAuth');
-      if(ca && data.author) ca.value=data.author;
-      var cd=document.getElementById('cvDraft');
-      if(cd && data.draft) cd.value=data.draft;
-
-      /* Logline — textarea */
-      var logTa=document.getElementById('loglineTa');
-      if(!logTa){ buildSecPage('logline'); logTa=document.getElementById('loglineTa'); }
-      if(logTa && data.logline){
-        logTa.value=data.logline;
-        var tlb=document.getElementById('tabLogline');
-        if(tlb && data.logline.trim()) tlb.classList.add('has');
-      }
-
-      /* Synopsis / Treatment — contentEditable */
-      ['synopsis','treatment'].forEach(function(k){
-        if(!data[k] || !data[k].trim()) return;
-        if(!tabPages[k]) buildSecPage(k);
-        var ed=document.getElementById(k+'Ed');
-        if(ed){
-          ed.innerText=data[k];
-          var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
-          var tb=document.getElementById(map[k]);
-          if(tb) tb.classList.add('has');
-        }
-      });
-
-      /* Screenplay elements */
-      if(data.screenplay && data.screenplay.length>0){
-        clearAllSpElements();
-        pages.forEach(function(p){p.pageEl.remove();}); pages=[];
-        addPage();
-        data.screenplay.forEach(function(s){
-          if(!elCfg[s.type]) return;
-          lastEl=els.length>0? els[els.length-1].wrap : null;
-          insRaw(s.type, s.text);
-        });
-        reflow(null);
-        /* Show/hide pages based on current tab */
-        pages.forEach(function(p){
-          p.pageEl.style.display=curTab==='screenplay'?'':'none';
-        });
-      }
-    } else {
-      var se=document.getElementById('stEd');
-      if(se && data.story){ se.innerHTML=data.story; setTimeout(scanChapters,200); }
-    }
-    setSv('ok');
+    applyRestoreData(data);
   },400);
+}
+
+function applyRestoreData(data){
+  if(!data) return;
+
+  if(docType==='screenplay'){
+    /* Cover */
+    var ct=document.getElementById('cvTitle');
+    if(ct && data.title){ ct.value=data.title; ct.style.height='auto'; ct.style.height=ct.scrollHeight+'px'; }
+    var ca=document.getElementById('cvAuth');
+    if(ca && data.author) ca.value=data.author;
+    var cd=document.getElementById('cvDraft');
+    if(cd && data.draft) cd.value=data.draft;
+
+    /* Logline */
+    if(!tabPages['logline']) buildSecPage('logline');
+    var logTa=document.getElementById('loglineTa');
+    if(logTa && data.logline){
+      logTa.value=data.logline;
+      var tlb=document.getElementById('tabLogline');
+      if(tlb && data.logline.trim()) tlb.classList.add('has');
+    }
+
+    /* Synopsis / Treatment */
+    ['synopsis','treatment'].forEach(function(k){
+      if(!data[k] || !data[k].trim()) return;
+      if(!tabPages[k]) buildSecPage(k);
+      var ed=document.getElementById(k+'Ed');
+      if(ed){
+        /* FIX: use innerText for plain text restore to avoid XSS and formatting issues */
+        ed.innerText=data[k];
+        var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
+        var tb=document.getElementById(map[k]);
+        if(tb) tb.classList.add('has');
+      }
+    });
+
+    /* Screenplay elements */
+    if(data.screenplay && data.screenplay.length>0){
+      /* FIX: clean up properly before restore */
+      clearAllSpElements();
+      pages.forEach(function(p){
+        if(p.pageEl.parentNode) p.pageEl.parentNode.removeChild(p.pageEl);
+      });
+      pages=[];
+      addPage();
+      data.screenplay.forEach(function(s){
+        if(!elCfg[s.type]) return;
+        insRaw(s.type, s.text);
+      });
+      reflow(null);
+      updateSceneNumbers();
+      pages.forEach(function(p){
+        p.pageEl.style.display=curTab==='screenplay'?'':'none';
+      });
+      updatePageIndicator();
+    }
+  } else {
+    /* Story */
+    var se=document.getElementById('stEd');
+    if(se && data.story){
+      se.innerHTML=data.story;
+      setTimeout(scanChapters,200);
+    }
+  }
+  setSv('ok');
 }
 
 /* ===== GENRE MODAL ===== */
@@ -1582,12 +1608,25 @@ function confirmGenre(){
 
 /* ===== AUTH ===== */
 function switchAuthTab(tab){
-  ['authSignin','authSignup','authForgot'].forEach(function(id){document.getElementById(id).style.display='none';});
-  ['siErr','suErr','fgErr'].forEach(function(id){document.getElementById(id).textContent='';});
+  ['authSignin','authSignup','authForgot'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.style.display='none';
+  });
+  ['siErr','suErr','fgErr'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.textContent='';
+  });
   document.querySelectorAll('.auth-tab').forEach(function(b){b.classList.remove('act');});
-  if(tab==='signin'){document.getElementById('authSignin').style.display='';document.getElementById('atSignin').classList.add('act');}
-  else if(tab==='signup'){document.getElementById('authSignup').style.display='';document.getElementById('atSignup').classList.add('act');}
-  else document.getElementById('authForgot').style.display='';
+  if(tab==='signin'){
+    document.getElementById('authSignin').style.display='';
+    document.getElementById('atSignin').classList.add('act');
+  } else if(tab==='signup'){
+    document.getElementById('authSignup').style.display='';
+    document.getElementById('atSignup').classList.add('act');
+  } else {
+    var af=document.getElementById('authForgot');
+    if(af) af.style.display='';
+  }
 }
 function doSignIn(){
   var email=document.getElementById('siEmail').value.trim();
@@ -1598,7 +1637,11 @@ function doSignIn(){
   if(!window._firebaseAuth){err.textContent='Firebase မချိတ်ရသေးပါ';return;}
   window._signInEmail(email,pass).then(function(){closeM('mAuth');doSave();})
     .catch(function(e){
-      var m={'auth/user-not-found':'Email မတွေ့ပါ','auth/wrong-password':'Password မှားနေသည်','auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'};
+      var m={
+        'auth/user-not-found':'Email မတွေ့ပါ',
+        'auth/wrong-password':'Password မှားနေသည်',
+        'auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'
+      };
       err.textContent=m[e.code]||e.message;
     });
 }
@@ -1609,10 +1652,14 @@ function doSignUp(){
   var err=document.getElementById('suErr');
   err.textContent='';
   if(!name||!email||!pass){err.textContent='အကုန်ထည့်ပါ';return;}
+  if(pass.length<6){err.textContent='Password အနည်းဆုံး ၆ လုံး';return;}
   if(!window._firebaseAuth){err.textContent='Firebase မချိတ်ရသေးပါ';return;}
   window._signUpEmail(name,email,pass).then(function(){closeM('mAuth');doSave();})
     .catch(function(e){
-      var m={'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်','auth/weak-password':'Password အနည်းဆုံး ၆ လုံး'};
+      var m={
+        'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်',
+        'auth/weak-password':'Password အနည်းဆုံး ၆ လုံး'
+      };
       err.textContent=m[e.code]||e.message;
     });
 }
@@ -1628,19 +1675,33 @@ function doForgot(){
 function authWithGoogle(){
   if(!window._firebaseAuth){toast('Firebase မချိတ်ရသေးပါ');return;}
   window._signInGoogle().then(function(){closeM('mAuth');doSave();})
-    .catch(function(){toast('Google sign in မအောင်မြင်ပါ');});
+    .catch(function(e){ toast('Google sign in မအောင်မြင်ပါ: '+(e.message||'')); });
 }
 
 /* ===== SHARE / COLLAB ===== */
-function openShareM(){document.getElementById('sUrl').textContent='cinepodma.com/read/'+docId;openM('mShare');}
-function cpLink(){navigator.clipboard.writeText(document.getElementById('sUrl').textContent).then(function(){toast('🔗 Link ကူးပြီး');});}
+function openShareM(){
+  var el=document.getElementById('sUrl');
+  if(el) el.textContent='cinepodma.com/read/'+docId;
+  openM('mShare');
+}
+function cpLink(){
+  var el=document.getElementById('sUrl');
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(function(){toast('🔗 Link ကူးပြီး');}).catch(function(){
+    toast('Copy မရပါ — manually ကူးပါ');
+  });
+}
 function invC(){
-  var e=document.getElementById('clEmail').value.trim(); if(!e) return;
+  var emailEl=document.getElementById('clEmail');
+  var e=(emailEl?emailEl.value:'').trim();
+  if(!e) return;
   var l=document.getElementById('clList');
+  if(!l) return;
   var i=document.createElement('div');
   i.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;margin-bottom:8px;';
-  i.innerHTML='<div style="width:30px;height:30px;border-radius:50%;background:var(--slate-bg);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✉</div><div style="flex:1;line-height:1.6;">'+e+'</div><span style="font-family:var(--font-en);font-size:10px;color:var(--slate);letter-spacing:.5px;">INVITED</span>';
-  l.appendChild(i); document.getElementById('clEmail').value='';
+  i.innerHTML='<div style="width:30px;height:30px;border-radius:50%;background:var(--slate-bg);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✉</div><div style="flex:1;line-height:1.6;">'+esc(e)+'</div><span style="font-family:var(--font-en);font-size:10px;color:var(--slate);letter-spacing:.5px;">INVITED</span>';
+  l.appendChild(i);
+  emailEl.value='';
   toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');
 }
 
@@ -1649,7 +1710,12 @@ function downloadPDF(){
   if(docType==='story'){toast('Story PDF မထုတ်ပါ');return;}
   openM('mPDF');
 }
-function confirmPDF(){ var w=document.getElementById('wmText').value.trim(); closeM('mPDF'); doPrint(w); }
+function confirmPDF(){
+  var wmEl=document.getElementById('wmText');
+  var w=wmEl?wmEl.value.trim():'';
+  closeM('mPDF');
+  doPrint(w);
+}
 
 function doPrint(wm){
   var cvTitle=(document.getElementById('cvTitle')||{}).value||document.getElementById('docTitle').value||'';
@@ -1660,47 +1726,75 @@ function doPrint(wm){
     '<div class="pp-cover-title">'+esc(cvTitle)+'</div><div class="pp-cover-hr"></div>'+
     '<div class="pp-cover-by">Written by</div><div class="pp-cover-author">'+esc(cvAuth)+'</div>'+
     '<div class="pp-cover-draft">'+esc(cvDraft)+'</div></div>');
-  [{id:'loglineTa',label:'Logline'},{id:'synopsisTa',label:'Synopsis'},{id:'treatmentTa',label:'Treatment'}].forEach(function(s){
-    var el=document.getElementById(s.id);
-    if(el&&el.value.trim()) pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
-      '<div class="pp-sec-lbl">'+s.label+'</div><div class="pp-sec-text">'+esc(el.value)+'</div></div>');
+
+  /* Logline */
+  var logEl=document.getElementById('loglineTa');
+  if(logEl&&logEl.value.trim()){
+    pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
+      '<div class="pp-sec-lbl">Logline</div><div class="pp-sec-text">'+esc(logEl.value)+'</div></div>');
+  }
+
+  /* Synopsis / Treatment from contentEditable */
+  ['synopsis','treatment'].forEach(function(k){
+    if(!secPages[k]||!secPages[k].length) return;
+    var txt=secPages[k].map(function(p){return p.edEl.innerText||'';}).join('\n').trim();
+    if(!txt) return;
+    pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
+      '<div class="pp-sec-lbl">'+secLabels[k]+'</div><div class="pp-sec-text">'+esc(txt)+'</div></div>');
   });
+
   pages.forEach(function(sp,i){
     var elems=sp.areaEl.querySelectorAll('.el');
     if(!elems.length&&i>0) return;
     var h='';
     elems.forEach(function(el){
-      h+='<div class="pp-el pp-'+(el.dataset.type||'action')+'">'+esc(el.querySelector('.el-ce')?el.querySelector('.el-ce').textContent:'')+'</div>';
+      var ce=el.querySelector('.el-ce');
+      h+='<div class="pp-el pp-'+(el.dataset.type||'action')+'">'+esc(ce?ce.textContent:'')+'</div>';
     });
     pgs.push('<div class="pp-page pp-script">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
       '<div class="pp-pnum">p.'+(i+1)+'</div>'+h+
       '<div class="pp-footer">write at cinepodma.com</div></div>');
   });
+
   var win=window.open('','_blank','width=900,height=700');
+  if(!win){toast('Popup blocked — browser popup allow လုပ်ပါ');return;}
   win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(cvTitle||'CinePodma')+'</title><style>@import url(\'https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap\');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:\'Courier New\',Courier,monospace;background:#fff;}.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;}.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}.pp-cover-title{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:28px;font-weight:700;margin-bottom:24px;line-height:1.8;}.pp-cover-hr{width:60px;height:1px;background:#000;margin:0 auto 20px;}.pp-cover-by{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:6px;}.pp-cover-author{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:16px;font-weight:600;line-height:1.8;}.pp-cover-draft{font-size:11px;color:#999;margin-top:32px;}.pp-sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:8px;}.pp-sec-text{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:14px;line-height:2.0;white-space:pre-wrap;}.pp-pnum{position:absolute;top:20px;right:2.54cm;font-size:9px;color:#999;}.pp-el{font-size:12px;line-height:1.8;margin-bottom:1px;}.pp-scene{font-weight:bold;margin-top:14px;text-transform:uppercase;}.pp-action{padding:1px 0;}.pp-char{padding-left:34%;margin-top:10px;text-transform:uppercase;}.pp-paren{padding-left:26%;padding-right:26%;}.pp-dial{padding-left:20%;padding-right:20%;}.pp-trans{text-align:right;margin-top:10px;text-transform:uppercase;}.pp-footer{position:absolute;bottom:1cm;left:2.54cm;right:2.54cm;text-align:center;font-size:8px;color:#CCC;letter-spacing:.8px;}@media print{body{-webkit-print-color-adjust:exact;}}</style></head><body>'+pgs.join('')+'</body></html>');
   win.document.close(); win.focus();
   setTimeout(function(){win.print();},800);
 }
+
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ===== MODALS ===== */
-function openM(id){document.getElementById(id).classList.add('on');}
-function closeM(id){document.getElementById(id).classList.remove('on');}
+function openM(id){
+  var el=document.getElementById(id);
+  if(el) el.classList.add('on');
+}
+function closeM(id){
+  var el=document.getElementById(id);
+  if(el) el.classList.remove('on');
+}
 function toast(m){
   var t=document.getElementById('toast');
+  if(!t) return;
   t.textContent=m; t.classList.add('on');
   setTimeout(function(){t.classList.remove('on');},2800);
 }
+
+/* Modal: close on overlay click */
 document.addEventListener('click',function(e){
   ['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(function(id){
-    var el=document.getElementById(id); if(el&&e.target===el) closeM(id);
+    var el=document.getElementById(id);
+    if(el&&e.target===el) closeM(id);
   });
 });
+
+/* Keyboard shortcuts */
 document.addEventListener('keydown',function(e){
   if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openSaveModal();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();doUndo();}
-  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();doRedo();}
-  if(e.key==='Escape')['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='z'){e.preventDefault();doUndo();}
+  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.shiftKey&&e.key==='z'))){e.preventDefault();doRedo();}
+  if(e.key==='Escape'){['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);}
 });
 
 /* ===== ON LOAD ===== */
@@ -1708,9 +1802,13 @@ window.addEventListener('DOMContentLoaded',function(){
   var p=new URLSearchParams(window.location.search);
   var id=p.get('id'); if(!id) return;
   docId=id;
+  /* Try localStorage first for instant restore */
   var raw=localStorage.getItem('cp_'+id)||localStorage.getItem('cp_doc_'+id);
   if(raw){
-    try{restoreDoc(JSON.parse(raw));}catch(e){console.error('restore error',e);}
+    try{
+      var data=JSON.parse(raw);
+      restoreDoc(data);
+    }catch(e){ console.error('localStorage restore error',e); }
   }
   window._pendingDocId=id;
 });
@@ -1733,7 +1831,15 @@ window._signInEmail=(e,p)=>signInWithEmailAndPassword(auth,e,p);
 window._signUpEmail=async(name,email,pass)=>{
   const c=await createUserWithEmailAndPassword(auth,email,pass);
   await updateProfile(c.user,{displayName:name});
-  try{await setDoc(doc(db,'users',c.user.uid),{name,email,username:'@'+email.split('@')[0],bio:'',avatar:'',role:'',onboarded:false,createdAt:new Date().toISOString()});}catch(e){}
+  try{
+    await setDoc(doc(db,'users',c.user.uid),{
+      name,email,
+      username:'@'+email.split('@')[0],
+      bio:'',avatar:'',role:'',
+      onboarded:false,
+      createdAt:new Date().toISOString()
+    });
+  }catch(e){ console.warn('User doc create failed:',e); }
   return c;
 };
 window._signInGoogle=()=>signInWithPopup(auth,provider);
@@ -1741,57 +1847,34 @@ window._resetPassword=e=>sendPasswordResetEmail(auth,e);
 
 onAuthStateChanged(auth,async user=>{
   currentUser=user;
-  renderTBR();
-  const pendId=window._pendingDocId;
-  if(pendId&&user&&!window._cloudLoaded){
-    window._cloudLoaded=true;
-    try{
-      const snap=await getDoc(doc(db,'docs',pendId));
-      if(snap.exists()){
-        const data={...snap.data(),id:pendId};
-        try{localStorage.setItem('cp_'+pendId,JSON.stringify(data));}catch(e){}
-        if(!window._docStarted){
-          restoreDoc(data);
-        } else {
-          savePriv=data.privacy||'private';
-          docGenre=data.genre||'';
-          if(data.type==='screenplay'&&data.screenplay&&data.screenplay.length>0){
-            clearAllSpElements();
-            pages.forEach(p=>p.pageEl.remove()); pages=[];
-            addPage();
-            data.screenplay.forEach(s=>{
-              if(!elCfg[s.type]) return;
-              lastEl=els.length>0?els[els.length-1].wrap:null;
-              insRaw(s.type,s.text);
-            });
-            reflow(null);
-            updateSceneNumbers();
-            pages.forEach(p=>{p.pageEl.style.display=curTab==='screenplay'?'':'none';});
-            updatePageIndicator();
-          }
-          /* Restore cover */
-          var ct=document.getElementById('cvTitle');
-          if(ct&&data.title){ct.value=data.title;ct.style.height='auto';ct.style.height=ct.scrollHeight+'px';}
-          var ca=document.getElementById('cvAuth');
-          if(ca&&data.author) ca.value=data.author;
-          var cd=document.getElementById('cvDraft');
-          if(cd&&data.draft) cd.value=data.draft;
-          /* Restore logline */
-          if(!tabPages['logline']) buildSecPage('logline');
-          var lt=document.getElementById('loglineTa');
-          if(lt&&data.logline) lt.value=data.logline;
-          /* Restore synopsis/treatment */
-          ['synopsis','treatment'].forEach(function(k){
-            if(!data[k]||!data[k].trim()) return;
-            if(!tabPages[k]) buildSecPage(k);
-            var ed=document.getElementById(k+'Ed');
-            if(ed) ed.innerText=data[k];
-          });
-        }
-        setSv('ok');
-      }
-    }catch(e){console.error('Firestore load',e);}
+  /* FIX: only call renderTBR if editor is already visible (docType known) */
+  if(document.getElementById('ed').style.display!=='none'){
+    renderTBR();
   }
+
+  const pendId=window._pendingDocId;
+  if(!pendId||!user) return;
+  /* FIX: guard against double cloud load */
+  if(window._cloudLoaded) return;
+  window._cloudLoaded=true;
+
+  try{
+    const snap=await getDoc(doc(db,'docs',pendId));
+    if(!snap.exists()) return;
+    const data={...snap.data(),id:pendId};
+    /* Update localStorage with latest cloud data */
+    try{localStorage.setItem('cp_'+pendId,JSON.stringify(data));}catch(e){}
+
+    if(!window._docStarted){
+      /* First load — full restore */
+      restoreDoc(data);
+    } else {
+      /* FIX: editor already running — apply data without re-running startDoc */
+      savePriv=data.privacy||'private';
+      docGenre=data.genre||'';
+      applyRestoreData(data);
+    }
+  }catch(e){ console.error('Firestore load error:',e); }
 });
 </script>
 </body>
