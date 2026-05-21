@@ -149,7 +149,8 @@ body{
 .letter-text strong{color:rgba(255,255,255,.9);font-weight:600;}
 
 /* ── FROM ── */
-.from-section{display:flex;align-items:center;gap:12px;margin-bottom:22px;animation:fadeUp .5s .3s ease both;}
+.from-section{display:flex;align-items:center;gap:12px;margin-bottom:22px;animation:fadeUp .5s .3s ease both;transition:background .15s;border-radius:12px;padding:8px;margin-left:-8px;margin-right:-8px;}
+.from-section:hover{background:rgba(255,255,255,.05);}
 .from-av{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;overflow:hidden;}
 .from-av img{width:100%;height:100%;object-fit:cover;}
 .from-label{font-family:var(--font-en);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:1px;}
@@ -278,14 +279,15 @@ body{
   </div>
 
   <!-- From -->
-  <div class="from-section">
+  <a class="from-section" id="fromSection" href="/profile?uid=PbnmY6SGu9hJzD69CF8F7rrQ6Iq1" style="text-decoration:none;cursor:pointer;">
     <div class="from-av" id="fromAv">🎬</div>
     <div>
       <div class="from-label">မှ</div>
       <div class="from-name" id="fromName">Ra Zaw</div>
       <div class="from-role" id="fromRole">🍿 Cinephile · CinePodma Founder</div>
     </div>
-  </div>
+    <div style="margin-left:auto;font-size:12px;color:rgba(255,255,255,.25);">→</div>
+  </a>
 
   <!-- Accept -->
   <button class="accept-btn" onclick="acceptInvite()">
@@ -351,6 +353,36 @@ function acceptInvite(){
   var code=new URLSearchParams(window.location.search).get('code')||'';
   window.location.href='/home?invite='+code;
 }
+
+/* ── Load Ra Zaw profile from Firestore ── */
+(async function loadSenderProfile(){
+  try{
+    var firebaseApp = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js');
+    var firestore   = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js');
+    var app = firebaseApp.initializeApp({
+      apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+      authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",
+      storageBucket:"cinepodma.firebasestorage.app",
+      messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+    });
+    var db   = firestore.getFirestore(app);
+    var snap = await firestore.getDoc(firestore.doc(db,'users','PbnmY6SGu9hJzD69CF8F7rrQ6Iq1'));
+    if(snap.exists()){
+      var d = snap.data();
+      /* Avatar */
+      var avEl = document.getElementById('fromAv');
+      if(d.avatar){
+        avEl.innerHTML = '<img src="'+d.avatar+'" alt="'+d.name+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      }
+      /* Name */
+      if(d.name) document.getElementById('fromName').textContent = d.name;
+      /* Role */
+      var roleIcons={Producer:'🎬',Director:'🎥',Writer:'✍️',Screenwriter:'📝',Filmmaker:'🎞️',Cinematographer:'📷','Film Crew':'🎙️',Actor:'🎭',Cinephile:'🍿',Fan:'⭐'};
+      var roleStr = d.role ? (roleIcons[d.role]||'')+ ' ' +d.role : '🍿 Cinephile';
+      document.getElementById('fromRole').textContent = roleStr + ' · CinePodma Founder';
+    }
+  }catch(e){ /* fallback to static — no problem */ }
+})();
 </script>
 </body>
 </html>
