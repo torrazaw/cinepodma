@@ -113,6 +113,32 @@ select.fi{cursor:pointer;}
 /* Loading spinner */
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;margin:20px auto;}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MAIN TABS ── */
+.main-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:28px;}
+.main-tab{padding:10px 24px;border:none;background:transparent;font-family:var(--font-en);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;line-height:1.6;}
+.main-tab:hover{color:var(--black);}
+.main-tab.active{color:var(--black);border-bottom-color:var(--red);font-weight:600;}
+
+/* ── INVITE SECTION ── */
+.invite-gen-box{background:var(--slate-bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
+.invite-link-box{display:flex;align-items:center;gap:8px;margin-top:12px;}
+.invite-link-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:monospace;font-size:11px;color:var(--black);background:var(--white);outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.invite-copy-btn{padding:9px 14px;border-radius:8px;border:none;background:var(--black);color:var(--white);font-family:var(--font-my);font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.invite-copy-btn:hover{background:#333;}
+
+.invite-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--white);border-radius:10px;border:1px solid var(--border);transition:border-color .15s;}
+.invite-item:hover{border-color:#CCC;}
+.invite-item-info{flex:1;min-width:0;}
+.invite-item-to{font-size:13px;font-weight:600;color:var(--black);line-height:1.5;}
+.invite-item-meta{font-size:10px;color:var(--slate-lt);line-height:1.6;font-family:var(--font-en);}
+.invite-badge{padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600;flex-shrink:0;}
+.invite-badge.unused{background:#FEF9C3;color:#854D0E;}
+.invite-badge.used{background:#DCFCE7;color:#166534;}
+.invite-revoke{width:28px;height:28px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--slate-lt);font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;}
+.invite-revoke:hover{background:#FEE2E2;color:var(--red);}
+.invite-copy-small{width:28px;height:28px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--slate-lt);font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;}
+.invite-copy-small:hover{background:var(--slate-bg);color:var(--black);}
 </style>
 </head>
 <body>
@@ -142,6 +168,15 @@ select.fi{cursor:pointer;}
 
 <!-- MAIN PANEL -->
 <main id="mainPanel" style="display:none;">
+
+  <!-- Main Tabs -->
+  <div class="main-tabs">
+    <button class="main-tab active" onclick="switchMainTab('library',this)">📚 Library</button>
+    <button class="main-tab" onclick="switchMainTab('invites',this)">🎟 Invites</button>
+  </div>
+
+  <!-- ── LIBRARY SECTION ── -->
+  <div id="sectionLibrary">
 
   <!-- Stats -->
   <div class="stats-row">
@@ -253,7 +288,44 @@ select.fi{cursor:pointer;}
       </div>
     </div>
 
+  </div><!-- end layout -->
+  </div><!-- end sectionLibrary -->
+
+  <!-- ── INVITE SECTION ── -->
+  <div id="sectionInvites" style="display:none;">
+    <div class="layout" style="grid-template-columns:1fr 1fr;">
+
+      <!-- Generate form -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Invite ဖန်တီးမည်</div>
+        <div class="fg">
+          <label class="fl">ဖိတ်ကြားမည့်သူ အမည် *</label>
+          <input class="fi" id="iToName" type="text" placeholder="ဥပမာ — Mg Mg">
+        </div>
+        <div class="invite-gen-box" id="inviteGenBox" style="display:none;">
+          <div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:6px;">✅ Invite Link ရပြီ</div>
+          <div class="invite-link-box">
+            <input class="invite-link-input" id="inviteLinkOut" readonly>
+            <button class="invite-copy-btn" onclick="copyInviteLink()">ကူးမည်</button>
+          </div>
+        </div>
+        <button class="btn btn-red" id="inviteGenBtn" onclick="generateInvite()">🎟 Invite Link ဖန်တီးမည်</button>
+      </div>
+
+      <!-- Invite list -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Invites (<span id="inviteCount">0</span>)</div>
+        <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+          <button class="ftab active" onclick="setInviteFilter('all',this)">အားလုံး</button>
+          <button class="ftab" onclick="setInviteFilter('unused',this)">⏳ Unused</button>
+          <button class="ftab" onclick="setInviteFilter('used',this)">✅ Used</button>
+        </div>
+        <div class="doc-list" id="inviteList"><div class="spinner"></div></div>
+      </div>
+
+    </div>
   </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
@@ -263,7 +335,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/fireba
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc,
-         doc, serverTimestamp, query, orderBy }
+         doc, serverTimestamp, query, orderBy, where }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
 const cfg = {
@@ -283,8 +355,11 @@ const ADMIN_UIDS = [
   'PbnmY6SGu9hJzD69CF8F7rrQ6Iq1'
 ];
 
-var allDocs   = [];
-var listFilter = 'all';
+var allDocs     = [];
+var listFilter  = 'all';
+var allInvites  = [];
+var inviteFilter = 'all';
+var lastGenLink  = '';
 
 /* ── Auth ── */
 onAuthStateChanged(auth, async function(user) {
@@ -303,6 +378,15 @@ onAuthStateChanged(auth, async function(user) {
 
 function showGate()  { document.getElementById('authGate').style.display='flex'; document.getElementById('mainPanel').style.display='none'; }
 function showPanel() { document.getElementById('authGate').style.display='none'; document.getElementById('mainPanel').style.display='block'; }
+
+/* ── Tab switch ── */
+window.switchMainTab = function(tab, btn) {
+  document.querySelectorAll('.main-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('sectionLibrary').style.display  = tab==='library' ? '' : 'none';
+  document.getElementById('sectionInvites').style.display  = tab==='invites' ? '' : 'none';
+  if (tab==='invites') loadInvites();
+};
 
 window.signInGoogle = async function() {
   try {
@@ -508,6 +592,110 @@ function toast(msg) {
   clearTimeout(t._tid);
   t._tid = setTimeout(function(){ t.classList.remove('on'); }, 3000);
 }
+
+/* ── INVITE FUNCTIONS ── */
+function genCode() {
+  var chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  var code = '';
+  for (var i=0;i<12;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+window.generateInvite = async function() {
+  var toName = document.getElementById('iToName').value.trim();
+  if (!toName) { toast('❌ အမည် ထည့်ပါ'); return; }
+  var btn = document.getElementById('inviteGenBtn');
+  btn.textContent = 'ဖန်တီးနေသည်...'; btn.disabled = true;
+  try {
+    var code = genCode();
+    await addDoc(collection(db,'invites'), {
+      to: toName,
+      code: code,
+      used: false,
+      usedBy: null,
+      usedAt: null,
+      createdAt: serverTimestamp()
+    });
+    var link = window.location.origin + '/invitation/' + code;
+    lastGenLink = link;
+    document.getElementById('inviteLinkOut').value = link;
+    document.getElementById('inviteGenBox').style.display = '';
+    toast('✅ Invite link ဖန်တီးပြီး');
+    await loadInvites();
+  } catch(e) { toast('❌ ' + e.message); }
+  btn.textContent = '🎟 Invite Link ဖန်တီးမည်';
+  btn.disabled = false;
+};
+
+window.copyInviteLink = function() {
+  var link = document.getElementById('inviteLinkOut').value;
+  if (!link) return;
+  navigator.clipboard.writeText(link).then(function(){ toast('🔗 Link ကူးပြီး'); }).catch(function(){
+    var ta = document.createElement('textarea'); ta.value=link;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); toast('🔗 Link ကူးပြီး');
+  });
+};
+
+window.copyInviteLinkById = function(code) {
+  var link = window.location.origin + '/invitation/' + code;
+  navigator.clipboard.writeText(link).then(function(){ toast('🔗 Link ကူးပြီး'); }).catch(function(){
+    var ta = document.createElement('textarea'); ta.value=link;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); toast('🔗 Link ကူးပြီး');
+  });
+};
+
+async function loadInvites() {
+  try {
+    var snap = await getDocs(query(collection(db,'invites'), orderBy('createdAt','desc')));
+    allInvites = [];
+    snap.forEach(function(d){ allInvites.push({id:d.id, ...d.data()}); });
+    renderInvites();
+  } catch(e) {
+    document.getElementById('inviteList').innerHTML = '<div class="empty-msg">ဖွင့်မရပါ — '+e.message+'</div>';
+  }
+}
+
+window.setInviteFilter = function(f, btn) {
+  inviteFilter = f;
+  document.querySelectorAll('#sectionInvites .ftab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderInvites();
+};
+
+function renderInvites() {
+  var invites = allInvites;
+  if (inviteFilter === 'unused') invites = invites.filter(function(i){ return !i.used; });
+  if (inviteFilter === 'used')   invites = invites.filter(function(i){ return i.used; });
+  document.getElementById('inviteCount').textContent = invites.length;
+  var list = document.getElementById('inviteList');
+  if (!invites.length) { list.innerHTML='<div class="empty-msg">Invite မရှိသေးပါ</div>'; return; }
+  list.innerHTML = '';
+  invites.forEach(function(inv) {
+    var item = document.createElement('div');
+    item.className = 'invite-item';
+    var date = inv.createdAt && inv.createdAt.toDate ? inv.createdAt.toDate().toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
+    item.innerHTML =
+      '<div class="invite-item-info">' +
+        '<div class="invite-item-to">သို့ ' + inv.to + '</div>' +
+        '<div class="invite-item-meta">' + date + (inv.used ? ' · Used by: '+(inv.usedBy||'?') : ' · Unused') + '</div>' +
+      '</div>' +
+      '<span class="invite-badge '+(inv.used?'used':'unused')+'">'+(inv.used?'✅ Used':'⏳ Unused')+'</span>' +
+      (!inv.used ? '<button class="invite-copy-small" onclick="copyInviteLinkById(''+inv.code+'')" title="Link ကူးမည်">🔗</button>' : '') +
+      (!inv.used ? '<button class="invite-revoke" onclick="revokeInvite(''+inv.id+'',''+inv.to+'')" title="ဖျက်မည်">🗑</button>' : '');
+    list.appendChild(item);
+  });
+}
+
+window.revokeInvite = async function(id, to) {
+  if (!confirm('"' + to + '" ၏ invite ကို ဖျက်မည်လား?')) return;
+  try {
+    await deleteDoc(doc(db,'invites',id));
+    toast('🗑 Invite ဖျက်ပြီး');
+    await loadInvites();
+  } catch(e) { toast('❌ ' + e.message); }
+};
 </script>
 </body>
 </html>
