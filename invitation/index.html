@@ -211,7 +211,7 @@ body{
       <strong>စီနီပုဒ်မ — CinePodma</strong> ကို
       ဦးဦးဖျားဖျား အသုံးပြုနိုင်ရန် ဖိတ်မန္တက ပြုအပ်ပါသည်။<br><br>
       ဝတ္ထု / ဇာတ်ညွှန်းရေးသူများ၊ ရုပ်ရှင်ဖန်တီးသူများအတွက် မိမိ၏
-      ဖန်တီးမှုများကို ချိတ်ဆက်မျှဝေနိုင်မည့် နေရာတဖြစ်ပြီး၊ ရုပ်ရှင်နှင့်
+      ဖန်တီးမှုများကို ချိတ်ဆက်မျှဝေနိုင်မည့် နေရာတခုဖြစ်ပြီး၊ ရုပ်ရှင်နှင့်
       စာပေအနုပညာ နှစ်သက်အားပေးသူများအတွက်လည်း
       <strong>ဖတ်ရှုခံစားနိုင်ရန်</strong> ရည်ရွယ်ဖန်တီးထားပါသည်။<br><br>
       CinePodma တွင် ပါဝင်ပြီး ဖန်တီးမှုအသစ်များကို ခံစားအသုံးပြုကာ
@@ -353,60 +353,68 @@ body{
 })();
 
 function acceptInvite(){
-  var params = new URLSearchParams(window.location.search);
-  var code = params.get('code')||'';
-  /* Mark used in background — don't wait, just redirect */
-  if(code && window._markInviteUsed) window._markInviteUsed(code);
-  window.location.href='/home';
+  if(window._inviteRef){
+    import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js')
+      .then(function(fst){
+        return fst.updateDoc(window._inviteRef,{used:true,usedAt:new Date().toISOString()});
+      })
+      .then(function(){ window.location.href='/home'; })
+      .catch(function(){ window.location.href='/home'; });
+  } else {
+    window.location.href='/home';
+  }
 }
 
 /* ── Check invite status + mark used ── */
 (async function checkAndLoadInvite(){
   var params = new URLSearchParams(window.location.search);
   var code   = params.get('code')||'';
-  var toName = params.get('to')||'အမည်';
+  var toName = params.get('to')||'မင်းမင်း';
   document.getElementById('toName').textContent = decodeURIComponent(toName);
-
   if(!code) return;
 
   try{
     var fa  = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js');
     var fst = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js');
-    var existingApp;
-    try{ existingApp = fa.getApp('cinepodma-invite'); }catch(e){ existingApp = null; }
-    var app = existingApp || fa.initializeApp({
-      apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-      authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",
-      storageBucket:"cinepodma.firebasestorage.app",
-      messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"
-    },'cinepodma-invite');
+
+    /* Safe init — reuse if already exists */
+    var app;
+    try{ app = fa.getApp('inv'); }
+    catch(e){
+      app = fa.initializeApp({
+        apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
+        authDomain:"cinepodma.firebaseapp.com",
+        projectId:"cinepodma",
+        storageBucket:"cinepodma.firebasestorage.app",
+        messagingSenderId:"587916526322",
+        appId:"1:587916526322:web:d00775311fb92fa1c8466b"
+      },'inv');
+    }
     var db = fst.getFirestore(app);
 
-    /* Check if already used */
+    /* Find invite by code */
     var q    = fst.query(fst.collection(db,'invites'), fst.where('code','==',code));
     var snap = await fst.getDocs(q);
 
-    if(!snap.empty && snap.docs[0].data().used){
-      /* Show used state */
-      document.querySelector('.accept-btn').textContent='✅ Invite သုံးပြီးသားဖြစ်သည်';
-      document.querySelector('.accept-btn').disabled=true;
-      document.querySelector('.accept-btn').style.background='#6B7280';
-      document.querySelector('.expire-note').textContent='This invite has already been used';
+    if(snap.empty) return;
+
+    var invData = snap.docs[0].data();
+    var invRef  = snap.docs[0].ref;
+
+    if(invData.used){
+      /* Already used — disable button */
+      var btn = document.querySelector('.accept-btn');
+      btn.textContent = '✅ Invite သုံးပြီးသားဖြစ်သည်';
+      btn.disabled = true;
+      btn.style.background = '#6B7280';
+      document.querySelector('.expire-note').textContent = 'This invite has already been used';
       return;
     }
 
-    /* Expose mark-used function */
-    window._markInviteUsed = async function(c){
-      try{
-        if(!snap.empty){
-          await fst.updateDoc(snap.docs[0].ref,{
-            used:true, usedAt:new Date().toISOString()
-          });
-        }
-      }catch(e){}
-    };
+    /* Expose markUsed for accept button */
+    window._inviteRef = invRef;
 
-  }catch(e){}
+  }catch(e){ console.error('invite check:', e); }
 })();
 
 /* ── Load Ra Zaw profile from Firestore ── */
