@@ -71,12 +71,23 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .cv-draft{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:1px;margin-top:36px;border:none;outline:none;background:transparent;text-align:center;}
 .cv-draft::placeholder{color:#CCC;}
 
-/* SECTION */
+/* SECTION — logline fixed single page */
 .sec{width:100%;height:100%;padding:var(--pad);box-sizing:border-box;display:flex;flex-direction:column;}
 .sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .sec-ta{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);resize:none;overflow-y:auto;}
 .sec-ta::placeholder{color:#CCC;}
+
+/* Synopsis / Treatment — contentEditable paginated area */
+.sec-ed{
+  flex:1;width:100%;
+  border:none;outline:none;background:transparent;
+  font-family:var(--font-my);font-style:normal;
+  font-size:14px;line-height:2.0;color:var(--black);
+  word-break:break-word;overflow:hidden;
+  min-height:1em;
+}
+.sec-ed:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;}
 
 /* SCREENPLAY AREA — fixed inside page */
 .sp-area{
@@ -99,8 +110,16 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 }
 .el-ce[data-ph]:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;font-weight:normal;}
 
-.el-scene .el-ce  {text-transform:uppercase;font-weight:bold;margin-top:14px;}
-.el-action .el-ce {padding:1px 0;}
+.el-scene{display:flex;align-items:baseline;margin-top:14px;}
+.el-scene .el-scene-num{
+  font-family:var(--font-en);font-size:12px;font-weight:bold;
+  line-height:1.8;color:var(--black);
+  white-space:nowrap;flex-shrink:0;
+  width:48px; /* ~0.5in at screen scale */
+  pointer-events:none;user-select:none;
+}
+.el-scene .el-ce{text-transform:uppercase;font-weight:bold;flex:1;min-width:0;}
+.el-action .el-ce {padding:1px 0 1px 48px;}
 .el-char .el-ce   {padding-left:34%;margin-top:10px;text-transform:uppercase;}
 .el-paren .el-ce  {padding-left:26%;padding-right:26%;}
 .el-dial .el-ce   {padding-left:20%;padding-right:20%;}
@@ -111,8 +130,96 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .story-paper{width:100%;max-width:680px;min-height:100%;}
 .story-ed{width:100%;min-height:calc(100vh - 200px);border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:16px;line-height:2.2;color:var(--black);word-break:break-word;}
 .story-ed:empty::before{content:'ဤနေရာတွင် ရေးပါ...';color:#CCC;pointer-events:none;}
-.story-ed h1{font-size:24px;font-weight:700;margin:28px 0 12px;line-height:1.6;}
-.story-ed h2{font-size:19px;font-weight:700;margin:22px 0 10px;line-height:1.6;}
+.story-ed h1{font-size:24px;font-weight:700;margin:32px 0 12px;line-height:1.6;scroll-margin-top:80px;}
+.story-ed h2{font-size:19px;font-weight:700;margin:24px 0 10px;line-height:1.6;scroll-margin-top:80px;}
+
+/* STORY LAYOUT — sidebar + editor */
+.story-layout{
+  flex:1;display:flex;overflow:hidden;
+  background:var(--white);
+}
+
+/* CHAPTER SIDEBAR */
+.ch-sidebar{
+  width:220px;flex-shrink:0;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  background:var(--white);
+  overflow:hidden;
+  transition:width .25s cubic-bezier(.4,0,.2,1);
+}
+.ch-sidebar.collapsed{width:0;border-right:none;}
+.ch-sidebar-inner{width:220px;flex-shrink:0;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+
+.ch-header{
+  height:44px;display:flex;align-items:center;
+  padding:0 14px;gap:8px;flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.ch-header-title{
+  font-size:11px;font-weight:600;color:var(--slate);
+  text-transform:uppercase;letter-spacing:.5px;flex:1;
+}
+.ch-add{
+  width:26px;height:26px;border-radius:7px;border:1px solid var(--border);
+  background:transparent;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--slate);transition:all .12s;flex-shrink:0;
+}
+.ch-add:hover{background:var(--slate-bg);color:var(--black);}
+
+.ch-list{flex:1;overflow-y:auto;padding:8px 0;scrollbar-width:thin;}
+.ch-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px;cursor:pointer;
+  transition:background .1s;border:none;background:transparent;
+  width:100%;text-align:left;
+}
+.ch-item:hover{background:var(--slate-bg);}
+.ch-item.active{background:var(--slate-bg);}
+.ch-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--border);flex-shrink:0;
+}
+.ch-item.active .ch-dot{background:var(--red);}
+.ch-item.h2 .ch-dot{width:3px;height:3px;margin-left:6px;}
+.ch-name{
+  font-size:12px;color:var(--black);line-height:1.5;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;
+}
+.ch-item.h2 .ch-name{font-size:11px;color:var(--slate);}
+.ch-empty{
+  padding:24px 14px;text-align:center;
+  font-size:12px;color:var(--slate-lt);line-height:1.8;
+}
+
+/* STORY EDITOR AREA */
+.story-editor-area{
+  flex:1;overflow-y:auto;
+  padding:32px 32px 100px;
+  scrollbar-width:thin;
+}
+
+/* SIDEBAR TOGGLE BUTTON — arrow tab on sidebar edge, story only */
+.ch-toggle{
+  position:absolute;
+  right:-18px;top:50%;transform:translateY(-50%);
+  width:18px;height:48px;
+  background:var(--border);
+  border:none;border-radius:0 8px 8px 0;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--slate);
+  z-index:10;transition:background .15s;
+  flex-shrink:0;
+}
+.ch-toggle:hover{background:var(--slate-bg);}
+
+@media(max-width:700px){
+  .ch-sidebar{position:fixed;top:100px;left:0;bottom:52px;z-index:150;box-shadow:4px 0 16px rgba(0,0,0,.12);}
+  .ch-sidebar.collapsed{width:0;overflow:hidden;}
+  .ch-toggle{right:-18px;}
+}
 
 /* Story bottom toolbar */
 .story-btb{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:none;align-items:center;justify-content:center;height:52px;z-index:200;gap:2px;padding:0 8px;flex-shrink:0;}
@@ -297,6 +404,8 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 
 <!-- STORY BOTTOM TOOLBAR -->
 <div class="story-btb" id="storyBtb">
+  <button class="sfb" onmousedown="evP(event)" onclick="addChapter()" title="Chapter အသစ်" style="font-size:11px;font-weight:700;gap:2px;flex-direction:row;width:auto;padding:0 10px;">+ Ch</button>
+  <div class="sfsep"></div>
   <button class="sfb" id="sfb-bold"      onmousedown="evP(event)" onclick="storyFmt('bold')"><b>B</b></button>
   <button class="sfb" id="sfb-italic"    onmousedown="evP(event)" onclick="storyFmt('italic')"><i>I</i></button>
   <button class="sfb" id="sfb-underline" onmousedown="evP(event)" onclick="storyFmt('underline')"><u>U</u></button>
@@ -537,7 +646,10 @@ function reflow(restoreFocusId){
   /* Move all wraps into measureHost */
   els.forEach(function(e){ host.appendChild(e.wrap); });
 
-  /* Measure heights — offsetHeight works because host is in DOM */
+  /* Force layout so CSS classes are applied before measuring */
+  void host.offsetHeight;
+
+  /* Measure heights */
   var heights=els.map(function(e){ return Math.max(e.wrap.offsetHeight, 22); });
 
   /* Distribute into pages */
@@ -564,6 +676,7 @@ function reflow(restoreFocusId){
   });
 
   removeTrailingEmptyPages();
+  updateSceneNumbers();
   updatePageIndicator();
 
   /* Restore focus without keyboard dismiss */
@@ -582,6 +695,22 @@ var elCfg={
   dial:   {ph:'ပြောစကား...',          next:'char'  },
   trans:  {ph:'CUT TO:',             next:'scene' }
 };
+
+function updateSceneNumbers(){
+  var n=0;
+  els.forEach(function(e){
+    if(e.type==='scene'){
+      n++;
+      var numEl=e.wrap.querySelector('.el-scene-num');
+      if(!numEl){
+        numEl=document.createElement('span');
+        numEl.className='el-scene-num';
+        e.wrap.insertBefore(numEl,e.wrap.firstChild);
+      }
+      numEl.textContent=n+'.';
+    }
+  });
+}
 
 function insRaw(type, text){
   var cfg=elCfg[type]; if(!cfg) return;
@@ -653,8 +782,8 @@ function insRaw(type, text){
 function ins(type){
   if(!elCfg[type]) return;
   var obj=insRaw(type,'');
-  /* Immediate reflow after insert (not debounced) then focus */
   reflow(null);
+  updateSceneNumbers();
   setTimeout(function(){ focusStart(obj.ce); },30);
   autoSave();
 }
@@ -668,6 +797,7 @@ function removeEl(wrap, id){
   if(prev) focusEnd(prev.ce);
   else if(els.length) focusStart(els[0].ce);
   reflow(null);
+  updateSceneNumbers();
   autoSave();
 }
 
@@ -844,10 +974,19 @@ function goTab(tab, btn){
   } else {
     if(!tabPages[tab]) buildSecPage(tab);
     tabPages[tab].style.display='';
+    /* Show additional pages for paginated sections */
+    if(secPages[tab] && secPages[tab].length>1){
+      secPages[tab].slice(1).forEach(function(p){ p.pageEl.style.display=''; });
+    }
   }
 }
 
-/* SECTION PAGES */
+/* ===== SECTION PAGES ===== */
+/*
+  logline   → single fixed A4 page, textarea (no pagination)
+  synopsis  → multi-page contentEditable, paginated like screenplay
+  treatment → multi-page contentEditable, paginated like screenplay
+*/
 var secLabels={logline:'Logline',synopsis:'Synopsis',treatment:'Treatment'};
 var secPH={
   logline:  'ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ...',
@@ -855,16 +994,19 @@ var secPH={
   treatment:'မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ...'
 };
 
+/* Paginated section state */
+var secPages={}; /* tab → [{pageEl, areaEl}] */
+var SEC_USABLE=931; /* same as screenplay */
+
 function buildSecPage(tab){
   if(tabPages[tab]) return tabPages[tab];
   var scaler=document.getElementById('scaler');
-  var pg=document.createElement('div');
-  pg.className='page'; pg.id='pg-'+tab; pg.style.display='none';
-
-  var pn=document.createElement('div'); pn.className='page-num';
 
   if(tab==='cover'){
-    pn.textContent='Cover'; pg.appendChild(pn);
+    var pg=document.createElement('div');
+    pg.className='page'; pg.id='pg-cover'; pg.style.display='none';
+    var pn=document.createElement('div'); pn.className='page-num'; pn.textContent='Cover';
+    pg.appendChild(pn);
     var cv=document.createElement('div'); cv.className='cv';
     cv.innerHTML=
       '<textarea class="cv-title" id="cvTitle" placeholder="ဇာတ်ကားနာမည်" rows="1" oninput="syncFromCV(this)"></textarea>'+
@@ -877,27 +1019,172 @@ function buildSecPage(tab){
       var dd=document.getElementById('cvDraft');
       if(dd&&!dd.value) dd.value='Draft 1 · '+new Date().getFullYear();
     },50);
-  } else {
-    pn.textContent=secLabels[tab]||tab; pg.appendChild(pn);
+    scaler.appendChild(pg);
+    tabPages[tab]=pg;
+    return pg;
+  }
+
+  if(tab==='logline'){
+    /* Fixed single page — simple textarea, no pagination */
+    var pg=document.createElement('div');
+    pg.className='page'; pg.id='pg-logline'; pg.style.display='none';
+    var pn=document.createElement('div'); pn.className='page-num'; pn.textContent='Logline';
+    pg.appendChild(pn);
     var sec=document.createElement('div'); sec.className='sec';
-    var lbl=document.createElement('div'); lbl.className='sec-lbl'; lbl.textContent=secLabels[tab]||tab;
+    var lbl=document.createElement('div'); lbl.className='sec-lbl'; lbl.textContent='Logline';
     var ta=document.createElement('textarea');
-    ta.className='sec-ta'; ta.id=tab+'Ta'; ta.placeholder=secPH[tab]||'';
+    ta.className='sec-ta'; ta.id='loglineTa'; ta.placeholder=secPH.logline;
     ta.addEventListener('input',function(){
       autoSave();
-      var map={logline:'tabLogline',synopsis:'tabSynopsis',treatment:'tabTreatment'};
-      var tb=document.getElementById(map[tab]);
+      var tb=document.getElementById('tabLogline');
       if(tb){ if(ta.value.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
     });
     sec.appendChild(lbl); sec.appendChild(ta); pg.appendChild(sec);
+    scaler.appendChild(pg);
+    tabPages[tab]=pg;
+    return pg;
   }
 
-  scaler.appendChild(pg);
-  tabPages[tab]=pg;
-  return pg;
+  /* Synopsis / Treatment — paginated contentEditable */
+  return buildPaginatedSec(tab, scaler);
+}
+
+function buildPaginatedSec(tab, scaler){
+  /* Create first page with contentEditable editor */
+  var pg=addSecPage(tab, scaler, 1);
+  tabPages[tab]=pg.pageEl; /* first page is the "anchor" */
+
+  var ed=pg.areaEl.querySelector('.sec-ed');
+  if(ed){
+    ed.addEventListener('input',function(){
+      autoSave();
+      var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
+      var tb=document.getElementById(map[tab]);
+      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
+      scheduleSecReflow(tab, 1000);
+    });
+  }
+  return pg.pageEl;
+}
+
+function addSecPage(tab, scaler, num){
+  if(!secPages[tab]) secPages[tab]=[];
+  var pg=document.createElement('div');
+  pg.className='page'; pg.id='pg-'+tab+'-'+num; pg.style.display='none';
+
+  var pn=document.createElement('div'); pn.className='page-num';
+  pn.textContent=secLabels[tab]+(num>1?' ('+num+')':'');
+  pg.appendChild(pn);
+
+  var sec=document.createElement('div'); sec.className='sec';
+  if(num===1){
+    var lbl=document.createElement('div'); lbl.className='sec-lbl'; lbl.textContent=secLabels[tab];
+    sec.appendChild(lbl);
+  }
+
+  var ed=document.createElement('div');
+  ed.className='sec-ed';
+  ed.contentEditable='true';
+  ed.setAttribute('data-ph', secPH[tab]||'');
+  ed.id= num===1 ? tab+'Ed' : tab+'Ed'+num;
+  ed.spellcheck=false;
+  sec.appendChild(ed);
+  pg.appendChild(sec);
+
+  var scEl=scaler||document.getElementById('scaler');
+  scEl.appendChild(pg);
+  var obj={pageEl:pg, areaEl:sec, edEl:ed, num:num};
+  secPages[tab].push(obj);
+  return obj;
+}
+
+/* Paginated reflow for synopsis / treatment */
+var secReflowTimers={};
+function scheduleSecReflow(tab, delay){
+  clearTimeout(secReflowTimers[tab]);
+  secReflowTimers[tab]=setTimeout(function(){ reflowSec(tab); }, delay||800);
+}
+
+function reflowSec(tab){
+  if(!secPages[tab]||!secPages[tab].length) return;
+  var firstEd=document.getElementById(tab+'Ed');
+  if(!firstEd) return;
+
+  /* Collect all text from all pages into one string */
+  var allText=secPages[tab].map(function(p){ return p.edEl.innerHTML; }).join('');
+
+  /* Measure how many lines fit in one page */
+  /* Strategy: put all content in first editor, check scrollHeight vs usable */
+  firstEd.innerHTML=allText;
+
+  /* Force layout */
+  void firstEd.offsetHeight;
+
+  var lineH=parseFloat(getComputedStyle(firstEd).lineHeight)||28;
+  var usable=SEC_USABLE-18-36; /* minus label(36) on page1 */
+  var linesPerPage=Math.floor(usable/lineH);
+
+  /* If scrollHeight fits, remove extra pages */
+  if(firstEd.scrollHeight<=usable+20){
+    /* remove extra pages */
+    if(secPages[tab].length>1){
+      for(var i=1;i<secPages[tab].length;i++){
+        secPages[tab][i].pageEl.remove();
+      }
+      secPages[tab]=secPages[tab].slice(0,1);
+    }
+    return;
+  }
+
+  /* Need multiple pages — use column layout trick */
+  /* Simple approach: split by lines */
+  var totalH=firstEd.scrollHeight;
+  var needed=Math.ceil(totalH/usable);
+
+  /* Ensure enough pages exist */
+  var scaler=document.getElementById('scaler');
+  while(secPages[tab].length < needed){
+    var n=secPages[tab].length+1;
+    var newPg=addSecPage(tab, scaler, n);
+    newPg.edEl.addEventListener('input',function(){
+      autoSave();
+      scheduleSecReflow(tab, 1000);
+    });
+    if(curTab===tab) newPg.pageEl.style.display='';
+  }
+  /* Remove extra */
+  while(secPages[tab].length > needed){
+    secPages[tab][secPages[tab].length-1].pageEl.remove();
+    secPages[tab].pop();
+  }
+
+  /* Collect nodes and distribute */
+  var nodes=Array.from(firstEd.childNodes);
+  secPages[tab].forEach(function(p){ p.edEl.innerHTML=''; });
+
+  var pageIdx=0, curH=0;
+  nodes.forEach(function(node){
+    var clone=node.cloneNode(true);
+    var tmp=document.createElement('div');
+    tmp.style.cssText='position:absolute;visibility:hidden;width:'+firstEd.offsetWidth+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);';
+    document.body.appendChild(tmp);
+    tmp.appendChild(clone.cloneNode(true));
+    var h=tmp.offsetHeight||lineH;
+    document.body.removeChild(tmp);
+
+    var pg=secPages[tab][pageIdx];
+    var pgUsable=pageIdx===0?usable:SEC_USABLE-18;
+    if(curH+h>pgUsable && pageIdx<secPages[tab].length-1){
+      pageIdx++; curH=0;
+    }
+    secPages[tab][pageIdx].edEl.appendChild(node.cloneNode(true));
+    curH+=h;
+  });
 }
 
 /* ===== STORY ===== */
+var sidebarOpen = true;
+
 function initStory(){
   document.getElementById('stTabs').style.display='flex';
   document.getElementById('spTabs').style.display='none';
@@ -905,21 +1192,192 @@ function initStory(){
   scaler.style.display='none';
 
   var ws=document.getElementById('ws');
-  ws.style.cssText='flex:1;overflow-y:auto;background:var(--white);display:flex;justify-content:center;padding:0;';
+  ws.style.cssText='flex:1;overflow:hidden;background:var(--white);display:flex;padding:0;';
 
-  if(!document.getElementById('storyWrap')){
-    var wrap=document.createElement('div');
-    wrap.className='story-wrap'; wrap.id='storyWrap';
-    var paper=document.createElement('div'); paper.className='story-paper';
+  if(!document.getElementById('storyLayout')){
+    /* Build layout: sidebar + editor area */
+    var layout=document.createElement('div');
+    layout.className='story-layout'; layout.id='storyLayout';
+
+    /* Sidebar */
+    var sidebar=document.createElement('div');
+    sidebar.className='ch-sidebar'; sidebar.id='chSidebar';
+    sidebar.style.position='relative'; /* for toggle positioning */
+    var sInner=document.createElement('div');
+    sInner.className='ch-sidebar-inner';
+
+    var sHead=document.createElement('div');
+    sHead.className='ch-header';
+    sHead.innerHTML=
+      '<span class="ch-header-title">အခန်းများ</span>'+
+      '<button class="ch-add" onclick="addChapter()" title="Chapter အသစ်">+</button>';
+    var sList=document.createElement('div');
+    sList.className='ch-list'; sList.id='chList';
+    sList.innerHTML='<div class="ch-empty">H1 / H2 heading ရေးလိုက်ရင်<br>ဒီနေရာမှာ ပေါ်မည်</div>';
+
+    sInner.appendChild(sHead); sInner.appendChild(sList);
+    sidebar.appendChild(sInner);
+
+    /* Toggle arrow — embedded in sidebar right edge */
+    var toggleBtn=document.createElement('button');
+    toggleBtn.className='ch-toggle'; toggleBtn.id='chToggle';
+    toggleBtn.onclick=toggleSidebar;
+    toggleBtn.textContent='◀';
+    sidebar.appendChild(toggleBtn);
+
+    /* Editor area */
+    var edArea=document.createElement('div');
+    edArea.className='story-editor-area'; edArea.id='stEdArea';
+
+    var paper=document.createElement('div');
+    paper.className='story-paper';
+    paper.style.maxWidth='680px'; paper.style.margin='0 auto';
+
     var ed=document.createElement('div');
-    ed.className='story-ed'; ed.contentEditable='true'; ed.id='stEd'; ed.spellcheck=false;
-    ed.addEventListener('input',function(){autoSave();updateStoryFmtState();});
-    ed.addEventListener('keyup',updateStoryFmtState);
+    ed.className='story-ed'; ed.contentEditable='true';
+    ed.id='stEd'; ed.spellcheck=false;
+
+    ed.addEventListener('input',function(){
+      autoSave();
+      updateStoryFmtState();
+      scheduleChapterScan();
+    });
+    ed.addEventListener('keyup',function(){
+      updateStoryFmtState();
+      scheduleChapterScan();
+    });
     ed.addEventListener('mouseup',updateStoryFmtState);
-    paper.appendChild(ed); wrap.appendChild(paper); ws.appendChild(wrap);
+
+    paper.appendChild(ed);
+    edArea.appendChild(paper);
+    layout.appendChild(sidebar);
+    layout.appendChild(edArea);
+    ws.appendChild(layout);
   }
+
   document.getElementById('storyBtb').classList.add('on');
-  setTimeout(function(){document.getElementById('stEd').focus();},100);
+
+  /* Mobile: collapse sidebar initially */
+  if(window.innerWidth<=700){
+    sidebarOpen=false;
+    var sb=document.getElementById('chSidebar');
+    if(sb) sb.classList.add('collapsed');
+    var tg=document.getElementById('chToggle');
+    if(tg) tg.textContent='▶';
+  }
+
+  setTimeout(function(){
+    document.getElementById('stEd').focus();
+    scanChapters();
+  },100);
+  initStoryScroll();
+}
+
+function toggleSidebar(){
+  sidebarOpen=!sidebarOpen;
+  var sb=document.getElementById('chSidebar');
+  var tg=document.getElementById('chToggle');
+  if(sb) sb.classList.toggle('collapsed',!sidebarOpen);
+  if(tg) tg.textContent=sidebarOpen?'◀':'▶';
+}
+
+/* ===== CHAPTER: + New Chapter ===== */
+function addChapter(){
+  var ed=document.getElementById('stEd'); if(!ed) return;
+  /* Insert H1 at cursor or end */
+  ed.focus();
+  var sel=window.getSelection();
+  var h1=document.createElement('h1');
+  h1.textContent='အခန်း';
+  if(sel && sel.rangeCount>0 && ed.contains(sel.anchorNode)){
+    var r=sel.getRangeAt(0);
+    r.collapse(false);
+    /* Go to end of current block then insert */
+    r.insertNode(document.createElement('br'));
+    r.insertNode(h1);
+  } else {
+    /* Append at end */
+    if(ed.lastChild) ed.appendChild(document.createElement('br'));
+    ed.appendChild(h1);
+  }
+  /* Place cursor inside h1 */
+  try{
+    var r2=document.createRange();
+    r2.setStart(h1,0); r2.collapse(true);
+    sel.removeAllRanges(); sel.addRange(r2);
+  }catch(x){}
+  h1.scrollIntoView({behavior:'smooth',block:'center'});
+  autoSave();
+  scheduleChapterScan();
+}
+
+/* ===== CHAPTER SCAN — detect H1/H2 headings ===== */
+var chScanTimer=null;
+function scheduleChapterScan(){
+  clearTimeout(chScanTimer);
+  chScanTimer=setTimeout(scanChapters, 400);
+}
+
+function scanChapters(){
+  var ed=document.getElementById('stEd');
+  var list=document.getElementById('chList');
+  if(!ed||!list) return;
+
+  var headings=ed.querySelectorAll('h1,h2');
+  if(!headings.length){
+    list.innerHTML='<div class="ch-empty">H1 / H2 heading ရေးလိုက်ရင်<br>ဒီနေရာမှာ ပေါ်မည်</div>';
+    return;
+  }
+
+  /* Assign ids to headings for scroll targeting */
+  headings.forEach(function(h,i){
+    if(!h.id) h.id='ch-heading-'+i;
+  });
+
+  var html='';
+  headings.forEach(function(h){
+    var tag=h.tagName.toLowerCase();
+    var txt=h.textContent.trim()||'(အမည်မဲ့)';
+    html+=
+      '<button class="ch-item '+tag+'" onclick="scrollToHeading(\''+h.id+'\')">'+
+        '<span class="ch-dot"></span>'+
+        '<span class="ch-name">'+esc(txt)+'</span>'+
+      '</button>';
+  });
+  list.innerHTML=html;
+
+  /* Highlight active chapter based on scroll */
+  highlightActiveChapter();
+}
+
+function scrollToHeading(id){
+  var el=document.getElementById(id);
+  var area=document.getElementById('stEdArea');
+  if(!el||!area) return;
+  var top=el.offsetTop - 20;
+  area.scrollTo({top:top, behavior:'smooth'});
+  /* Close sidebar on mobile after tap */
+  if(window.innerWidth<=700){ sidebarOpen=false; document.getElementById('chSidebar').classList.add('collapsed'); }
+}
+
+function highlightActiveChapter(){
+  var area=document.getElementById('stEdArea');
+  var list=document.getElementById('chList');
+  if(!area||!list) return;
+  var scrollTop=area.scrollTop;
+  var items=list.querySelectorAll('.ch-item');
+  var headings=document.getElementById('stEd').querySelectorAll('h1,h2');
+  var activeIdx=0;
+  headings.forEach(function(h,i){
+    if(h.offsetTop-40 <= scrollTop) activeIdx=i;
+  });
+  items.forEach(function(it,i){ it.classList.toggle('active',i===activeIdx); });
+}
+
+/* Update active chapter on scroll */
+function initStoryScroll(){
+  var area=document.getElementById('stEdArea');
+  if(area) area.addEventListener('scroll',highlightActiveChapter,{passive:true});
 }
 
 function storyFmt(cmd){
@@ -1009,6 +1467,15 @@ function setSv(s){
 }
 
 function collect(){
+  /* synopsis/treatment: gather text from all pages */
+  function getSecText(tab){
+    if(!secPages[tab]) {
+      /* fallback: textarea for logline */
+      var ta=document.getElementById(tab+'Ta');
+      return ta?ta.value:'';
+    }
+    return secPages[tab].map(function(p){ return p.edEl.innerText||''; }).join('\n').trim();
+  }
   return{
     id:docId, type:docType, privacy:savePriv, genre:docGenre,
     genreLabel:genreLabels[docGenre]||docGenre,
@@ -1016,8 +1483,8 @@ function collect(){
     author:(document.getElementById('cvAuth')||{}).value||'',
     draft: (document.getElementById('cvDraft')||{}).value||'',
     logline:  (document.getElementById('loglineTa')||{}).value||'',
-    synopsis: (document.getElementById('synopsisTa')||{}).value||'',
-    treatment:(document.getElementById('treatmentTa')||{}).value||'',
+    synopsis: getSecText('synopsis'),
+    treatment:getSecText('treatment'),
     screenplay:els.map(function(e){return{type:e.type,text:e.ce.textContent};}),
     story:(document.getElementById('stEd')||{}).innerHTML||'',
     saved:new Date().toISOString()
@@ -1049,16 +1516,25 @@ function restoreDoc(data){
       var cd=document.getElementById('cvDraft');
       if(cd && data.draft) cd.value=data.draft;
 
-      /* Sections */
-      ['logline','synopsis','treatment'].forEach(function(k){
-        /* Build page so textarea exists */
+      /* Logline — textarea */
+      var logTa=document.getElementById('loglineTa');
+      if(!logTa){ buildSecPage('logline'); logTa=document.getElementById('loglineTa'); }
+      if(logTa && data.logline){
+        logTa.value=data.logline;
+        var tlb=document.getElementById('tabLogline');
+        if(tlb && data.logline.trim()) tlb.classList.add('has');
+      }
+
+      /* Synopsis / Treatment — contentEditable */
+      ['synopsis','treatment'].forEach(function(k){
+        if(!data[k] || !data[k].trim()) return;
         if(!tabPages[k]) buildSecPage(k);
-        var ta=document.getElementById(k+'Ta');
-        if(ta && data[k]){
-          ta.value=data[k];
-          var map={logline:'tabLogline',synopsis:'tabSynopsis',treatment:'tabTreatment'};
+        var ed=document.getElementById(k+'Ed');
+        if(ed){
+          ed.innerText=data[k];
+          var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
           var tb=document.getElementById(map[k]);
-          if(tb && data[k].trim()) tb.classList.add('has');
+          if(tb) tb.classList.add('has');
         }
       });
 
@@ -1080,7 +1556,7 @@ function restoreDoc(data){
       }
     } else {
       var se=document.getElementById('stEd');
-      if(se && data.story) se.innerHTML=data.story;
+      if(se && data.story){ se.innerHTML=data.story; setTimeout(scanChapters,200); }
     }
     setSv('ok');
   },400);
@@ -1197,10 +1673,11 @@ function doPrint(wm){
       h+='<div class="pp-el pp-'+(el.dataset.type||'action')+'">'+esc(el.querySelector('.el-ce')?el.querySelector('.el-ce').textContent:'')+'</div>';
     });
     pgs.push('<div class="pp-page pp-script">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
-      '<div class="pp-pnum">p.'+(i+1)+'</div>'+(i===0?'<div class="pp-fade">FADE IN:</div>':'')+h+'</div>');
+      '<div class="pp-pnum">p.'+(i+1)+'</div>'+h+
+      '<div class="pp-footer">write at cinepodma.com</div></div>');
   });
   var win=window.open('','_blank','width=900,height=700');
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(cvTitle||'CinePodma')+'</title><style>@import url(\'https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap\');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:\'Courier New\',Courier,monospace;background:#fff;}.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;}.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}.pp-cover-title{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:28px;font-weight:700;margin-bottom:24px;line-height:1.8;}.pp-cover-hr{width:60px;height:1px;background:#000;margin:0 auto 20px;}.pp-cover-by{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:6px;}.pp-cover-author{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:16px;font-weight:600;line-height:1.8;}.pp-cover-draft{font-size:11px;color:#999;margin-top:32px;}.pp-sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:8px;}.pp-sec-text{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:14px;line-height:2.0;white-space:pre-wrap;}.pp-pnum{position:absolute;top:20px;right:2.54cm;font-size:9px;color:#999;}.pp-fade{font-size:12px;font-weight:600;margin-bottom:8px;}.pp-el{font-size:12px;line-height:1.8;margin-bottom:1px;}.pp-scene{font-weight:bold;margin-top:14px;text-transform:uppercase;}.pp-action{padding:1px 0;}.pp-char{padding-left:34%;margin-top:10px;text-transform:uppercase;}.pp-paren{padding-left:26%;padding-right:26%;}.pp-dial{padding-left:20%;padding-right:20%;}.pp-trans{text-align:right;margin-top:10px;text-transform:uppercase;}@media print{body{-webkit-print-color-adjust:exact;}}</style></head><body>'+pgs.join('')+'</body></html>');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(cvTitle||'CinePodma')+'</title><style>@import url(\'https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap\');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:\'Courier New\',Courier,monospace;background:#fff;}.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;}.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}.pp-cover-title{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:28px;font-weight:700;margin-bottom:24px;line-height:1.8;}.pp-cover-hr{width:60px;height:1px;background:#000;margin:0 auto 20px;}.pp-cover-by{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:6px;}.pp-cover-author{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:16px;font-weight:600;line-height:1.8;}.pp-cover-draft{font-size:11px;color:#999;margin-top:32px;}.pp-sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:8px;}.pp-sec-text{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:14px;line-height:2.0;white-space:pre-wrap;}.pp-pnum{position:absolute;top:20px;right:2.54cm;font-size:9px;color:#999;}.pp-el{font-size:12px;line-height:1.8;margin-bottom:1px;}.pp-scene{font-weight:bold;margin-top:14px;text-transform:uppercase;}.pp-action{padding:1px 0;}.pp-char{padding-left:34%;margin-top:10px;text-transform:uppercase;}.pp-paren{padding-left:26%;padding-right:26%;}.pp-dial{padding-left:20%;padding-right:20%;}.pp-trans{text-align:right;margin-top:10px;text-transform:uppercase;}.pp-footer{position:absolute;bottom:1cm;left:2.54cm;right:2.54cm;text-align:center;font-size:8px;color:#CCC;letter-spacing:.8px;}@media print{body{-webkit-print-color-adjust:exact;}}</style></head><body>'+pgs.join('')+'</body></html>');
   win.document.close(); win.focus();
   setTimeout(function(){win.print();},800);
 }
@@ -1288,16 +1765,28 @@ onAuthStateChanged(auth,async user=>{
               insRaw(s.type,s.text);
             });
             reflow(null);
+            updateSceneNumbers();
             pages.forEach(p=>{p.pageEl.style.display=curTab==='screenplay'?'':'none';});
             updatePageIndicator();
           }
-          /* Restore cover title from cloud too */
+          /* Restore cover */
           var ct=document.getElementById('cvTitle');
           if(ct&&data.title){ct.value=data.title;ct.style.height='auto';ct.style.height=ct.scrollHeight+'px';}
           var ca=document.getElementById('cvAuth');
           if(ca&&data.author) ca.value=data.author;
           var cd=document.getElementById('cvDraft');
           if(cd&&data.draft) cd.value=data.draft;
+          /* Restore logline */
+          if(!tabPages['logline']) buildSecPage('logline');
+          var lt=document.getElementById('loglineTa');
+          if(lt&&data.logline) lt.value=data.logline;
+          /* Restore synopsis/treatment */
+          ['synopsis','treatment'].forEach(function(k){
+            if(!data[k]||!data[k].trim()) return;
+            if(!tabPages[k]) buildSecPage(k);
+            var ed=document.getElementById(k+'Ed');
+            if(ed) ed.innerText=data[k];
+          });
         }
         setSv('ok');
       }
