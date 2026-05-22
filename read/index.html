@@ -289,10 +289,13 @@ function setTheme(t) {
   var bg = getBg();
   document.getElementById('topNav').style.background = bg;
   document.getElementById('sbar').style.background   = bg;
-  /* ① Update browser bar color */
-  var meta = document.querySelector('meta[name="theme-color"]');
-  if (!meta) { meta = document.createElement('meta'); meta.name='theme-color'; document.head.appendChild(meta); }
+  /* ① Update browser bar color — remove+readd for iOS Safari live update */
+  var oldMeta = document.querySelector('meta[name="theme-color"]');
+  if (oldMeta) oldMeta.parentNode.removeChild(oldMeta);
+  var meta = document.createElement('meta');
+  meta.name = 'theme-color';
   meta.content = bg;
+  document.head.appendChild(meta);
   try { localStorage.setItem('cp_theme', t); } catch(e) {}
   if (window._onSettingChange) window._onSettingChange();
 }
