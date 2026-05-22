@@ -72,7 +72,7 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .cv-draft::placeholder{color:#CCC;}
 
 /* SECTION */
-.sec{width:100%;height:100%;padding:var(--pad);box-sizing:border-box;display:flex;flex-direction:column;}
+.sec{width:100%;height:100%;padding:var(--pad);box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;}
 .sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .sec-ta{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);resize:none;overflow-y:auto;}
@@ -623,83 +623,64 @@ var reflowTimer=null;
 
 function scheduleReflow(delay){
   clearTimeout(reflowTimer);
-  /* Capture focusedElId at FIRE time (not schedule time) so we always
-     restore focus to whichever element is actually focused when reflow runs */
+  /* Pass null — focus is managed directly by ins()/focusStart().
+     Reflow from typing should only redistribute pages, not touch focus. */
   reflowTimer=setTimeout(function(){
-    reflow(focusedElId);
+    reflow(null);
   }, delay||600);
 }
 
 function reflow(restoreFocusId){
   if(curTab!=='screenplay') return;
   if(els.length===0){ removeTrailingEmptyPages(); updatePageIndicator(); return; }
-
   if(pages.length===0) addPage();
 
-  /* STEP 1: Read sp-area size BEFORE moving elements out (clientHeight is 0 after) */
-  var dims = getSpDimensions();
-  var usable = dims.h;
-  var spW    = dims.w;
+  /* Read sp-area dimensions BEFORE touching DOM */
+  var dims=getSpDimensions();
+  var usable=dims.h;
+  var spW=dims.w;
 
-  /* STEP 2: Set measureHost width = sp-area width so text wraps identically */
+  /* Measure heights using CLONES — live elements never leave the DOM.
+     This is the key fix: iOS keyboard dismisses when focused element is
+     detached from DOM. By cloning, we measure without any detach. */
   var host=document.getElementById('measureHost');
-  host.style.width      = spW + 'px';
-  host.style.fontFamily = "Courier New,Courier,monospace";
-  host.style.fontSize   = '12px';
+  host.style.width=spW+'px';
+  host.style.fontFamily='Courier New,Courier,monospace';
+  host.style.fontSize='12px';
+  host.innerHTML='';
 
-  /* STEP 3: Move all elements into measureHost */
-  els.forEach(function(e){ host.appendChild(e.wrap); });
-  void host.offsetHeight; /* force layout */
-
-  /* STEP 4: Measure each element height in CSS pixels */
-  var heights=els.map(function(e){
-    return Math.max(e.wrap.offsetHeight || 22, 22);
+  var clones=els.map(function(e){
+    var c=e.wrap.cloneNode(true);
+    host.appendChild(c);
+    return c;
   });
+  void host.offsetHeight;
+  var heights=clones.map(function(c){ return Math.max(c.offsetHeight||22,22); });
+  host.innerHTML='';
 
-  /* STEP 5: Distribute into pages — same logic every page */
+  /* Compute page assignments */
   var assignments=[];
-  var pageIdx=0, used=0;
+  var pageIdx=0,used=0;
   heights.forEach(function(h,i){
-    if(used>0 && used+h > usable){ pageIdx++; used=0; }
-    assignments.push({el:els[i], pageIdx:pageIdx});
+    if(used>0 && used+h>usable){ pageIdx++; used=0; }
+    assignments.push({el:els[i],pageIdx:pageIdx});
     used+=h;
   });
 
-  /* STEP 6: Ensure enough pages */
-  while(pages.length < pageIdx+1) addPage();
+  /* Ensure enough pages */
+  while(pages.length<pageIdx+1) addPage();
 
-  /* STEP 7: Clear then fill pages */
-  pages.forEach(function(p){ p.areaEl.innerHTML=''; });
+  /* Move live elements with appendChild — moves node without detach/reattach.
+     If element is already in correct page, skip. No focus loss, no keyboard dismiss. */
   assignments.forEach(function(a){
+    var area=pages[a.pageIdx].areaEl;
+    if(a.el.wrap.parentNode!==area) area.appendChild(a.el.wrap);
     a.el.pageIdx=a.pageIdx;
-    pages[a.pageIdx].areaEl.appendChild(a.el.wrap);
   });
 
   removeTrailingEmptyPages();
   updateSceneNumbers();
   updatePageIndicator();
-
-  if(restoreFocusId){
-    var target=null;
-    for(var i=0;i<els.length;i++){
-      if(els[i].id===restoreFocusId){ target=els[i]; break; }
-    }
-    if(target && document.body.contains(target.ce)){
-      requestAnimationFrame(function(){
-        if(target.ce.textContent==='') focusStart(target.ce);
-        else focusEnd(target.ce);
-        /* Scroll element into view within the ws scroller */
-        var ws=document.getElementById('ws');
-        if(ws && target.wrap){
-          var er=target.wrap.getBoundingClientRect();
-          var wr=ws.getBoundingClientRect();
-          if(er.bottom > wr.bottom - 60){
-            target.wrap.scrollIntoView({block:'nearest',behavior:'smooth'});
-          }
-        }
-      });
-    }
-  }
 }
 
 /* ===== ELEMENT CONFIG ===== */
@@ -812,16 +793,20 @@ function getElIndex(id){
 
 function ins(type){
   if(!elCfg[type]) return;
-  /* Cancel any pending debounced reflow — we're about to do one now */
   clearTimeout(reflowTimer);
   var obj=insRaw(type,'');
   if(!obj) return;
-  /* Set focusedElId to NEW element BEFORE reflow so restore goes there */
   focusedElId=obj.id;
-  reflow(obj.id);
+  lastEl=obj.wrap;
+  focusStart(obj.ce);
+  reflow(null);
   updateSceneNumbers();
+  requestAnimationFrame(function(){
+    obj.wrap.scrollIntoView({block:'nearest',behavior:'smooth'});
+  });
   autoSave();
 }
+
 
 function removeEl(wrap, id){
   var idx=getElIndex(id);
@@ -1140,27 +1125,8 @@ function buildSecPage(tab){
 function buildPaginatedSec(tab, scaler){
   var pg=addSecPage(tab, scaler, 1);
   tabPages[tab]=pg.pageEl;
-
   var ed=pg.areaEl.querySelector('.sec-ed');
-  if(ed){
-    var isComp=false;
-    ed.addEventListener('compositionstart',function(){ isComp=true; });
-    ed.addEventListener('compositionend',function(){
-      isComp=false; autoSave();
-      var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
-      var tb=document.getElementById(map[tab]);
-      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
-      scheduleSecReflow(tab, 300);
-    });
-    ed.addEventListener('input',function(){
-      if(isComp) return;
-      autoSave();
-      var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
-      var tb=document.getElementById(map[tab]);
-      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
-      scheduleSecReflow(tab, 300);
-    });
-  }
+  if(ed) attachSecEdListeners(ed, tab);
   return pg.pageEl;
 }
 
@@ -1195,88 +1161,88 @@ function addSecPage(tab, scaler, num){
   return obj;
 }
 
-/* ===== SECTION REFLOW (screenplay-style) ===== */
+/* ===== SECTION REFLOW ===== */
+/*
+  True multi-page reflow using node moves (no innerHTML swap, no cursor jump).
+  
+  Each page has its own contentEditable .sec-ed.
+  User types in any page editor naturally.
+  After typing stops (debounced), we:
+    1. Collect all child nodes from all page editors (by reference)
+    2. Measure each node using a clone in an off-screen div
+    3. Compute which page each node belongs to
+    4. Move nodes with appendChild() — moves in-place, no DOM detach for
+       nodes staying in same page; nodes crossing pages are moved but by
+       then the debounce has passed so keyboard is not dismissed
+*/
 var secReflowTimers={};
-function scheduleSecReflow(tab, delay){
+function scheduleSecReflow(tab,delay){
   clearTimeout(secReflowTimers[tab]);
-  secReflowTimers[tab]=setTimeout(function(){ reflowSec(tab); }, delay||300);
+  secReflowTimers[tab]=setTimeout(function(){ reflowSec(tab); },delay||800);
 }
 
-/* Get usable height of a sec page area (CSS pixels, same as offsetHeight) */
 function getSecUsable(tab){
-  if(secPages[tab] && secPages[tab].length>0){
+  if(secPages[tab]&&secPages[tab].length>0){
     var area=secPages[tab][0].areaEl;
-    /* areaEl is .sec — use clientHeight; subtract label height on page 1 */
     var h=area.clientHeight;
-    if(h>0){
-      /* page 1 has a label (~36px), subsequent pages do not */
-      return {page1: h-36, rest: h};
-    }
+    if(h>0) return {page1:h-40, rest:h};
   }
-  /* fallback: A4 - top/bottom pad - label */
-  return {page1: 931-36, rest: 931};
+  return {page1:891, rest:931};
 }
+
+function updateSecPageLines(){}  /* no-op — kept for compat */
 
 function reflowSec(tab){
   if(!secPages[tab]||!secPages[tab].length) return;
-  var firstPg=secPages[tab][0];
-  var firstEd=firstPg.edEl;
-  if(!firstEd) return;
 
-  /* Collect all content from every page into firstEd */
-  var allHTML='';
-  secPages[tab].forEach(function(p){ allHTML+=p.edEl.innerHTML; });
-  firstEd.innerHTML=allHTML;
-  void firstEd.offsetHeight;
-
-  /* Read usable heights */
   var dims=getSecUsable(tab);
-  var usable1=dims.page1;   /* page 1 usable (minus label) */
-  var usableN=dims.rest;    /* page 2+ usable */
+  var usable1=dims.page1;
+  var usableN=dims.rest;
 
-  /* If all fits on one page, remove extras and return */
-  if(firstEd.scrollHeight<=usable1+4){
-    for(var i=1;i<secPages[tab].length;i++) secPages[tab][i].pageEl.remove();
-    secPages[tab]=secPages[tab].slice(0,1);
-    return;
-  }
+  /* Step 1: Collect ALL nodes from ALL pages (by live reference) */
+  var allNodes=[];
+  secPages[tab].forEach(function(p){
+    Array.from(p.edEl.childNodes).forEach(function(n){
+      allNodes.push(n);
+    });
+  });
+  if(!allNodes.length) return;
 
-  /* Need multiple pages — measure each child node */
-  var scaler=document.getElementById('scaler');
-  var edW=firstEd.clientWidth||602;
+  /* Step 2: Measure using clones in off-screen div */
+  var firstEd=secPages[tab][0].edEl;
+  var edW=firstEd.clientWidth||580;
   var lineH=parseFloat(getComputedStyle(firstEd).lineHeight)||28;
 
-  /* Measure div — same font/size as sec-ed */
   var mDiv=document.createElement('div');
-  mDiv.style.cssText=
-    'position:fixed;top:-9999px;left:0;visibility:hidden;pointer-events:none;'+
-    'width:'+edW+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);'+
-    'word-break:break-word;box-sizing:border-box;';
+  mDiv.style.cssText='position:fixed;top:-9999px;left:0;visibility:hidden;'+
+    'pointer-events:none;width:'+edW+'px;font-size:14px;line-height:2.0;'+
+    'font-family:var(--font-my);word-break:break-word;box-sizing:border-box;';
   document.body.appendChild(mDiv);
 
-  /* Get all child nodes */
-  var nodes=Array.from(firstEd.childNodes);
-
-  /* Figure out how many pages we need */
-  var pageIdx=0, usedH=0;
-  nodes.forEach(function(node){
+  var heights=allNodes.map(function(n){
     mDiv.innerHTML='';
-    mDiv.appendChild(node.cloneNode(true));
-    var h=Math.max(mDiv.offsetHeight||lineH, lineH);
-    var cap=(pageIdx===0)?usable1:usableN;
-    if(usedH>0 && usedH+h>cap){ pageIdx++; usedH=0; }
-    usedH+=h;
+    mDiv.appendChild(n.cloneNode(true));
+    return Math.max(mDiv.offsetHeight||lineH,lineH);
   });
-  var needed=pageIdx+1;
   document.body.removeChild(mDiv);
 
-  /* Add/remove pages to match needed count */
+  /* Step 3: Assign nodes to pages */
+  var assignments=[];
+  var pageIdx=0,used=0;
+  heights.forEach(function(h,i){
+    var cap=pageIdx===0?usable1:usableN;
+    if(used>0&&used+h>cap){ pageIdx++; used=0; }
+    assignments.push(pageIdx);
+    used+=h;
+  });
+  var needed=pageIdx+1;
+
+  /* Step 4: Ensure enough pages exist */
+  var scaler=document.getElementById('scaler');
   while(secPages[tab].length<needed){
     var n=secPages[tab].length+1;
     var newPg=addSecPage(tab,scaler,n);
-    (function(t){
-      newPg.edEl.addEventListener('input',function(){ autoSave(); scheduleSecReflow(t,300); });
-    })(tab);
+    attachSecEdListeners(newPg.edEl,tab);
     if(curTab===tab) newPg.pageEl.style.display='';
   }
   while(secPages[tab].length>needed){
@@ -1284,26 +1250,46 @@ function reflowSec(tab){
     secPages[tab].pop();
   }
 
-  /* Remeasure and distribute */
-  var mDiv2=document.createElement('div');
-  mDiv2.style.cssText=
-    'position:fixed;top:-9999px;left:0;visibility:hidden;pointer-events:none;'+
-    'width:'+edW+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);'+
-    'word-break:break-word;box-sizing:border-box;';
-  document.body.appendChild(mDiv2);
+  /* Step 5: Move nodes to correct pages using appendChild (no innerHTML clear)
+     Group assignments by page first */
+  var pageNodes=[];
+  for(var i=0;i<needed;i++) pageNodes.push([]);
+  allNodes.forEach(function(n,i){ pageNodes[assignments[i]].push(n); });
 
-  secPages[tab].forEach(function(p){ p.edEl.innerHTML=''; });
-  pageIdx=0; usedH=0;
-  nodes.forEach(function(node){
-    mDiv2.innerHTML='';
-    mDiv2.appendChild(node.cloneNode(true));
-    var h=Math.max(mDiv2.offsetHeight||lineH, lineH);
-    var cap=(pageIdx===0)?usable1:usableN;
-    if(usedH>0 && usedH+h>cap && pageIdx<secPages[tab].length-1){ pageIdx++; usedH=0; }
-    secPages[tab][pageIdx].edEl.appendChild(node.cloneNode(true));
-    usedH+=h;
+  pageNodes.forEach(function(nodes,pi){
+    var ed=secPages[tab][pi].edEl;
+    nodes.forEach(function(n){
+      if(n.parentNode!==ed) ed.appendChild(n);
+    });
   });
-  document.body.removeChild(mDiv2);
+}
+
+function attachSecEdListeners(ed,tab){
+  if(ed._secListened) return;
+  ed._secListened=true;
+  var isComp=false;
+  ed.addEventListener('compositionstart',function(){ isComp=true; });
+  ed.addEventListener('compositionend',function(){
+    isComp=false; autoSave();
+    updateSecHasDot(ed,tab);
+    scheduleSecReflow(tab,800);
+  });
+  ed.addEventListener('input',function(){
+    if(isComp) return;
+    autoSave();
+    updateSecHasDot(ed,tab);
+    scheduleSecReflow(tab,800);
+  });
+}
+
+function updateSecHasDot(ed,tab){
+  var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
+  var tb=document.getElementById(map[tab]);
+  if(tb){
+    /* Check all pages for content */
+    var hasText=secPages[tab]&&secPages[tab].some(function(p){ return p.edEl.textContent.trim(); });
+    tb.classList.toggle('has',hasText);
+  }
 }
 
 
@@ -1727,13 +1713,10 @@ function collect(){
       var el=document.getElementById('loglineTa');
       return el?(el.innerText||''):'';
     }
-    /* synopsis/treatment: gather from all sec pages */
-    if(secPages[tab] && secPages[tab].length>0){
-      return secPages[tab].map(function(p){
-        return p.edEl.innerText||'';
-      }).join('\n').trim();
+    /* synopsis/treatment: gather text from all pages */
+    if(secPages[tab]&&secPages[tab].length>0){
+      return secPages[tab].map(function(p){ return p.edEl.innerText||''; }).join('\n').trim();
     }
-    /* fallback: single editor */
     var ed=document.getElementById(tab+'Ed');
     return ed?(ed.innerText||''):'';
   }
@@ -1798,15 +1781,15 @@ function applyRestoreData(data){
 
     /* Synopsis / Treatment */
     ['synopsis','treatment'].forEach(function(k){
-      if(!data[k] || !data[k].trim()) return;
+      if(!data[k]||!data[k].trim()) return;
       if(!tabPages[k]) buildSecPage(k);
       var ed=document.getElementById(k+'Ed');
       if(ed){
-        /* FIX: use innerText for plain text restore to avoid XSS and formatting issues */
         ed.innerText=data[k];
         var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
         var tb=document.getElementById(map[k]);
         if(tb) tb.classList.add('has');
+        setTimeout(function(){ reflowSec(k); },400);
       }
     });
 
