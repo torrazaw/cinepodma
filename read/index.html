@@ -296,6 +296,12 @@ function setTheme(t) {
   meta.name = 'theme-color';
   meta.content = bg;
   document.head.appendChild(meta);
+  /* Update TOC sheet background to match theme */
+  var tocSheet = document.getElementById('tocSheet');
+  if (tocSheet) tocSheet.style.background = bg;
+  /* Update bottom bar background */
+  var bottomBar = document.getElementById('bottomBar');
+  if (bottomBar) bottomBar.style.background = bg;
   try { localStorage.setItem('cp_theme', t); } catch(e) {}
   if (window._onSettingChange) window._onSettingChange();
 }
