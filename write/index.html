@@ -1083,20 +1083,32 @@ function buildSecPage(tab){
   }
 
   if(tab==='logline'){
+    /* Logline: single A4 page, contentEditable — overflow-y:auto for long text */
     var pg=document.createElement('div');
     pg.className='page'; pg.id='pg-logline'; pg.style.display='none';
     var pn=document.createElement('div'); pn.className='page-num'; pn.textContent='Logline';
     pg.appendChild(pn);
     var sec=document.createElement('div'); sec.className='sec';
     var lbl=document.createElement('div'); lbl.className='sec-lbl'; lbl.textContent='Logline';
-    var ta=document.createElement('textarea');
-    ta.className='sec-ta'; ta.id='loglineTa'; ta.placeholder=secPH.logline;
-    ta.addEventListener('input',function(){
-      autoSave();
+    var ed=document.createElement('div');
+    ed.className='sec-ed'; ed.id='loglineTa';
+    ed.contentEditable='true'; ed.spellcheck=false;
+    ed.setAttribute('data-ph', secPH.logline);
+    /* Allow scroll on logline page if text exceeds page */
+    ed.style.overflowY='auto';
+    var isComp=false;
+    ed.addEventListener('compositionstart',function(){ isComp=true; });
+    ed.addEventListener('compositionend',function(){
+      isComp=false; autoSave();
       var tb=document.getElementById('tabLogline');
-      if(tb){ if(ta.value.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
+      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
     });
-    sec.appendChild(lbl); sec.appendChild(ta); pg.appendChild(sec);
+    ed.addEventListener('input',function(){
+      if(isComp) return; autoSave();
+      var tb=document.getElementById('tabLogline');
+      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
+    });
+    sec.appendChild(lbl); sec.appendChild(ed); pg.appendChild(sec);
     scaler.appendChild(pg);
     tabPages[tab]=pg;
     return pg;
@@ -1111,12 +1123,22 @@ function buildPaginatedSec(tab, scaler){
 
   var ed=pg.areaEl.querySelector('.sec-ed');
   if(ed){
+    var isComp=false;
+    ed.addEventListener('compositionstart',function(){ isComp=true; });
+    ed.addEventListener('compositionend',function(){
+      isComp=false; autoSave();
+      var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
+      var tb=document.getElementById(map[tab]);
+      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
+      scheduleSecReflow(tab, 300);
+    });
     ed.addEventListener('input',function(){
+      if(isComp) return;
       autoSave();
       var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
       var tb=document.getElementById(map[tab]);
       if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
-      scheduleSecReflow(tab, 1000);
+      scheduleSecReflow(tab, 300);
     });
   }
   return pg.pageEl;
@@ -1153,93 +1175,117 @@ function addSecPage(tab, scaler, num){
   return obj;
 }
 
-/* ===== SECTION REFLOW — fixed: collect from all pages before reflow ===== */
+/* ===== SECTION REFLOW (screenplay-style) ===== */
 var secReflowTimers={};
 function scheduleSecReflow(tab, delay){
   clearTimeout(secReflowTimers[tab]);
-  secReflowTimers[tab]=setTimeout(function(){ reflowSec(tab); }, delay||800);
+  secReflowTimers[tab]=setTimeout(function(){ reflowSec(tab); }, delay||300);
+}
+
+/* Get usable height of a sec page area (CSS pixels, same as offsetHeight) */
+function getSecUsable(tab){
+  if(secPages[tab] && secPages[tab].length>0){
+    var area=secPages[tab][0].areaEl;
+    /* areaEl is .sec — use clientHeight; subtract label height on page 1 */
+    var h=area.clientHeight;
+    if(h>0){
+      /* page 1 has a label (~36px), subsequent pages do not */
+      return {page1: h-36, rest: h};
+    }
+  }
+  /* fallback: A4 - top/bottom pad - label */
+  return {page1: 931-36, rest: 931};
 }
 
 function reflowSec(tab){
   if(!secPages[tab]||!secPages[tab].length) return;
-  var firstEd=document.getElementById(tab+'Ed');
+  var firstPg=secPages[tab][0];
+  var firstEd=firstPg.edEl;
   if(!firstEd) return;
 
-  /* FIX: collect innerHTML from ALL pages before overwriting first */
+  /* Collect all content from every page into firstEd */
   var allHTML='';
-  secPages[tab].forEach(function(p){
-    allHTML += p.edEl.innerHTML;
-  });
-
-  /* Save selection position (caret) */
-  var sel=window.getSelection();
-  var savedRange=null;
-  if(sel && sel.rangeCount>0){
-    try{ savedRange=sel.getRangeAt(0).cloneRange(); }catch(x){}
-  }
-
+  secPages[tab].forEach(function(p){ allHTML+=p.edEl.innerHTML; });
   firstEd.innerHTML=allHTML;
   void firstEd.offsetHeight;
 
-  var lineH=parseFloat(getComputedStyle(firstEd).lineHeight)||28;
-  var usable=SEC_USABLE-18-36;
+  /* Read usable heights */
+  var dims=getSecUsable(tab);
+  var usable1=dims.page1;   /* page 1 usable (minus label) */
+  var usableN=dims.rest;    /* page 2+ usable */
 
-  if(firstEd.scrollHeight<=usable+20){
-    if(secPages[tab].length>1){
-      for(var i=1;i<secPages[tab].length;i++){
-        secPages[tab][i].pageEl.remove();
-      }
-      secPages[tab]=secPages[tab].slice(0,1);
-    }
+  /* If all fits on one page, remove extras and return */
+  if(firstEd.scrollHeight<=usable1+4){
+    for(var i=1;i<secPages[tab].length;i++) secPages[tab][i].pageEl.remove();
+    secPages[tab]=secPages[tab].slice(0,1);
     return;
   }
 
-  var totalH=firstEd.scrollHeight;
-  var needed=Math.ceil(totalH/usable);
-
+  /* Need multiple pages — measure each child node */
   var scaler=document.getElementById('scaler');
-  while(secPages[tab].length < needed){
+  var edW=firstEd.clientWidth||602;
+  var lineH=parseFloat(getComputedStyle(firstEd).lineHeight)||28;
+
+  /* Measure div — same font/size as sec-ed */
+  var mDiv=document.createElement('div');
+  mDiv.style.cssText=
+    'position:fixed;top:-9999px;left:0;visibility:hidden;pointer-events:none;'+
+    'width:'+edW+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);'+
+    'word-break:break-word;box-sizing:border-box;';
+  document.body.appendChild(mDiv);
+
+  /* Get all child nodes */
+  var nodes=Array.from(firstEd.childNodes);
+
+  /* Figure out how many pages we need */
+  var pageIdx=0, usedH=0;
+  nodes.forEach(function(node){
+    mDiv.innerHTML='';
+    mDiv.appendChild(node.cloneNode(true));
+    var h=Math.max(mDiv.offsetHeight||lineH, lineH);
+    var cap=(pageIdx===0)?usable1:usableN;
+    if(usedH>0 && usedH+h>cap){ pageIdx++; usedH=0; }
+    usedH+=h;
+  });
+  var needed=pageIdx+1;
+  document.body.removeChild(mDiv);
+
+  /* Add/remove pages to match needed count */
+  while(secPages[tab].length<needed){
     var n=secPages[tab].length+1;
-    var newPg=addSecPage(tab, scaler, n);
-    /* FIX: use closure to capture tab correctly */
+    var newPg=addSecPage(tab,scaler,n);
     (function(t){
-      newPg.edEl.addEventListener('input',function(){
-        autoSave();
-        scheduleSecReflow(t, 1000);
-      });
+      newPg.edEl.addEventListener('input',function(){ autoSave(); scheduleSecReflow(t,300); });
     })(tab);
     if(curTab===tab) newPg.pageEl.style.display='';
   }
-  while(secPages[tab].length > needed){
+  while(secPages[tab].length>needed){
     secPages[tab][secPages[tab].length-1].pageEl.remove();
     secPages[tab].pop();
   }
 
-  /* Distribute child nodes across pages */
-  var nodes=Array.from(firstEd.childNodes);
+  /* Remeasure and distribute */
+  var mDiv2=document.createElement('div');
+  mDiv2.style.cssText=
+    'position:fixed;top:-9999px;left:0;visibility:hidden;pointer-events:none;'+
+    'width:'+edW+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);'+
+    'word-break:break-word;box-sizing:border-box;';
+  document.body.appendChild(mDiv2);
+
   secPages[tab].forEach(function(p){ p.edEl.innerHTML=''; });
-
-  var pageIdx=0, curH=0;
-  var measureDiv=document.createElement('div');
-  measureDiv.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:'+firstEd.offsetWidth+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);';
-  document.body.appendChild(measureDiv);
-
+  pageIdx=0; usedH=0;
   nodes.forEach(function(node){
-    var clone=node.cloneNode(true);
-    measureDiv.innerHTML='';
-    measureDiv.appendChild(clone);
-    var h=measureDiv.offsetHeight||lineH;
-
-    var pgUsable=pageIdx===0?usable:SEC_USABLE-18;
-    if(curH+h>pgUsable && pageIdx<secPages[tab].length-1){
-      pageIdx++; curH=0;
-    }
+    mDiv2.innerHTML='';
+    mDiv2.appendChild(node.cloneNode(true));
+    var h=Math.max(mDiv2.offsetHeight||lineH, lineH);
+    var cap=(pageIdx===0)?usable1:usableN;
+    if(usedH>0 && usedH+h>cap && pageIdx<secPages[tab].length-1){ pageIdx++; usedH=0; }
     secPages[tab][pageIdx].edEl.appendChild(node.cloneNode(true));
-    curH+=h;
+    usedH+=h;
   });
-
-  document.body.removeChild(measureDiv);
+  document.body.removeChild(mDiv2);
 }
+
 
 /* ===== STORY ===== */
 
@@ -1656,10 +1702,10 @@ function setSv(s){
 /* ===== COLLECT — fixed: gather all sec pages ===== */
 function collect(){
   function getSecText(tab){
-    /* logline is a textarea */
+    /* logline is now contentEditable */
     if(tab==='logline'){
-      var ta=document.getElementById('loglineTa');
-      return ta?ta.value:'';
+      var el=document.getElementById('loglineTa');
+      return el?(el.innerText||''):'';
     }
     /* synopsis/treatment: gather from all sec pages */
     if(secPages[tab] && secPages[tab].length>0){
@@ -1721,11 +1767,11 @@ function applyRestoreData(data){
     var cd=document.getElementById('cvDraft');
     if(cd && data.draft) cd.value=data.draft;
 
-    /* Logline */
+    /* Logline — contentEditable */
     if(!tabPages['logline']) buildSecPage('logline');
-    var logTa=document.getElementById('loglineTa');
-    if(logTa && data.logline){
-      logTa.value=data.logline;
+    var logEd=document.getElementById('loglineTa');
+    if(logEd && data.logline){
+      logEd.innerText=data.logline;
       var tlb=document.getElementById('tabLogline');
       if(tlb && data.logline.trim()) tlb.classList.add('has');
     }
