@@ -9,7 +9,7 @@
 <style>
 :root{--white:#fff;--black:#0A0A0A;--slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;--border:#E5E7EB;--red:#DC2626;--red-h:#B91C1C;--green:#16A34A;--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font-my);background:var(--slate-bg);color:var(--black);min-height:100vh;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--font-my);background:var(--slate-bg);color:var(--black);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:14px 24px;background:var(--black);border-bottom:1px solid #222;}
@@ -215,29 +215,25 @@ select.fi{cursor:pointer;}
 
         <input type="hidden" id="editDocId">
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="fg">
-            <label class="fl">ခေါင်းစဉ် *</label>
-            <input class="fi" id="fTitle" type="text" placeholder="ဥပမာ — Parasite" oninput="updatePreview()">
-          </div>
-          <div class="fg">
-            <label class="fl">Author *</label>
-            <input class="fi" id="fAuthor" type="text" placeholder="ဥပမာ — Bong Joon-ho" oninput="updatePreview()">
-          </div>
+        <div class="fg">
+          <label class="fl">ခေါင်းစဉ် *</label>
+          <input class="fi" id="fTitle" type="text" placeholder="ဥပမာ — Parasite" oninput="updatePreview()">
+        </div>
+        <div class="fg">
+          <label class="fl">Author *</label>
+          <input class="fi" id="fAuthor" type="text" placeholder="ဥပမာ — Bong Joon-ho" oninput="updatePreview()">
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="fg">
-            <label class="fl">အမျိုးအစား</label>
-            <select class="fi" id="fCat" onchange="updatePreview()">
-              <option value="int">🌐 ပြည်ပ</option>
-              <option value="mm">🇲🇲 ပြည်တွင်း</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label class="fl">Genre Label</label>
-            <input class="fi" id="fGenre" type="text" placeholder="ဇာတ်ညွှန်း / ဝတ္ထု" value="ဇာတ်ညွှန်း" oninput="updatePreview()">
-          </div>
+        <div class="fg">
+          <label class="fl">အမျိုးအစား</label>
+          <select class="fi" id="fCat" onchange="updatePreview()">
+            <option value="int">🌐 ပြည်ပ</option>
+            <option value="mm">🇲🇲 ပြည်တွင်း</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Genre Label</label>
+          <input class="fi" id="fGenre" type="text" placeholder="ဇာတ်ညွှန်း / ဝတ္ထု" value="ဇာတ်ညွှန်း" oninput="updatePreview()">
         </div>
 
         <div class="fg">
