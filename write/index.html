@@ -512,21 +512,26 @@ function goBack(){
 var SP_USABLE = 931; /* fallback — overridden dynamically in reflow() */
 var SP_WIDTH  = 602; /* fallback — overridden dynamically in reflow() */
 
+/* Cache last valid sp-area dimensions so reflow always has correct values
+   even if called when sp-area is temporarily empty. */
+var _cachedSpDims = null;
+
 function getSpDimensions(){
-  /* COORDINATE SPACE:
-     - measureHost is position:fixed outside scaler → renders at CSS pixel size (no zoom)
-     - Elements moved there report offsetHeight / getBCR in CSS pixels
-     - sp-area.clientWidth/clientHeight = CSS pixels (layout size, ignores CSS transform)
-     - These two are in the SAME coordinate space → correct comparison
-     Note: getBoundingClientRect on sp-area would give SCALED visual pixels → wrong. */
+  /* clientHeight/clientWidth = CSS layout pixels (not affected by CSS transform on scaler).
+     measureHost offsetHeight is also CSS pixels → same coordinate space → correct. */
   if(pages.length > 0){
     var area = pages[0].areaEl;
     var h = area.clientHeight;
     var w = area.clientWidth;
-    if(h > 0 && w > 0) return {h:h, w:w};
+    if(h > 0 && w > 0){
+      _cachedSpDims = {h:h, w:w}; /* update cache */
+      return _cachedSpDims;
+    }
   }
-  /* Fallback: page CSS values minus padding */
-  return {h: 1123 - 96*2, w: 794 - 96*2}; /* = 931, 602 */
+  /* Return cached value if available (elements may have just been moved to measureHost) */
+  if(_cachedSpDims) return _cachedSpDims;
+  /* Last resort: CSS design values */
+  return {h: 1123 - 96*2, w: 794 - 96*2};
 }
 var pages = [];
 var els   = [];
@@ -625,48 +630,42 @@ function reflow(restoreFocusId){
   if(curTab!=='screenplay') return;
   if(els.length===0){ removeTrailingEmptyPages(); updatePageIndicator(); return; }
 
-  /* Ensure at least one page exists before measuring */
   if(pages.length===0) addPage();
 
-  /* Read actual dimensions from live sp-area — respects zoom/scale */
+  /* STEP 1: Read sp-area size BEFORE moving elements out (clientHeight is 0 after) */
   var dims = getSpDimensions();
   var usable = dims.h;
   var spW    = dims.w;
 
+  /* STEP 2: Set measureHost width = sp-area width so text wraps identically */
   var host=document.getElementById('measureHost');
-  /* Match measureHost width to actual sp-area width for accurate wrapping */
-  host.style.width = spW + 'px';
+  host.style.width      = spW + 'px';
+  host.style.fontFamily = "Courier New,Courier,monospace";
+  host.style.fontSize   = '12px';
 
-  /* Move all wraps into measureHost for measurement */
+  /* STEP 3: Move all elements into measureHost */
   els.forEach(function(e){ host.appendChild(e.wrap); });
+  void host.offsetHeight; /* force layout */
 
-  /* Force layout */
-  void host.offsetHeight;
-
-  /* Measure heights — elements are in measureHost (fixed, outside scaler transform).
-     measureHost renders at CSS pixel size. sp-area.clientHeight is also CSS pixels.
-     Both in same coordinate space → correct page distribution. */
+  /* STEP 4: Measure each element height in CSS pixels */
   var heights=els.map(function(e){
     return Math.max(e.wrap.offsetHeight || 22, 22);
   });
 
-  /* Distribute into pages */
+  /* STEP 5: Distribute into pages — same logic every page */
   var assignments=[];
   var pageIdx=0, used=0;
-
   heights.forEach(function(h,i){
-    if(used+h > usable && used>0){ pageIdx++; used=0; }
+    if(used>0 && used+h > usable){ pageIdx++; used=0; }
     assignments.push({el:els[i], pageIdx:pageIdx});
     used+=h;
   });
 
-  /* Ensure enough pages */
+  /* STEP 6: Ensure enough pages */
   while(pages.length < pageIdx+1) addPage();
 
-  /* Clear page areas */
+  /* STEP 7: Clear then fill pages */
   pages.forEach(function(p){ p.areaEl.innerHTML=''; });
-
-  /* Place elements */
   assignments.forEach(function(a){
     a.el.pageIdx=a.pageIdx;
     pages[a.pageIdx].areaEl.appendChild(a.el.wrap);
@@ -676,14 +675,12 @@ function reflow(restoreFocusId){
   updateSceneNumbers();
   updatePageIndicator();
 
-  /* FIX: restore focus only if element still exists in DOM */
   if(restoreFocusId){
     var target=null;
     for(var i=0;i<els.length;i++){
       if(els[i].id===restoreFocusId){ target=els[i]; break; }
     }
     if(target && document.body.contains(target.ce)){
-      /* Use requestAnimationFrame to avoid keyboard dismiss on mobile */
       requestAnimationFrame(function(){ focusEnd(target.ce); });
     }
   }
@@ -1011,6 +1008,11 @@ function initSP(){
   document.getElementById('storyBtb').classList.remove('on');
   buildSecPage('cover');
   goTab('cover', document.getElementById('tabCover'));
+  /* Warm dimension cache after DOM settles so reflow always has correct values */
+  setTimeout(function(){
+    if(pages.length===0) addPage();
+    getSpDimensions(); /* populates _cachedSpDims */
+  }, 200);
 }
 
 function goTab(tab, btn){
@@ -1029,8 +1031,10 @@ function goTab(tab, btn){
     pages.forEach(function(p){p.pageEl.style.display='';});
     if(pages.length===0) addPage();
     document.getElementById('btb').classList.add('on');
+    /* Warm dimension cache now that sp-area is visible */
+    setTimeout(function(){ getSpDimensions(); }, 50);
     updatePageIndicator();
-    if(els.length>0) setTimeout(function(){focusEnd(els[els.length-1].ce);},50);
+    if(els.length>0) setTimeout(function(){focusEnd(els[els.length-1].ce);},80);
   } else {
     if(!tabPages[tab]) buildSecPage(tab);
     tabPages[tab].style.display='';
