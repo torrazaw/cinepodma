@@ -78,23 +78,34 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
   -webkit-overflow-scrolling:touch;
 }
 
-/* PAGE NUMBER INDICATOR */
-.pg-ind{
+/* BOTTOM BAR — page number left, clap count right */
+.bottom-bar{
   position:fixed;
-  bottom:10px;left:0;right:0;
-  text-align:center;
-  font-family:var(--font-en);font-size:10px;
-  color:var(--fg3);
+  bottom:0;left:0;right:0;
+  height:36px;
+  display:flex;align-items:center;
+  padding:0 16px;
   pointer-events:none;
-  z-index:195; /* above storyTapOverlay(190), below nav(200) */
-  letter-spacing:.5px;
+  z-index:195;
+}
+.pg-ind{
+  font-family:var(--font-en);font-size:10px;
+  color:var(--fg3);letter-spacing:.5px;
+  pointer-events:none;
+  flex:1;
 }
 .pg-ind.tappable{
   pointer-events:auto;
   cursor:pointer;
-  padding:6px 0;
 }
 .pg-ind.tappable:active{opacity:.6;}
+.clap-count{
+  font-family:var(--font-en);font-size:10px;
+  color:var(--fg3);letter-spacing:.5px;
+  display:none;align-items:center;gap:4px;
+  pointer-events:none;
+}
+.clap-count.on{display:flex;}
 
 /* TOC BOTTOM SHEET */
 .toc-overlay{
@@ -180,10 +191,9 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 .sp-trans {font-size:12px;font-weight:bold;text-transform:uppercase;text-align:right;margin-top:10px;color:var(--fg2);line-height:1.8;}
 
 /* CLAP FAB — default grey, red only when clapped */
-.clap-fab{position:fixed;bottom:32px;right:16px;z-index:300;width:46px;height:46px;border-radius:50%;background:var(--card);color:var(--fg2);border:1.5px solid var(--border);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;transition:all .2s;}
-.clap-fab.clapped{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 4px 14px rgba(220,38,38,.4);}
-.clap-icon{font-size:18px;line-height:1;}
-.clap-n{font-size:9px;font-family:var(--font-en);line-height:1;margin-top:1px;}
+/* CLAP COUNT (display only, no button) */
+.clap-icon{font-size:12px;line-height:1;}
+.clap-n{font-size:10px;font-family:var(--font-en);line-height:1;}
 
 /* LOADING / NOT FOUND */
 .loading{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--fg2);font-size:14px;}
@@ -247,14 +257,14 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 <div class="tap-prev" id="tapPrev" onclick="prevSlide()"></div>
 <div class="tap-next" id="tapNext" onclick="nextSlide()"></div>
 
-<!-- PAGE INDICATOR -->
-<div class="pg-ind" id="pgInd"></div>
-
-<!-- CLAP FAB -->
-<button class="clap-fab" id="clapFab" onclick="doClap()" style="display:none;">
-  <span class="clap-icon">👏</span>
-  <span class="clap-n" id="clapN">0</span>
-</button>
+<!-- BOTTOM BAR: page indicator left, clap count right -->
+<div class="bottom-bar" id="bottomBar">
+  <div class="pg-ind" id="pgInd"></div>
+  <div class="clap-count" id="clapCount">
+    <span class="clap-icon">👏</span>
+    <span class="clap-n" id="clapN">0</span>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -413,7 +423,7 @@ function initSwipe() {
 
 <script type="module">
 import { initializeApp }  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc, deleteDoc, updateDoc }
+import { getFirestore, doc, getDoc, setDoc }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 import { getAuth, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
@@ -470,10 +480,11 @@ function initUI() {
   av.href = '/profile?uid=' + (docData.uid||'');
   if (authorData.avatar) av.innerHTML = '<img src="'+esc(authorData.avatar)+'" alt="">';
   document.getElementById('sbName').textContent = authorData.name || docData.authorName || '—';
-  var fab = document.getElementById('clapFab');
-  fab.style.display = 'flex';
-  fab.className = 'clap-fab' + (isClapped ? ' clapped' : '');
-  document.getElementById('clapN').textContent = docData.clapCount || 0;
+  /* Show clap count (display only — no button) */
+  var cc = document.getElementById('clapCount');
+  var cn = document.getElementById('clapN');
+  if (cc) cc.classList.add('on');
+  if (cn) cn.textContent = docData.clapCount || 0;
 }
 
 /* ===== STORY (epub column pagination) ===== */
@@ -857,32 +868,6 @@ function elCls(type) {
   var map = {scene:'sp-scene',action:'sp-action',char:'sp-char',paren:'sp-paren',dial:'sp-dial',trans:'sp-trans'};
   return map[type] || 'sp-action';
 }
-
-/* ===== CLAP ===== */
-window.doClap = async function() {
-  if (!currentUser) { toast('👏 Login ဝင်ပြီး Clap လုပ်ပါ'); return; }
-  var fab = document.getElementById('clapFab');
-  var cEl = document.getElementById('clapN');
-  var cr  = doc(db,'docClaps',docId,'users',currentUser.uid);
-  var gr  = doc(db,'clapping',currentUser.uid,'users',docId);
-  try {
-    if (isClapped) {
-      await deleteDoc(cr); try{await deleteDoc(gr);}catch(e){}
-      var s  = await getDoc(doc(db,'docs',docId));
-      var n  = s.exists() ? (s.data().clapCount||0) : 0;
-      await updateDoc(doc(db,'docs',docId),{clapCount:Math.max(0,n-1)});
-      cEl.textContent=Math.max(0,n-1); isClapped=false; fab.className='clap-fab'; toast('👏 Clap ဖြုတ်ပြီး');
-    } else {
-      var now=new Date().toISOString();
-      await setDoc(cr,{uid:currentUser.uid,clappedAt:now});
-      await setDoc(gr,{docId:docId,clappedAt:now});
-      var s2 = await getDoc(doc(db,'docs',docId));
-      var n2 = s2.exists() ? (s2.data().clapCount||0) : 0;
-      await updateDoc(doc(db,'docs',docId),{clapCount:n2+1});
-      cEl.textContent=n2+1; isClapped=true; fab.className='clap-fab clapped'; toast('👏 Clap လုပ်ပြီး');
-    }
-  } catch(e) { toast('❌ '+e.message); }
-};
 
 /* ===== NOT FOUND ===== */
 function showNF(m) {
