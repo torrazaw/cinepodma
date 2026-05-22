@@ -71,163 +71,99 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 .cv-draft{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:1px;margin-top:36px;border:none;outline:none;background:transparent;text-align:center;}
 .cv-draft::placeholder{color:#CCC;}
 
-/* SECTION — logline fixed single page */
+/* SECTION */
 .sec{width:100%;height:100%;padding:var(--pad);box-sizing:border-box;display:flex;flex-direction:column;}
 .sec-lbl{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--slate-lt);margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 .sec-ta{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);resize:none;overflow-y:auto;}
 .sec-ta::placeholder{color:#CCC;}
-
-/* Synopsis / Treatment — contentEditable paginated area */
-.sec-ed{
-  flex:1;width:100%;
-  border:none;outline:none;background:transparent;
-  font-family:var(--font-my);font-style:normal;
-  font-size:14px;line-height:2.0;color:var(--black);
-  word-break:break-word;overflow:hidden;
-  min-height:1em;
-}
+.sec-ed{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:14px;line-height:2.0;color:var(--black);word-break:break-word;overflow:hidden;min-height:1em;}
 .sec-ed:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;}
 
-/* SCREENPLAY AREA — fixed inside page */
-.sp-area{
-  position:absolute;
-  top:var(--pad);left:var(--pad);right:var(--pad);bottom:var(--pad);
-  overflow:hidden;
-}
+/* SCREENPLAY AREA */
+.sp-area{position:absolute;top:var(--pad);left:var(--pad);right:var(--pad);bottom:var(--pad);overflow:hidden;}
 
 /* Screenplay elements */
 .el{margin:0;}
-.el-ce{
-  display:block;width:100%;
-  border:none;outline:none;background:transparent;
-  font-family:var(--font-en);
-  font-size:12px;font-style:normal;font-weight:normal;
-  line-height:1.8;color:var(--black);
-  cursor:text;word-break:break-word;
-  min-height:1.4em;white-space:pre-wrap;
-  -webkit-user-select:text;user-select:text;
-}
+.el-ce{display:block;width:100%;border:none;outline:none;background:transparent;font-family:var(--font-en);font-size:12px;font-style:normal;font-weight:normal;line-height:1.8;color:var(--black);cursor:text;word-break:break-word;min-height:1.4em;white-space:pre-wrap;-webkit-user-select:text;user-select:text;}
 .el-ce[data-ph]:empty::before{content:attr(data-ph);color:#CCC;pointer-events:none;font-weight:normal;}
-
 .el-scene{display:flex;align-items:baseline;margin-top:14px;}
-.el-scene .el-scene-num{
-  font-family:var(--font-en);font-size:12px;font-weight:bold;
-  line-height:1.8;color:var(--black);
-  white-space:nowrap;flex-shrink:0;
-  width:48px; /* ~0.5in at screen scale */
-  pointer-events:none;user-select:none;
-}
+.el-scene .el-scene-num{font-family:var(--font-en);font-size:12px;font-weight:bold;line-height:1.8;color:var(--black);white-space:nowrap;flex-shrink:0;width:48px;pointer-events:none;user-select:none;}
 .el-scene .el-ce{text-transform:uppercase;font-weight:bold;flex:1;min-width:0;}
-.el-action .el-ce {padding:1px 0 1px 48px;}
-.el-char .el-ce   {padding-left:34%;margin-top:10px;text-transform:uppercase;}
-.el-paren .el-ce  {padding-left:26%;padding-right:26%;}
-.el-dial .el-ce   {padding-left:20%;padding-right:20%;}
-.el-trans .el-ce  {text-align:right;margin-top:10px;text-transform:uppercase;}
+.el-action .el-ce{padding:1px 0 1px 48px;}
+.el-char .el-ce{padding-left:34%;margin-top:10px;text-transform:uppercase;}
+.el-paren .el-ce{padding-left:26%;padding-right:26%;}
+.el-dial .el-ce{padding-left:20%;padding-right:20%;}
+.el-trans .el-ce{text-align:right;margin-top:10px;text-transform:uppercase;}
 
 /* STORY */
-.story-wrap{flex:1;overflow-y:auto;background:var(--white);display:flex;justify-content:center;padding:32px 24px 100px;width:100%;scrollbar-width:thin;}
-.story-paper{width:100%;max-width:680px;min-height:100%;}
-.story-ed{width:100%;min-height:calc(100vh - 200px);border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:16px;line-height:2.2;color:var(--black);word-break:break-word;}
+.story-layout{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--st-bg,#fff);transition:background .2s;min-height:0;width:100%;}
+/* Story themes — full screen via body class */
+body.st-dark {--st-bg:#1C1C1E;--st-fg:#F0EDE8;--st-border:#333;--white:#1C1C1E;--black:#F0EDE8;--border:#333;--slate-bg:#2A2A2C;--slate:#AAA;--slate-lt:#666;}
+body.st-warm {--st-bg:#FAF3E0;--st-fg:#2C1810;--st-border:#E2C88A;--white:#FAF3E0;--black:#2C1810;--border:#E2C88A;--slate-bg:#F0E4C0;--slate:#7A5C3A;--slate-lt:#A08060;}
+body.st-light,body:not(.st-dark):not(.st-warm){--st-bg:#FFFFFF;--st-fg:#0A0A0A;--st-border:var(--border);}
+.story-layout{background:var(--st-bg,#fff);}
+.story-editor-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:24px 20px 120px;scrollbar-width:thin;background:var(--st-bg,#fff);min-height:0;}
+.story-paper{width:100%;max-width:660px;margin:0 auto;}
+.story-ed{width:100%;min-height:60vh;border:none;outline:none;background:transparent;font-family:var(--font-my);font-style:normal;font-size:16px;line-height:2.2;color:var(--st-fg,var(--black));word-break:break-word;caret-color:var(--red);}
 .story-ed:empty::before{content:'ဤနေရာတွင် ရေးပါ...';color:#CCC;pointer-events:none;}
-.story-ed h1{font-size:24px;font-weight:700;margin:32px 0 12px;line-height:1.6;scroll-margin-top:80px;}
-.story-ed h2{font-size:19px;font-weight:700;margin:24px 0 10px;line-height:1.6;scroll-margin-top:80px;}
+.story-ed p{margin:0 0 8px;line-height:2.2;}
+.story-ed h1{font-size:22px;font-weight:700;margin:28px 0 10px;line-height:1.6;color:var(--st-fg,var(--black));}
+.story-ed h2{font-size:18px;font-weight:700;margin:22px 0 8px;line-height:1.6;color:var(--st-fg,var(--black));}
+.story-ed h3{font-size:15px;font-weight:700;margin:18px 0 6px;line-height:1.6;color:var(--st-fg,var(--black));}
+.story-ed blockquote{border-left:3px solid var(--red);padding:2px 0 2px 16px;margin:12px 0;color:var(--st-fg,var(--black));opacity:.75;}
+.story-ed hr{border:none;border-top:1px solid var(--st-border,var(--border));margin:24px 0;}
+.story-ed img{max-width:100%;border-radius:8px;margin:8px 0;display:block;}
 
-/* STORY LAYOUT — sidebar + editor */
-.story-layout{
-  flex:1;display:flex;overflow:hidden;
-  background:var(--white);
-}
+/* No sidebar — story uses full-width scroll editor */
 
-/* CHAPTER SIDEBAR */
-.ch-sidebar{
-  width:220px;flex-shrink:0;
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  background:var(--white);
-  overflow:hidden;
-  transition:width .25s cubic-bezier(.4,0,.2,1);
-}
-.ch-sidebar.collapsed{width:0;border-right:none;}
-.ch-sidebar-inner{width:220px;flex-shrink:0;display:flex;flex-direction:column;height:100%;overflow:hidden;}
-
-.ch-header{
-  height:44px;display:flex;align-items:center;
-  padding:0 14px;gap:8px;flex-shrink:0;
-  border-bottom:1px solid var(--border);
-}
-.ch-header-title{
-  font-size:11px;font-weight:600;color:var(--slate);
-  text-transform:uppercase;letter-spacing:.5px;flex:1;
-}
-.ch-add{
-  width:26px;height:26px;border-radius:7px;border:1px solid var(--border);
-  background:transparent;cursor:pointer;font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--slate);transition:all .12s;flex-shrink:0;
-}
-.ch-add:hover{background:var(--slate-bg);color:var(--black);}
-
-.ch-list{flex:1;overflow-y:auto;padding:8px 0;scrollbar-width:thin;}
-.ch-item{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 14px;cursor:pointer;
-  transition:background .1s;border:none;background:transparent;
-  width:100%;text-align:left;
-}
-.ch-item:hover{background:var(--slate-bg);}
-.ch-item.active{background:var(--slate-bg);}
-.ch-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--border);flex-shrink:0;
-}
-.ch-item.active .ch-dot{background:var(--red);}
-.ch-item.h2 .ch-dot{width:3px;height:3px;margin-left:6px;}
-.ch-name{
-  font-size:12px;color:var(--black);line-height:1.5;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;
-}
-.ch-item.h2 .ch-name{font-size:11px;color:var(--slate);}
-.ch-empty{
-  padding:24px 14px;text-align:center;
-  font-size:12px;color:var(--slate-lt);line-height:1.8;
-}
-
-/* STORY EDITOR AREA */
-.story-editor-area{
-  flex:1;overflow-y:auto;
-  padding:32px 32px 100px;
-  scrollbar-width:thin;
-}
-
-/* SIDEBAR TOGGLE BUTTON — arrow tab on sidebar edge, story only */
-.ch-toggle{
-  position:absolute;
-  right:-18px;top:50%;transform:translateY(-50%);
-  width:18px;height:48px;
-  background:var(--border);
-  border:none;border-radius:0 8px 8px 0;
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;color:var(--slate);
-  z-index:10;transition:background .15s;
-  flex-shrink:0;
-}
-.ch-toggle:hover{background:var(--slate-bg);}
-
-@media(max-width:700px){
-  .ch-sidebar{position:fixed;top:100px;left:0;bottom:52px;z-index:150;box-shadow:4px 0 16px rgba(0,0,0,.12);}
-  .ch-sidebar.collapsed{width:0;overflow:hidden;}
-  .ch-toggle{right:-18px;}
-}
-
-/* Story bottom toolbar */
-.story-btb{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:none;align-items:center;justify-content:center;height:52px;z-index:200;gap:2px;padding:0 8px;flex-shrink:0;}
+/* Story bottom toolbar — single horizontal scrollable row (screenplay style) */
+.story-btb{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:none;align-items:center;height:52px;z-index:200;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding:0 8px;gap:2px;}
 .story-btb.on{display:flex;}
+.story-btb::-webkit-scrollbar{display:none;}
+/* legacy row classes — no longer used but kept for safety */
+.stb-row1{display:contents;}
+.stb-row2{display:contents;}
+/* Block type pill button */
+.stb-block{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-style:normal;font-size:12px;font-weight:600;color:var(--black);cursor:pointer;transition:all .12s;flex-shrink:0;}
+.stb-block:hover{background:var(--slate-bg);}
+.stb-block-arrow{font-size:9px;color:var(--slate);}
+/* Plus button */
+.stb-plus{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:300;color:var(--slate);flex-shrink:0;transition:all .12s;}
+.stb-plus:hover{background:var(--slate-bg);color:var(--black);}
+/* Theme dots (read.html style) */
+.stb-themes{display:flex;align-items:center;gap:5px;margin-left:auto;}
+.st-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;transition:all .12s;padding:0;}
+.st-dot.tl{background:#FFF;border-color:#CCC;}
+.st-dot.td{background:#1C1C1E;border-color:#555;}
+.st-dot.tw{background:#FAF3E0;border-color:#CCC;}
+.st-dot.act{border-color:var(--red);transform:scale(1.25);}
+/* Formatting buttons (row 2) */
 .sfb{width:34px;height:34px;border:none;background:transparent;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--black);transition:all .12s;flex-shrink:0;font-size:13px;}
 .sfb:hover{background:var(--slate-bg);}
 .sfb.active{background:var(--black);color:var(--white);}
-.sfsep{width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 3px;}
+.sfsep{width:1px;height:22px;background:var(--border);flex-shrink:0;margin:0 2px;}
+/* Block type popup sheet */
+.block-sheet{position:fixed;bottom:0;left:0;right:0;z-index:600;background:var(--white);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.15);transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.block-sheet.on{transform:translateY(0);}
+.block-sheet-inner{padding:10px 12px 32px;}
+.block-sheet-handle{width:32px;height:3px;border-radius:2px;background:var(--border);margin:10px auto 12px;}
+.block-opt{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:none;background:transparent;width:100%;text-align:left;cursor:pointer;transition:background .1s;}
+.block-opt:hover{background:var(--slate-bg);}
+.block-opt.sel{background:var(--slate-bg);}
+.block-opt-icon{font-family:var(--font-en);font-size:13px;font-weight:700;width:32px;flex-shrink:0;color:var(--slate);}
+.block-opt-name{font-family:var(--font-my);font-style:normal;font-size:14px;color:var(--black);line-height:1.6;}
+.block-sheet-ov{display:none;position:fixed;inset:0;z-index:599;}
+.block-sheet-ov.on{display:block;}
+/* Plus insert sheet */
+.ins-sheet{position:fixed;bottom:0;left:0;right:0;z-index:600;background:var(--white);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.15);transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.ins-sheet.on{transform:translateY(0);}
+.ins-sheet-inner{padding:10px 12px 32px;}
+.ins-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;}
+.ins-opt{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;border-radius:12px;border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .12s;}
+.ins-opt:hover{background:var(--slate-bg);border-color:var(--black);}
+.ins-opt-icon{font-size:22px;}
+.ins-opt-name{font-size:11px;color:var(--slate);font-family:var(--font-my);font-style:normal;line-height:1.4;text-align:center;}
 
 /* BOTTOM TOOLBAR */
 .btb{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:none;align-items:center;justify-content:center;padding:0 12px;height:52px;z-index:200;overflow-x:auto;scrollbar-width:none;gap:2px;flex-shrink:0;}
@@ -299,7 +235,7 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 
 .pg-ind{font-family:var(--font-en);font-size:10px;color:var(--slate-lt);letter-spacing:.5px;white-space:nowrap;}
 
-/* MEASURE DIV — visible but off-screen for accurate offsetHeight */
+/* MEASURE DIV */
 #measureHost{position:fixed;top:-9999px;left:0;width:602px;visibility:hidden;pointer-events:none;z-index:-1;}
 
 @media(max-width:860px){.ws{padding:20px 0 80px;}.zr{display:none;}}
@@ -309,7 +245,6 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
 </head>
 <body>
 
-<!-- MEASURE HOST — always in DOM, off-screen, correct width for height measurement -->
 <div id="measureHost"></div>
 
 <!-- TOPBAR -->
@@ -374,6 +309,12 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
     <div id="stTabs" style="display:none;flex:1;align-items:center;display:flex;">
       <button class="tab act">📖 Story</button>
     </div>
+    <!-- Story theme dots — visible only in story mode, inside tabs tr -->
+    <div id="stThemeDots" style="display:none;align-items:center;gap:5px;padding:0 10px;">
+      <button class="st-dot tl act" id="stDotL" onclick="setStoryTheme('light')" title="Light"></button>
+      <button class="st-dot td"     id="stDotD" onclick="setStoryTheme('dark')"  title="Dark"></button>
+      <button class="st-dot tw"     id="stDotW" onclick="setStoryTheme('warm')"  title="Warm"></button>
+    </div>
     <div class="tr">
       <div class="zr hm"><button class="zb" onclick="zm(-10)">−</button><span class="zl" id="zl">100%</span><button class="zb" onclick="zm(10)">+</button></div>
       <button class="btn btn-g btn-s hm" onclick="window.print()">🖨</button>
@@ -402,20 +343,52 @@ body{font-family:var(--font-my);font-style:normal;background:var(--white);color:
   <button class="bb" onclick="addFadeOut()"><span class="bt">F.OUT</span><span class="bl">Fade Out</span></button>
 </div>
 
-<!-- STORY BOTTOM TOOLBAR -->
+<!-- STORY BOTTOM TOOLBAR — single horizontal scrollable row -->
 <div class="story-btb" id="storyBtb">
-  <button class="sfb" onmousedown="evP(event)" onclick="addChapter()" title="Chapter အသစ်" style="font-size:11px;font-weight:700;gap:2px;flex-direction:row;width:auto;padding:0 10px;">+ Ch</button>
-  <div class="sfsep"></div>
-  <button class="sfb" id="sfb-bold"      onmousedown="evP(event)" onclick="storyFmt('bold')"><b>B</b></button>
-  <button class="sfb" id="sfb-italic"    onmousedown="evP(event)" onclick="storyFmt('italic')"><i>I</i></button>
-  <button class="sfb" id="sfb-underline" onmousedown="evP(event)" onclick="storyFmt('underline')"><u>U</u></button>
-  <div class="sfsep"></div>
-  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('h1')" style="font-size:11px;font-weight:700;">H1</button>
-  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('h2')" style="font-size:11px;font-weight:700;">H2</button>
-  <div class="sfsep"></div>
-  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyLeft')">⬅</button>
-  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyCenter')">↔</button>
-  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyRight')">➡</button>
+  <button class="stb-block" id="stbBlock" onmousedown="evP(event)" onclick="openBlockSheet()">
+    <span id="stbBlockLabel">Body</span>
+    <span class="stb-block-arrow">▾</span>
+  </button>
+  <button class="stb-plus" onmousedown="evP(event)" onclick="openInsSheet()" title="ထည့်မည်">+</button>
+  <div class="bs"></div>
+  <button class="sfb" id="sfb-bold"      onmousedown="evP(event)" onclick="storyFmt('bold')"><b style="font-size:14px;">B</b></button>
+  <button class="sfb" id="sfb-italic"    onmousedown="evP(event)" onclick="storyFmt('italic')"><i style="font-size:14px;">I</i></button>
+  <button class="sfb" id="sfb-underline" onmousedown="evP(event)" onclick="storyFmt('underline')"><u style="font-size:14px;">U</u></button>
+  <div class="bs"></div>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyLeft')"   title="Left">⬅</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyCenter')" title="Center">↔</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyFmt('justifyRight')"  title="Right">➡</button>
+  <div class="bs"></div>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyUndo()" title="Undo" style="font-size:16px;">↩</button>
+  <button class="sfb" onmousedown="evP(event)" onclick="storyRedo()" title="Redo" style="font-size:16px;">↪</button>
+</div>
+
+<!-- BLOCK TYPE SHEET -->
+<div class="block-sheet-ov" id="blockSheetOv" onclick="closeBlockSheet()"></div>
+<div class="block-sheet" id="blockSheet">
+  <div class="block-sheet-inner">
+    <div class="block-sheet-handle"></div>
+    <button class="block-opt sel" id="bopt-p"           onclick="applyBlock('p')"><span class="block-opt-icon">¶</span><span class="block-opt-name">Body</span></button>
+    <button class="block-opt"     id="bopt-h1"          onclick="applyBlock('h1')"><span class="block-opt-icon" style="font-size:16px;font-weight:900;">H1</span><span class="block-opt-name">Heading 1</span></button>
+    <button class="block-opt"     id="bopt-h2"          onclick="applyBlock('h2')"><span class="block-opt-icon" style="font-size:14px;font-weight:700;">H2</span><span class="block-opt-name">Heading 2</span></button>
+    <button class="block-opt"     id="bopt-h3"          onclick="applyBlock('h3')"><span class="block-opt-icon" style="font-size:12px;font-weight:700;">H3</span><span class="block-opt-name">Heading 3</span></button>
+    <button class="block-opt"     id="bopt-blockquote"  onclick="applyBlock('blockquote')"><span class="block-opt-icon">"</span><span class="block-opt-name">Blockquote</span></button>
+  </div>
+</div>
+
+<!-- INSERT SHEET -->
+<div class="block-sheet-ov" id="insSheetOv" onclick="closeInsSheet()"></div>
+<div class="ins-sheet" id="insSheet">
+  <div class="ins-sheet-inner">
+    <div class="block-sheet-handle"></div>
+    <div class="ins-grid">
+      <button class="ins-opt" onclick="insImage()"><span class="ins-opt-icon">🖼️</span><span class="ins-opt-name">ပုံထည့်</span></button>
+      <button class="ins-opt" onclick="insDivider()"><span class="ins-opt-icon">—</span><span class="ins-opt-name">Divider</span></button>
+      <button class="ins-opt" onclick="insPageBreak()"><span class="ins-opt-icon">📄</span><span class="ins-opt-name">Page Break</span></button>
+    </div>
+    <!-- hidden file input for image -->
+    <input type="file" id="imgFileIn" accept="image/*" style="display:none;" onchange="handleImgFile(this)">
+  </div>
 </div>
 
 <!-- MODALS -->
@@ -532,25 +505,11 @@ function goBack(){
 }
 
 /* ===== SCREENPLAY DATA ===== */
-/*
-  pages[] = [{pageEl, areaEl, num}]
-  els[]   = [{id, type, wrap, ce, pageIdx}]
-
-  A4 usable height = 1123 - 96 - 96 = 931px
-  Line height: 12px * 1.8 = ~21.6px
-
-  Reflow strategy:
-  1. Move all .el wraps into #measureHost (fixed, off-screen, width=602px)
-  2. Read offsetHeight for each — browser paints correctly because measureHost is in DOM
-  3. Distribute into pages
-  4. Move wraps back into correct page areas
-  5. Restore focus to previously focused element
-*/
 var SP_USABLE = 931;
 var pages = [];
 var els   = [];
 var lastEl = null;
-var focusedElId = null; /* track which el has focus to restore after reflow */
+var focusedElId = null;
 
 /* ===== UNDO / REDO ===== */
 var undoStack=[], redoStack=[], MAX_UNDO=50;
@@ -565,7 +524,9 @@ function pushUndo(){
 
 function applyUndoState(state){
   isUndoRedo=true;
+  /* FIX: clear elements properly before restoring */
   clearAllSpElements();
+  if(pages.length===0) addPage();
   state.forEach(function(s){ insRaw(s.type, s.text); });
   reflow(null);
   isUndoRedo=false;
@@ -620,19 +581,20 @@ function removeTrailingEmptyPages(){
       last.pageEl.remove(); pages.pop();
     } else break;
   }
+  /* FIX: update page numbers after removal */
   pages.forEach(function(p,i){
     p.num=i+1;
     var pn=p.pageEl.querySelector('.page-num');
     if(pn) pn.textContent='p. '+(i+1);
+    p.pageEl.id='sp-pg-'+(i+1);
+    p.areaEl.id='sp-area-'+(i+1);
   });
 }
 
-/* ===== REFLOW — key fix: measure in #measureHost ===== */
-var reflowPending=false;
+/* ===== REFLOW ===== */
 var reflowTimer=null;
 
 function scheduleReflow(delay){
-  /* During typing we debounce to avoid constant reflow killing keyboard focus */
   clearTimeout(reflowTimer);
   reflowTimer=setTimeout(function(){ reflow(focusedElId); }, delay||600);
 }
@@ -643,10 +605,10 @@ function reflow(restoreFocusId){
 
   var host=document.getElementById('measureHost');
 
-  /* Move all wraps into measureHost */
+  /* FIX: move all wraps into measureHost for measurement */
   els.forEach(function(e){ host.appendChild(e.wrap); });
 
-  /* Force layout so CSS classes are applied before measuring */
+  /* Force layout */
   void host.offsetHeight;
 
   /* Measure heights */
@@ -679,10 +641,16 @@ function reflow(restoreFocusId){
   updateSceneNumbers();
   updatePageIndicator();
 
-  /* Restore focus without keyboard dismiss */
+  /* FIX: restore focus only if element still exists in DOM */
   if(restoreFocusId){
-    var target=els.find(function(e){ return e.id===restoreFocusId; });
-    if(target) focusEnd(target.ce);
+    var target=null;
+    for(var i=0;i<els.length;i++){
+      if(els[i].id===restoreFocusId){ target=els[i]; break; }
+    }
+    if(target && document.body.contains(target.ce)){
+      /* Use requestAnimationFrame to avoid keyboard dismiss on mobile */
+      requestAnimationFrame(function(){ focusEnd(target.ce); });
+    }
   }
 }
 
@@ -713,7 +681,8 @@ function updateSceneNumbers(){
 }
 
 function insRaw(type, text){
-  var cfg=elCfg[type]; if(!cfg) return;
+  if(!elCfg[type]) return null;
+  var cfg=elCfg[type];
   var id='el_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
 
   var wrap=document.createElement('div');
@@ -733,7 +702,6 @@ function insRaw(type, text){
   ce.addEventListener('input', function(){
     if(!isUndoRedo) pushUndo();
     autoSave();
-    /* Debounced reflow — doesn't steal focus immediately */
     scheduleReflow(800);
   });
 
@@ -751,7 +719,7 @@ function insRaw(type, text){
       return;
     }
     if(e.key==='ArrowUp'||e.key==='ArrowDown'){
-      var idx=els.findIndex(function(x){ return x.id===id; });
+      var idx=getElIndex(id);
       var t=e.key==='ArrowUp'? els[idx-1] : els[idx+1];
       if(t){ e.preventDefault(); focusEnd(t.ce); }
     }
@@ -759,17 +727,25 @@ function insRaw(type, text){
 
   wrap.appendChild(ce);
 
-  /* Insert after lastEl or append */
+  /* FIX: check lastEl is in a real sp-area (not in measureHost) */
+  var inserted=false;
   if(lastEl && lastEl.parentNode && lastEl.parentNode.classList.contains('sp-area')){
     lastEl.after(wrap);
-  } else {
+    inserted=true;
+  }
+  if(!inserted){
     var pg=pages.length>0? pages[pages.length-1] : addPage();
     pg.areaEl.appendChild(wrap);
   }
 
   var obj={id:id, type:type, wrap:wrap, ce:ce, pageIdx:0};
+
+  /* FIX: insert into els array at correct position */
   if(lastEl){
-    var li=els.findIndex(function(e){ return e.wrap===lastEl; });
+    var li=-1;
+    for(var i=0;i<els.length;i++){
+      if(els[i].wrap===lastEl){ li=i; break; }
+    }
     if(li>=0){ els.splice(li+1,0,obj); }
     else els.push(obj);
   } else {
@@ -779,9 +755,16 @@ function insRaw(type, text){
   return obj;
 }
 
+/* FIX: helper to find element index by id */
+function getElIndex(id){
+  for(var i=0;i<els.length;i++){ if(els[i].id===id) return i; }
+  return -1;
+}
+
 function ins(type){
   if(!elCfg[type]) return;
   var obj=insRaw(type,'');
+  if(!obj) return;
   reflow(null);
   updateSceneNumbers();
   setTimeout(function(){ focusStart(obj.ce); },30);
@@ -789,13 +772,22 @@ function ins(type){
 }
 
 function removeEl(wrap, id){
-  var idx=els.findIndex(function(e){ return e.id===id; });
+  var idx=getElIndex(id);
+  if(idx===-1) return;
   var prev=idx>0? els[idx-1] : null;
-  wrap.remove();
+  /* FIX: safely remove from DOM */
+  if(wrap.parentNode) wrap.parentNode.removeChild(wrap);
   els.splice(idx,1);
-  lastEl=prev? prev.wrap : (els.length? els[0].wrap : null);
-  if(prev) focusEnd(prev.ce);
-  else if(els.length) focusStart(els[0].ce);
+  /* FIX: correct lastEl handling when list is empty */
+  if(prev){
+    lastEl=prev.wrap;
+    focusEnd(prev.ce);
+  } else if(els.length>0){
+    lastEl=els[0].wrap;
+    focusStart(els[0].ce);
+  } else {
+    lastEl=null;
+  }
   reflow(null);
   updateSceneNumbers();
   autoSave();
@@ -810,24 +802,46 @@ function addFadeOut(){
   toast('FADE OUT. ထည့်ပြီး');
 }
 
+/* FIX: clearAllSpElements also removes page DOM elements cleanly */
 function clearAllSpElements(){
-  els=[]; lastEl=null;
+  els=[]; lastEl=null; focusedElId=null;
+  /* Remove element wraps from any parent */
+  var host=document.getElementById('measureHost');
+  if(host) host.innerHTML='';
   pages.forEach(function(p){ p.areaEl.innerHTML=''; });
 }
 
 /* ===== FOCUS HELPERS ===== */
 function focusEnd(ce){
+  if(!ce) return;
   ce.focus();
-  try{var r=document.createRange();r.selectNodeContents(ce);r.collapse(false);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(x){}
+  try{
+    var r=document.createRange();
+    r.selectNodeContents(ce);
+    r.collapse(false);
+    var s=window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  }catch(x){}
 }
 function focusStart(ce){
+  if(!ce) return;
   ce.focus();
-  try{var r=document.createRange();r.setStart(ce,0);r.collapse(true);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(x){}
+  try{
+    var r=document.createRange();
+    r.setStart(ce,0);
+    r.collapse(true);
+    var s=window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  }catch(x){}
 }
 
 /* ===== PAGE INDICATOR ===== */
 function updatePageIndicator(){
-  var ind=document.getElementById('pgInd'); if(!ind) return;
+  /* FIX: getElementById each time since renderTBR() replaces tbr innerHTML */
+  var ind=document.getElementById('pgInd');
+  if(!ind) return;
   if(curTab!=='screenplay'){ ind.style.display='none'; return; }
   ind.style.display='';
   ind.textContent='p. 1 / '+Math.max(1,pages.length);
@@ -900,24 +914,36 @@ function startDoc(){
 }
 
 /* ===== TOPBAR ===== */
+function applyStoryDots(t){
+  ['L','D','W'].forEach(function(x,i){
+    var el=document.getElementById('stDot'+x);
+    if(el) el.classList.toggle('act',['light','dark','warm'][i]===t);
+  });
+  /* Show/hide dots container in tabs bar */
+  var dc=document.getElementById('stThemeDots');
+  if(dc) dc.style.display=docType==='story'?'flex':'none';
+}
+
 function renderTBR(){
   var e=document.getElementById('tbr');
+  if(!e) return;
   var co=docType==='screenplay'?'<button class="btn btn-g btn-s hm" onclick="openM(\'mCollab\')">👥</button>':'';
   e.innerHTML=
     '<span class="pg-ind" id="pgInd" style="display:none;"></span>'+
     co+
-    '<button class="btn btn-g btn-s hm" onclick="downloadPDF()">⬇ PDF</button>'+
+    (docType!=='story'?'<button class="btn btn-g btn-s hm" onclick="downloadPDF()">⬇ PDF</button>':'')+
     '<button class="btn btn-g btn-s" onclick="openShareM()">🔗</button>'+
     '<button class="btn btn-r btn-s" onclick="openSaveModal()">💾 Save</button>';
 }
-
 /* ===== ZOOM ===== */
 function applyZ(){
   var s=document.getElementById('scaler');
+  if(!s) return;
   var sc=zoomLv/100;
   s.style.transform='scale('+sc+')';
   s.style.marginBottom=((sc-1)*1123)+'px';
-  document.getElementById('zl').textContent=zoomLv+'%';
+  var zl=document.getElementById('zl');
+  if(zl) zl.textContent=zoomLv+'%';
 }
 function zm(d){ zoomLv=Math.min(200,Math.max(25,zoomLv+d)); applyZ(); }
 function fitZoom(){
@@ -948,7 +974,6 @@ function initSP(){
   document.getElementById('spTabs').style.display='flex';
   document.getElementById('stTabs').style.display='none';
   document.getElementById('storyBtb').classList.remove('on');
-  /* Build cover immediately so cvTitle exists for restore */
   buildSecPage('cover');
   goTab('cover', document.getElementById('tabCover'));
 }
@@ -982,11 +1007,6 @@ function goTab(tab, btn){
 }
 
 /* ===== SECTION PAGES ===== */
-/*
-  logline   → single fixed A4 page, textarea (no pagination)
-  synopsis  → multi-page contentEditable, paginated like screenplay
-  treatment → multi-page contentEditable, paginated like screenplay
-*/
 var secLabels={logline:'Logline',synopsis:'Synopsis',treatment:'Treatment'};
 var secPH={
   logline:  'ဇာတ်ကားတစ်ကားလုံး၏ အနှစ်သာရကို ၁-၂ ကြောင်းဖြင့် ဖော်ပြပါ...',
@@ -994,9 +1014,8 @@ var secPH={
   treatment:'မြင်ကွင်းအလိုက် ဇာတ်လမ်းအသေးစိတ် — present tense ဖြင့်ရေးပါ...'
 };
 
-/* Paginated section state */
-var secPages={}; /* tab → [{pageEl, areaEl}] */
-var SEC_USABLE=931; /* same as screenplay */
+var secPages={};
+var SEC_USABLE=931;
 
 function buildSecPage(tab){
   if(tabPages[tab]) return tabPages[tab];
@@ -1025,7 +1044,6 @@ function buildSecPage(tab){
   }
 
   if(tab==='logline'){
-    /* Fixed single page — simple textarea, no pagination */
     var pg=document.createElement('div');
     pg.className='page'; pg.id='pg-logline'; pg.style.display='none';
     var pn=document.createElement('div'); pn.className='page-num'; pn.textContent='Logline';
@@ -1045,14 +1063,12 @@ function buildSecPage(tab){
     return pg;
   }
 
-  /* Synopsis / Treatment — paginated contentEditable */
   return buildPaginatedSec(tab, scaler);
 }
 
 function buildPaginatedSec(tab, scaler){
-  /* Create first page with contentEditable editor */
   var pg=addSecPage(tab, scaler, 1);
-  tabPages[tab]=pg.pageEl; /* first page is the "anchor" */
+  tabPages[tab]=pg.pageEl;
 
   var ed=pg.areaEl.querySelector('.sec-ed');
   if(ed){
@@ -1098,7 +1114,7 @@ function addSecPage(tab, scaler, num){
   return obj;
 }
 
-/* Paginated reflow for synopsis / treatment */
+/* ===== SECTION REFLOW — fixed: collect from all pages before reflow ===== */
 var secReflowTimers={};
 function scheduleSecReflow(tab, delay){
   clearTimeout(secReflowTimers[tab]);
@@ -1110,23 +1126,26 @@ function reflowSec(tab){
   var firstEd=document.getElementById(tab+'Ed');
   if(!firstEd) return;
 
-  /* Collect all text from all pages into one string */
-  var allText=secPages[tab].map(function(p){ return p.edEl.innerHTML; }).join('');
+  /* FIX: collect innerHTML from ALL pages before overwriting first */
+  var allHTML='';
+  secPages[tab].forEach(function(p){
+    allHTML += p.edEl.innerHTML;
+  });
 
-  /* Measure how many lines fit in one page */
-  /* Strategy: put all content in first editor, check scrollHeight vs usable */
-  firstEd.innerHTML=allText;
+  /* Save selection position (caret) */
+  var sel=window.getSelection();
+  var savedRange=null;
+  if(sel && sel.rangeCount>0){
+    try{ savedRange=sel.getRangeAt(0).cloneRange(); }catch(x){}
+  }
 
-  /* Force layout */
+  firstEd.innerHTML=allHTML;
   void firstEd.offsetHeight;
 
   var lineH=parseFloat(getComputedStyle(firstEd).lineHeight)||28;
-  var usable=SEC_USABLE-18-36; /* minus label(36) on page1 */
-  var linesPerPage=Math.floor(usable/lineH);
+  var usable=SEC_USABLE-18-36;
 
-  /* If scrollHeight fits, remove extra pages */
   if(firstEd.scrollHeight<=usable+20){
-    /* remove extra pages */
     if(secPages[tab].length>1){
       for(var i=1;i<secPages[tab].length;i++){
         secPages[tab][i].pageEl.remove();
@@ -1136,43 +1155,42 @@ function reflowSec(tab){
     return;
   }
 
-  /* Need multiple pages — use column layout trick */
-  /* Simple approach: split by lines */
   var totalH=firstEd.scrollHeight;
   var needed=Math.ceil(totalH/usable);
 
-  /* Ensure enough pages exist */
   var scaler=document.getElementById('scaler');
   while(secPages[tab].length < needed){
     var n=secPages[tab].length+1;
     var newPg=addSecPage(tab, scaler, n);
-    newPg.edEl.addEventListener('input',function(){
-      autoSave();
-      scheduleSecReflow(tab, 1000);
-    });
+    /* FIX: use closure to capture tab correctly */
+    (function(t){
+      newPg.edEl.addEventListener('input',function(){
+        autoSave();
+        scheduleSecReflow(t, 1000);
+      });
+    })(tab);
     if(curTab===tab) newPg.pageEl.style.display='';
   }
-  /* Remove extra */
   while(secPages[tab].length > needed){
     secPages[tab][secPages[tab].length-1].pageEl.remove();
     secPages[tab].pop();
   }
 
-  /* Collect nodes and distribute */
+  /* Distribute child nodes across pages */
   var nodes=Array.from(firstEd.childNodes);
   secPages[tab].forEach(function(p){ p.edEl.innerHTML=''; });
 
   var pageIdx=0, curH=0;
+  var measureDiv=document.createElement('div');
+  measureDiv.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:'+firstEd.offsetWidth+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);';
+  document.body.appendChild(measureDiv);
+
   nodes.forEach(function(node){
     var clone=node.cloneNode(true);
-    var tmp=document.createElement('div');
-    tmp.style.cssText='position:absolute;visibility:hidden;width:'+firstEd.offsetWidth+'px;font-size:14px;line-height:2.0;font-family:var(--font-my);';
-    document.body.appendChild(tmp);
-    tmp.appendChild(clone.cloneNode(true));
-    var h=tmp.offsetHeight||lineH;
-    document.body.removeChild(tmp);
+    measureDiv.innerHTML='';
+    measureDiv.appendChild(clone);
+    var h=measureDiv.offsetHeight||lineH;
 
-    var pg=secPages[tab][pageIdx];
     var pgUsable=pageIdx===0?usable:SEC_USABLE-18;
     if(curH+h>pgUsable && pageIdx<secPages[tab].length-1){
       pageIdx++; curH=0;
@@ -1180,217 +1198,270 @@ function reflowSec(tab){
     secPages[tab][pageIdx].edEl.appendChild(node.cloneNode(true));
     curH+=h;
   });
+
+  document.body.removeChild(measureDiv);
 }
 
 /* ===== STORY ===== */
-var sidebarOpen = true;
 
+
+/* ===== STORY THEME ===== */
+var storyTheme='light';
+function setStoryTheme(t){
+  storyTheme=t;
+  document.body.classList.remove('st-light','st-dark','st-warm');
+  document.body.classList.add('st-'+t);
+  applyStoryDots(t);
+  try{localStorage.setItem('cp_st_theme',t);}catch(e){}
+}
+
+/* ===== STORY INIT ===== */
 function initStory(){
   document.getElementById('stTabs').style.display='flex';
   document.getElementById('spTabs').style.display='none';
   var scaler=document.getElementById('scaler');
   scaler.style.display='none';
 
+  /* Hide screenplay ws — story uses its own full-width layout inside #ed */
   var ws=document.getElementById('ws');
-  ws.style.cssText='flex:1;overflow:hidden;background:var(--white);display:flex;padding:0;';
+  ws.style.display='none';
+  var edContainer=document.getElementById('ed');
 
   if(!document.getElementById('storyLayout')){
-    /* Build layout: sidebar + editor area */
     var layout=document.createElement('div');
     layout.className='story-layout'; layout.id='storyLayout';
 
-    /* Sidebar */
-    var sidebar=document.createElement('div');
-    sidebar.className='ch-sidebar'; sidebar.id='chSidebar';
-    sidebar.style.position='relative'; /* for toggle positioning */
-    var sInner=document.createElement('div');
-    sInner.className='ch-sidebar-inner';
-
-    var sHead=document.createElement('div');
-    sHead.className='ch-header';
-    sHead.innerHTML=
-      '<span class="ch-header-title">အခန်းများ</span>'+
-      '<button class="ch-add" onclick="addChapter()" title="Chapter အသစ်">+</button>';
-    var sList=document.createElement('div');
-    sList.className='ch-list'; sList.id='chList';
-    sList.innerHTML='<div class="ch-empty">H1 / H2 heading ရေးလိုက်ရင်<br>ဒီနေရာမှာ ပေါ်မည်</div>';
-
-    sInner.appendChild(sHead); sInner.appendChild(sList);
-    sidebar.appendChild(sInner);
-
-    /* Toggle arrow — embedded in sidebar right edge */
-    var toggleBtn=document.createElement('button');
-    toggleBtn.className='ch-toggle'; toggleBtn.id='chToggle';
-    toggleBtn.onclick=toggleSidebar;
-    toggleBtn.textContent='◀';
-    sidebar.appendChild(toggleBtn);
-
-    /* Editor area */
-    var edArea=document.createElement('div');
-    edArea.className='story-editor-area'; edArea.id='stEdArea';
+    /* Editor scroll area */
+    var edWrap=document.createElement('div');
+    edWrap.className='story-editor-wrap'; edWrap.id='stEdArea';
 
     var paper=document.createElement('div');
     paper.className='story-paper';
-    paper.style.maxWidth='680px'; paper.style.margin='0 auto';
 
     var ed=document.createElement('div');
     ed.className='story-ed'; ed.contentEditable='true';
     ed.id='stEd'; ed.spellcheck=false;
 
-    ed.addEventListener('input',function(){
+    /* IME composition guard */
+    var isComposing=false;
+    ed.addEventListener('compositionstart',function(){ isComposing=true; });
+    ed.addEventListener('compositionend',function(){
+      isComposing=false;
       autoSave();
+      updateBlockLabel();
       updateStoryFmtState();
-      scheduleChapterScan();
     });
-    ed.addEventListener('keyup',function(){
+    ed.addEventListener('input',function(){
+      if(isComposing) return;
+      autoSave();
+      updateBlockLabel();
       updateStoryFmtState();
-      scheduleChapterScan();
     });
-    ed.addEventListener('mouseup',updateStoryFmtState);
+    ed.addEventListener('mouseup',function(){ updateBlockLabel(); updateStoryFmtState(); });
+    ed.addEventListener('keyup',function(e){
+      if(!isComposing && (e.key==='ArrowUp'||e.key==='ArrowDown'||e.key==='ArrowLeft'||e.key==='ArrowRight')){
+        updateBlockLabel(); updateStoryFmtState();
+      }
+    });
+    ed.addEventListener('selectionchange',function(){
+      if(!isComposing){ updateBlockLabel(); updateStoryFmtState(); }
+    });
 
     paper.appendChild(ed);
-    edArea.appendChild(paper);
-    layout.appendChild(sidebar);
-    layout.appendChild(edArea);
-    ws.appendChild(layout);
+    edWrap.appendChild(paper);
+    layout.appendChild(edWrap);
+    edContainer.appendChild(layout);
   }
 
   document.getElementById('storyBtb').classList.add('on');
 
-  /* Mobile: collapse sidebar initially */
-  if(window.innerWidth<=700){
-    sidebarOpen=false;
-    var sb=document.getElementById('chSidebar');
-    if(sb) sb.classList.add('collapsed');
-    var tg=document.getElementById('chToggle');
-    if(tg) tg.textContent='▶';
-  }
+  /* Show theme dots in tabs bar */
+  var dc=document.getElementById('stThemeDots');
+  if(dc) dc.style.display='flex';
+
+  /* Restore theme — applies full-screen */
+  try{
+    var t=localStorage.getItem('cp_st_theme')||'light';
+    setStoryTheme(t);
+  }catch(e){ setStoryTheme('light'); }
 
   setTimeout(function(){
-    document.getElementById('stEd').focus();
-    scanChapters();
+    var se=document.getElementById('stEd');
+    if(se) se.focus();
   },100);
-  initStoryScroll();
 }
 
-function toggleSidebar(){
-  sidebarOpen=!sidebarOpen;
-  var sb=document.getElementById('chSidebar');
-  var tg=document.getElementById('chToggle');
-  if(sb) sb.classList.toggle('collapsed',!sidebarOpen);
-  if(tg) tg.textContent=sidebarOpen?'◀':'▶';
+/* ===== BLOCK TYPE SHEET ===== */
+var blockTypes={
+  p:      {label:'Body',       cmd:'p'},
+  h1:     {label:'Heading 1',  cmd:'h1'},
+  h2:     {label:'Heading 2',  cmd:'h2'},
+  h3:     {label:'Heading 3',  cmd:'h3'},
+  blockquote:{label:'Blockquote',cmd:'blockquote'}
+};
+
+function openBlockSheet(){
+  document.getElementById('blockSheet').classList.add('on');
+  document.getElementById('blockSheetOv').classList.add('on');
+}
+function closeBlockSheet(){
+  document.getElementById('blockSheet').classList.remove('on');
+  document.getElementById('blockSheetOv').classList.remove('on');
 }
 
-/* ===== CHAPTER: + New Chapter ===== */
-function addChapter(){
+function applyBlock(type){
   var ed=document.getElementById('stEd'); if(!ed) return;
-  /* Insert H1 at cursor or end */
   ed.focus();
+  try{
+    document.execCommand('formatBlock',false,type);
+  }catch(e){ console.warn('formatBlock error:',e); }
+  closeBlockSheet();
+  updateBlockLabel();
+  updateStoryFmtState();
+  autoSave();
+}
+
+function updateBlockLabel(){
   var sel=window.getSelection();
-  var h1=document.createElement('h1');
-  h1.textContent='အခန်း';
+  var label='Body';
+  var curType='p';
+  if(sel && sel.rangeCount>0){
+    var node=sel.anchorNode;
+    while(node && node.nodeType!==1) node=node.parentNode;
+    var ed=document.getElementById('stEd');
+    if(node && ed && ed.contains(node)){
+      var tag=node.tagName?node.tagName.toLowerCase():'p';
+      if(blockTypes[tag]){ label=blockTypes[tag].label; curType=tag; }
+    }
+  }
+  var lbl=document.getElementById('stbBlockLabel');
+  if(lbl) lbl.textContent=label;
+  /* update active block opt */
+  Object.keys(blockTypes).forEach(function(k){
+    var opt=document.getElementById('bopt-'+k);
+    if(opt) opt.classList.toggle('sel',k===curType);
+  });
+}
+
+/* ===== INSERT SHEET ===== */
+function openInsSheet(){
+  document.getElementById('insSheet').classList.add('on');
+  document.getElementById('insSheetOv').classList.add('on');
+}
+function closeInsSheet(){
+  document.getElementById('insSheet').classList.remove('on');
+  document.getElementById('insSheetOv').classList.remove('on');
+}
+
+function insImage(){
+  closeInsSheet();
+  document.getElementById('imgFileIn').click();
+}
+
+function handleImgFile(input){
+  var file=input.files[0]; if(!file) return;
+  if(!file.type.startsWith('image/')){ toast('🖼️ Image file ကိုသာ ရွေးပါ'); return; }
+  if(file.size>10*1024*1024){ toast('📦 10MB အောက် ရှိသင့်'); return; }
+  toast('⬆ ပုံတင်နေသည်...');
+
+  /* Firebase Storage upload */
+  if(!window._storage){
+    /* Fallback: local base64 embed (no cloud storage configured) */
+    var reader=new FileReader();
+    reader.onload=function(e){
+      embedImage(e.target.result, file.name);
+    };
+    reader.readAsDataURL(file);
+    input.value='';
+    return;
+  }
+  var path='story-images/'+docId+'/'+Date.now()+'_'+file.name;
+  var ref=window._storageRef(window._storage,path);
+  window._uploadBytes(ref,file).then(function(snap){
+    return window._getDownloadURL(snap.ref);
+  }).then(function(url){
+    embedImage(url, file.name);
+    toast('✅ ပုံတင်ပြီး');
+    input.value='';
+  }).catch(function(e){
+    toast('❌ '+e.message); input.value='';
+  });
+}
+
+function embedImage(src, name){
+  var ed=document.getElementById('stEd'); if(!ed) return;
+  ed.focus();
+  var img=document.createElement('img');
+  img.src=src; img.alt=name||'image'; img.style.maxWidth='100%';
+  var sel=window.getSelection();
   if(sel && sel.rangeCount>0 && ed.contains(sel.anchorNode)){
     var r=sel.getRangeAt(0);
     r.collapse(false);
-    /* Go to end of current block then insert */
-    r.insertNode(document.createElement('br'));
-    r.insertNode(h1);
+    r.insertNode(img);
+    r.setStartAfter(img); r.collapse(true);
+    sel.removeAllRanges(); sel.addRange(r);
   } else {
-    /* Append at end */
-    if(ed.lastChild) ed.appendChild(document.createElement('br'));
-    ed.appendChild(h1);
+    ed.appendChild(img);
   }
-  /* Place cursor inside h1 */
-  try{
-    var r2=document.createRange();
-    r2.setStart(h1,0); r2.collapse(true);
-    sel.removeAllRanges(); sel.addRange(r2);
-  }catch(x){}
-  h1.scrollIntoView({behavior:'smooth',block:'center'});
   autoSave();
-  scheduleChapterScan();
 }
 
-/* ===== CHAPTER SCAN — detect H1/H2 headings ===== */
-var chScanTimer=null;
-function scheduleChapterScan(){
-  clearTimeout(chScanTimer);
-  chScanTimer=setTimeout(scanChapters, 400);
-}
-
-function scanChapters(){
-  var ed=document.getElementById('stEd');
-  var list=document.getElementById('chList');
-  if(!ed||!list) return;
-
-  var headings=ed.querySelectorAll('h1,h2');
-  if(!headings.length){
-    list.innerHTML='<div class="ch-empty">H1 / H2 heading ရေးလိုက်ရင်<br>ဒီနေရာမှာ ပေါ်မည်</div>';
-    return;
+function insDivider(){
+  closeInsSheet();
+  var ed=document.getElementById('stEd'); if(!ed) return;
+  ed.focus();
+  try{
+    document.execCommand('insertHorizontalRule',false,null);
+  }catch(e){
+    /* fallback */
+    var hr=document.createElement('hr');
+    var sel=window.getSelection();
+    if(sel && sel.rangeCount>0 && ed.contains(sel.anchorNode)){
+      var r=sel.getRangeAt(0);
+      var block=sel.anchorNode;
+      while(block && block.parentNode!==ed) block=block.parentNode;
+      if(block) block.after(hr); else ed.appendChild(hr);
+    } else { ed.appendChild(hr); }
   }
-
-  /* Assign ids to headings for scroll targeting */
-  headings.forEach(function(h,i){
-    if(!h.id) h.id='ch-heading-'+i;
-  });
-
-  var html='';
-  headings.forEach(function(h){
-    var tag=h.tagName.toLowerCase();
-    var txt=h.textContent.trim()||'(အမည်မဲ့)';
-    html+=
-      '<button class="ch-item '+tag+'" onclick="scrollToHeading(\''+h.id+'\')">'+
-        '<span class="ch-dot"></span>'+
-        '<span class="ch-name">'+esc(txt)+'</span>'+
-      '</button>';
-  });
-  list.innerHTML=html;
-
-  /* Highlight active chapter based on scroll */
-  highlightActiveChapter();
+  autoSave();
 }
 
-function scrollToHeading(id){
-  var el=document.getElementById(id);
-  var area=document.getElementById('stEdArea');
-  if(!el||!area) return;
-  var top=el.offsetTop - 20;
-  area.scrollTo({top:top, behavior:'smooth'});
-  /* Close sidebar on mobile after tap */
-  if(window.innerWidth<=700){ sidebarOpen=false; document.getElementById('chSidebar').classList.add('collapsed'); }
+function insPageBreak(){
+  closeInsSheet();
+  var ed=document.getElementById('stEd'); if(!ed) return;
+  ed.focus();
+  /* Insert a visible page-break marker div */
+  var pb=document.createElement('div');
+  pb.className='story-page-break';
+  pb.setAttribute('contenteditable','false');
+  pb.style.cssText='width:100%;text-align:center;padding:8px 0;margin:12px 0;color:var(--slate-lt);font-size:11px;font-family:var(--font-en);letter-spacing:2px;border-top:1px dashed var(--border);border-bottom:1px dashed var(--border);user-select:none;cursor:default;';
+  pb.textContent='— PAGE BREAK —';
+  var sel=window.getSelection();
+  if(sel && sel.rangeCount>0 && ed.contains(sel.anchorNode)){
+    var block=sel.anchorNode;
+    while(block && block.parentNode!==ed) block=block.parentNode;
+    if(block) block.after(pb); else ed.appendChild(pb);
+  } else { ed.appendChild(pb); }
+  autoSave();
 }
 
-function highlightActiveChapter(){
-  var area=document.getElementById('stEdArea');
-  var list=document.getElementById('chList');
-  if(!area||!list) return;
-  var scrollTop=area.scrollTop;
-  var items=list.querySelectorAll('.ch-item');
-  var headings=document.getElementById('stEd').querySelectorAll('h1,h2');
-  var activeIdx=0;
-  headings.forEach(function(h,i){
-    if(h.offsetTop-40 <= scrollTop) activeIdx=i;
-  });
-  items.forEach(function(it,i){ it.classList.toggle('active',i===activeIdx); });
-}
-
-/* Update active chapter on scroll */
-function initStoryScroll(){
-  var area=document.getElementById('stEdArea');
-  if(area) area.addEventListener('scroll',highlightActiveChapter,{passive:true});
-}
-
+/* ===== STORY FORMAT ===== */
 function storyFmt(cmd){
   var ed=document.getElementById('stEd'); if(!ed) return;
-  if(cmd==='h1'||cmd==='h2') document.execCommand('formatBlock',false,cmd);
-  else document.execCommand(cmd,false,null);
-  ed.focus(); updateStoryFmtState();
+  ed.focus();
+  try{ document.execCommand(cmd,false,null); }catch(e){ console.warn('storyFmt error:',e); }
+  updateStoryFmtState();
+  autoSave();
 }
+
+function storyUndo(){ var ed=document.getElementById('stEd'); if(!ed) return; ed.focus(); try{document.execCommand('undo',false,null);}catch(e){} updateStoryFmtState(); }
+function storyRedo(){ var ed=document.getElementById('stEd'); if(!ed) return; ed.focus(); try{document.execCommand('redo',false,null);}catch(e){} updateStoryFmtState(); }
+
 function updateStoryFmtState(){
   var cmds={'sfb-bold':'bold','sfb-italic':'italic','sfb-underline':'underline'};
   Object.keys(cmds).forEach(function(id){
     var el=document.getElementById(id);
-    if(el) el.classList.toggle('active',document.queryCommandState(cmds[id]));
+    if(el){ try{ el.classList.toggle('active',document.queryCommandState(cmds[id])); }catch(e){} }
   });
 }
 function evP(e){e.preventDefault();}
@@ -1416,7 +1487,9 @@ function openSaveModal(){
 function confirmSave(){ savePriv=pendSP; closeM('mSave'); doSave(); }
 
 function doSave(){
-  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
+  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){
+    console.warn('localStorage save failed:',e);
+  }
   if(currentUser&&window._db){
     setSv('unsaved'); toast('💾 သိမ်းနေသည်...');
     cloudSave().then(function(){
@@ -1424,10 +1497,11 @@ function doSave(){
       toast('✅ သိမ်းပြီး · '+(savePriv==='public'?'🌐 Public':'🔒 Private'));
       setTimeout(function(){ window.location.href='/profile'; },1800);
     }).catch(function(e){
-      setSv('ok'); toast('⚠️ Local သိမ်းပြီး — cloud error: '+e.message);
+      setSv('local');
+      toast('⚠️ Local သိမ်းပြီး — cloud error: '+e.message);
     });
   } else {
-    setSv('ok'); toast('💾 Local သိမ်းပြီး — login ဝင်ပါ');
+    setSv('local'); toast('💾 Local သိမ်းပြီး — login ဝင်ပါ');
   }
 }
 
@@ -1438,68 +1512,143 @@ async function cloudSave(){
   data.authorUsername='';
   data.updatedAt=new Date().toISOString();
   try{
-    var us=await window._getDoc(window._doc(window._db,'users',currentUser.uid));
+    var results=await Promise.all([
+      window._getDoc(window._doc(window._db,'users',currentUser.uid)),
+      window._getDoc(window._doc(window._db,'docs',docId))
+    ]);
+    var us=results[0];
+    var ex=results[1];
     if(us.exists()) data.authorUsername=us.data().username||'';
-  }catch(e){}
-  try{
-    var ex=await window._getDoc(window._doc(window._db,'docs',docId));
     if(ex.exists()){
       var exData=ex.data();
-      /* Preserve createdAt */
-      data.createdAt=exData.createdAt||data.updatedAt;
-      /* Preserve clapCount — setDoc overwrites entire doc so we must carry it over */
-      if(typeof exData.clapCount==='number') data.clapCount=exData.clapCount;
+      /* Preserve immutable/external fields — write page must never reset these */
+      data.createdAt = exData.createdAt || data.updatedAt;
+      if(typeof exData.clapCount!=='undefined') data.clapCount = exData.clapCount;
+      if(typeof exData.viewCount!=='undefined')  data.viewCount = exData.viewCount;
     } else {
-      data.createdAt=data.updatedAt;
+      data.createdAt = data.updatedAt;
+      data.clapCount = 0;
     }
-  }catch(e){data.createdAt=data.updatedAt;}
-  await window._setDoc(window._doc(window._db,'docs',docId),data);
+  }catch(e){
+    data.createdAt = data.updatedAt;
+  }
+  /* merge:true — server keeps any fields not present in data */
+  await window._setDoc(
+    window._doc(window._db,'docs',docId),
+    data,
+    {merge:true}
+  );
 }
 
+/* ===== AUTO SAVE ===== */
 function autoSave(){
   setSv('unsaved');
   clearTimeout(autoT);
   autoT=setTimeout(function(){
-    try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(e){}
+    var data=collect();
+    try{localStorage.setItem('cp_'+docId,JSON.stringify(data));}catch(e){
+      console.warn('localStorage autoSave failed:',e);
+    }
     if(currentUser&&window._db){
-      cloudSave().then(function(){setSv('ok');}).catch(function(){setSv('local');});
-    } else { setSv('local'); }
+      cloudSave().then(function(){setSv('ok');}).catch(function(){ setSv('local'); });
+    } else {
+      setSv('local');
+    }
   },2000);
 }
 
+/* FIX: clear autoSave timer on unload to prevent orphaned saves */
+window.addEventListener('beforeunload',function(){
+  clearTimeout(autoT);
+});
+
+/* ===== KEYBOARD TOOLBAR LIFT (visualViewport API) =====
+   On iOS Safari, when keyboard appears the visual viewport shrinks.
+   We move fixed toolbars up so they sit just above the keyboard.
+   This is the best possible behavior in a web app — true keyboard
+   attachment (like native apps) requires a native app. */
+(function(){
+  var lastBottom=0;
+  function adjustToolbars(){
+    var vv=window.visualViewport;
+    if(!vv) return;
+    /* offsetTop = how far visual viewport top is from layout viewport top
+       height    = visible area height
+       We want toolbar bottom = layout height - (visual offset + visual height) */
+    var layoutH = document.documentElement.clientHeight;
+    var visTop  = vv.offsetTop;
+    var visH    = vv.height;
+    var keyboardH = Math.max(0, layoutH - (visTop + visH));
+    /* Add 1px fudge for subpixel */
+    var bottom = Math.round(keyboardH);
+    if(bottom === lastBottom) return;
+    lastBottom = bottom;
+    var targets = ['storyBtb','btb'];
+    targets.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && el.classList.contains('on')){
+        el.style.bottom = bottom + 'px';
+      }
+    });
+    /* Also pad editor bottom so content not hidden under lifted toolbar */
+    var edArea = document.getElementById('stEdArea');
+    if(edArea){
+      var tbH = bottom > 0 ? 52 + bottom : 120;
+      edArea.style.paddingBottom = tbH + 'px';
+    }
+  }
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',  adjustToolbars, {passive:true});
+    window.visualViewport.addEventListener('scroll',  adjustToolbars, {passive:true});
+  }
+  /* Fallback: window resize */
+  window.addEventListener('resize', adjustToolbars, {passive:true});
+})();
+
 function setSv(s){
   var e=document.getElementById('sv');
+  if(!e) return;
   if(s==='ok'){e.textContent='Cloud Saved ✓';e.className='sv ok';}
   else if(s==='local'){e.textContent='Local only';e.className='sv';}
   else{e.textContent='Unsaved…';e.className='sv';}
 }
 
+/* ===== COLLECT — fixed: gather all sec pages ===== */
 function collect(){
-  /* synopsis/treatment: gather text from all pages */
   function getSecText(tab){
-    if(!secPages[tab]) {
-      /* fallback: textarea for logline */
-      var ta=document.getElementById(tab+'Ta');
+    /* logline is a textarea */
+    if(tab==='logline'){
+      var ta=document.getElementById('loglineTa');
       return ta?ta.value:'';
     }
-    return secPages[tab].map(function(p){ return p.edEl.innerText||''; }).join('\n').trim();
+    /* synopsis/treatment: gather from all sec pages */
+    if(secPages[tab] && secPages[tab].length>0){
+      return secPages[tab].map(function(p){
+        return p.edEl.innerText||'';
+      }).join('\n').trim();
+    }
+    /* fallback: single editor */
+    var ed=document.getElementById(tab+'Ed');
+    return ed?(ed.innerText||''):'';
   }
+
   return{
     id:docId, type:docType, privacy:savePriv, genre:docGenre,
     genreLabel:genreLabels[docGenre]||docGenre,
-    title:document.getElementById('docTitle').value,
+    title:(document.getElementById('docTitle')||{}).value||'',
     author:(document.getElementById('cvAuth')||{}).value||'',
-    draft: (document.getElementById('cvDraft')||{}).value||'',
-    logline:  (document.getElementById('loglineTa')||{}).value||'',
+    draft:(document.getElementById('cvDraft')||{}).value||'',
+    logline:  getSecText('logline'),
     synopsis: getSecText('synopsis'),
     treatment:getSecText('treatment'),
     screenplay:els.map(function(e){return{type:e.type,text:e.ce.textContent};}),
-    story:(document.getElementById('stEd')||{}).innerHTML||'',
+    story:(document.getElementById('stEd')||{}).innerHTML||'', storyTheme:storyTheme,
     saved:new Date().toISOString()
   };
 }
 
-/* ===== RESTORE — fixed: cover built first, no tab switch ===== */
+/* ===== RESTORE — fixed race condition with _docStarted flag ===== */
 function restoreDoc(data){
   if(!data) return;
   docType=data.type||'screenplay';
@@ -1507,67 +1656,82 @@ function restoreDoc(data){
   docGenre=data.genre||'';
   selType=docType; selPriv=savePriv;
 
-  document.getElementById('docTitle').value=data.title||'';
+  var titleEl=document.getElementById('docTitle');
+  if(titleEl) titleEl.value=data.title||'';
 
   if(!window._docStarted){
     window._docStarted=true;
-    startDoc(); /* builds cover page inside initSP() */
+    startDoc();
   }
 
+  /* FIX: use a single delayed restore — avoids double-restore race */
   setTimeout(function(){
-    if(docType==='screenplay'){
-      /* Cover — cvTitle now exists because buildSecPage('cover') called in initSP */
-      var ct=document.getElementById('cvTitle');
-      if(ct && data.title){ ct.value=data.title; ct.style.height='auto'; ct.style.height=ct.scrollHeight+'px'; }
-      var ca=document.getElementById('cvAuth');
-      if(ca && data.author) ca.value=data.author;
-      var cd=document.getElementById('cvDraft');
-      if(cd && data.draft) cd.value=data.draft;
-
-      /* Logline — textarea */
-      var logTa=document.getElementById('loglineTa');
-      if(!logTa){ buildSecPage('logline'); logTa=document.getElementById('loglineTa'); }
-      if(logTa && data.logline){
-        logTa.value=data.logline;
-        var tlb=document.getElementById('tabLogline');
-        if(tlb && data.logline.trim()) tlb.classList.add('has');
-      }
-
-      /* Synopsis / Treatment — contentEditable */
-      ['synopsis','treatment'].forEach(function(k){
-        if(!data[k] || !data[k].trim()) return;
-        if(!tabPages[k]) buildSecPage(k);
-        var ed=document.getElementById(k+'Ed');
-        if(ed){
-          ed.innerText=data[k];
-          var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
-          var tb=document.getElementById(map[k]);
-          if(tb) tb.classList.add('has');
-        }
-      });
-
-      /* Screenplay elements */
-      if(data.screenplay && data.screenplay.length>0){
-        clearAllSpElements();
-        pages.forEach(function(p){p.pageEl.remove();}); pages=[];
-        addPage();
-        data.screenplay.forEach(function(s){
-          if(!elCfg[s.type]) return;
-          lastEl=els.length>0? els[els.length-1].wrap : null;
-          insRaw(s.type, s.text);
-        });
-        reflow(null);
-        /* Show/hide pages based on current tab */
-        pages.forEach(function(p){
-          p.pageEl.style.display=curTab==='screenplay'?'':'none';
-        });
-      }
-    } else {
-      var se=document.getElementById('stEd');
-      if(se && data.story){ se.innerHTML=data.story; setTimeout(scanChapters,200); }
-    }
-    setSv('ok');
+    applyRestoreData(data);
   },400);
+}
+
+function applyRestoreData(data){
+  if(!data) return;
+
+  if(docType==='screenplay'){
+    /* Cover */
+    var ct=document.getElementById('cvTitle');
+    if(ct && data.title){ ct.value=data.title; ct.style.height='auto'; ct.style.height=ct.scrollHeight+'px'; }
+    var ca=document.getElementById('cvAuth');
+    if(ca && data.author) ca.value=data.author;
+    var cd=document.getElementById('cvDraft');
+    if(cd && data.draft) cd.value=data.draft;
+
+    /* Logline */
+    if(!tabPages['logline']) buildSecPage('logline');
+    var logTa=document.getElementById('loglineTa');
+    if(logTa && data.logline){
+      logTa.value=data.logline;
+      var tlb=document.getElementById('tabLogline');
+      if(tlb && data.logline.trim()) tlb.classList.add('has');
+    }
+
+    /* Synopsis / Treatment */
+    ['synopsis','treatment'].forEach(function(k){
+      if(!data[k] || !data[k].trim()) return;
+      if(!tabPages[k]) buildSecPage(k);
+      var ed=document.getElementById(k+'Ed');
+      if(ed){
+        /* FIX: use innerText for plain text restore to avoid XSS and formatting issues */
+        ed.innerText=data[k];
+        var map={synopsis:'tabSynopsis',treatment:'tabTreatment'};
+        var tb=document.getElementById(map[k]);
+        if(tb) tb.classList.add('has');
+      }
+    });
+
+    /* Screenplay elements */
+    if(data.screenplay && data.screenplay.length>0){
+      /* FIX: clean up properly before restore */
+      clearAllSpElements();
+      pages.forEach(function(p){
+        if(p.pageEl.parentNode) p.pageEl.parentNode.removeChild(p.pageEl);
+      });
+      pages=[];
+      addPage();
+      data.screenplay.forEach(function(s){
+        if(!elCfg[s.type]) return;
+        insRaw(s.type, s.text);
+      });
+      reflow(null);
+      updateSceneNumbers();
+      pages.forEach(function(p){
+        p.pageEl.style.display=curTab==='screenplay'?'':'none';
+      });
+      updatePageIndicator();
+    }
+  } else {
+    /* Story */
+    var se=document.getElementById('stEd');
+    if(se && data.story) se.innerHTML=data.story;
+    if(data.storyTheme) setStoryTheme(data.storyTheme);
+  }
+  setSv('ok');
 }
 
 /* ===== GENRE MODAL ===== */
@@ -1590,12 +1754,25 @@ function confirmGenre(){
 
 /* ===== AUTH ===== */
 function switchAuthTab(tab){
-  ['authSignin','authSignup','authForgot'].forEach(function(id){document.getElementById(id).style.display='none';});
-  ['siErr','suErr','fgErr'].forEach(function(id){document.getElementById(id).textContent='';});
+  ['authSignin','authSignup','authForgot'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.style.display='none';
+  });
+  ['siErr','suErr','fgErr'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.textContent='';
+  });
   document.querySelectorAll('.auth-tab').forEach(function(b){b.classList.remove('act');});
-  if(tab==='signin'){document.getElementById('authSignin').style.display='';document.getElementById('atSignin').classList.add('act');}
-  else if(tab==='signup'){document.getElementById('authSignup').style.display='';document.getElementById('atSignup').classList.add('act');}
-  else document.getElementById('authForgot').style.display='';
+  if(tab==='signin'){
+    document.getElementById('authSignin').style.display='';
+    document.getElementById('atSignin').classList.add('act');
+  } else if(tab==='signup'){
+    document.getElementById('authSignup').style.display='';
+    document.getElementById('atSignup').classList.add('act');
+  } else {
+    var af=document.getElementById('authForgot');
+    if(af) af.style.display='';
+  }
 }
 function doSignIn(){
   var email=document.getElementById('siEmail').value.trim();
@@ -1606,7 +1783,11 @@ function doSignIn(){
   if(!window._firebaseAuth){err.textContent='Firebase မချိတ်ရသေးပါ';return;}
   window._signInEmail(email,pass).then(function(){closeM('mAuth');doSave();})
     .catch(function(e){
-      var m={'auth/user-not-found':'Email မတွေ့ပါ','auth/wrong-password':'Password မှားနေသည်','auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'};
+      var m={
+        'auth/user-not-found':'Email မတွေ့ပါ',
+        'auth/wrong-password':'Password မှားနေသည်',
+        'auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'
+      };
       err.textContent=m[e.code]||e.message;
     });
 }
@@ -1617,10 +1798,14 @@ function doSignUp(){
   var err=document.getElementById('suErr');
   err.textContent='';
   if(!name||!email||!pass){err.textContent='အကုန်ထည့်ပါ';return;}
+  if(pass.length<6){err.textContent='Password အနည်းဆုံး ၆ လုံး';return;}
   if(!window._firebaseAuth){err.textContent='Firebase မချိတ်ရသေးပါ';return;}
   window._signUpEmail(name,email,pass).then(function(){closeM('mAuth');doSave();})
     .catch(function(e){
-      var m={'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်','auth/weak-password':'Password အနည်းဆုံး ၆ လုံး'};
+      var m={
+        'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်',
+        'auth/weak-password':'Password အနည်းဆုံး ၆ လုံး'
+      };
       err.textContent=m[e.code]||e.message;
     });
 }
@@ -1636,19 +1821,33 @@ function doForgot(){
 function authWithGoogle(){
   if(!window._firebaseAuth){toast('Firebase မချိတ်ရသေးပါ');return;}
   window._signInGoogle().then(function(){closeM('mAuth');doSave();})
-    .catch(function(){toast('Google sign in မအောင်မြင်ပါ');});
+    .catch(function(e){ toast('Google sign in မအောင်မြင်ပါ: '+(e.message||'')); });
 }
 
 /* ===== SHARE / COLLAB ===== */
-function openShareM(){document.getElementById('sUrl').textContent='cinepodma.com/read/'+docId;openM('mShare');}
-function cpLink(){navigator.clipboard.writeText(document.getElementById('sUrl').textContent).then(function(){toast('🔗 Link ကူးပြီး');});}
+function openShareM(){
+  var el=document.getElementById('sUrl');
+  if(el) el.textContent='cinepodma.com/read/'+docId;
+  openM('mShare');
+}
+function cpLink(){
+  var el=document.getElementById('sUrl');
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(function(){toast('🔗 Link ကူးပြီး');}).catch(function(){
+    toast('Copy မရပါ — manually ကူးပါ');
+  });
+}
 function invC(){
-  var e=document.getElementById('clEmail').value.trim(); if(!e) return;
+  var emailEl=document.getElementById('clEmail');
+  var e=(emailEl?emailEl.value:'').trim();
+  if(!e) return;
   var l=document.getElementById('clList');
+  if(!l) return;
   var i=document.createElement('div');
   i.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;margin-bottom:8px;';
-  i.innerHTML='<div style="width:30px;height:30px;border-radius:50%;background:var(--slate-bg);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✉</div><div style="flex:1;line-height:1.6;">'+e+'</div><span style="font-family:var(--font-en);font-size:10px;color:var(--slate);letter-spacing:.5px;">INVITED</span>';
-  l.appendChild(i); document.getElementById('clEmail').value='';
+  i.innerHTML='<div style="width:30px;height:30px;border-radius:50%;background:var(--slate-bg);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✉</div><div style="flex:1;line-height:1.6;">'+esc(e)+'</div><span style="font-family:var(--font-en);font-size:10px;color:var(--slate);letter-spacing:.5px;">INVITED</span>';
+  l.appendChild(i);
+  emailEl.value='';
   toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');
 }
 
@@ -1657,7 +1856,12 @@ function downloadPDF(){
   if(docType==='story'){toast('Story PDF မထုတ်ပါ');return;}
   openM('mPDF');
 }
-function confirmPDF(){ var w=document.getElementById('wmText').value.trim(); closeM('mPDF'); doPrint(w); }
+function confirmPDF(){
+  var wmEl=document.getElementById('wmText');
+  var w=wmEl?wmEl.value.trim():'';
+  closeM('mPDF');
+  doPrint(w);
+}
 
 function doPrint(wm){
   var cvTitle=(document.getElementById('cvTitle')||{}).value||document.getElementById('docTitle').value||'';
@@ -1668,47 +1872,75 @@ function doPrint(wm){
     '<div class="pp-cover-title">'+esc(cvTitle)+'</div><div class="pp-cover-hr"></div>'+
     '<div class="pp-cover-by">Written by</div><div class="pp-cover-author">'+esc(cvAuth)+'</div>'+
     '<div class="pp-cover-draft">'+esc(cvDraft)+'</div></div>');
-  [{id:'loglineTa',label:'Logline'},{id:'synopsisTa',label:'Synopsis'},{id:'treatmentTa',label:'Treatment'}].forEach(function(s){
-    var el=document.getElementById(s.id);
-    if(el&&el.value.trim()) pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
-      '<div class="pp-sec-lbl">'+s.label+'</div><div class="pp-sec-text">'+esc(el.value)+'</div></div>');
+
+  /* Logline */
+  var logEl=document.getElementById('loglineTa');
+  if(logEl&&logEl.value.trim()){
+    pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
+      '<div class="pp-sec-lbl">Logline</div><div class="pp-sec-text">'+esc(logEl.value)+'</div></div>');
+  }
+
+  /* Synopsis / Treatment from contentEditable */
+  ['synopsis','treatment'].forEach(function(k){
+    if(!secPages[k]||!secPages[k].length) return;
+    var txt=secPages[k].map(function(p){return p.edEl.innerText||'';}).join('\n').trim();
+    if(!txt) return;
+    pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
+      '<div class="pp-sec-lbl">'+secLabels[k]+'</div><div class="pp-sec-text">'+esc(txt)+'</div></div>');
   });
+
   pages.forEach(function(sp,i){
     var elems=sp.areaEl.querySelectorAll('.el');
     if(!elems.length&&i>0) return;
     var h='';
     elems.forEach(function(el){
-      h+='<div class="pp-el pp-'+(el.dataset.type||'action')+'">'+esc(el.querySelector('.el-ce')?el.querySelector('.el-ce').textContent:'')+'</div>';
+      var ce=el.querySelector('.el-ce');
+      h+='<div class="pp-el pp-'+(el.dataset.type||'action')+'">'+esc(ce?ce.textContent:'')+'</div>';
     });
     pgs.push('<div class="pp-page pp-script">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
       '<div class="pp-pnum">p.'+(i+1)+'</div>'+h+
       '<div class="pp-footer">write at cinepodma.com</div></div>');
   });
+
   var win=window.open('','_blank','width=900,height=700');
+  if(!win){toast('Popup blocked — browser popup allow လုပ်ပါ');return;}
   win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(cvTitle||'CinePodma')+'</title><style>@import url(\'https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap\');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:\'Courier New\',Courier,monospace;background:#fff;}.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;}.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}.pp-cover-title{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:28px;font-weight:700;margin-bottom:24px;line-height:1.8;}.pp-cover-hr{width:60px;height:1px;background:#000;margin:0 auto 20px;}.pp-cover-by{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:6px;}.pp-cover-author{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:16px;font-weight:600;line-height:1.8;}.pp-cover-draft{font-size:11px;color:#999;margin-top:32px;}.pp-sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:8px;}.pp-sec-text{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:14px;line-height:2.0;white-space:pre-wrap;}.pp-pnum{position:absolute;top:20px;right:2.54cm;font-size:9px;color:#999;}.pp-el{font-size:12px;line-height:1.8;margin-bottom:1px;}.pp-scene{font-weight:bold;margin-top:14px;text-transform:uppercase;}.pp-action{padding:1px 0;}.pp-char{padding-left:34%;margin-top:10px;text-transform:uppercase;}.pp-paren{padding-left:26%;padding-right:26%;}.pp-dial{padding-left:20%;padding-right:20%;}.pp-trans{text-align:right;margin-top:10px;text-transform:uppercase;}.pp-footer{position:absolute;bottom:1cm;left:2.54cm;right:2.54cm;text-align:center;font-size:8px;color:#CCC;letter-spacing:.8px;}@media print{body{-webkit-print-color-adjust:exact;}}</style></head><body>'+pgs.join('')+'</body></html>');
   win.document.close(); win.focus();
   setTimeout(function(){win.print();},800);
 }
+
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ===== MODALS ===== */
-function openM(id){document.getElementById(id).classList.add('on');}
-function closeM(id){document.getElementById(id).classList.remove('on');}
+function openM(id){
+  var el=document.getElementById(id);
+  if(el) el.classList.add('on');
+}
+function closeM(id){
+  var el=document.getElementById(id);
+  if(el) el.classList.remove('on');
+}
 function toast(m){
   var t=document.getElementById('toast');
+  if(!t) return;
   t.textContent=m; t.classList.add('on');
   setTimeout(function(){t.classList.remove('on');},2800);
 }
+
+/* Modal: close on overlay click */
 document.addEventListener('click',function(e){
   ['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(function(id){
-    var el=document.getElementById(id); if(el&&e.target===el) closeM(id);
+    var el=document.getElementById(id);
+    if(el&&e.target===el) closeM(id);
   });
 });
+
+/* Keyboard shortcuts */
 document.addEventListener('keydown',function(e){
   if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openSaveModal();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();doUndo();}
-  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();doRedo();}
-  if(e.key==='Escape')['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='z'){e.preventDefault();doUndo();}
+  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.shiftKey&&e.key==='z'))){e.preventDefault();doRedo();}
+  if(e.key==='Escape'){['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);}
 });
 
 /* ===== ON LOAD ===== */
@@ -1716,9 +1948,13 @@ window.addEventListener('DOMContentLoaded',function(){
   var p=new URLSearchParams(window.location.search);
   var id=p.get('id'); if(!id) return;
   docId=id;
+  /* Try localStorage first for instant restore */
   var raw=localStorage.getItem('cp_'+id)||localStorage.getItem('cp_doc_'+id);
   if(raw){
-    try{restoreDoc(JSON.parse(raw));}catch(e){console.error('restore error',e);}
+    try{
+      var data=JSON.parse(raw);
+      restoreDoc(data);
+    }catch(e){ console.error('localStorage restore error',e); }
   }
   window._pendingDocId=id;
 });
@@ -1727,6 +1963,7 @@ window.addEventListener('DOMContentLoaded',function(){
 <!-- FIREBASE -->
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import{getStorage,ref,uploadBytes,getDownloadURL}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js';
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,sendPasswordResetEmail,updateProfile}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 import{getFirestore,doc,setDoc,getDoc}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
@@ -1737,11 +1974,21 @@ const db=getFirestore(app);
 const provider=new GoogleAuthProvider();
 
 window._db=db;window._doc=doc;window._setDoc=setDoc;window._getDoc=getDoc;window._firebaseAuth=auth;
+const storage=getStorage(app);
+window._storage=storage;window._storageRef=ref;window._uploadBytes=uploadBytes;window._getDownloadURL=getDownloadURL;
 window._signInEmail=(e,p)=>signInWithEmailAndPassword(auth,e,p);
 window._signUpEmail=async(name,email,pass)=>{
   const c=await createUserWithEmailAndPassword(auth,email,pass);
   await updateProfile(c.user,{displayName:name});
-  try{await setDoc(doc(db,'users',c.user.uid),{name,email,username:'@'+email.split('@')[0],bio:'',avatar:'',role:'',onboarded:false,createdAt:new Date().toISOString()});}catch(e){}
+  try{
+    await setDoc(doc(db,'users',c.user.uid),{
+      name,email,
+      username:'@'+email.split('@')[0],
+      bio:'',avatar:'',role:'',
+      onboarded:false,
+      createdAt:new Date().toISOString()
+    });
+  }catch(e){ console.warn('User doc create failed:',e); }
   return c;
 };
 window._signInGoogle=()=>signInWithPopup(auth,provider);
@@ -1749,57 +1996,34 @@ window._resetPassword=e=>sendPasswordResetEmail(auth,e);
 
 onAuthStateChanged(auth,async user=>{
   currentUser=user;
-  renderTBR();
-  const pendId=window._pendingDocId;
-  if(pendId&&user&&!window._cloudLoaded){
-    window._cloudLoaded=true;
-    try{
-      const snap=await getDoc(doc(db,'docs',pendId));
-      if(snap.exists()){
-        const data={...snap.data(),id:pendId};
-        try{localStorage.setItem('cp_'+pendId,JSON.stringify(data));}catch(e){}
-        if(!window._docStarted){
-          restoreDoc(data);
-        } else {
-          savePriv=data.privacy||'private';
-          docGenre=data.genre||'';
-          if(data.type==='screenplay'&&data.screenplay&&data.screenplay.length>0){
-            clearAllSpElements();
-            pages.forEach(p=>p.pageEl.remove()); pages=[];
-            addPage();
-            data.screenplay.forEach(s=>{
-              if(!elCfg[s.type]) return;
-              lastEl=els.length>0?els[els.length-1].wrap:null;
-              insRaw(s.type,s.text);
-            });
-            reflow(null);
-            updateSceneNumbers();
-            pages.forEach(p=>{p.pageEl.style.display=curTab==='screenplay'?'':'none';});
-            updatePageIndicator();
-          }
-          /* Restore cover */
-          var ct=document.getElementById('cvTitle');
-          if(ct&&data.title){ct.value=data.title;ct.style.height='auto';ct.style.height=ct.scrollHeight+'px';}
-          var ca=document.getElementById('cvAuth');
-          if(ca&&data.author) ca.value=data.author;
-          var cd=document.getElementById('cvDraft');
-          if(cd&&data.draft) cd.value=data.draft;
-          /* Restore logline */
-          if(!tabPages['logline']) buildSecPage('logline');
-          var lt=document.getElementById('loglineTa');
-          if(lt&&data.logline) lt.value=data.logline;
-          /* Restore synopsis/treatment */
-          ['synopsis','treatment'].forEach(function(k){
-            if(!data[k]||!data[k].trim()) return;
-            if(!tabPages[k]) buildSecPage(k);
-            var ed=document.getElementById(k+'Ed');
-            if(ed) ed.innerText=data[k];
-          });
-        }
-        setSv('ok');
-      }
-    }catch(e){console.error('Firestore load',e);}
+  /* FIX: only call renderTBR if editor is already visible (docType known) */
+  if(document.getElementById('ed').style.display!=='none'){
+    renderTBR();
   }
+
+  const pendId=window._pendingDocId;
+  if(!pendId||!user) return;
+  /* FIX: guard against double cloud load */
+  if(window._cloudLoaded) return;
+  window._cloudLoaded=true;
+
+  try{
+    const snap=await getDoc(doc(db,'docs',pendId));
+    if(!snap.exists()) return;
+    const data={...snap.data(),id:pendId};
+    /* Update localStorage with latest cloud data */
+    try{localStorage.setItem('cp_'+pendId,JSON.stringify(data));}catch(e){}
+
+    if(!window._docStarted){
+      /* First load — full restore */
+      restoreDoc(data);
+    } else {
+      /* FIX: editor already running — apply data without re-running startDoc */
+      savePriv=data.privacy||'private';
+      docGenre=data.genre||'';
+      applyRestoreData(data);
+    }
+  }catch(e){ console.error('Firestore load error:',e); }
 });
 </script>
 </body>
