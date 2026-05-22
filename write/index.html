@@ -505,7 +505,29 @@ function goBack(){
 }
 
 /* ===== SCREENPLAY DATA ===== */
-var SP_USABLE = 931;
+/* SP_USABLE & SP_WIDTH computed at reflow time from actual sp-area DOM element.
+   A4 CSS: 1123px tall, 794px wide, --pad:96px each side.
+   But zoom/scaling affects what elements report as offsetHeight.
+   We always measure from the real sp-area to stay accurate. */
+var SP_USABLE = 931; /* fallback — overridden dynamically in reflow() */
+var SP_WIDTH  = 602; /* fallback — overridden dynamically in reflow() */
+
+function getSpDimensions(){
+  /* COORDINATE SPACE:
+     - measureHost is position:fixed outside scaler → renders at CSS pixel size (no zoom)
+     - Elements moved there report offsetHeight / getBCR in CSS pixels
+     - sp-area.clientWidth/clientHeight = CSS pixels (layout size, ignores CSS transform)
+     - These two are in the SAME coordinate space → correct comparison
+     Note: getBoundingClientRect on sp-area would give SCALED visual pixels → wrong. */
+  if(pages.length > 0){
+    var area = pages[0].areaEl;
+    var h = area.clientHeight;
+    var w = area.clientWidth;
+    if(h > 0 && w > 0) return {h:h, w:w};
+  }
+  /* Fallback: page CSS values minus padding */
+  return {h: 1123 - 96*2, w: 794 - 96*2}; /* = 931, 602 */
+}
 var pages = [];
 var els   = [];
 var lastEl = null;
@@ -603,24 +625,37 @@ function reflow(restoreFocusId){
   if(curTab!=='screenplay') return;
   if(els.length===0){ removeTrailingEmptyPages(); updatePageIndicator(); return; }
 
-  var host=document.getElementById('measureHost');
+  /* Ensure at least one page exists before measuring */
+  if(pages.length===0) addPage();
 
-  /* FIX: move all wraps into measureHost for measurement */
+  /* Read actual dimensions from live sp-area — respects zoom/scale */
+  var dims = getSpDimensions();
+  var usable = dims.h;
+  var spW    = dims.w;
+
+  var host=document.getElementById('measureHost');
+  /* Match measureHost width to actual sp-area width for accurate wrapping */
+  host.style.width = spW + 'px';
+
+  /* Move all wraps into measureHost for measurement */
   els.forEach(function(e){ host.appendChild(e.wrap); });
 
   /* Force layout */
   void host.offsetHeight;
 
-  /* Measure heights */
-  var heights=els.map(function(e){ return Math.max(e.wrap.offsetHeight, 22); });
+  /* Measure heights — elements are in measureHost (fixed, outside scaler transform).
+     measureHost renders at CSS pixel size. sp-area.clientHeight is also CSS pixels.
+     Both in same coordinate space → correct page distribution. */
+  var heights=els.map(function(e){
+    return Math.max(e.wrap.offsetHeight || 22, 22);
+  });
 
   /* Distribute into pages */
-  if(pages.length===0) addPage();
   var assignments=[];
   var pageIdx=0, used=0;
 
   heights.forEach(function(h,i){
-    if(used+h > SP_USABLE && used>0){ pageIdx++; used=0; }
+    if(used+h > usable && used>0){ pageIdx++; used=0; }
     assignments.push({el:els[i], pageIdx:pageIdx});
     used+=h;
   });
@@ -702,7 +737,7 @@ function insRaw(type, text){
   ce.addEventListener('input', function(){
     if(!isUndoRedo) pushUndo();
     autoSave();
-    scheduleReflow(800);
+    scheduleReflow(200);
   });
 
   ce.addEventListener('keydown', function(e){
