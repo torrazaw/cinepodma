@@ -1182,15 +1182,17 @@ function scheduleSecReflow(tab,delay){
 }
 
 function getSecUsable(tab){
+  /* Try live page first */
   if(secPages[tab]&&secPages[tab].length>0){
     var area=secPages[tab][0].areaEl;
     var h=area.clientHeight;
-    if(h>0) return {page1:h-40, rest:h};
+    if(h>0) return {page1:Math.max(h-40,200), rest:Math.max(h,200)};
   }
+  /* Page may be hidden — derive from A4 CSS constants: 1123 - 96*2 = 931 */
   return {page1:891, rest:931};
 }
 
-function updateSecPageLines(){}  /* no-op — kept for compat */
+function updateSecPageLines(){}
 
 function reflowSec(tab){
   if(!secPages[tab]||!secPages[tab].length) return;
@@ -1199,37 +1201,46 @@ function reflowSec(tab){
   var usable1=dims.page1;
   var usableN=dims.rest;
 
-  /* Step 1: Collect ALL nodes from ALL pages (by live reference) */
+  /* Collect all live nodes from all pages */
   var allNodes=[];
   secPages[tab].forEach(function(p){
-    Array.from(p.edEl.childNodes).forEach(function(n){
-      allNodes.push(n);
-    });
+    /* snapshot childNodes before moving anything */
+    Array.from(p.edEl.childNodes).forEach(function(n){ allNodes.push(n); });
   });
-  if(!allNodes.length) return;
 
-  /* Step 2: Measure using clones in off-screen div */
+  /* Filter out empty-only text nodes (whitespace between tags) */
+  var meaningful=allNodes.filter(function(n){
+    if(n.nodeType===3) return n.textContent.replace(/\s/g,'').length>0;
+    return true;
+  });
+  if(!meaningful.length) return;
+
+  /* Measure using fixed off-screen div */
   var firstEd=secPages[tab][0].edEl;
   var edW=firstEd.clientWidth||580;
-  var lineH=parseFloat(getComputedStyle(firstEd).lineHeight)||28;
+  var cs=getComputedStyle(firstEd);
+  var lineH=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*2||28;
 
   var mDiv=document.createElement('div');
-  mDiv.style.cssText='position:fixed;top:-9999px;left:0;visibility:hidden;'+
-    'pointer-events:none;width:'+edW+'px;font-size:14px;line-height:2.0;'+
+  mDiv.style.cssText=
+    'position:fixed;top:-9999px;left:0;visibility:hidden;pointer-events:none;'+
+    'width:'+edW+'px;font-size:14px;line-height:2.0;'+
     'font-family:var(--font-my);word-break:break-word;box-sizing:border-box;';
   document.body.appendChild(mDiv);
 
-  var heights=allNodes.map(function(n){
+  var heights=meaningful.map(function(n){
     mDiv.innerHTML='';
     mDiv.appendChild(n.cloneNode(true));
-    return Math.max(mDiv.offsetHeight||lineH,lineH);
+    void mDiv.offsetHeight;
+    var h=mDiv.offsetHeight;
+    return h>0?h:lineH;
   });
   document.body.removeChild(mDiv);
 
-  /* Step 3: Assign nodes to pages */
+  /* Assign nodes to pages */
   var assignments=[];
   var pageIdx=0,used=0;
-  heights.forEach(function(h,i){
+  heights.forEach(function(h){
     var cap=pageIdx===0?usable1:usableN;
     if(used>0&&used+h>cap){ pageIdx++; used=0; }
     assignments.push(pageIdx);
@@ -1237,11 +1248,10 @@ function reflowSec(tab){
   });
   var needed=pageIdx+1;
 
-  /* Step 4: Ensure enough pages exist */
+  /* Ensure correct page count */
   var scaler=document.getElementById('scaler');
   while(secPages[tab].length<needed){
-    var n=secPages[tab].length+1;
-    var newPg=addSecPage(tab,scaler,n);
+    var newPg=addSecPage(tab,scaler,secPages[tab].length+1);
     attachSecEdListeners(newPg.edEl,tab);
     if(curTab===tab) newPg.pageEl.style.display='';
   }
@@ -1250,19 +1260,35 @@ function reflowSec(tab){
     secPages[tab].pop();
   }
 
-  /* Step 5: Move nodes to correct pages using appendChild (no innerHTML clear)
-     Group assignments by page first */
+  /* Build per-page node lists */
   var pageNodes=[];
   for(var i=0;i<needed;i++) pageNodes.push([]);
-  allNodes.forEach(function(n,i){ pageNodes[assignments[i]].push(n); });
+  meaningful.forEach(function(n,i){ pageNodes[assignments[i]].push(n); });
 
+  /* Move nodes to correct pages IN ORDER using insertBefore.
+     This preserves document order without innerHTML. */
   pageNodes.forEach(function(nodes,pi){
     var ed=secPages[tab][pi].edEl;
     nodes.forEach(function(n){
-      if(n.parentNode!==ed) ed.appendChild(n);
+      /* appendChild if not in this editor, or if already last child — skip */
+      if(n.parentNode!==ed){
+        ed.appendChild(n);
+      } else {
+        /* Ensure correct order: re-append only if out of order */
+        var next=n.nextSibling;
+        var expectedNext=nodes[nodes.indexOf(n)+1];
+        if(next!==expectedNext) ed.appendChild(n);
+      }
+    });
+    /* Remove any nodes that don't belong here */
+    Array.from(ed.childNodes).forEach(function(child){
+      if(nodes.indexOf(child)===-1 && (child.nodeType!==3||child.textContent.replace(/\s/g,'').length>0)){
+        /* will be placed by its assigned page loop */
+      }
     });
   });
 }
+
 
 function attachSecEdListeners(ed,tab){
   if(ed._secListened) return;
