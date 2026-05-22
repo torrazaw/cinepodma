@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="theme-color" content="#FFFFFF">
 <title>Read — CinePodma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
@@ -285,10 +286,13 @@ function setTheme(t) {
   ['L','D','W'].forEach(function(x,i){
     document.getElementById('th'+x).classList.toggle('act', ['light','dark','warm'][i]===t);
   });
-  /* update nav/sbar bg */
   var bg = getBg();
   document.getElementById('topNav').style.background = bg;
   document.getElementById('sbar').style.background   = bg;
+  /* ① Update browser bar color */
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) { meta = document.createElement('meta'); meta.name='theme-color'; document.head.appendChild(meta); }
+  meta.content = bg;
   try { localStorage.setItem('cp_theme', t); } catch(e) {}
   if (window._onSettingChange) window._onSettingChange();
 }
@@ -316,7 +320,7 @@ function getBg() {
 /* restore settings */
 try {
   var _t = localStorage.getItem('cp_theme') || 'light';
-  setTheme(_t);
+  setTheme(_t); /* also sets theme-color meta */
   var _f = parseInt(localStorage.getItem('cp_fs')) || 14;
   fontSize = _f;
   document.getElementById('fsNum').textContent = _f;
@@ -691,12 +695,16 @@ function initStory() {
       sliderEl = slider;
       indEl    = document.getElementById('pgInd');
 
-      /* Scan headings for TOC — column layout: offsetLeft gives column position */
+      /* ② Scan headings for TOC — use getBoundingClientRect for accurate column position */
       headings = [];
+      var colRect = col.getBoundingClientRect();
       col.querySelectorAll('h1,h2').forEach(function(el){
-        var elLeft = el.offsetLeft;
-        var pgIdx  = Math.max(0, Math.floor(elLeft / W));
-        headings.push({text:el.textContent.trim(), tag:el.tagName.toLowerCase(), pageIdx:pgIdx});
+        var elRect   = el.getBoundingClientRect();
+        /* offset from left edge of epubCol in screen coords */
+        var elOffset = elRect.left - colRect.left;
+        var pgIdx    = Math.max(0, Math.floor(elOffset / W));
+        var txt      = el.textContent.trim();
+        if (txt) headings.push({text:txt, tag:el.tagName.toLowerCase(), pageIdx:pgIdx});
       });
 
       curPg = Math.min(savedPg, totalPg-1);
