@@ -623,7 +623,11 @@ var reflowTimer=null;
 
 function scheduleReflow(delay){
   clearTimeout(reflowTimer);
-  reflowTimer=setTimeout(function(){ reflow(focusedElId); }, delay||600);
+  /* Capture focusedElId at FIRE time (not schedule time) so we always
+     restore focus to whichever element is actually focused when reflow runs */
+  reflowTimer=setTimeout(function(){
+    reflow(focusedElId);
+  }, delay||600);
 }
 
 function reflow(restoreFocusId){
@@ -681,7 +685,19 @@ function reflow(restoreFocusId){
       if(els[i].id===restoreFocusId){ target=els[i]; break; }
     }
     if(target && document.body.contains(target.ce)){
-      requestAnimationFrame(function(){ focusEnd(target.ce); });
+      requestAnimationFrame(function(){
+        if(target.ce.textContent==='') focusStart(target.ce);
+        else focusEnd(target.ce);
+        /* Scroll element into view within the ws scroller */
+        var ws=document.getElementById('ws');
+        if(ws && target.wrap){
+          var er=target.wrap.getBoundingClientRect();
+          var wr=ws.getBoundingClientRect();
+          if(er.bottom > wr.bottom - 60){
+            target.wrap.scrollIntoView({block:'nearest',behavior:'smooth'});
+          }
+        }
+      });
     }
   }
 }
@@ -734,7 +750,8 @@ function insRaw(type, text){
   ce.addEventListener('input', function(){
     if(!isUndoRedo) pushUndo();
     autoSave();
-    scheduleReflow(200);
+    /* Only reflow if this element still has focus (skip if Enter created a new element) */
+    scheduleReflow(400);
   });
 
   ce.addEventListener('keydown', function(e){
@@ -795,11 +812,14 @@ function getElIndex(id){
 
 function ins(type){
   if(!elCfg[type]) return;
+  /* Cancel any pending debounced reflow — we're about to do one now */
+  clearTimeout(reflowTimer);
   var obj=insRaw(type,'');
   if(!obj) return;
-  reflow(null);
+  /* Set focusedElId to NEW element BEFORE reflow so restore goes there */
+  focusedElId=obj.id;
+  reflow(obj.id);
   updateSceneNumbers();
-  setTimeout(function(){ focusStart(obj.ce); },30);
   autoSave();
 }
 
