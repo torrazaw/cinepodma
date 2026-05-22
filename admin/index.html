@@ -293,7 +293,7 @@ select.fi{cursor:pointer;}
 
   <!-- ── INVITE SECTION ── -->
   <div id="sectionInvites" style="display:none;">
-    <div class="layout" style="grid-template-columns:1fr 1fr;">
+    <div style="display:flex;flex-direction:column;gap:20px;max-width:600px;margin:0 auto;">
 
       <!-- Generate form -->
       <div class="card">
@@ -512,8 +512,8 @@ window.submitDoc = async function() {
     title, author, cat,
     genreLabel: genre,
     synopsis, pdfUrl, coverUrl,
-    clapCount: 0,
     updatedAt: new Date().toISOString()
+    /* clapCount is NOT included here — only set on create, never on update */
   };
 
   try {
@@ -525,6 +525,7 @@ window.submitDoc = async function() {
     } else {
       /* Add new */
       data.createdAt = serverTimestamp();
+      data.clapCount = 0;  /* only set clapCount on first create */
       await addDoc(collection(db,'adminDocs'), data);
       toast('✅ Library မှာ ထည့်ပြီးပါပြီ');
       resetForm();
