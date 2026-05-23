@@ -472,13 +472,13 @@ onAuthStateChanged(auth,async function(user){
     var initial=(user.displayName||user.email||'?')[0].toUpperCase();
     var photo=user.photoURL||'';
     area.innerHTML='<a class="nav-user" href="/profile"><div class="nav-avatar">'+(photo?'<img src="'+photo+'" alt="">':initial)+'</div></a>';
-    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">\u270d \u101b\u1031\u1038\u1019\u103a\u1014\u1032\u1037\u1019\u103e</a><a class="btn btn-lib" href="/library">\ud83d\udcda \u1005\u102c\u1016\u1010\u103a\u1019\u103a\u101e\u103a</a><a class="btn btn-outline" href="/profile">\ud83d\udc64 Profile</a>';
+    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ရေးမ်နဲ့မှ</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မ်သ်</a><a class="btn btn-outline" href="/profile">👤 Profile</a>';
     if(guestNote)guestNote.style.display='none';
     var snap=await getDoc(doc(db,'users',user.uid));
     if(!snap.exists())await setDoc(doc(db,'users',user.uid),{name:user.displayName||'',email:user.email,username:'@'+user.email.split('@')[0],bio:'',avatar:user.photoURL||'',created:new Date().toISOString()});
   }else{
     area.innerHTML='';
-    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">\u270d \u101b\u1031\u1038\u1019\u103a\u1014\u1032\u1037\u1019\u103e</a><a class="btn btn-lib" href="/library">\ud83d\udcda \u1005\u102c\u1016\u1010\u103a\u1019\u103a\u101e\u103a</a><button class="btn btn-outline-red" onclick="openAuthModal(\'signup\')">\u1021\u1000\u1031\u102c\u1004\u1037\u103a\u1016\u103d\u1004\u1037\u103a\u1019\u103a\u101e\u103a</button><button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">\u1021\u1000\u1031\u102c\u1004\u1037\u103a\u1040\u1004\u103a\u1019\u103a\u101e\u103a</button>';
+    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ရေးမ်နဲ့မှ</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မ်သ်</a><button class="btn btn-outline-red" onclick="openAuthModal(\'signup\')">အကောင့်ဖွင့်မ်သ်</button><button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်၀င်မ်သ်</button>';
     if(guestNote)guestNote.style.display='';
   }
 });
@@ -491,7 +491,7 @@ window.submitAuth=async function(){
   var password=document.getElementById('authPassword').value;
   var errEl=document.getElementById('authError');
   var btn=document.getElementById('authSubmitBtn');
-  errEl.textContent='';btn.textContent='\u101c\u102f\u1015\u103a\u1006\u1031\u102c\u1004\u103a\u1014\u1031\u101e\u100a\u103a...';btn.disabled=true;
+  errEl.textContent='';btn.textContent='လုပ်ဆောင်နေသည်...';btn.disabled=true;
   try{
     if(mode==='signup'){
       var name=document.getElementById('authName').value.trim();
@@ -504,8 +504,8 @@ window.submitAuth=async function(){
       closeAuthModal();
     }
   }catch(e){
-    var msgs={'auth/email-already-in-use':'Email \u1000\u102d\u102f \u1021\u101e\u102f\u1036\u1038\u1015\u103c\u102f\u1015\u103c\u102e\u1038\u101e\u102c\u1038\u1016\u103c\u1005\u103a\u101e\u100a\u103a','auth/invalid-email':'Email \u1019\u1019\u103e\u1014\u103a\u1000\u1014\u103a\u1015\u102b','auth/weak-password':'Password \u1021\u1014\u1031\u102c\u1006\u102f\u1036\u1038 \u1006 \u101c\u102f\u1036\u1038','auth/user-not-found':'Email \u1019\u1010\u103d\u1031\u1037\u1015\u102b','auth/wrong-password':'Password \u1019\u103e\u102c\u1038\u1014\u1031\u101e\u100a\u103a','auth/invalid-credential':'Email \u101e\u102d\u102f\u1037\u1019\u101f\u102f\u1010\u103a Password \u1019\u1019\u103e\u1014\u103a\u1015\u102b'};
-    errEl.textContent=msgs[e.code]||e.message;btn.textContent=mode==='signup'?'\u1021\u1000\u1031\u102c\u1004\u1037\u103a\u1016\u103d\u1004\u1037\u103a\u1019\u103a\u101e\u103a':'\u1040\u1004\u103a\u101b\u1031\u102c\u1000\u103a\u1019\u103a\u101e\u103a';btn.disabled=false;
+    var msgs={'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်','auth/invalid-email':'Email မမှန်ကန်ပါ','auth/weak-password':'Password အနောဆုံး ဆ လုံး','auth/user-not-found':'Email မတွေ့ပါ','auth/wrong-password':'Password မှားနေသည်','auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'};
+    errEl.textContent=msgs[e.code]||e.message;btn.textContent=mode==='signup'?'အကောင့်ဖွင့်မ်သ်':'၀င်ရောက်မ်သ်';btn.disabled=false;
   }
 };
 
@@ -517,7 +517,7 @@ window.signInWithGoogle=async function(){
     closeAuthModal();
     var snap=await getDoc(doc(db,'users',result.user.uid));
     if(!snap.exists()||snap.data().onboarded!==true)window.location.href='/onboarding';
-  }catch(e){document.getElementById('authError').textContent='Google sign in \u1019\u1021\u1031\u102c\u1004\u103a\u1019\u103c\u1004\u103a\u1015\u102b';}
+  }catch(e){document.getElementById('authError').textContent='Google sign in မအောင်မြင်ပါ';}
 };
 </script>
 </body>
