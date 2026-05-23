@@ -472,13 +472,13 @@ onAuthStateChanged(auth,async function(user){
     var initial=(user.displayName||user.email||'?')[0].toUpperCase();
     var photo=user.photoURL||'';
     area.innerHTML='<a class="nav-user" href="/profile"><div class="nav-avatar">'+(photo?'<img src="'+photo+'" alt="">':initial)+'</div></a>';
-    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ရေးမ်နဲ့မှ</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မ်သ်</a><a class="btn btn-outline" href="/profile">👤 Profile</a>';
+    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မည်</a><a class="btn btn-outline" href="/profile">👤 Profile</a>';
     if(guestNote)guestNote.style.display='none';
     var snap=await getDoc(doc(db,'users',user.uid));
     if(!snap.exists())await setDoc(doc(db,'users',user.uid),{name:user.displayName||'',email:user.email,username:'@'+user.email.split('@')[0],bio:'',avatar:user.photoURL||'',created:new Date().toISOString()});
   }else{
     area.innerHTML='';
-    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ရေးမ်နဲ့မှ</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မ်သ်</a><button class="btn btn-outline-red" onclick="openAuthModal(\'signup\')">အကောင့်ဖွင့်မ်သ်</button><button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်၀င်မ်သ်</button>';
+    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မည်</a><button class="btn btn-outline-red" onclick="openAuthModal(\'signup\')">' + 'အကောင့်ဖွင့်မည်</button><button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်ဝင်မည်</button>';
     if(guestNote)guestNote.style.display='';
   }
 });
@@ -504,8 +504,8 @@ window.submitAuth=async function(){
       closeAuthModal();
     }
   }catch(e){
-    var msgs={'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်','auth/invalid-email':'Email မမှန်ကန်ပါ','auth/weak-password':'Password အနောဆုံး ဆ လုံး','auth/user-not-found':'Email မတွေ့ပါ','auth/wrong-password':'Password မှားနေသည်','auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'};
-    errEl.textContent=msgs[e.code]||e.message;btn.textContent=mode==='signup'?'အကောင့်ဖွင့်မ်သ်':'၀င်ရောက်မ်သ်';btn.disabled=false;
+    var msgs={'auth/email-already-in-use':'Email ကို အသုံးပြုပြီးသားဖြစ်သည်','auth/invalid-email':'Email မမှန်ကန်ပါ','auth/weak-password':'Password အနည်းဆုံး ၆ လုံး','auth/user-not-found':'Email မတွေ့ပါ','auth/wrong-password':'Password မှားနေသည်','auth/invalid-credential':'Email သို့မဟုတ် Password မမှန်ပါ'};
+    errEl.textContent=msgs[e.code]||e.message;btn.textContent=mode==='signup'?'အကောင့်ဖွင့်မည်':'ဝင်ရောက်မည်';btn.disabled=false;
   }
 };
 
