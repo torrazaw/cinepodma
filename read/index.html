@@ -66,8 +66,8 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 .slide-content{width:100%;max-width:680px;padding:0;}
 
 /* BOTTOM BAR */
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:195;}
-.bottom-bar-inner{width:100%;max-width:900px;padding:0 16px;display:flex;align-items:center;}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:center;padding:0;pointer-events:none;z-index:195;}
+.bottom-bar-inner{width:100%;max-width:900px;margin:0 auto;padding:0 16px;display:flex;align-items:center;pointer-events:none;}
 .pg-ind{font-family:var(--font-en);font-size:10px;color:var(--fg3);letter-spacing:.5px;pointer-events:none;flex:1;}
 .bottom-bar-inner .pg-ind.tappable{pointer-events:auto;}
 .pg-ind.tappable{pointer-events:auto;cursor:pointer;}
@@ -397,7 +397,9 @@ function initStory(){
 
     /* Content width = min(W, 900) centered — matches nav bar */
     var contentW=Math.min(W, 900);
-    var sidePad=Math.floor((W-contentW)/2)+PAD;
+    /* Match nav-inner: (W-900)/2 + 16px left padding */
+    var navOffset=Math.max(0,Math.floor((W-900)/2));
+    var sidePad=navOffset+16;
 
     reader.innerHTML=
       '<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s;">'+
