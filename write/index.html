@@ -20,7 +20,9 @@ html{height:100%}
 body{font-family:var(--font-my);font-style:normal;background:var(--white);color:var(--black);height:100%;overflow:hidden;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
 
 /* TOPBAR */
-.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:100;}
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0;gap:0;flex-shrink:0;z-index:100;}
+.topbar-inner{width:100%;max-width:900px;margin:0 auto;padding:0 14px;display:flex;align-items:center;gap:10px;}
+.topbar-inner{width:100%;max-width:900px;margin:0 auto;padding:0 14px;display:flex;align-items:center;gap:10px;}
 .tb-l{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .tb-c{flex:1;display:flex;justify-content:center;min-width:0;}
 .tb-r{display:flex;align-items:center;gap:6px;flex-shrink:0;}
@@ -279,14 +281,16 @@ body.st-light,body:not(.st-dark):not(.st-warm){--st-bg:#FFFFFF;--st-fg:#0A0A0A;-
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="tb-l">
-    <button class="back" onclick="goBack()">← ပြန်</button>
-    <span class="sv" id="sv">—</span>
-  </div>
-  <div class="tb-c">
-    <input class="title-in" id="docTitle" type="text" placeholder="ခေါင်းစဉ်" autocomplete="off" oninput="syncTitle()">
-  </div>
-  <div class="tb-r" id="tbr">
+  <div class="topbar-inner">
+    <div class="tb-l">
+      <button class="back" onclick="goBack()">← ပြန်</button>
+      <span class="sv" id="sv">—</span>
+    </div>
+    <div class="tb-c">
+      <input class="title-in" id="docTitle" type="text" placeholder="ခေါင်းစဉ်" autocomplete="off" oninput="syncTitle()">
+    </div>
+    <div class="tb-r" id="tbr">
+    </div>
   </div>
 </div>
 
@@ -2147,7 +2151,7 @@ window.addEventListener('DOMContentLoaded',function(){
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
 import{getStorage,ref,uploadBytes,getDownloadURL}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js';
-import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,sendPasswordResetEmail,updateProfile}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,sendPasswordResetEmail,updateProfile}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 import{getFirestore,doc,setDoc,getDoc}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
 const cfg={apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",storageBucket:"cinepodma.firebasestorage.app",messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"};
@@ -2174,8 +2178,33 @@ window._signUpEmail=async(name,email,pass)=>{
   }catch(e){ console.warn('User doc create failed:',e); }
   return c;
 };
-window._signInGoogle=()=>signInWithPopup(auth,provider);
+/* iOS standalone (Add to Home Screen) needs redirect, not popup */
+function isStandalone(){ return window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches; }
+window._signInGoogle=function(){
+  if(isStandalone()){
+    /* Save pending action so we can resume after redirect */
+    try{sessionStorage.setItem('cp_auth_pending','google');}catch(e){}
+    return signInWithRedirect(auth,provider);
+  }
+  return signInWithPopup(auth,provider);
+};
 window._resetPassword=e=>sendPasswordResetEmail(auth,e);
+
+/* Handle redirect result on page load (iOS standalone) */
+getRedirectResult(auth).then(function(result){
+  if(result && result.user){
+    /* Redirect sign-in succeeded — close modal and save */
+    closeM('mAuth');
+    try{sessionStorage.removeItem('cp_auth_pending');}catch(e){}
+    doSave();
+  }
+}).catch(function(e){
+  if(e.code!=='auth/no-current-user') console.warn('redirectResult:',e);
+});
+
+getRedirectResult(auth).then(function(result){
+  if(result&&result.user){closeM('mAuth');doSave();}
+}).catch(function(e){console.warn(e);});
 
 onAuthStateChanged(auth,async user=>{
   currentUser=user;
