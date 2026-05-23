@@ -406,9 +406,9 @@ function initStory(){
         '<div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;">'+
           '<div id="epubCol" style="'+
             'height:'+H+'px;'+
-            'padding:'+PAD+'px '+sidePad+'px '+(PAD+20)+'px;'+
+            'padding:'+PAD+'px '+sidePad+'px '+(PAD+20)+'px '+sidePad+'px;'+
             'font-size:'+fs+'px;line-height:2.1;color:'+fg+';'+
-            'column-width:'+W+'px;'+
+            'column-width:'+(W - sidePad*2)+'px;'+
             'column-gap:'+(sidePad*2)+'px;'+
             'column-fill:auto;overflow:hidden;word-break:break-word;'+
             'box-sizing:border-box;pointer-events:none;user-select:none;">'+
