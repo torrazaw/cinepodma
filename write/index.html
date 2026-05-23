@@ -121,7 +121,7 @@ body.st-light,body:not(.st-dark):not(.st-warm){--st-bg:#FFFFFF;--st-fg:#0A0A0A;-
 /* No sidebar — story uses full-width scroll editor */
 
 /* Story bottom toolbar — single horizontal scrollable row (screenplay style) */
-.story-btb{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:none;align-items:center;height:52px;z-index:200;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding:0 8px;gap:2px;}
+.story-btb{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:none;align-items:center;justify-content:center;height:52px;z-index:200;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding:0 8px;gap:2px;}
 .story-btb.on{display:flex;}
 .story-btb::-webkit-scrollbar{display:none;}
 /* legacy row classes — no longer used but kept for safety */
@@ -137,7 +137,7 @@ body.st-light,body:not(.st-dark):not(.st-warm){--st-bg:#FFFFFF;--st-fg:#0A0A0A;-
 /* Theme dots (read.html style) */
 .stb-themes{display:flex;align-items:center;gap:5px;margin-left:auto;}
 /* Theme dots — copied from read.html .th-btn style */
-.st-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;transition:all .12s;padding:0;}
+.st-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;transition:all .12s;padding:0;vertical-align:middle;display:block;}
 .st-dot.tl{background:#FFF;border-color:#CCC;}
 .st-dot.td{background:#1C1C1E;border-color:#555;}
 .st-dot.tw{background:#FAF3E0;border-color:#CCC;}
@@ -345,13 +345,12 @@ body.st-light,body:not(.st-dark):not(.st-warm){--st-bg:#FFFFFF;--st-fg:#0A0A0A;-
       <div id="stTabs" style="display:none;flex:1;align-items:center;display:flex;">
         <button class="tab act">📖 Story</button>
       </div>
-      <div id="stThemeDots" style="display:none;align-items:center;gap:6px;padding:0 8px;">
+      <div id="stThemeDots" style="display:none;align-items:center;gap:6px;padding:0 8px;line-height:1;">
         <button class="st-dot tl act" id="stDotL" onclick="setStoryTheme('light')" title="Light"></button>
         <button class="st-dot td"     id="stDotD" onclick="setStoryTheme('dark')"  title="Dark"></button>
         <button class="st-dot tw"     id="stDotW" onclick="setStoryTheme('warm')"  title="Warm"></button>
       </div>
       <div class="tr">
-        <button class="btn btn-g btn-s hm" onclick="window.print()">🖨</button>
       </div>
     </div>
   </div>
