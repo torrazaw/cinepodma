@@ -66,8 +66,10 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 .slide-content{width:100%;max-width:680px;padding:0;}
 
 /* BOTTOM BAR */
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:36px;display:flex;align-items:center;padding:0 16px;pointer-events:none;z-index:195;}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:195;}
+.bottom-bar-inner{width:100%;max-width:900px;padding:0 16px;display:flex;align-items:center;}
 .pg-ind{font-family:var(--font-en);font-size:10px;color:var(--fg3);letter-spacing:.5px;pointer-events:none;flex:1;}
+.bottom-bar-inner .pg-ind.tappable{pointer-events:auto;}
 .pg-ind.tappable{pointer-events:auto;cursor:pointer;}
 .pg-ind.tappable:active{opacity:.6;}
 .clap-count{font-family:var(--font-en);font-size:10px;color:var(--fg3);letter-spacing:.5px;display:none;align-items:center;gap:4px;pointer-events:none;}
@@ -176,10 +178,12 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 <div class="tap-next" id="tapNext" onclick="nextSlide()"></div>
 
 <div class="bottom-bar" id="bottomBar">
-  <div class="pg-ind" id="pgInd"></div>
-  <div class="clap-count" id="clapCount">
-    <span class="clap-icon">👏</span>
-    <span class="clap-n" id="clapN">0</span>
+  <div class="bottom-bar-inner">
+    <div class="pg-ind" id="pgInd"></div>
+    <div class="clap-count" id="clapCount">
+      <span class="clap-icon">👏</span>
+      <span class="clap-n" id="clapN">0</span>
+    </div>
   </div>
 </div>
 
@@ -402,7 +406,7 @@ function initStory(){
             'height:'+H+'px;'+
             'padding:'+PAD+'px '+sidePad+'px '+(PAD+20)+'px;'+
             'font-size:'+fs+'px;line-height:2.1;color:'+fg+';'+
-            'column-width:'+(contentW-PAD*2)+'px;'+
+            'column-width:'+W+'px;'+
             'column-gap:'+(sidePad*2)+'px;'+
             'column-fill:auto;overflow:hidden;word-break:break-word;'+
             'box-sizing:border-box;pointer-events:none;user-select:none;">'+
