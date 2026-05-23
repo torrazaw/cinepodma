@@ -753,6 +753,9 @@ function updateSceneNumbers(){
       numEl.textContent=n+'.';
     }
   });
+  /* Update Screenplay tab dot */
+  var tb=document.getElementById('tabSP');
+  if(tb) tb.classList.toggle('has', els.length>0);
 }
 
 function insRaw(type, text){
@@ -1139,13 +1142,11 @@ function buildSecPage(tab){
     ed.addEventListener('compositionstart',function(){ isComp=true; });
     ed.addEventListener('compositionend',function(){
       isComp=false; autoSave();
-      var tb=document.getElementById('tabLogline');
-      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
+      updateSecHasDot(ed,'logline');
     });
     ed.addEventListener('input',function(){
       if(isComp) return; autoSave();
-      var tb=document.getElementById('tabLogline');
-      if(tb){ if(ed.textContent.trim()) tb.classList.add('has'); else tb.classList.remove('has'); }
+      updateSecHasDot(ed,'logline');
     });
     sec.appendChild(lbl); sec.appendChild(ed); pg.appendChild(sec);
     scaler.appendChild(pg);
@@ -1154,6 +1155,14 @@ function buildSecPage(tab){
   }
 
   return buildPaginatedSec(tab, scaler);
+}
+
+function updateSecHasDot(el, tab){
+  var map={logline:'tabLogline',synopsis:'tabSynopsis',treatment:'tabTreatment'};
+  var tb=document.getElementById(map[tab]);
+  if(!tb) return;
+  var val=el.tagName==='TEXTAREA'?el.value:(el.textContent||'');
+  tb.classList.toggle('has', !!(val&&val.trim()));
 }
 
 function buildPaginatedSec(tab, scaler){
@@ -1173,8 +1182,8 @@ function buildPaginatedSec(tab, scaler){
   ta.className='sec-ta'; ta.id=tab+'Ed'; ta.spellcheck=false;
   ta.placeholder=secPH[tab]||'';
   ta.style.cssText='resize:none;flex:1;width:100%;border:none;outline:none;'+
-    'background:transparent;font-family:var(--font-my);font-style:normal;'+
-    'font-size:14px;line-height:2.0;color:var(--black);overflow:hidden;padding:0;margin:0;';
+    'background:transparent;font-family:var(--font-en);font-size:13px;'+
+    'line-height:2.0;color:var(--black);overflow:hidden;padding:0;margin:0;';
 
   var isComp=false;
   ta.addEventListener('compositionstart',function(){ isComp=true; });
@@ -1211,7 +1220,7 @@ function addSecPage(tab, scaler, num){
   /* Page 2+: read-only div showing overflow text */
   var disp=document.createElement('div');
   disp.className='sec-ta';
-  disp.style.cssText='flex:1;overflow:hidden;font-family:var(--font-my);font-style:normal;'+
+  disp.style.cssText='flex:1;overflow:hidden;font-family:var(--font-en);'+
     'font-size:14px;line-height:2.0;color:var(--black);white-space:pre-wrap;'+
     'word-break:break-word;pointer-events:none;user-select:text;';
   sec.appendChild(disp); pg.appendChild(sec);
@@ -1866,7 +1875,7 @@ function applyRestoreData(data){
         insRaw(s.type, s.text);
       });
       reflow(null);
-      updateSceneNumbers();
+      updateSceneNumbers(); /* also updates tabSP dot */
       pages.forEach(function(p){
         p.pageEl.style.display=curTab==='screenplay'?'':'none';
       });
@@ -2053,42 +2062,55 @@ function doPrint(wm){
     pgs.push('<div class="pp-page pp-script">'+wmDiv+spHtml+'</div>');
   }
 
-  var win=window.open('','_blank');
-  if(!win){toast('Popup blocked — ☰ menu → allow popup လုပ်ပါ');return;}
-
+  /* CSS */
   var css=
     '*{box-sizing:border-box;margin:0;padding:0;}'+
-    '@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;700&display=swap");'+
     'body{font-family:"Courier New",Courier,monospace;background:#fff;}'+
     '.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}'+
     '.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;user-select:none;}'+
     '.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:25cm;}'+
-    '.pp-cover-title{font-family:"Noto Sans Myanmar",sans-serif;font-size:24px;font-weight:700;margin-bottom:20px;line-height:1.8;}'+
+    '.pp-cover-title{font-size:24px;font-weight:700;margin-bottom:20px;line-height:1.8;}'+
     '.pp-cover-hr{width:48px;height:1px;background:#000;margin:0 auto 16px;}'+
     '.pp-cover-by{font-size:11px;color:#888;letter-spacing:1px;margin-bottom:6px;}'+
-    '.pp-cover-author{font-family:"Noto Sans Myanmar",sans-serif;font-size:14px;font-weight:600;line-height:1.8;}'+
+    '.pp-cover-author{font-size:14px;font-weight:600;line-height:1.8;}'+
     '.pp-cover-draft{font-size:10px;color:#aaa;margin-top:28px;}'+
     '.pp-sec-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#aaa;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #eee;}'+
-    '.pp-sec-text{font-family:"Noto Sans Myanmar",sans-serif;font-size:14px;line-height:2.1;white-space:pre-wrap;word-break:break-word;}'+
+    '.pp-sec-text{font-size:13px;line-height:2.1;white-space:pre-wrap;word-break:break-word;}'+
     '.pp-el{font-size:12px;line-height:1.85;word-break:break-word;}'+
     '.pp-scene{font-weight:700;text-transform:uppercase;margin-top:18px;}'+
-    '.pp-action{margin-top:2px;padding-left:0;}'+
+    '.pp-action{margin-top:2px;}'+
     '.pp-char{padding-left:34%;margin-top:12px;font-weight:700;text-transform:uppercase;}'+
     '.pp-paren{padding-left:26%;padding-right:20%;}'+
     '.pp-dial{padding-left:20%;padding-right:14%;}'+
     '.pp-trans{text-align:right;margin-top:12px;font-weight:700;text-transform:uppercase;}'+
     '@media print{body{-webkit-print-color-adjust:exact;}}';
 
-  win.document.write(
+  /* Build full HTML */
+  var html=
     '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
     '<title>'+esc(cvTitle||'CinePodma')+'</title>'+
     '<style>'+css+'</style></head><body>'+
     pgs.join('')+
-    '</body></html>'
-  );
-  win.document.close();
-  win.focus();
-  setTimeout(function(){win.print();},600);
+    '</body></html>';
+
+  /* Try popup first; fallback to blob URL (works on mobile) */
+  var win=window.open('','_blank');
+  if(win){
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(function(){win.print();},600);
+  } else {
+    /* Blob URL fallback — no popup permission needed */
+    var blob=new Blob([html],{type:'text/html'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url; a.target='_blank'; a.rel='noopener';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){URL.revokeObjectURL(url);a.remove();},3000);
+    toast('PDF tab ဖွင့်ပြီး print လုပ်ပါ');
+  }
 }
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
