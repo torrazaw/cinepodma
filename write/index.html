@@ -2020,98 +2020,174 @@ function confirmPDF(){
 }
 
 function doPrint(wm){
+  toast('PDF ဆောက်နေသည်...');
+
+  /* Collect content */
   var cvTitle=(document.getElementById('cvTitle')||{}).value||document.getElementById('docTitle').value||'';
   var cvAuth=(document.getElementById('cvAuth')||{}).value||'';
   var cvDraft=(document.getElementById('cvDraft')||{}).value||'';
-  var wmDiv=wm?'<div class="pp-wm">'+esc(wm)+'</div>':'';
-  var pgs=[];
-
-  /* Cover */
-  pgs.push(
-    '<div class="pp-page pp-cover">'+wmDiv+
-    '<div class="pp-cover-title">'+esc(cvTitle)+'</div>'+
-    '<div class="pp-cover-hr"></div>'+
-    '<div class="pp-cover-by">Written by</div>'+
-    '<div class="pp-cover-author">'+esc(cvAuth)+'</div>'+
-    (cvDraft?'<div class="pp-cover-draft">'+esc(cvDraft)+'</div>':'')+
-    '</div>'
-  );
-
-  /* Logline */
   var logEl=document.getElementById('loglineTa');
-  if(logEl&&logEl.value.trim()){
-    pgs.push('<div class="pp-page pp-sec">'+wmDiv+'<div class="pp-sec-lbl">Logline</div><div class="pp-sec-text">'+esc(logEl.value)+'</div></div>');
-  }
+  var logline=logEl?logEl.value.trim():'';
+  var synEl=document.getElementById('synopsisEd');
+  var synopsis=synEl?(synEl.tagName==='TEXTAREA'?synEl.value:synEl.innerText||'').trim():'';
+  var trEl=document.getElementById('treatmentEd');
+  var treatment=trEl?(trEl.tagName==='TEXTAREA'?trEl.value:trEl.innerText||'').trim():'';
 
-  /* Synopsis / Treatment */
-  ['synopsis','treatment'].forEach(function(k){
-    var ta=document.getElementById(k+'Ed');
-    var txt=ta?(ta.tagName==='TEXTAREA'?ta.value:ta.innerText||''):'';
-    txt=txt.trim();
-    if(!txt) return;
-    pgs.push('<div class="pp-page pp-sec">'+wmDiv+'<div class="pp-sec-lbl">'+secLabels[k]+'</div><div class="pp-sec-text">'+esc(txt)+'</div></div>');
-  });
-
-  /* Screenplay — all elements in order, paginated by CSS */
-  if(els.length){
-    var spHtml='';
-    els.forEach(function(e){
-      var txt=e.ce?e.ce.textContent:'';
-      spHtml+='<div class="pp-el pp-'+e.type+'">'+esc(txt)+'</div>';
-    });
-    pgs.push('<div class="pp-page pp-script">'+wmDiv+spHtml+'</div>');
-  }
-
-  /* CSS */
-  var css=
-    '*{box-sizing:border-box;margin:0;padding:0;}'+
-    'body{font-family:"Courier New",Courier,monospace;background:#fff;}'+
-    '.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}'+
-    '.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;user-select:none;}'+
-    '.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:25cm;}'+
-    '.pp-cover-title{font-size:24px;font-weight:700;margin-bottom:20px;line-height:1.8;}'+
-    '.pp-cover-hr{width:48px;height:1px;background:#000;margin:0 auto 16px;}'+
-    '.pp-cover-by{font-size:11px;color:#888;letter-spacing:1px;margin-bottom:6px;}'+
-    '.pp-cover-author{font-size:14px;font-weight:600;line-height:1.8;}'+
-    '.pp-cover-draft{font-size:10px;color:#aaa;margin-top:28px;}'+
-    '.pp-sec-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#aaa;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #eee;}'+
-    '.pp-sec-text{font-size:13px;line-height:2.1;white-space:pre-wrap;word-break:break-word;}'+
-    '.pp-el{font-size:12px;line-height:1.85;word-break:break-word;}'+
-    '.pp-scene{font-weight:700;text-transform:uppercase;margin-top:18px;}'+
-    '.pp-action{margin-top:2px;}'+
-    '.pp-char{padding-left:34%;margin-top:12px;font-weight:700;text-transform:uppercase;}'+
-    '.pp-paren{padding-left:26%;padding-right:20%;}'+
-    '.pp-dial{padding-left:20%;padding-right:14%;}'+
-    '.pp-trans{text-align:right;margin-top:12px;font-weight:700;text-transform:uppercase;}'+
-    '@media print{body{-webkit-print-color-adjust:exact;}}';
-
-  /* Build full HTML */
-  var html=
-    '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
-    '<title>'+esc(cvTitle||'CinePodma')+'</title>'+
-    '<style>'+css+'</style></head><body>'+
-    pgs.join('')+
-    '</body></html>';
-
-  /* Try popup first; fallback to blob URL (works on mobile) */
-  var win=window.open('','_blank');
-  if(win){
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    setTimeout(function(){win.print();},600);
+  /* A4 at 96dpi = 794x1123px; jsPDF uses mm */
+  /* Load jsPDF dynamically */
+  if(!window.jspdf){
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload=function(){ buildPDF(cvTitle,cvAuth,cvDraft,logline,synopsis,treatment,wm); };
+    s.onerror=function(){ fallbackPrint(cvTitle,cvAuth,cvDraft,logline,synopsis,treatment,wm); };
+    document.head.appendChild(s);
   } else {
-    /* Blob URL fallback — no popup permission needed */
-    var blob=new Blob([html],{type:'text/html'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url; a.target='_blank'; a.rel='noopener';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function(){URL.revokeObjectURL(url);a.remove();},3000);
-    toast('PDF tab ဖွင့်ပြီး print လုပ်ပါ');
+    buildPDF(cvTitle,cvAuth,cvDraft,logline,synopsis,treatment,wm);
   }
 }
+
+function buildPDF(title,auth,draft,logline,synopsis,treatment,wm){
+  try{
+    var jsPDF=window.jspdf.jsPDF;
+    var doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+
+    /* A4: 210x297mm, margins: 25.4mm each side */
+    var PW=210, PH=297;
+    var ML=25.4, MR=25.4, MT=25.4, MB=25.4;
+    var CW=PW-ML-MR; /* content width = 159.2mm */
+
+    var pgNum=0;
+
+    function newPage(){
+      if(pgNum>0) doc.addPage();
+      pgNum++;
+      /* Watermark */
+      if(wm){
+        doc.saveGraphicsState();
+        doc.setGState(new doc.GState({opacity:0.06}));
+        doc.setFontSize(32);
+        doc.setTextColor(0,0,0);
+        doc.text(wm,PW/2,PH/2,{align:'center',angle:35});
+        doc.restoreGraphicsState();
+      }
+    }
+
+    function addText(text,x,y,opts){
+      return doc.text(text,x,y,opts||{});
+    }
+
+    /* ── COVER ── */
+    newPage();
+    var cy=PH/2-20;
+    doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
+    var titleLines=doc.splitTextToSize(title||'Untitled',CW);
+    doc.text(titleLines,PW/2,cy,{align:'center'});
+    cy+=titleLines.length*9+6;
+    doc.setLineWidth(0.3); doc.setDrawColor(0);
+    doc.line(PW/2-12,cy,PW/2+12,cy); cy+=8;
+    doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(120,120,120);
+    doc.text('Written by',PW/2,cy,{align:'center'}); cy+=5;
+    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
+    doc.text(auth||'',PW/2,cy,{align:'center'}); cy+=5;
+    if(draft){
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(150,150,150);
+      doc.text(draft,PW/2,cy+10,{align:'center'});
+    }
+
+    /* ── SECTION helper ── */
+    function addSection(label,text){
+      if(!text) return;
+      newPage();
+      var y=MT;
+      /* Label */
+      doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(150,150,150);
+      doc.setCharSpace(2);
+      doc.text(label.toUpperCase(),ML,y); doc.setCharSpace(0);
+      y+=4;
+      doc.setLineWidth(0.2); doc.setDrawColor(220,220,220);
+      doc.line(ML,y,ML+CW,y); y+=6;
+      /* Text */
+      doc.setFontSize(11); doc.setFont('helvetica','normal'); doc.setTextColor(0,0,0);
+      var lines=doc.splitTextToSize(text,CW);
+      var lineH=6;
+      lines.forEach(function(line){
+        if(y+lineH>PH-MB){ newPage(); y=MT; }
+        doc.text(line,ML,y); y+=lineH;
+      });
+    }
+
+    if(logline) addSection('Logline',logline);
+    if(synopsis) addSection('Synopsis',synopsis);
+    if(treatment) addSection('Treatment',treatment);
+
+    /* ── SCREENPLAY ── */
+    if(els.length){
+      newPage();
+      var y=MT;
+      var lineH=5.5;
+
+      els.forEach(function(e){
+        var txt=(e.ce?e.ce.textContent:'').trim();
+        if(!txt&&e.type!=='action') return;
+
+        var x=ML, maxW=CW, bold=false, upper=false, rightAlign=false;
+        var topGap=0;
+
+        switch(e.type){
+          case 'scene':  bold=true;upper=true;topGap=6;break;
+          case 'action': topGap=1;break;
+          case 'char':   x=ML+CW*0.34;maxW=CW*0.66;bold=true;upper=true;topGap=5;break;
+          case 'paren':  x=ML+CW*0.26;maxW=CW*0.48;topGap=0;break;
+          case 'dial':   x=ML+CW*0.20;maxW=CW*0.60;topGap=0;break;
+          case 'trans':  rightAlign=true;bold=true;upper=true;topGap=5;break;
+        }
+
+        if(upper) txt=txt.toUpperCase();
+        doc.setFont('courier',bold?'bold':'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(0,0,0);
+
+        var lines=doc.splitTextToSize(txt,maxW);
+        var blockH=lines.length*lineH+topGap;
+
+        if(y+blockH>PH-MB){ newPage(); y=MT; }
+        y+=topGap;
+
+        if(rightAlign){
+          lines.forEach(function(line){ doc.text(line,ML+CW,y,{align:'right'}); y+=lineH; });
+        } else {
+          lines.forEach(function(line){ doc.text(line,x,y); y+=lineH; });
+        }
+      });
+    }
+
+    /* Save */
+    var filename=(title||'screenplay').replace(/[^a-zA-Z0-9က-႟\s]/g,'').trim()||'screenplay';
+    doc.save(filename+'.pdf');
+    toast('✅ PDF ဒေါင်းပြီး');
+
+  } catch(err){
+    console.error('jsPDF error:',err);
+    fallbackPrint(title,auth,draft,logline,synopsis,treatment,wm);
+  }
+}
+
+function fallbackPrint(title,auth,draft,logline,synopsis,treatment,wm){
+  /* Original HTML print fallback */
+  var wmDiv=wm?'<div class="pp-wm">'+esc(wm)+'</div>':'';
+  var pgs=[];
+  pgs.push('<div class="pp-page pp-cover">'+wmDiv+'<div class="pp-cover-title">'+esc(title)+'</div><div class="pp-cover-hr"></div><div class="pp-cover-by">Written by</div><div class="pp-cover-author">'+esc(auth)+'</div>'+(draft?'<div class="pp-cover-draft">'+esc(draft)+'</div>':'')+'</div>');
+  if(logline) pgs.push('<div class="pp-page pp-sec">'+wmDiv+'<div class="pp-sec-lbl">Logline</div><div class="pp-sec-text">'+esc(logline)+'</div></div>');
+  if(synopsis) pgs.push('<div class="pp-page pp-sec">'+wmDiv+'<div class="pp-sec-lbl">Synopsis</div><div class="pp-sec-text">'+esc(synopsis)+'</div></div>');
+  if(treatment) pgs.push('<div class="pp-page pp-sec">'+wmDiv+'<div class="pp-sec-lbl">Treatment</div><div class="pp-sec-text">'+esc(treatment)+'</div></div>');
+  if(els.length){var h='';els.forEach(function(e){h+='<div class="pp-el pp-'+e.type+'">'+esc(e.ce?e.ce.textContent:'')+'</div>';});pgs.push('<div class="pp-page pp-script">'+wmDiv+h+'</div>');}
+  var css='*{box-sizing:border-box;margin:0;padding:0;}body{font-family:"Courier New",Courier,monospace;background:#fff;}.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;}.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:25cm;}.pp-cover-title{font-size:24px;font-weight:700;margin-bottom:20px;line-height:1.8;}.pp-cover-hr{width:48px;height:1px;background:#000;margin:0 auto 16px;}.pp-cover-by{font-size:11px;color:#888;letter-spacing:1px;margin-bottom:6px;}.pp-cover-author{font-size:14px;font-weight:600;line-height:1.8;}.pp-cover-draft{font-size:10px;color:#aaa;margin-top:28px;}.pp-sec-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#aaa;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #eee;}.pp-sec-text{font-size:13px;line-height:2.1;white-space:pre-wrap;word-break:break-word;}.pp-el{font-size:12px;line-height:1.85;word-break:break-word;}.pp-scene{font-weight:bold;text-transform:uppercase;margin-top:18px;}.pp-action{margin-top:2px;}.pp-char{padding-left:34%;margin-top:12px;font-weight:bold;text-transform:uppercase;}.pp-paren{padding-left:26%;padding-right:20%;}.pp-dial{padding-left:20%;padding-right:14%;}.pp-trans{text-align:right;margin-top:12px;font-weight:bold;text-transform:uppercase;}@media print{body{-webkit-print-color-adjust:exact;}}';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(title||'CinePodma')+'</title><style>'+css+'</style></head><body>'+pgs.join('')+'</body></html>';
+  var win=window.open('','_blank');
+  if(win){win.document.write(html);win.document.close();win.focus();setTimeout(function(){win.print();},600);}
+  else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.target='_blank';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},3000);toast('PDF tab ဖွင့်ပြီး print လုပ်ပါ');}
+}
+
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ===== SCENE NAVIGATOR ===== */
