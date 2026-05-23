@@ -286,7 +286,7 @@ import{initializeApp}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-ap
 import{getFirestore,doc,getDoc}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 import{getAuth,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 
-const app=initializeApp({apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",authDomain:"cinepodma.com",projectId:"cinepodma",storageBucket:"cinepodma.firebasestorage.app",messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"});
+const app=initializeApp({apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",storageBucket:"cinepodma.firebasestorage.app",messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"});
 const db=getFirestore(app);const auth=getAuth(app);
 
 var docId=new URLSearchParams(window.location.search).get('id');
