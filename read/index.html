@@ -387,9 +387,10 @@ function initStory(){
       if(/style\s*=\s*"/i.test(h))return h.replace(/style\s*=\s*"/i,'style="'+extra);
       return h.replace(/^<(\w+)/,'<$1 style="'+extra+'"');
     });
-    /* Use 640px column width for centered readable text */
-    var colW=Math.min(W-PAD*2,640);
-    reader.innerHTML='<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s;"><div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;"><div id="epubCol" style="height:'+H+'px;padding:'+PAD+'px '+PAD+'px '+(PAD+20)+'px;font-size:'+fs+'px;line-height:2.1;color:'+fg+';column-width:'+colW+'px;column-gap:'+(PAD*2)+'px;column-fill:auto;overflow:hidden;word-break:break-word;box-sizing:border-box;pointer-events:none;user-select:none;">'+titleHtml+styledParas.join('')+'</div></div></div>';
+    /* Single column — max 680px centered, extra space = side margins */
+    var maxContent=680;
+    var sidePad=Math.max(PAD, Math.floor((W-maxContent)/2));
+    reader.innerHTML='<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s;"><div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;"><div id="epubCol" style="height:'+H+'px;padding:'+PAD+'px '+sidePad+'px '+(PAD+20)+'px;font-size:'+fs+'px;line-height:2.1;color:'+fg+';column-width:'+(W)+'px;column-gap:0;column-fill:auto;overflow:hidden;word-break:break-word;box-sizing:border-box;pointer-events:none;user-select:none;">'+titleHtml+styledParas.join('')+'</div></div></div>';
     setTimeout(function(){
       var col=document.getElementById('epubCol');var slider=document.getElementById('epubSlider');var wrap=document.getElementById('epubWrap');
       if(!col||!slider||!wrap)return;
