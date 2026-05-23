@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="my" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,114 +7,150 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+/* ── TOKENS ── */
 :root{
-  --white:#FFFFFF;--black:#0A0A0A;
-  --slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;
-  --border:#E5E7EB;--red:#DC2626;--red-h:#B91C1C;
   --font-en:'Special Elite','Courier New',monospace;
   --font-my:'Noto Sans Myanmar',sans-serif;
+  --red:#DC2626;--red-h:#B91C1C;
 }
+[data-theme="light"]{
+  --bg:#FFFFFF;--bg2:#F3F4F6;
+  --fg:#0A0A0A;--fg2:#6B7280;--fg3:#9CA3AF;
+  --border:#E5E7EB;
+  --nav-bg:rgba(255,255,255,.95);
+  --card-bg:#FFFFFF;--card-border:#E5E7EB;
+  --poster-bg:#F0F0F0;--poster-letter:#C0C0C0;
+  --popup-bg:#FFFFFF;
+  --tab-active:#0A0A0A;
+  --badge-bg:rgba(0,0,0,.7);
+  --clap-bg:rgba(255,255,255,.92);--clap-fg:#0A0A0A;
+}
+[data-theme="dark"]{
+  --bg:#0D0D0D;--bg2:#1A1A1A;
+  --fg:#F0F0F0;--fg2:#9CA3AF;--fg3:#6B7280;
+  --border:#2A2A2A;
+  --nav-bg:rgba(13,13,13,.95);
+  --card-bg:#181818;--card-border:#2A2A2A;
+  --poster-bg:#222;--poster-letter:#555;
+  --popup-bg:#1A1A1A;
+  --tab-active:#F0F0F0;
+  --badge-bg:rgba(0,0,0,.75);
+  --clap-bg:rgba(30,30,30,.95);--clap-fg:#F0F0F0;
+}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--font-my);background:var(--bg);color:var(--fg);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s;}
 
-/* NAV — centered max-width */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px 20px;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
-.nav-inner{width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;}
-.brand{font-family:var(--font-en);font-size:13px;color:var(--black);text-decoration:none;line-height:1.3;}
-.brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px 20px;background:var(--nav-bg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);transition:background .25s,border-color .25s;}
+.nav-inner{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;}
+.brand{font-family:var(--font-en);font-size:13px;color:var(--fg);text-decoration:none;line-height:1.3;}
+.brand span{display:block;color:var(--fg2);font-size:11px;letter-spacing:1px;}
 .nav-r{display:flex;align-items:center;gap:8px;}
-.nav-btn{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
-.nav-btn:hover{background:var(--slate-bg);color:var(--black);}
-.nav-btn.red{background:var(--red);color:var(--white);border-color:var(--red);}
+.nav-btn{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;font-family:var(--font-my);font-size:12px;color:var(--fg2);cursor:pointer;text-decoration:none;transition:all .15s;line-height:1.6;}
+.nav-btn:hover{background:var(--bg2);color:var(--fg);}
+.nav-btn.red{background:var(--red);color:#fff;border-color:var(--red);}
 .nav-btn.red:hover{background:var(--red-h);}
-.nav-user-av{width:32px;height:32px;border-radius:50%;background:var(--slate-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;cursor:pointer;text-decoration:none;}
+.nav-user-av{width:32px;height:32px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;cursor:pointer;text-decoration:none;}
 .nav-user-av img{width:100%;height:100%;object-fit:cover;}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .18s;}
+.theme-btn:hover{background:var(--fg);color:var(--bg);}
 
-/* MAIN */
+/* ── MAIN ── */
 main{flex:1;padding:76px 16px 60px;max-width:960px;margin:0 auto;width:100%;}
 
-/* HEADER */
+/* ── HEADER ── */
 .page-hdr{margin-bottom:20px;}
-.page-title{font-family:var(--font-en);font-size:28px;letter-spacing:.5px;color:var(--black);margin-bottom:4px;}
+.page-title{font-family:var(--font-en);font-size:28px;letter-spacing:.5px;color:var(--fg);margin-bottom:4px;}
 .page-div{width:40px;height:2px;background:var(--red);border-radius:2px;margin-bottom:6px;}
-.page-sub{font-size:13px;color:var(--slate);line-height:1.8;}
+.page-sub{font-size:13px;color:var(--fg2);line-height:1.8;}
 
-/* SEARCH */
+/* ── SEARCH ── */
 .search-wrap{position:relative;margin-bottom:14px;}
-.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--slate-lt);pointer-events:none;}
-.search-input{width:100%;padding:10px 16px 10px 42px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;line-height:1.8;background:var(--white);}
-.search-input:focus{border-color:var(--black);}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--fg3);pointer-events:none;}
+.search-input{width:100%;padding:10px 16px 10px 42px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-my);font-size:14px;color:var(--fg);background:var(--bg2);outline:none;transition:border-color .15s;line-height:1.8;}
+.search-input:focus{border-color:var(--fg);}
+.search-input::placeholder{color:var(--fg3);}
 
-/* TABS */
+/* ── TABS ── */
 .lib-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none;}
 .lib-tabs::-webkit-scrollbar{display:none;}
-.lib-tab{padding:10px 18px;border:none;background:transparent;font-family:var(--font-my);font-size:14px;color:var(--slate);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;line-height:1.6;flex-shrink:0;}
-.lib-tab:hover{color:var(--black);}
-.lib-tab.active{color:var(--black);border-bottom-color:var(--red);font-weight:600;}
+.lib-tab{padding:10px 18px;border:none;background:transparent;font-family:var(--font-my);font-size:14px;color:var(--fg2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;line-height:1.6;flex-shrink:0;}
+.lib-tab:hover{color:var(--fg);}
+.lib-tab.active{color:var(--tab-active);border-bottom-color:var(--red);font-weight:600;}
 
-/* FILTER */
+/* ── FILTER ── */
 .filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.filter-btn{padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font-my);font-size:11px;color:var(--slate);cursor:pointer;transition:all .15s;line-height:1.8;white-space:nowrap;}
-.filter-btn:hover,.filter-btn.active{background:var(--black);border-color:var(--black);color:var(--white);}
+.filter-btn{padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);background:transparent;font-family:var(--font-my);font-size:11px;color:var(--fg2);cursor:pointer;transition:all .15s;line-height:1.8;white-space:nowrap;}
+.filter-btn:hover,.filter-btn.active{background:var(--fg);border-color:var(--fg);color:var(--bg);}
 
-/* COUNT */
-.result-count{font-family:var(--font-en);font-size:11px;color:var(--slate-lt);letter-spacing:.3px;margin-bottom:12px;}
+/* ── COUNT ── */
+.result-count{font-family:var(--font-en);font-size:11px;color:var(--fg3);letter-spacing:.3px;margin-bottom:12px;}
 
-/* 3-COL GRID */
-.lib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:32px;}
+/* ── GRID ──
+   mobile  : 2 col
+   tablet  : 3 col (≥600px)
+   desktop : 4 col (≥900px)
+*/
+.lib-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:32px;
+}
+@media(min-width:600px){.lib-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:900px){.lib-grid{grid-template-columns:repeat(4,1fr);gap:12px;}}
 
-/* CARD */
-.lib-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);display:flex;flex-direction:column;}
-.lib-card:hover{border-color:#CCC;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
-.lib-poster{width:100%;aspect-ratio:3/4;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.lib-poster-letter{font-family:var(--font-my);font-size:28px;font-weight:700;color:#C0C0C0;}
+/* ── CARD ── */
+.lib-card{border:1px solid var(--card-border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .18s;background:var(--card-bg);display:flex;flex-direction:column;}
+.lib-card:hover{border-color:var(--fg3);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.lib-poster{width:100%;aspect-ratio:3/4;background:var(--poster-bg);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.lib-poster-letter{font-family:var(--font-my);font-size:28px;font-weight:700;color:var(--poster-letter);}
 .lib-poster img{width:100%;height:100%;object-fit:cover;}
-.lib-badge{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:5px;font-family:var(--font-my);font-size:9px;font-weight:600;background:rgba(0,0,0,.7);color:var(--white);backdrop-filter:blur(4px);}
-.card-clap{position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.92);border-radius:99px;padding:2px 7px;font-size:10px;font-weight:600;color:var(--black);cursor:pointer;border:none;transition:all .15s;backdrop-filter:blur(4px);}
-.card-clap:hover{background:var(--white);}
-.card-clap.clapped{background:var(--red);color:var(--white);}
+.lib-badge{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:5px;font-family:var(--font-my);font-size:9px;font-weight:600;background:var(--badge-bg);color:#fff;backdrop-filter:blur(4px);}
+.card-clap{position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;background:var(--clap-bg);border-radius:99px;padding:2px 7px;font-size:10px;font-weight:600;color:var(--clap-fg);cursor:pointer;border:none;transition:all .15s;backdrop-filter:blur(4px);}
+.card-clap:hover{filter:brightness(1.1);}
+.card-clap.clapped{background:var(--red);color:#fff;}
 .lib-body{padding:8px 10px;}
-.lib-title{font-size:11px;font-weight:600;color:var(--black);margin-bottom:2px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lib-author{font-size:10px;color:var(--slate-lt);line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lib-title{font-size:11px;font-weight:600;color:var(--fg);margin-bottom:2px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lib-author{font-size:10px;color:var(--fg3);line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-/* DETAIL POPUP */
-.popup-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:300;display:none;align-items:flex-end;justify-content:center;}
+/* ── DETAIL POPUP ── */
+.popup-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:300;display:none;align-items:flex-end;justify-content:center;}
 .popup-ov.on{display:flex;}
-.popup-card{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:640px;padding:24px 24px 40px;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);}
+.popup-card{background:var(--popup-bg);border:1px solid var(--border);border-radius:20px 20px 0 0;width:100%;max-width:640px;padding:24px 24px 40px;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);}
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .popup-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
 .popup-cover-row{display:flex;gap:16px;margin-bottom:20px;}
-.popup-cover{width:80px;height:106px;border-radius:10px;background:#F0F0F0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:28px;font-weight:700;color:#C0C0C0;font-family:var(--font-my);}
+.popup-cover{width:80px;height:106px;border-radius:10px;background:var(--poster-bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:28px;font-weight:700;color:var(--poster-letter);font-family:var(--font-my);}
 .popup-cover img{width:100%;height:100%;object-fit:cover;}
 .popup-meta{flex:1;min-width:0;}
-.popup-title{font-size:18px;font-weight:700;color:var(--black);line-height:1.5;margin-bottom:6px;}
-.popup-author{font-size:13px;color:var(--slate);margin-bottom:8px;line-height:1.6;}
+.popup-title{font-size:18px;font-weight:700;color:var(--fg);line-height:1.5;margin-bottom:6px;}
+.popup-author{font-size:13px;color:var(--fg2);margin-bottom:8px;line-height:1.6;}
 .popup-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.popup-badge{padding:3px 10px;border-radius:99px;font-size:11px;border:1px solid var(--border);color:var(--slate);background:var(--slate-bg);}
-.popup-clap{font-size:13px;color:var(--slate);line-height:1.6;}
-.popup-synopsis{font-size:13px;color:var(--slate);line-height:2.0;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.popup-badge{padding:3px 10px;border-radius:99px;font-size:11px;border:1px solid var(--border);color:var(--fg2);background:var(--bg2);}
+.popup-clap{font-size:13px;color:var(--fg2);line-height:1.6;}
+.popup-synopsis{font-size:13px;color:var(--fg2);line-height:2.0;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
 .popup-actions{display:flex;gap:10px;}
-.popup-btn-read{flex:1;padding:13px;border-radius:12px;border:none;background:var(--black);color:var(--white);font-family:var(--font-my);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;line-height:1.6;}
-.popup-btn-read:hover{background:#222;}
-.popup-btn-clap{width:48px;height:48px;border-radius:12px;border:1px solid var(--border);background:var(--white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
-.popup-btn-clap:hover{background:var(--slate-bg);}
+.popup-btn-read{flex:1;padding:13px;border-radius:12px;border:none;background:var(--fg);color:var(--bg);font-family:var(--font-my);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;line-height:1.6;}
+.popup-btn-read:hover{opacity:.85;}
+.popup-btn-clap{width:48px;height:48px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.popup-btn-clap:hover{background:var(--bg);}
 .popup-btn-clap.clapped{background:var(--red);border-color:var(--red);}
 
-/* LOADING */
-.state-msg{grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--slate-lt);font-size:14px;line-height:2;}
-.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+/* ── STATES ── */
+.state-msg{grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--fg3);font-size:14px;line-height:2;}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--fg);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* FOOTER */
-footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:14px 20px;text-align:center;}
-.footer-text{font-family:var(--font-en);font-size:11px;color:var(--slate);letter-spacing:.5px;}
+/* ── FOOTER ── */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:14px 20px;text-align:center;transition:background .25s,border-color .25s;}
+.footer-text{font-family:var(--font-en);font-size:11px;color:var(--fg2);letter-spacing:.5px;}
 
-/* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--black);color:var(--white);font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;white-space:nowrap;}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--fg);color:var(--bg);font-family:var(--font-my);font-size:13px;line-height:1.8;padding:10px 18px;border-radius:10px;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;white-space:nowrap;}
 .toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
-
-@media(max-width:480px){.lib-grid{gap:8px;}}
 </style>
 </head>
 <body>
@@ -123,6 +159,7 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:14p
   <div class="nav-inner">
     <a class="brand" href="/home">cine<br><span>podma</span></a>
     <div class="nav-r" id="navR">
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
       <a class="nav-btn red" href="/write">✍ ရေးမည်</a>
     </div>
   </div>
@@ -145,7 +182,6 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:14p
     <button class="lib-tab" id="tabAdmin" onclick="setTab('admin',this)">ရုပ်ရှင်ဇာတ်ညွှန်းများ</button>
   </div>
 
-  <!-- Podmates filters -->
   <div id="pmFilters">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setPmFilter('all',this)">အားလုံး</button>
@@ -159,7 +195,6 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:14p
     </div>
   </div>
 
-  <!-- Admin filters — ထပ်နေသော subtitle ဖြုတ်ပြီး filter ခလုတ်သာ -->
   <div id="adminFilters" style="display:none;">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setAdminFilter('all',this)">အားလုံး</button>
@@ -199,42 +234,40 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:14p
 <div class="toast" id="toast"></div>
 
 <script>
-var curTab='podmates', pmFilter='all', adminFilter='all', searchQ='';
-var pmDocs=[], currentUser=null, myClaps={};
+/* ── THEME ── */
+(function(){
+  var saved=localStorage.getItem('cp-theme');
+  var theme=saved||'dark';
+  document.documentElement.setAttribute('data-theme',theme);
+  updateThemeBtn(theme);
+})();
+function updateThemeBtn(t){var b=document.getElementById('themeBtn');if(b)b.textContent=t==='dark'?'☀️':'🌙';}
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme')||'dark';
+  var next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('cp-theme',next);
+  updateThemeBtn(next);
+}
+
+/* ── STATE ── */
+var curTab='podmates',pmFilter='all',adminFilter='all',searchQ='';
+var pmDocs=[],adminDocs=[],currentUser=null,myClaps={};
 var activeDoc=null;
 
-var genreLabels={
-  novel:'ဝတ္ထု',short:'ဝတ္ထုတို',essay:'ဆောင်းပါး',poem:'ကဗျာ',
-  feature:'ဇာတ်ညွှန်း',shortfilm:'ဇာတ်ညွှန်းတို',series:'စီးရီး'
-};
-var genreFilters={
-  feature:['feature'],shortfilm:['shortfilm'],series:['series'],
-  novel:['novel'],short:['short'],poem:['poem'],essay:['essay'],
-  screenplay:['feature','shortfilm','series'],
-  story:['novel','short','poem','essay']
-};
-
-var adminDocs=[];  /* Firestore မှ load မည် */
+var genreLabels={novel:'ဝတ္ထု',short:'ဝတ္ထုတို',essay:'ဆောင်းပါး',poem:'ကဗျာ',feature:'ဇာတ်ညွှန်း',shortfilm:'ဇာတ်ညွှန်းတို',series:'စီးရီး'};
+var genreFilters={feature:['feature'],shortfilm:['shortfilm'],series:['series'],novel:['novel'],short:['short'],poem:['poem'],essay:['essay']};
 
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function getGenreLabel(d){return d.genreLabel||genreLabels[d.genre]||(d.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');}
 function stripHtml(html){if(!html)return '';var tmp=document.createElement('div');tmp.innerHTML=html;return tmp.textContent||tmp.innerText||'';}
-
-/* Convert Drive share/view link → direct image URL */
 function convertCoverUrl(url){
-  if(!url) return '';
-  /* already lh3 format — best */
-  if(url.includes('lh3.googleusercontent.com')) return url;
-  /* extract file ID from /file/d/ID/... */
-  var m=url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if(m) return 'https://lh3.googleusercontent.com/d/'+m[1];
-  /* /open?id=ID or ?id=ID */
-  var m2=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if(m2) return 'https://lh3.googleusercontent.com/d/'+m2[1];
-  /* uc?id= old format — convert */
-  var m3=url.match(/uc\?id=([a-zA-Z0-9_-]+)/);
-  if(m3) return 'https://lh3.googleusercontent.com/d/'+m3[1];
+  if(!url)return '';
+  if(url.includes('lh3.googleusercontent.com'))return url;
+  var m=url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);if(m)return 'https://lh3.googleusercontent.com/d/'+m[1];
+  var m2=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);if(m2)return 'https://lh3.googleusercontent.com/d/'+m2[1];
+  var m3=url.match(/uc\?id=([a-zA-Z0-9_-]+)/);if(m3)return 'https://lh3.googleusercontent.com/d/'+m3[1];
   return url;
 }
 
@@ -242,8 +275,13 @@ function buildCard(doc){
   var div=document.createElement('div');div.className='lib-card';
   div.onclick=function(){openPopup(doc);};
   var poster=document.createElement('div');poster.className='lib-poster';
-  if(doc.coverUrl){var img=document.createElement('img');img.src=convertCoverUrl(doc.coverUrl);img.alt=doc.title;img.onerror=function(){this.style.display='none';var l=document.createElement('div');l.className='lib-poster-letter';l.textContent=(doc.title||'?').charAt(0);poster.appendChild(l);};poster.appendChild(img);}
-  else{var letter=document.createElement('div');letter.className='lib-poster-letter';letter.textContent=(doc.title||'?').charAt(0);poster.appendChild(letter);}
+  if(doc.coverUrl){
+    var img=document.createElement('img');img.src=convertCoverUrl(doc.coverUrl);img.alt=doc.title;
+    img.onerror=function(){this.style.display='none';var l=document.createElement('div');l.className='lib-poster-letter';l.textContent=(doc.title||'?').charAt(0);poster.appendChild(l);};
+    poster.appendChild(img);
+  }else{
+    var letter=document.createElement('div');letter.className='lib-poster-letter';letter.textContent=(doc.title||'?').charAt(0);poster.appendChild(letter);
+  }
   var badge=document.createElement('div');badge.className='lib-badge';badge.textContent=getGenreLabel(doc);poster.appendChild(badge);
   var clap=document.createElement('button');
   clap.className='card-clap'+(myClaps[doc.id]?' clapped':'');
@@ -265,20 +303,11 @@ function openPopup(doc){
   else{cv.textContent=(doc.title||'?').charAt(0);}
   document.getElementById('popupTitle').textContent=doc.title||'Untitled';
   document.getElementById('popupAuthor').textContent=(doc.authorName||doc.author||'—')+(doc.authorUsername?' · '+doc.authorUsername:'');
-  document.getElementById('popupBadges').innerHTML=
-    '<span class="popup-badge">'+getGenreLabel(doc)+'</span>'+
-    (doc.updatedAt?'<span class="popup-badge">'+doc.updatedAt.substring(0,10)+'</span>':'');
+  document.getElementById('popupBadges').innerHTML='<span class="popup-badge">'+getGenreLabel(doc)+'</span>'+(doc.updatedAt?'<span class="popup-badge">'+doc.updatedAt.substring(0,10)+'</span>':'');
   document.getElementById('popupClap').textContent='👏 '+(doc.clapCount||0);
   document.getElementById('popupSynopsis').textContent=stripHtml(doc.synopsis||doc.logline||'');
-  var cb=document.getElementById('popupClapBtn');
-  cb.className='popup-btn-clap'+(myClaps[doc.id]?' clapped':'');
-  /* Change button label for admin docs */
-  var readBtn = document.getElementById('popupReadBtn');
-  if(doc.pdfUrl){
-    readBtn.textContent = '📄 PDF ဖတ်မည်';
-  } else {
-    readBtn.textContent = '📖 ဖတ်မည်';
-  }
+  var cb=document.getElementById('popupClapBtn');cb.className='popup-btn-clap'+(myClaps[doc.id]?' clapped':'');
+  document.getElementById('popupReadBtn').textContent=doc.pdfUrl?'📄 PDF ဖတ်မည်':'📖 ဖတ်မည်';
   document.getElementById('detailPopup').classList.add('on');
   document.body.style.overflow='hidden';
 }
@@ -288,62 +317,38 @@ function closePopup(e){
   document.body.style.overflow='';activeDoc=null;
 }
 window.closePopupBtn=function(){document.getElementById('detailPopup').classList.remove('on');document.body.style.overflow='';activeDoc=null;};
-window.goRead=function(){
-  if(!activeDoc) return;
-  if(activeDoc.pdfUrl){
-    window.open(activeDoc.pdfUrl,'_blank');
-  } else {
-    window.location.href='/read?id='+activeDoc.id;
-  }
-};
-window.doPopupClap=async function(){
-  if(!activeDoc)return;
-  await toggleClap(activeDoc,null,document.getElementById('popupClapBtn'));
-  document.getElementById('popupClap').textContent='👏 '+(activeDoc.clapCount||0);
-};
+window.goRead=function(){if(!activeDoc)return;if(activeDoc.pdfUrl)window.open(activeDoc.pdfUrl,'_blank');else window.location.href='/read?id='+activeDoc.id;};
+window.doPopupClap=async function(){if(!activeDoc)return;await toggleClap(activeDoc,null,document.getElementById('popupClapBtn'));document.getElementById('popupClap').textContent='👏 '+(activeDoc.clapCount||0);};
 
 async function toggleClap(doc,cardBtn,popupBtn){
-  var currentUser=window._currentUser||null;
-  if(!currentUser){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
-  var docId=doc.id;
-  /* admin doc (has pdfUrl) — use adminDocClaps + adminDocs collections */
-  var isAdmin = !!doc.pdfUrl;
-  var clapsCol = isAdmin ? 'adminDocClaps' : 'docClaps';
-  var docsCol  = isAdmin ? 'adminDocs'     : 'docs';
+  var cu=window._currentUser||null;
+  if(!cu){toast('👏 Clap လုပ်ရန် Login ဝင်ပါ');return;}
+  var isAdmin=!!doc.pdfUrl;
+  var clapsCol=isAdmin?'adminDocClaps':'docClaps';
+  var docsCol=isAdmin?'adminDocs':'docs';
   try{
-    var cRef=window._getRef(clapsCol+'/'+docId+'/users/'+currentUser.uid);
+    var cRef=window._getRef(clapsCol+'/'+doc.id+'/users/'+cu.uid);
     var snap=await window._getDoc2(cRef);
     if(snap.exists()){
       await window._deleteDoc(cRef);
-      try{
-        if(!isAdmin) await window._deleteDoc(window._getRef('userDocClaps/'+currentUser.uid+'/docs/'+docId));
-      }catch(e){}
-      var s=await window._getDoc2(window._getRef(docsCol+'/'+docId));
+      if(!isAdmin)try{await window._deleteDoc(window._getRef('userDocClaps/'+cu.uid+'/docs/'+doc.id));}catch(e){}
+      var s=await window._getDoc2(window._getRef(docsCol+'/'+doc.id));
       var n=s.exists()?(s.data().clapCount||0):0;
-      await window._updateDoc(window._getRef(docsCol+'/'+docId),{clapCount:Math.max(0,n-1)});
-      doc.clapCount=Math.max(0,n-1);myClaps[docId]=false;
+      await window._updateDoc(window._getRef(docsCol+'/'+doc.id),{clapCount:Math.max(0,n-1)});
+      doc.clapCount=Math.max(0,n-1);myClaps[doc.id]=false;
       if(cardBtn){cardBtn.className='card-clap';cardBtn.innerHTML='👏 '+doc.clapCount;}
-      if(popupBtn){popupBtn.className='popup-btn-clap';}
+      if(popupBtn)popupBtn.className='popup-btn-clap';
       toast('👏 Clap ဖြုတ်ပြီး');
     }else{
       var now=new Date().toISOString();
-      await window._setDoc(cRef,{uid:currentUser.uid,clappedAt:now});
-      /* track in userDocClaps for profile Clapped tab */
-      try{
-        var histCol = isAdmin ? 'adminDocClaps_user' : 'userDocClaps';
-        if(!isAdmin){
-          await window._setDoc(
-            window._getRef('userDocClaps/'+currentUser.uid+'/docs/'+docId),
-            {docId:docId,clappedAt:now,type:isAdmin?'admin':'podmate'}
-          );
-        }
-      }catch(e){}
-      var s2=await window._getDoc2(window._getRef(docsCol+'/'+docId));
+      await window._setDoc(cRef,{uid:cu.uid,clappedAt:now});
+      if(!isAdmin)try{await window._setDoc(window._getRef('userDocClaps/'+cu.uid+'/docs/'+doc.id),{docId:doc.id,clappedAt:now,type:'podmate'});}catch(e){}
+      var s2=await window._getDoc2(window._getRef(docsCol+'/'+doc.id));
       var n2=s2.exists()?(s2.data().clapCount||0):0;
-      await window._updateDoc(window._getRef(docsCol+'/'+docId),{clapCount:n2+1});
-      doc.clapCount=n2+1;myClaps[docId]=true;
+      await window._updateDoc(window._getRef(docsCol+'/'+doc.id),{clapCount:n2+1});
+      doc.clapCount=n2+1;myClaps[doc.id]=true;
       if(cardBtn){cardBtn.className='card-clap clapped';cardBtn.innerHTML='👏 '+doc.clapCount;}
-      if(popupBtn){popupBtn.className='popup-btn-clap clapped';}
+      if(popupBtn)popupBtn.className='popup-btn-clap clapped';
       toast('👏 Clap လုပ်ပြီး');
     }
   }catch(e){toast('❌ '+e.message);}
@@ -360,11 +365,10 @@ function renderGrid(docs){
 function applyPm(){
   var docs=pmDocs.slice();
   if(pmFilter!=='all'){var allowed=genreFilters[pmFilter]||[pmFilter];docs=docs.filter(function(d){return allowed.indexOf(d.genre)>-1||allowed.indexOf(d.type)>-1;});}
-  if(searchQ){docs=docs.filter(function(d){return(d.title||'').toLowerCase().includes(searchQ)||(d.authorUsername||d.authorName||'').toLowerCase().includes(searchQ);});}
+  if(searchQ)docs=docs.filter(function(d){return(d.title||'').toLowerCase().includes(searchQ)||(d.authorUsername||d.authorName||'').toLowerCase().includes(searchQ);});
   docs.sort(function(a,b){return(b.clapCount||0)-(a.clapCount||0);});
   renderGrid(docs);
 }
-
 function applyAdmin(){
   var docs=adminDocs.slice();
   if(adminFilter!=='all')docs=docs.filter(function(d){return d.cat===adminFilter;});
@@ -372,7 +376,6 @@ function applyAdmin(){
   docs.sort(function(a,b){return(b.clapCount||0)-(a.clapCount||0);});
   renderGrid(docs);
 }
-
 function refresh(){if(curTab==='podmates')applyPm();else applyAdmin();}
 
 function setTab(tab,btn){
@@ -381,123 +384,70 @@ function setTab(tab,btn){
   btn.classList.add('active');
   document.getElementById('pmFilters').style.display=tab==='podmates'?'':'none';
   document.getElementById('adminFilters').style.display=tab==='admin'?'':'none';
-  document.getElementById('libSub').textContent=tab==='podmates'
-    ?'CinePodma တွင် ရေးသားထားသော ဝတ္ထုနှင့် ဇာတ်ညွှန်းများ'
-    :'မြန်မာ့ရုပ်ရှင်အပါအဝင် နိုင်ငံတကာရုပ်ရှင်များ၏ ဇာတ်ညွှန်းများ';
-  if(tab==='admin' && adminDocs.length===0) loadAdminDocs();
-  else refresh();
+  document.getElementById('libSub').textContent=tab==='podmates'?'CinePodma တွင် ရေးသားထားသော ဝတ္ထုနှင့် ဇာတ်ညွှန်းများ':'မြန်မာ့ရုပ်ရှင်အပါအဝင် နိုင်ငံတကာရုပ်ရှင်များ၏ ဇာတ်ညွှန်းများ';
+  if(tab==='admin'&&adminDocs.length===0)loadAdminDocs();else refresh();
 }
 function setPmFilter(f,btn){pmFilter=f;document.querySelectorAll('#pmFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyPm();}
 function setAdminFilter(f,btn){adminFilter=f;document.querySelectorAll('#adminFilters .filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');applyAdmin();}
 function onSearch(q){searchQ=q.toLowerCase().trim();refresh();}
-
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closePopupBtn();});
-</script>
 
-<script>
-/* loadAdminDocs — called from setTab; uses window._db exposed by Firebase module */
 async function loadAdminDocs(){
   var grid=document.getElementById('libGrid');
   grid.innerHTML='<div class="state-msg"><div class="spinner"></div>ဖွင့်နေသည်...</div>';
   try{
     var snap=await window._adminDocsSnap();
     adminDocs=[];
-    snap.forEach(function(d){
-      var dt=d.data();
-      adminDocs.push({
-        id:d.id,cat:dt.cat||'int',type:'screenplay',
-        title:dt.title||'Untitled',author:dt.author||'',
-        genreLabel:dt.genreLabel||'ဇာတ်ညွှန်း',
-        pdfUrl:dt.pdfUrl||'',coverUrl:dt.coverUrl||'',
-        synopsis:dt.synopsis||'',clapCount:dt.clapCount||0
-      });
-    });
-    /* load myClaps for adminDocs */
+    snap.forEach(function(d){var dt=d.data();adminDocs.push({id:d.id,cat:dt.cat||'int',type:'screenplay',title:dt.title||'Untitled',author:dt.author||'',genreLabel:dt.genreLabel||'ဇာတ်ညွှန်း',pdfUrl:dt.pdfUrl||'',coverUrl:dt.coverUrl||'',synopsis:dt.synopsis||'',clapCount:dt.clapCount||0});});
     var cu=window._currentUser||null;
-    if(cu && window._adminClapSnap){
-      for(var i=0;i<adminDocs.length;i++){
-        try{
-          var cs=await window._adminClapSnap(adminDocs[i].id, cu.uid);
-          if(cs.exists()) myClaps[adminDocs[i].id]=true;
-        }catch(e){}
-      }
-    }
+    if(cu&&window._adminClapSnap){for(var i=0;i<adminDocs.length;i++){try{var cs=await window._adminClapSnap(adminDocs[i].id,cu.uid);if(cs.exists())myClaps[adminDocs[i].id]=true;}catch(e){}}}
     applyAdmin();
-  }catch(e){
-    grid.innerHTML='<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';
-  }
+  }catch(e){grid.innerHTML='<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';}
 }
 </script>
 
 <!-- FIREBASE -->
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getAuth, onAuthStateChanged }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
-import { getFirestore, collection, query, where, orderBy, limit, getDocs,
-         doc, getDoc, setDoc, deleteDoc, updateDoc }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+import{initializeApp}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import{getAuth,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import{getFirestore,collection,query,where,orderBy,limit,getDocs,doc,getDoc,setDoc,deleteDoc,updateDoc}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
-const app=initializeApp({
-  apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-  authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",
-  storageBucket:"cinepodma.firebasestorage.app",
-  messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"
-});
-const auth=getAuth(app);
-const db=getFirestore(app);
+const app=initializeApp({apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",storageBucket:"cinepodma.firebasestorage.app",messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"});
+const auth=getAuth(app);const db=getFirestore(app);
 
 window._getRef=function(path){var p=path.split('/');return doc(db,...p);};
-window._getDoc2=function(ref){return getDoc(ref);};
+window._getDoc2=function(r){return getDoc(r);};
 window._setDoc=function(r,d){return setDoc(r,d);};
 window._deleteDoc=function(r){return deleteDoc(r);};
 window._updateDoc=function(r,d){return updateDoc(r,d);};
+window._adminDocsSnap=function(){return getDocs(query(collection(db,'adminDocs'),orderBy('createdAt','desc')));};
+window._adminClapSnap=function(docId,uid){return getDoc(doc(db,'adminDocClaps',docId,'users',uid));};
 
 onAuthStateChanged(auth,async function(user){
-  currentUser=user;
-  window._currentUser=user;
+  currentUser=user;window._currentUser=user;
   var navR=document.getElementById('navR');
+  var themeHtml='<button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">'+((document.documentElement.getAttribute('data-theme')||'dark')==='dark'?'☀️':'🌙')+'</button>';
   if(user){
     try{
       var us=await getDoc(doc(db,'users',user.uid));
       var av=us.exists()&&us.data().avatar?'<img src="'+us.data().avatar+'" alt="">':'👤';
-      navR.innerHTML='<a class="nav-user-av" href="/profile">'+av+'</a>'+
-        '<a class="nav-btn red" href="/write">✍ ရေးမည်</a>';
-    }catch(e){}
+      navR.innerHTML=themeHtml+'<a class="nav-user-av" href="/profile">'+av+'</a><a class="nav-btn red" href="/write">✍ ရေးမည်</a>';
+    }catch(e){navR.innerHTML=themeHtml+'<a class="nav-btn red" href="/write">✍ ရေးမည်</a>';}
+  }else{
+    navR.innerHTML=themeHtml+'<a class="nav-btn red" href="/write">✍ ရေးမည်</a>';
   }
 });
-
-/* expose adminDocs fetcher for inline script */
-window._adminDocsSnap=function(){
-  return getDocs(query(collection(db,'adminDocs'),orderBy('createdAt','desc')));
-};
-window._adminClapSnap=function(docId,uid){
-  return getDoc(doc(db,'adminDocClaps',docId,'users',uid));
-};
 
 async function loadDocs(){
   try{
     var q=query(collection(db,'docs'),where('privacy','==','public'),limit(100));
     var snap=await getDocs(q);
     pmDocs=[];
-    snap.forEach(function(d){
-      var data=d.data();
-      pmDocs.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',
-        genre:data.genre||'',genreLabel:data.genreLabel||'',
-        authorName:data.authorName||'',authorUsername:data.authorUsername||'',
-        coverUrl:data.coverUrl||'',clapCount:data.clapCount||0,
-        updatedAt:data.updatedAt||'',uid:data.uid||'',
-        synopsis:data.synopsis||data.logline||data.story||''});
-    });
-    if(currentUser){
-      for(var i=0;i<Math.min(pmDocs.length,50);i++){
-        try{var cs=await getDoc(doc(db,'docClaps',pmDocs[i].id,'users',currentUser.uid));if(cs.exists())myClaps[pmDocs[i].id]=true;}catch(e){}
-      }
-    }
+    snap.forEach(function(d){var data=d.data();pmDocs.push({id:d.id,title:data.title||'Untitled',type:data.type||'screenplay',genre:data.genre||'',genreLabel:data.genreLabel||'',authorName:data.authorName||'',authorUsername:data.authorUsername||'',coverUrl:data.coverUrl||'',clapCount:data.clapCount||0,updatedAt:data.updatedAt||'',uid:data.uid||'',synopsis:data.synopsis||data.logline||data.story||''});});
+    var cu=window._currentUser||null;
+    if(cu){for(var i=0;i<Math.min(pmDocs.length,50);i++){try{var cs=await getDoc(doc(db,'docClaps',pmDocs[i].id,'users',cu.uid));if(cs.exists())myClaps[pmDocs[i].id]=true;}catch(e){}}}
     applyPm();
-  }catch(e){
-    document.getElementById('libGrid').innerHTML='<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';
-  }
+  }catch(e){document.getElementById('libGrid').innerHTML='<div class="state-msg">ဖွင့်မရပါ — '+e.message+'</div>';}
 }
 loadDocs();
 </script>
