@@ -2011,48 +2011,82 @@ function doPrint(wm){
   var cvTitle=(document.getElementById('cvTitle')||{}).value||document.getElementById('docTitle').value||'';
   var cvAuth=(document.getElementById('cvAuth')||{}).value||'';
   var cvDraft=(document.getElementById('cvDraft')||{}).value||'';
+  var wmDiv=wm?'<div class="pp-wm">'+esc(wm)+'</div>':'';
   var pgs=[];
-  pgs.push('<div class="pp-page pp-cover">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
-    '<div class="pp-cover-title">'+esc(cvTitle)+'</div><div class="pp-cover-hr"></div>'+
-    '<div class="pp-cover-by">Written by</div><div class="pp-cover-author">'+esc(cvAuth)+'</div>'+
-    '<div class="pp-cover-draft">'+esc(cvDraft)+'</div></div>');
+
+  /* Cover */
+  pgs.push(
+    '<div class="pp-page pp-cover">'+wmDiv+
+    '<div class="pp-cover-title">'+esc(cvTitle)+'</div>'+
+    '<div class="pp-cover-hr"></div>'+
+    '<div class="pp-cover-by">Written by</div>'+
+    '<div class="pp-cover-author">'+esc(cvAuth)+'</div>'+
+    (cvDraft?'<div class="pp-cover-draft">'+esc(cvDraft)+'</div>':'')+
+    '</div>'
+  );
 
   /* Logline */
   var logEl=document.getElementById('loglineTa');
   if(logEl&&logEl.value.trim()){
-    pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
-      '<div class="pp-sec-lbl">Logline</div><div class="pp-sec-text">'+esc(logEl.value)+'</div></div>');
+    pgs.push('<div class="pp-page pp-sec">'+wmDiv+'<div class="pp-sec-lbl">Logline</div><div class="pp-sec-text">'+esc(logEl.value)+'</div></div>');
   }
 
-  /* Synopsis / Treatment from contentEditable */
+  /* Synopsis / Treatment */
   ['synopsis','treatment'].forEach(function(k){
-    if(!secPages[k]||!secPages[k].length) return;
-    var txt=secPages[k].map(function(p){return p.edEl.innerText||'';}).join('\n').trim();
+    var ta=document.getElementById(k+'Ed');
+    var txt=ta?(ta.tagName==='TEXTAREA'?ta.value:ta.innerText||''):'';
+    txt=txt.trim();
     if(!txt) return;
-    pgs.push('<div class="pp-page pp-sec">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
-      '<div class="pp-sec-lbl">'+secLabels[k]+'</div><div class="pp-sec-text">'+esc(txt)+'</div></div>');
+    pgs.push('<div class="pp-page pp-sec">'+wmDiv+'<div class="pp-sec-lbl">'+secLabels[k]+'</div><div class="pp-sec-text">'+esc(txt)+'</div></div>');
   });
 
-  pages.forEach(function(sp,i){
-    var elems=sp.areaEl.querySelectorAll('.el');
-    if(!elems.length&&i>0) return;
-    var h='';
-    elems.forEach(function(el){
-      var ce=el.querySelector('.el-ce');
-      h+='<div class="pp-el pp-'+(el.dataset.type||'action')+'">'+esc(ce?ce.textContent:'')+'</div>';
+  /* Screenplay — all elements in order, paginated by CSS */
+  if(els.length){
+    var spHtml='';
+    els.forEach(function(e){
+      var txt=e.ce?e.ce.textContent:'';
+      spHtml+='<div class="pp-el pp-'+e.type+'">'+esc(txt)+'</div>';
     });
-    pgs.push('<div class="pp-page pp-script">'+(wm?'<div class="pp-wm">'+esc(wm)+'</div>':'')+
-      '<div class="pp-pnum">p.'+(i+1)+'</div>'+h+
-      '<div class="pp-footer">write at cinepodma.com</div></div>');
-  });
+    pgs.push('<div class="pp-page pp-script">'+wmDiv+spHtml+'</div>');
+  }
 
   var win=window.open('','_blank','width=900,height=700');
   if(!win){toast('Popup blocked — browser popup allow လုပ်ပါ');return;}
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(cvTitle||'CinePodma')+'</title><style>@import url(\'https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap\');*{box-sizing:border-box;margin:0;padding:0;}body{font-family:\'Courier New\',Courier,monospace;background:#fff;}.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;}.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}.pp-cover-title{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:28px;font-weight:700;margin-bottom:24px;line-height:1.8;}.pp-cover-hr{width:60px;height:1px;background:#000;margin:0 auto 20px;}.pp-cover-by{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:6px;}.pp-cover-author{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:16px;font-weight:600;line-height:1.8;}.pp-cover-draft{font-size:11px;color:#999;margin-top:32px;}.pp-sec-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:8px;}.pp-sec-text{font-family:\'Noto Sans Myanmar\',sans-serif;font-size:14px;line-height:2.0;white-space:pre-wrap;}.pp-pnum{position:absolute;top:20px;right:2.54cm;font-size:9px;color:#999;}.pp-el{font-size:12px;line-height:1.8;margin-bottom:1px;}.pp-scene{font-weight:bold;margin-top:14px;text-transform:uppercase;}.pp-action{padding:1px 0;}.pp-char{padding-left:34%;margin-top:10px;text-transform:uppercase;}.pp-paren{padding-left:26%;padding-right:26%;}.pp-dial{padding-left:20%;padding-right:20%;}.pp-trans{text-align:right;margin-top:10px;text-transform:uppercase;}.pp-footer{position:absolute;bottom:1cm;left:2.54cm;right:2.54cm;text-align:center;font-size:8px;color:#CCC;letter-spacing:.8px;}@media print{body{-webkit-print-color-adjust:exact;}}</style></head><body>'+pgs.join('')+'</body></html>');
-  win.document.close(); win.focus();
-  setTimeout(function(){win.print();},800);
-}
 
+  var css=
+    '*{box-sizing:border-box;margin:0;padding:0;}'+
+    '@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;700&display=swap");'+
+    'body{font-family:"Courier New",Courier,monospace;background:#fff;}'+
+    '.pp-page{width:21cm;min-height:29.7cm;padding:2.54cm;position:relative;page-break-after:always;background:#fff;}'+
+    '.pp-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:48px;color:rgba(0,0,0,.06);font-weight:700;white-space:nowrap;pointer-events:none;user-select:none;}'+
+    '.pp-cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:25cm;}'+
+    '.pp-cover-title{font-family:"Noto Sans Myanmar",sans-serif;font-size:24px;font-weight:700;margin-bottom:20px;line-height:1.8;}'+
+    '.pp-cover-hr{width:48px;height:1px;background:#000;margin:0 auto 16px;}'+
+    '.pp-cover-by{font-size:11px;color:#888;letter-spacing:1px;margin-bottom:6px;}'+
+    '.pp-cover-author{font-family:"Noto Sans Myanmar",sans-serif;font-size:14px;font-weight:600;line-height:1.8;}'+
+    '.pp-cover-draft{font-size:10px;color:#aaa;margin-top:28px;}'+
+    '.pp-sec-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#aaa;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #eee;}'+
+    '.pp-sec-text{font-family:"Noto Sans Myanmar",sans-serif;font-size:14px;line-height:2.1;white-space:pre-wrap;word-break:break-word;}'+
+    '.pp-el{font-size:12px;line-height:1.85;word-break:break-word;}'+
+    '.pp-scene{font-weight:700;text-transform:uppercase;margin-top:18px;}'+
+    '.pp-action{margin-top:2px;padding-left:0;}'+
+    '.pp-char{padding-left:34%;margin-top:12px;font-weight:700;text-transform:uppercase;}'+
+    '.pp-paren{padding-left:26%;padding-right:20%;}'+
+    '.pp-dial{padding-left:20%;padding-right:14%;}'+
+    '.pp-trans{text-align:right;margin-top:12px;font-weight:700;text-transform:uppercase;}'+
+    '@media print{body{-webkit-print-color-adjust:exact;}}';
+
+  win.document.write(
+    '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
+    '<title>'+esc(cvTitle||'CinePodma')+'</title>'+
+    '<style>'+css+'</style></head><body>'+
+    pgs.join('')+
+    '</body></html>'
+  );
+  win.document.close();
+  win.focus();
+  setTimeout(function(){win.print();},600);
+}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ===== SCENE NAVIGATOR ===== */
