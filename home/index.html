@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="my" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,22 +7,74 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--white:#FFFFFF;--black:#0A0A0A;--slate:#6B7280;--slate-lt:#9CA3AF;--slate-bg:#F3F4F6;--red:#DC2626;--red-h:#B91C1C;--border:#E5E7EB;--radius:20px;--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;--nav-h:76px;}
+/* ── TOKENS ── */
+:root{
+  --font-en:'Special Elite','Courier New',monospace;
+  --font-my:'Noto Sans Myanmar',sans-serif;
+  --nav-h:76px;
+  --radius:20px;
+  --red:#DC2626;
+  --red-h:#B91C1C;
+}
+
+/* Light theme */
+[data-theme="light"]{
+  --bg:#FFFFFF;
+  --bg2:#F3F4F6;
+  --fg:#0A0A0A;
+  --fg2:#6B7280;
+  --fg3:#9CA3AF;
+  --border:#E5E7EB;
+  --nav-bg:rgba(255,255,255,0.92);
+  --card-bg:#FFFFFF;
+  --card-hover-shadow:0 8px 24px rgba(0,0,0,.09);
+  --showcase-bg:#0A0A0A;
+  --showcase-fg:#FFFFFF;
+  --showcase-card:rgba(255,255,255,.04);
+  --showcase-border:rgba(255,255,255,.1);
+}
+
+/* Dark theme (default) */
+[data-theme="dark"]{
+  --bg:#0D0D0D;
+  --bg2:#1A1A1A;
+  --fg:#F0F0F0;
+  --fg2:#9CA3AF;
+  --fg3:#6B7280;
+  --border:#2A2A2A;
+  --nav-bg:rgba(13,13,13,0.92);
+  --card-bg:#181818;
+  --card-hover-shadow:0 8px 24px rgba(0,0,0,.4);
+  --showcase-bg:#111111;
+  --showcase-fg:#F0F0F0;
+  --showcase-card:rgba(255,255,255,.04);
+  --showcase-border:rgba(255,255,255,.1);
+}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:var(--font-my);background:var(--white);color:var(--black);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
-nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px 32px;padding-top:calc(18px + env(safe-area-inset-top,0px));background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+body{font-family:var(--font-my);background:var(--bg);color:var(--fg);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px 32px;padding-top:calc(18px + env(safe-area-inset-top,0px));background:var(--nav-bg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);transition:background .25s,border-color .25s;}
 .nav-inner{width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
-.brand{font-family:var(--font-en);font-size:13px;letter-spacing:.5px;color:var(--black);text-decoration:none;line-height:1.3;white-space:nowrap;flex-shrink:0;}
-.brand span{display:block;color:var(--slate);font-size:11px;letter-spacing:1px;}
+.brand{font-family:var(--font-en);font-size:13px;letter-spacing:.5px;color:var(--fg);text-decoration:none;line-height:1.3;white-space:nowrap;flex-shrink:0;}
+.brand span{display:block;color:var(--fg2);font-size:11px;letter-spacing:1px;}
+
+/* Theme toggle */
+.theme-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .18s;flex-shrink:0;}
+.theme-btn:hover{background:var(--fg);color:var(--bg);}
+
 .burger{display:flex;flex-direction:column;gap:7px;cursor:pointer;padding:6px;border:none;background:transparent;position:relative;z-index:500;flex-shrink:0;}
-.burger-line{width:24px;height:1.5px;background:var(--black);border-radius:1px;transform-origin:left center;transition:transform .38s cubic-bezier(.4,0,.2,1),background .25s ease;}
+.burger-line{width:24px;height:1.5px;background:var(--fg);border-radius:1px;transform-origin:left center;transition:transform .38s cubic-bezier(.4,0,.2,1),background .25s ease;}
 .burger.open .burger-line:nth-child(1){transform:rotate(-45deg) translateY(-1px);}
 .burger.open .burger-line:nth-child(2){transform:none;}
-.full-menu{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;height:100dvh;background:#F7F7F7;z-index:300;clip-path:inset(0 0 100% 0);transition:clip-path .48s cubic-bezier(.77,0,.18,1);pointer-events:none;}
+
+/* ── FULL MENU ── */
+.full-menu{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;height:100dvh;background:var(--bg2);z-index:300;clip-path:inset(0 0 100% 0);transition:clip-path .48s cubic-bezier(.77,0,.18,1),background .25s;pointer-events:none;}
 .full-menu.open{clip-path:inset(0 0 0% 0);pointer-events:all;}
 .menu-nav{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;}
-.menu-link{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 24px;border-radius:8px;text-decoration:none;font-family:var(--font-en);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--black);border:1px solid transparent;opacity:0;transform:translateY(10px);transition:color .18s,background .18s,border-color .18s,opacity .32s ease,transform .32s ease;}
+.menu-link{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 24px;border-radius:8px;text-decoration:none;font-family:var(--font-en);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--fg);border:1px solid transparent;opacity:0;transform:translateY(10px);transition:color .18s,background .18s,border-color .18s,opacity .32s ease,transform .32s ease;}
 .full-menu.open .menu-link{opacity:1;transform:translateY(0);}
 .full-menu.open .menu-link:nth-child(1){transition-delay:.12s;}
 .full-menu.open .menu-link:nth-child(2){transition-delay:.17s;}
@@ -30,57 +82,65 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .full-menu.open .menu-link:nth-child(4){transition-delay:.27s;}
 .full-menu.open .menu-link:nth-child(5){transition-delay:.32s;}
 .full-menu.open .menu-link:nth-child(6){transition-delay:.37s;}
-.menu-link:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.08);}
+.menu-link:hover{background:rgba(128,128,128,.1);border-color:rgba(128,128,128,.15);}
 .menu-link .icon{font-size:13px;opacity:.6;width:18px;text-align:center;}
 .menu-link:hover .icon{opacity:1;}
-.menu-footer{position:absolute;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font-family:var(--font-en);font-size:10px;color:rgba(0,0,0,.4);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;opacity:0;transition:opacity .3s .4s;}
+.menu-footer{position:absolute;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font-family:var(--font-en);font-size:10px;color:var(--fg3);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;opacity:0;transition:opacity .3s .4s;}
 .full-menu.open .menu-footer{opacity:1;}
+
+/* ── HERO ── */
 main{flex:1;width:100%;padding-top:0;}
 .hero{min-height:100vh;min-height:100dvh;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;padding-top:max(80px,calc(env(safe-area-inset-top,0px) + var(--nav-h) + 20px));position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(220,38,38,.04) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(0,0,0,.03) 0%,transparent 40%);pointer-events:none;}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(220,38,38,.06) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,255,255,.02) 0%,transparent 40%);pointer-events:none;}
 .hero-lines{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
 .hero-lines::before,.hero-lines::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:1px;background:var(--border);}
 .hero-lines::before{top:0;height:60px;}
 .hero-lines::after{bottom:0;height:60px;}
-.hero-eyebrow{font-family:var(--font-en);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--slate);margin-bottom:24px;animation:fadeUp .7s ease both;}
-.hero-title{font-family:var(--font-en);font-size:clamp(52px,10vw,96px);line-height:1;letter-spacing:-1px;color:var(--black);margin-bottom:8px;animation:fadeUp .7s .1s ease both;}
+.hero-eyebrow{font-family:var(--font-en);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--fg2);margin-bottom:24px;animation:fadeUp .7s ease both;}
+.hero-title{font-family:var(--font-en);font-size:clamp(52px,10vw,96px);line-height:1;letter-spacing:-1px;color:var(--fg);margin-bottom:8px;animation:fadeUp .7s .1s ease both;}
 .hero-title span{color:var(--red);}
-.hero-sub{font-family:var(--font-en);font-size:clamp(18px,3vw,26px);letter-spacing:4px;color:var(--slate);margin-bottom:32px;animation:fadeUp .7s .15s ease both;}
-.hero-desc{font-family:var(--font-my);font-size:15px;line-height:2.0;color:var(--slate);max-width:480px;margin-bottom:48px;animation:fadeUp .7s .2s ease both;}
+.hero-sub{font-family:var(--font-en);font-size:clamp(18px,3vw,26px);letter-spacing:4px;color:var(--fg2);margin-bottom:32px;animation:fadeUp .7s .15s ease both;}
+.hero-desc{font-family:var(--font-my);font-size:15px;line-height:2.0;color:var(--fg2);max-width:480px;margin-bottom:48px;animation:fadeUp .7s .2s ease both;}
 .auth-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;animation:fadeUp .7s .25s ease both;}
+
+/* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:var(--radius);border:none;cursor:pointer;font-family:var(--font-my);font-size:14px;font-weight:600;line-height:1.6;text-decoration:none;transition:all .18s;white-space:nowrap;}
-.btn-red{background:var(--red);color:var(--white);}
-.btn-red:hover{background:var(--red-h);transform:translateY(-2px);box-shadow:0 8px 24px rgba(220,38,38,.25);}
-.btn-outline{background:transparent;color:var(--black);border:1.5px solid var(--black);}
-.btn-outline:hover{background:var(--black);color:var(--white);transform:translateY(-2px);}
-.btn-lib{background:var(--black);color:var(--white);border:1.5px solid var(--black);}
-.btn-lib:hover{background:#222;transform:translateY(-2px);}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:var(--red-h);transform:translateY(-2px);box-shadow:0 8px 24px rgba(220,38,38,.3);}
+.btn-outline{background:transparent;color:var(--fg);border:1.5px solid var(--fg);}
+.btn-outline:hover{background:var(--fg);color:var(--bg);transform:translateY(-2px);}
+.btn-lib{background:var(--fg);color:var(--bg);border:1.5px solid var(--fg);}
+.btn-lib:hover{opacity:.85;transform:translateY(-2px);}
 .btn-outline-red{background:transparent;color:var(--red);border:1.5px solid var(--red);}
-.btn-outline-red:hover{background:var(--red);color:var(--white);transform:translateY(-2px);}
-.btn-ghost{background:transparent;color:var(--slate);border:1px solid var(--border);}
-.btn-ghost:hover{background:var(--slate-bg);color:var(--black);}
-.features{display:flex;justify-content:center;padding:0 24px;max-width:700px;margin:0 auto;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;animation:fadeUp .7s .35s ease both;}
+.btn-outline-red:hover{background:var(--red);color:#fff;transform:translateY(-2px);}
+.btn-ghost{background:transparent;color:var(--fg2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--bg2);color:var(--fg);}
+
+/* ── FEATURES STRIP ── */
+.features{display:flex;justify-content:center;padding:0 24px;max-width:700px;margin:0 auto;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;animation:fadeUp .7s .35s ease both;background:var(--card-bg);}
 .feat-item{flex:1;padding:20px 16px;text-align:center;border-right:1px solid var(--border);}
 .feat-item:last-child{border-right:none;}
 .feat-icon{font-size:20px;margin-bottom:6px;}
-.feat-label{font-family:var(--font-my);font-size:12px;color:var(--slate);line-height:1.8;}
-.showcase-section{background:var(--black);padding:80px 24px;position:relative;overflow:hidden;}
-.showcase-section::before,.showcase-section::after{content:'';position:absolute;top:0;bottom:0;width:20px;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 14px,rgba(255,255,255,.06) 14px,rgba(255,255,255,.06) 28px);}
+.feat-label{font-family:var(--font-my);font-size:12px;color:var(--fg2);line-height:1.8;}
+
+/* ── SHOWCASE ── */
+.showcase-section{background:var(--showcase-bg);padding:80px 24px;position:relative;overflow:hidden;transition:background .25s;}
+.showcase-section::before,.showcase-section::after{content:'';position:absolute;top:0;bottom:0;width:20px;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 14px,rgba(255,255,255,.04) 14px,rgba(255,255,255,.04) 28px);}
 .showcase-section::before{left:0;}
 .showcase-section::after{right:0;}
 .showcase-inner{max-width:640px;margin:0 auto;text-align:center;}
 .showcase-eyebrow{font-family:var(--font-en);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--red);margin-bottom:16px;}
-.showcase-title{font-family:var(--font-en);font-size:clamp(22px,5vw,32px);color:var(--white);letter-spacing:.5px;margin-bottom:8px;line-height:1.2;}
+.showcase-title{font-family:var(--font-en);font-size:clamp(22px,5vw,32px);color:var(--showcase-fg);letter-spacing:.5px;margin-bottom:8px;line-height:1.2;}
 .showcase-title span{color:var(--red);}
 .showcase-rule{width:32px;height:2px;background:var(--red);border-radius:2px;margin:0 auto 48px;}
 .fc-wrap{position:relative;min-height:240px;margin-bottom:32px;}
-.fc-card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:36px 28px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(255,255,255,.04);backdrop-filter:blur(4px);opacity:0;transform:translateY(24px) scale(.97);transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.fc-card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:36px 28px;border:1px solid var(--showcase-border);border-radius:20px;background:var(--showcase-card);backdrop-filter:blur(4px);opacity:0;transform:translateY(24px) scale(.97);transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;}
 .fc-card.active{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
 .fc-card[data-link]{cursor:pointer;}
 .fc-card.exit{opacity:0;transform:translateY(-18px) scale(.97);transition:opacity .35s ease,transform .35s ease;}
 .fc-icon{font-size:44px;line-height:1;filter:drop-shadow(0 0 16px rgba(220,38,38,.35));}
 .fc-label{font-family:var(--font-en);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);}
-.fc-title{font-family:var(--font-my);font-size:20px;font-weight:700;color:var(--white);line-height:1.5;text-align:center;}
+.fc-title{font-family:var(--font-my);font-size:20px;font-weight:700;color:var(--showcase-fg);line-height:1.5;text-align:center;}
 .fc-desc{font-family:var(--font-my);font-size:13px;color:rgba(255,255,255,.55);line-height:2.0;text-align:center;max-width:420px;}
 .fc-dots{display:flex;justify-content:center;gap:8px;margin-bottom:20px;}
 .fc-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;padding:0;transition:background .25s,transform .25s;}
@@ -88,108 +148,44 @@ main{flex:1;width:100%;padding-top:0;}
 .fc-progress-wrap{width:100%;max-width:320px;height:2px;background:rgba(255,255,255,.1);border-radius:1px;margin:0 auto 32px;overflow:hidden;}
 .fc-progress-bar{height:100%;background:var(--red);border-radius:1px;width:0%;}
 .showcase-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.page{display:none !important;min-height:calc(100vh - 65px);padding:80px 32px 60px;width:100%;box-sizing:border-box;text-align:left;}
-.page.active{display:block !important;}
-.page-inner{width:100%;max-width:900px;margin:0 auto;text-align:left;}
-.page-title{font-family:var(--font-en);font-size:22px;letter-spacing:1px;margin-bottom:8px;color:var(--black);}
-.page-divider{width:48px;height:3px;background:var(--red);border-radius:3px;margin-bottom:32px;}
-.page-body{font-family:var(--font-my);font-size:13px;line-height:2.0;color:var(--slate);max-width:600px;}
-.lib-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
-.lib-filter-btn{padding:6px 14px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font-my);font-size:12px;color:var(--slate);cursor:pointer;transition:all .15s;line-height:1.8;}
-.lib-filter-btn:hover,.lib-filter-btn.active{background:var(--black);border-color:var(--black);color:var(--white);}
-.lib-search-wrap{position:relative;margin-bottom:16px;}
-.lib-search{width:100%;padding:10px 16px 10px 40px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-my);font-size:13px;color:var(--black);outline:none;transition:border-color .15s;background:var(--white);line-height:1.8;}
-.lib-search:focus{border-color:var(--black);}
-.lib-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--slate-lt);pointer-events:none;}
-.lib-empty{grid-column:1/-1;text-align:center;padding:40px;color:var(--slate-lt);font-size:13px;line-height:2;}
-.lib-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.lib-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .18s;background:var(--white);display:flex;flex-direction:column;}
-.lib-card:hover{border-color:var(--black);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.09);}
-.lib-card-poster{width:100%;aspect-ratio:3/2;background:var(--slate-bg);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;flex-shrink:0;}
-.lib-card-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:99px;font-family:var(--font-en);font-size:9px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;}
-.badge-mm{background:rgba(220,38,38,.9);color:white;}
-.badge-int{background:rgba(10,10,10,.8);color:white;}
-.lib-card-body{padding:12px;}
-.lib-card-title{font-family:var(--font-my);font-size:13px;font-weight:600;color:var(--black);margin-bottom:2px;line-height:1.6;}
-.lib-card-en{font-family:var(--font-en);font-size:10px;color:var(--slate);margin-bottom:6px;}
-.lib-card-meta{font-size:11px;color:var(--slate-lt);line-height:1.6;}
-.lib-read-btn{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:5px 12px;border-radius:99px;background:var(--black);color:var(--white);font-family:var(--font-my);font-size:11px;border:none;cursor:pointer;transition:background .15s;line-height:1.6;}
-.lib-read-btn:hover{background:var(--red);}
-.pdf-viewer-overlay{display:none;position:fixed;inset:0;z-index:700;background:rgba(10,10,10,.88);backdrop-filter:blur(6px);flex-direction:column;}
-.pdf-viewer-overlay.open{display:flex;}
-.pdf-viewer-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px;}
-.pdf-viewer-title{font-family:var(--font-my);font-size:14px;font-weight:600;color:var(--black);line-height:1.6;flex:1;}
-.pdf-viewer-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
-.pdf-viewer-close:hover{background:var(--black);color:var(--white);border-color:var(--black);}
-.pdf-viewer-body{flex:1;overflow:hidden;background:#525659;}
-.pdf-viewer-body iframe{width:100%;height:100%;border:none;display:block;}
-.pdf-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ccc;font-family:var(--font-my);font-size:14px;line-height:2;text-align:center;padding:24px;}
-.pdf-placeholder .big{font-size:52px;}
-.form-group{margin-bottom:20px;}
-.form-label{display:block;font-size:12px;font-weight:600;margin-bottom:8px;color:var(--black);}
-.form-input,.form-textarea{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;background:var(--white);line-height:1.8;max-width:600px;}
-.form-input:focus,.form-textarea:focus{border-color:var(--black);}
-.form-textarea{min-height:120px;resize:vertical;}
-.contact-email{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--slate-bg);border-radius:var(--radius);margin-bottom:28px;max-width:600px;}
-.contact-email a{font-family:var(--font-en);font-size:13px;color:var(--black);}
-.script-publish-section{margin-top:28px;max-width:600px;}
-.script-publish-heading{font-family:var(--font-my);font-size:14px;font-weight:600;color:var(--black);margin-bottom:12px;}
-.script-publish-note{font-family:var(--font-my);font-size:13px;line-height:2;color:var(--slate);margin-bottom:20px;}
-.script-dropzone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;min-height:168px;padding:28px 20px;border:2px dashed var(--border);border-radius:var(--radius);background:var(--white);cursor:pointer;transition:border-color .2s,background .2s;text-align:center;}
-.script-dropzone:hover{border-color:var(--black);background:var(--slate-bg);}
-.script-dropzone input[type="file"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;}
-.script-dropzone-icon{font-size:32px;line-height:1;pointer-events:none;}
-.script-dropzone-title{font-family:var(--font-my);font-size:14px;font-weight:600;color:var(--black);max-width:300px;line-height:1.65;pointer-events:none;}
-.script-dropzone-hint{font-family:var(--font-en);font-size:11px;letter-spacing:.4px;color:var(--slate-lt);pointer-events:none;}
-.script-upload-filename{margin-top:12px;font-family:var(--font-my);font-size:12px;color:var(--red-h);word-break:break-all;min-height:1.5em;line-height:1.5;}
-.support-coffee-section{margin-top:28px;padding-top:28px;border-top:1px solid var(--border);max-width:600px;}
-.coffee-tier-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
-@media(min-width:520px){.coffee-tier-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
-.coffee-tier{font-family:var(--font-my);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 14px;background:var(--white);cursor:pointer;text-align:left;transition:border-color .18s,transform .18s,box-shadow .18s;}
-.coffee-tier:hover{border-color:var(--black);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.07);}
-.coffee-tier.featured{border-color:var(--red);background:rgba(220,38,38,.04);}
-.coffee-tier-amt{font-family:var(--font-en);font-size:21px;font-weight:700;color:var(--black);margin-bottom:6px;line-height:1.2;}
-.coffee-tier-note{font-size:11px;color:var(--slate);line-height:1.55;}
-.donate-modal{display:none;position:fixed;inset:0;z-index:600;align-items:center;justify-content:center;padding:20px;}
-.donate-modal.open{display:flex;flex-direction:column;}
-.donate-modal-backdrop{position:absolute;inset:0;background:rgba(10,10,10,.48);backdrop-filter:blur(5px);}
-.donate-modal-card{position:relative;z-index:1;width:100%;max-width:360px;background:var(--white);border-radius:var(--radius);padding:26px 20px 22px;box-shadow:0 24px 60px rgba(0,0,0,.2);max-height:min(90vh,620px);overflow-y:auto;text-align:left;}
-.donate-modal-close{position:absolute;top:10px;right:10px;width:40px;height:40px;border:none;background:transparent;font-size:24px;cursor:pointer;color:var(--slate);border-radius:10px;transition:background .15s;}
-.donate-modal-close:hover{background:var(--slate-bg);color:var(--black);}
-.donate-modal-lead{font-family:var(--font-my);font-size:15px;font-weight:600;color:var(--black);margin-bottom:6px;padding-right:36px;}
-.donate-modal-sub{font-family:var(--font-my);font-size:12px;color:var(--slate);line-height:1.75;margin-bottom:18px;}
-.donate-pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.donate-pay-grid .btn{justify-content:center;width:100%;}
-.donate-qr-wrap{display:flex;justify-content:center;margin:16px 0 14px;padding:14px;background:var(--slate-bg);border-radius:var(--radius);border:1px solid var(--border);}
-.donate-qr-wrap img{display:block;width:min(220px,100%);height:auto;aspect-ratio:1;object-fit:contain;}
-.donate-qr-meta{font-family:var(--font-en);font-size:13px;color:var(--black);text-align:center;margin-bottom:8px;}
-.donate-qr-hint{font-family:var(--font-my);font-size:11px;color:var(--slate-lt);line-height:1.7;margin-bottom:14px;}
-.donate-step-actions{display:flex;flex-direction:column;gap:10px;}
-.donate-step-actions .btn{justify-content:center;width:100%;}
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:20px;}
+
+/* ── AUTH MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:20px;}
 .overlay.open{display:flex;}
-.auth-modal-card{background:var(--white);border-radius:var(--radius);padding:32px 28px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:popIn .25s cubic-bezier(.34,1.56,.64,1);position:relative;}
-.auth-modal-title{font-family:var(--font-en);font-size:20px;letter-spacing:.5px;margin-bottom:6px;color:var(--black);}
-.auth-modal-sub{font-size:13px;color:var(--slate);margin-bottom:24px;line-height:1.8;}
+.auth-modal-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:32px 28px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:popIn .25s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.auth-modal-title{font-family:var(--font-en);font-size:20px;letter-spacing:.5px;margin-bottom:6px;color:var(--fg);}
+.auth-modal-sub{font-size:13px;color:var(--fg2);margin-bottom:24px;line-height:1.8;}
 .auth-form-group{margin-bottom:14px;}
-.auth-label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--black);}
-.auth-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--font-my);font-size:14px;color:var(--black);outline:none;transition:border-color .15s;line-height:1.8;background:var(--white);}
-.auth-input:focus{border-color:var(--black);}
+.auth-label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--fg);}
+.auth-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--font-my);font-size:14px;color:var(--fg);background:var(--bg2);outline:none;transition:border-color .15s;line-height:1.8;}
+.auth-input:focus{border-color:var(--fg);}
 .auth-error{color:var(--red);font-size:12px;margin-top:8px;line-height:1.8;min-height:20px;}
-.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--slate-lt);font-size:11px;}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--fg3);font-size:11px;}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid var(--border);border-radius:12px;background:var(--white);font-family:var(--font-my);font-size:13px;color:var(--black);cursor:pointer;transition:all .15s;margin-bottom:16px;}
-.btn-google:hover{background:var(--slate-bg);border-color:var(--black);}
-.auth-switch{text-align:center;font-size:12px;color:var(--slate);margin-top:14px;line-height:1.8;}
-.auth-switch a{color:var(--black);font-weight:600;cursor:pointer;text-decoration:underline;}
+.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg2);font-family:var(--font-my);font-size:13px;color:var(--fg);cursor:pointer;transition:all .15s;margin-bottom:16px;}
+.btn-google:hover{background:var(--bg);border-color:var(--fg);}
+.auth-switch{text-align:center;font-size:12px;color:var(--fg2);margin-top:14px;line-height:1.8;}
+.auth-switch a{color:var(--fg);font-weight:600;cursor:pointer;text-decoration:underline;}
+
+/* Nav user */
 .nav-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:99px;border:1px solid var(--border);transition:all .15s;text-decoration:none;}
-.nav-user:hover{background:var(--slate-bg);}
-.nav-avatar{width:28px;height:28px;border-radius:50%;background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;overflow:hidden;flex-shrink:0;}
+.nav-user:hover{background:var(--bg2);}
+.nav-avatar{width:28px;height:28px;border-radius:50%;background:var(--fg);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;overflow:hidden;flex-shrink:0;}
 .nav-avatar img{width:100%;height:100%;object-fit:cover;}
-footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:center;}
-.footer-text{font-family:var(--font-en);font-size:11px;color:var(--slate);letter-spacing:.5px;text-align:center;}
+
+/* Forgot password */
+#forgotForm{background:var(--bg2);border-radius:12px;padding:14px;margin-top:12px;}
+#forgotForm div:first-child{font-size:12px;color:var(--fg2);margin-bottom:10px;line-height:1.8;}
+
+/* ── FOOTER ── */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s;}
+.footer-text{font-family:var(--font-en);font-size:11px;color:var(--fg2);letter-spacing:.5px;text-align:center;}
+
+/* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 @keyframes popIn{from{opacity:0;transform:scale(.95) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
+
+/* ── RESPONSIVE ── */
 @media(max-width:480px){
   :root{--radius:16px;}
   nav{padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top,0px));}
@@ -205,7 +201,6 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20p
   .feat-item:last-child{border-bottom:none;}
   .feat-icon{font-size:18px;margin-bottom:0;flex-shrink:0;}
   .feat-label{font-size:13px;}
-  .page{padding:72px 18px 48px;}
   .showcase-section{padding:60px 16px;}
   .fc-wrap{min-height:280px;}
   .fc-card{padding:28px 20px;}
@@ -215,12 +210,11 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20p
 @media(min-width:480px) and (max-width:768px){
   nav{padding:16px 24px;padding-top:calc(16px + env(safe-area-inset-top,0px));}
   .hero{padding:56px 24px 80px;padding-top:max(56px,calc(env(safe-area-inset-top,0px) + var(--nav-h) + 24px));}
-  .page{padding:76px 24px 52px;}
 }
 @media(hover:none) and (pointer:coarse){
   .btn{min-height:48px;}
   .menu-link{min-height:44px;}
-  .form-input,.form-textarea,.auth-input{font-size:16px;}
+  .auth-input{font-size:16px;}
 }
 </style>
 </head>
@@ -232,6 +226,7 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20p
     <a class="brand" href="https://cinepodma.com">cine<br><span>podma</span></a>
     <div style="display:flex;align-items:center;gap:8px;">
       <div id="navAuthArea"></div>
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme" title="Light / Dark">🌙</button>
       <button class="burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Menu">
         <div class="burger-line"></div>
         <div class="burger-line"></div>
@@ -240,6 +235,7 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20p
   </div>
 </nav>
 
+<!-- FULL MENU -->
 <div class="full-menu" id="fullMenu">
   <div class="menu-nav">
     <a class="menu-link" href="/write"><span class="icon">✍</span> Write</a>
@@ -253,124 +249,60 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20p
 </div>
 
 <main>
-<section id="page-home" class="active" style="display:flex;width:100%;">
-  <div class="hero">
-    <div class="hero-lines"></div>
-    <p class="hero-eyebrow">Myanmar Screenplay Editor</p>
-    <h1 class="hero-title">Cine<span>.</span></h1>
-    <p class="hero-sub">PODMA</p>
-    <p class="hero-desc">မြန်မာဘာသာဖြင့် screenplay ရေးသားနိုင်သော<br>professional script editor</p>
-    <div class="auth-row" id="heroAuthRow">
-      <a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a>
-      <a class="btn btn-lib" href="/library">📚 စာဖတ်မည်</a>
-      <button class="btn btn-outline-red" onclick="openAuthModal('signup')">အကောင့်ဖွင့်မည်</button>
-      <button class="btn btn-ghost" onclick="openAuthModal('signin')">အကောင့်ဝင်မည်</button>
-    </div>
-    <p style="font-size:11px;color:var(--slate-lt);margin-top:12px;line-height:1.8;">✍ Guest mode — ရေးပြီး download ဆွဲနိုင်သည် · Cloud save အတွက် အကောင့်ဖွင့်ပါ</p>
-    <br><br>
-    <div class="features">
-      <div class="feat-item"><div class="feat-icon">🎬</div><div class="feat-label">Industry Format</div></div>
-      <div class="feat-item"><div class="feat-icon">🇲🇲</div><div class="feat-label">မြန်မာဘာသာ</div></div>
-      <div class="feat-item"><div class="feat-icon">📄</div><div class="feat-label">PDF Export</div></div>
-      <div class="feat-item"><div class="feat-icon">☁️</div><div class="feat-label">Cloud Save</div></div>
-    </div>
-  </div>
-</section>
-
-<section class="showcase-section" id="page-home-showcase">
-  <div class="showcase-inner">
-    <p class="showcase-eyebrow">What you can do</p>
-    <h2 class="showcase-title">CinePodma <span>တွင်</span></h2>
-    <div class="showcase-rule"></div>
-    <div class="fc-wrap" id="fcWrap">
-      <div class="fc-card active" data-index="0" data-link="/write"><div class="fc-icon">✍️</div><div class="fc-label">Write</div><div class="fc-title">Screenplay ရေးသားပါ</div><div class="fc-desc">Industry Standard Format — INT/EXT Scene, Action Line, Dialogue တို့ကို မြန်မာဘာသာဖြင့် တနေရာတည်းတွင် ရေးသားနိုင်သည်</div></div>
-      <div class="fc-card" data-index="1" data-link="/library"><div class="fc-icon">📖</div><div class="fc-label">Read</div><div class="fc-title">Screenplay များ ဖတ်ရှုပါ</div><div class="fc-desc">ပြည်တွင်း ပြည်ပ ကျော်ကြားသော Screenplay များကို Library တွင် အခမဲ့ ဖတ်ရှုနိုင်သည်</div></div>
-      <div class="fc-card" data-index="2" data-link="/write"><div class="fc-icon">🖊️</div><div class="fc-label">Write</div><div class="fc-title">ဝတ္ထု · ကဗျာ · ဆောင်းပါး ရေးပါ</div><div class="fc-desc">Screenplay သာမက ဝတ္ထု၊ ကဗျာ၊ ဆောင်းပါးများကိုလည်း မြန်မာဘာသာဖြင့် တနေရာတည်းတွင် ဖန်တီးရေးသားနိုင်သည်</div></div>
-      <div class="fc-card" data-index="3" data-link="/library"><div class="fc-icon">📚</div><div class="fc-label">Read</div><div class="fc-title">ဝတ္ထု · ကဗျာ · ဆောင်းပါး ဖတ်ပါ</div><div class="fc-desc">အခြားသော ရေးသားသူများ၏ ဝတ္ထု၊ ကဗျာ၊ ဆောင်းပါးများကို Library တွင် ရှာဖွေဖတ်ရှုနိုင်သည်</div></div>
-      <div class="fc-card" data-index="4" data-link="/podmates"><div class="fc-icon">👏</div><div class="fc-label">Clap</div><div class="fc-title">ကြိုက်ရင် Clap လုပ်ပါ</div><div class="fc-desc">ကြိုက်နှစ်သက်သော ဇာတ်ညွှန်း၊ ဝတ္ထု၊ ကဗျာများကို Clap လုပ်ကာ ရေးသားသူများကို လက်ခုပ်တီးအားပေးနိုင်သည်</div></div>
-      <div class="fc-card" data-index="5" data-link="/podmates"><div class="fc-icon">👥</div><div class="fc-label">Connect</div><div class="fc-title">Podmates နဲ့ ချိတ်ဆက်ပါ</div><div class="fc-desc">မြန်မာ Filmmaker, Screenwriter, Director များ အချင်းချင်း ဆက်သွယ်တွေ့ဆုံနိုင်သော Community</div></div>
-      <div class="fc-card" data-index="6"><div class="fc-icon">☁️</div><div class="fc-label">Cloud Save</div><div class="fc-title">Cloud မှာ သိမ်းဆည်းပါ</div><div class="fc-desc">ရေးနေသော ဇာတ်ညွှန်း၊ ဝတ္ထု၊ ကဗျာများကို Cloud တွင် auto-save လုပ်ပြီး မည်သည့် device မှမဆို ဆက်ရေးနိုင်သည်</div></div>
-      <div class="fc-card" data-index="7"><div class="fc-icon">📄</div><div class="fc-label">Export</div><div class="fc-title">PDF export လုပ်ပါ</div><div class="fc-desc">ပြီးဆုံးသော ဇာတ်ညွှန်းများကို PDF format ဖြင့် export လုပ်ကာ မည်သူ့မဆို ပေးပို့နိုင်သည်</div></div>
-    </div>
-    <div class="fc-progress-wrap"><div class="fc-progress-bar" id="fcProgressBar"></div></div>
-    <div class="fc-dots" id="fcDots"></div>
-    <div class="showcase-cta">
-      <a class="btn btn-red" href="/write">✍ စတင်ရေးမည်</a>
-      <a class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);" href="/library">📚 Library ကြည့်မည်</a>
-    </div>
-  </div>
-</section>
-
-<section id="page-write" class="page" style="display:none !important;"><div class="page-inner"><h2 class="page-title">Write</h2><div class="page-divider"></div><p class="page-body">Screenplay editor</p></div></section>
-
-<section id="page-library" class="page" style="display:none !important;">
-  <div class="page-inner">
-    <h2 class="page-title">Library</h2><div class="page-divider"></div>
-    <p class="page-body" style="margin-bottom:16px;">ပြည်တွင်း · ပြည်ပ ရုပ်ရှင်ဇာတ်ညွှန်းများ — အားလုံး အခမဲ့ဖတ်ရှုနိုင်သည်</p>
-    <div class="lib-search-wrap"><span class="lib-search-icon">🔍</span><input class="lib-search" id="libSearch" type="text" placeholder="ကားနာမည်၊ ဒါရိုက်တာ ရှာပါ..." oninput="searchLib(this.value)"></div>
-    <div class="lib-filter-row">
-      <button class="lib-filter-btn active" onclick="filterLib(this,'all')">အားလုံး</button>
-      <button class="lib-filter-btn" onclick="filterLib(this,'mm')">🇲🇲 ပြည်တွင်း</button>
-      <button class="lib-filter-btn" onclick="filterLib(this,'int')">🌐 ပြည်ပ</button>
-    </div>
-    <div class="lib-grid" id="libGrid">
-      <div class="lib-card" data-cat="mm" data-title="ချစ်ရသောမြို့တော် the beloved city" onclick="openPdf('ချစ်ရသောမြို့တော်',null)"><div class="lib-card-poster">🎬<span class="lib-card-badge badge-mm">မြန်မာ</span></div><div class="lib-card-body"><div class="lib-card-title">ချစ်ရသောမြို့တော်</div><div class="lib-card-en">The Beloved City</div><div class="lib-card-meta">၂၀၁၈ · Drama</div><button class="lib-read-btn">📖 ဖတ်မည်</button></div></div>
-      <div class="lib-card" data-cat="int" data-title="parasite bong joon-ho" onclick="openPdf('Parasite',null)"><div class="lib-card-poster">🎬<span class="lib-card-badge badge-int">INT</span></div><div class="lib-card-body"><div class="lib-card-title">Parasite</div><div class="lib-card-en">Bong Joon-ho · 2019</div><div class="lib-card-meta">Korean · Thriller</div><button class="lib-read-btn">📖 ဖတ်မည်</button></div></div>
-      <div class="lib-card" data-cat="int" data-title="pulp fiction quentin tarantino" onclick="openPdf('Pulp Fiction',null)"><div class="lib-card-poster">🎬<span class="lib-card-badge badge-int">INT</span></div><div class="lib-card-body"><div class="lib-card-title">Pulp Fiction</div><div class="lib-card-en">Quentin Tarantino · 1994</div><div class="lib-card-meta">English · Crime</div><button class="lib-read-btn">📖 ဖတ်မည်</button></div></div>
-      <div class="lib-card" data-cat="mm" data-title="နမူနာဇာတ်ညွှန်း sample script" onclick="openPdf('နမူနာဇာတ်ညွှန်း',null)"><div class="lib-card-poster">🎬<span class="lib-card-badge badge-mm">မြန်မာ</span></div><div class="lib-card-body"><div class="lib-card-title">နမူနာဇာတ်ညွှန်း</div><div class="lib-card-en">Sample Script</div><div class="lib-card-meta">Admin တင်မည်</div><button class="lib-read-btn">📖 ဖတ်မည်</button></div></div>
-    </div>
-  </div>
-</section>
-
-<div class="pdf-viewer-overlay" id="pdfViewer">
-  <div class="pdf-viewer-header"><span class="pdf-viewer-title" id="pdfTitle">—</span><button class="pdf-viewer-close" onclick="closePdf()">✕</button></div>
-  <div class="pdf-viewer-body" id="pdfBody"><div class="pdf-placeholder"><span class="big">📄</span><span>PDF ဖိုင်ကို Admin တင်ပြီးမှ ဤနေရာတွင် ဖတ်ရှုနိုင်မည်</span></div></div>
-</div>
-
-<section id="page-about" class="page" style="display:none !important;"><div class="page-inner"><h2 class="page-title">About</h2><div class="page-divider"></div><div class="page-body"><p style="margin-bottom:16px;"><strong style="color:var(--black);font-family:var(--font-en);">CinePodma</strong> သည် မြန်မာ screenplay ရေးသားသူများအတွက် ဖန်တီးထားသော professional script editor ဖြစ်သည်။</p><p>Industry standard format — INT/EXT မြင်ကွင်း၊ ဒိုင်ယာလော့ဂ်၊ action line များကို မြန်မာဘာသာဖြင့် ရေးသားနိုင်သည်။</p></div></div></section>
-
-<section id="page-contact" class="page" style="display:none !important;"><div class="page-inner"><h2 class="page-title">Contact</h2><div class="page-divider"></div><div class="contact-email"><span>✉</span><a href="mailto:hello@cinepodma.com">hello@cinepodma.com</a></div><form onsubmit="submitContact(event)"><div class="form-group"><label class="form-label">အမည်</label><input class="form-input" type="text" placeholder="သင့်အမည်" required></div><div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="email@example.com" required></div><div class="form-group"><label class="form-label">မက်ဆေ့ဂျ်</label><textarea class="form-textarea" placeholder="သင်ပြောချင်သည့်အရာ..." required></textarea></div><button type="submit" class="btn btn-red">ပို့မည်</button></form></div></section>
-
-<section id="page-support" class="page" style="display:none !important;">
-  <div class="page-inner"><h2 class="page-title">Support</h2><div class="page-divider"></div>
-  <p class="page-body" style="margin-bottom:8px;">CinePodma ကို ထောက်ပံ့ပေးပါ</p>
-  <section class="support-coffee-section">
-    <h3 class="script-publish-heading">☕ ထောက်ပံ့မှုဖြင့် ကူညီပါ</h3>
-    <p class="script-publish-note" style="margin-bottom:16px;">ပမာဏ ရွေးပြီးနောက် <strong>KPay</strong> သို့မဟုတ် <strong>Wave Money</strong> ဖြင့် ငွေလွှဲရန် QR ပြမည်။</p>
-    <div class="coffee-tier-grid">
-      <button type="button" class="coffee-tier" onclick="openDonateCoffee(1000,'1,000 ကျပ်')"><div class="coffee-tier-amt">1,000</div><div class="coffee-tier-note">ကျပ် · ကော်ဖီတစ်ခွက်</div></button>
-      <button type="button" class="coffee-tier featured" onclick="openDonateCoffee(3000,'3,000 ကျပ်')"><div class="coffee-tier-amt">3,000</div><div class="coffee-tier-note">ကျပ် · ကျေးဇူးတင်ပါသည်</div></button>
-      <button type="button" class="coffee-tier" onclick="openDonateCoffee(5000,'5,000 ကျပ်')"><div class="coffee-tier-amt">5,000</div><div class="coffee-tier-note">ကျပ် · ထောက်ပံ့မှု အထူး</div></button>
-      <button type="button" class="coffee-tier" onclick="openDonateCoffeeCustom()"><div class="coffee-tier-amt">…</div><div class="coffee-tier-note">ကြိုက်သလောက်</div></button>
+  <!-- HERO -->
+  <section style="display:flex;width:100%;">
+    <div class="hero">
+      <div class="hero-lines"></div>
+      <p class="hero-eyebrow">Myanmar Screenplay Editor</p>
+      <h1 class="hero-title">Cine<span>.</span></h1>
+      <p class="hero-sub">PODMA</p>
+      <p class="hero-desc">မြန်မာဘာသာဖြင့် screenplay ရေးသားနိုင်သော<br>professional script editor</p>
+      <div class="auth-row" id="heroAuthRow">
+        <a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a>
+        <a class="btn btn-lib" href="/library">📚 စာဖတ်မည်</a>
+        <button class="btn btn-outline-red" onclick="openAuthModal('signup')">အကောင့်ဖွင့်မည်</button>
+        <button class="btn btn-ghost" onclick="openAuthModal('signin')">အကောင့်ဝင်မည်</button>
+      </div>
+      <p style="font-size:11px;color:var(--fg3);margin-top:12px;line-height:1.8;">✍ Guest mode — ရေးပြီး download ဆွဲနိုင်သည် · Cloud save အတွက် အကောင့်ဖွင့်ပါ</p>
+      <br><br>
+      <div class="features">
+        <div class="feat-item"><div class="feat-icon">🎬</div><div class="feat-label">Industry Format</div></div>
+        <div class="feat-item"><div class="feat-icon">🇲🇲</div><div class="feat-label">မြန်မာဘာသာ</div></div>
+        <div class="feat-item"><div class="feat-icon">📄</div><div class="feat-label">PDF Export</div></div>
+        <div class="feat-item"><div class="feat-icon">☁️</div><div class="feat-label">Cloud Save</div></div>
+      </div>
     </div>
   </section>
-  <section class="script-publish-section">
-    <h3 class="script-publish-heading">🎬 သင့် Screenplay ကို Library သို့ တင်ပြပါ</h3>
-    <p class="script-publish-note">Admin မှ စစ်ဆေးပြီးနောက် Library တွင် ထည့်သွင်းပေးမည်။</p>
-    <form onsubmit="submitScript(event)">
-      <div class="form-group"><label class="form-label">ဇာတ်ကားနာမည်</label><input class="form-input" type="text" placeholder="ဥပမာ — မိုးမခ" required></div>
-      <div class="form-group"><label class="form-label">အမျိုးအစား</label><input class="form-input" type="text" placeholder="ဥပမာ — Drama, Thriller"></div>
-      <div class="form-group"><label class="form-label">ဖော်ပြချက်</label><textarea class="form-textarea" placeholder="ဇာတ်ကား အကြောင်းအကျဉ်း..." style="min-height:90px;"></textarea></div>
-      <div class="form-group"><label class="form-label">Screenplay ဖိုင် (PDF)</label><label class="script-dropzone" id="scriptDropzone"><input type="file" id="supportScriptFile" accept=".pdf,.txt,.fdx,.fountain,.doc,.docx"><span class="script-dropzone-icon">📄</span><span class="script-dropzone-title">ဖိုင်ဆွဲထည့်ပါ သို့ နှိပ်ပြီးရွေးပါ</span><span class="script-dropzone-hint">PDF · TXT · Fountain · FDX</span></label><p class="script-upload-filename" id="supportScriptFilename"></p></div>
-      <div class="form-group"><label class="form-label">သင့် Email</label><input class="form-input" type="email" placeholder="email@example.com"></div>
-      <button type="submit" class="btn btn-red">တင်ပြမည်</button>
-    </form>
-  </section></div>
-</section>
+
+  <!-- SHOWCASE -->
+  <section class="showcase-section">
+    <div class="showcase-inner">
+      <p class="showcase-eyebrow">What you can do</p>
+      <h2 class="showcase-title">CinePodma <span>တွင်</span></h2>
+      <div class="showcase-rule"></div>
+      <div class="fc-wrap" id="fcWrap">
+        <div class="fc-card active" data-index="0" data-link="/write"><div class="fc-icon">✍️</div><div class="fc-label">Write</div><div class="fc-title">Screenplay ရေးသားပါ</div><div class="fc-desc">Industry Standard Format — INT/EXT Scene, Action Line, Dialogue တို့ကို မြန်မာဘာသာဖြင့် တနေရာတည်းတွင် ရေးသားနိုင်သည်</div></div>
+        <div class="fc-card" data-index="1" data-link="/library"><div class="fc-icon">📖</div><div class="fc-label">Read</div><div class="fc-title">Screenplay များ ဖတ်ရှုပါ</div><div class="fc-desc">ပြည်တွင်း ပြည်ပ ကျော်ကြားသော Screenplay များကို Library တွင် အခမဲ့ ဖတ်ရှုနိုင်သည်</div></div>
+        <div class="fc-card" data-index="2" data-link="/write"><div class="fc-icon">🖊️</div><div class="fc-label">Write</div><div class="fc-title">ဝတ္ထု · ကဗျာ · ဆောင်းပါး ရေးပါ</div><div class="fc-desc">Screenplay သာမက ဝတ္ထု၊ ကဗျာ၊ ဆောင်းပါးများကိုလည်း မြန်မာဘာသာဖြင့် တနေရာတည်းတွင် ဖန်တီးရေးသားနိုင်သည်</div></div>
+        <div class="fc-card" data-index="3" data-link="/library"><div class="fc-icon">📚</div><div class="fc-label">Read</div><div class="fc-title">ဝတ္ထု · ကဗျာ · ဆောင်းပါး ဖတ်ပါ</div><div class="fc-desc">အခြားသော ရေးသားသူများ၏ ဝတ္ထု၊ ကဗျာ၊ ဆောင်းပါးများကို Library တွင် ရှာဖွေဖတ်ရှုနိုင်သည်</div></div>
+        <div class="fc-card" data-index="4" data-link="/podmates"><div class="fc-icon">👏</div><div class="fc-label">Clap</div><div class="fc-title">ကြိုက်ရင် Clap လုပ်ပါ</div><div class="fc-desc">ကြိုက်နှစ်သက်သော ဇာတ်ညွှန်း၊ ဝတ္ထု၊ ကဗျာများကို Clap လုပ်ကာ ရေးသားသူများကို လက်ခုပ်တီးအားပေးနိုင်သည်</div></div>
+        <div class="fc-card" data-index="5" data-link="/podmates"><div class="fc-icon">👥</div><div class="fc-label">Connect</div><div class="fc-title">Podmates နဲ့ ချိတ်ဆက်ပါ</div><div class="fc-desc">မြန်မာ Filmmaker, Screenwriter, Director များ အချင်းချင်း ဆက်သွယ်တွေ့ဆုံနိုင်သော Community</div></div>
+        <div class="fc-card" data-index="6"><div class="fc-icon">☁️</div><div class="fc-label">Cloud Save</div><div class="fc-title">Cloud မှာ သိမ်းဆည်းပါ</div><div class="fc-desc">ရေးနေသော ဇာတ်ညွှန်း၊ ဝတ္ထု၊ ကဗျာများကို Cloud တွင် auto-save လုပ်ပြီး မည်သည့် device မှမဆို ဆက်ရေးနိုင်သည်</div></div>
+        <div class="fc-card" data-index="7"><div class="fc-icon">📄</div><div class="fc-label">Export</div><div class="fc-title">PDF export လုပ်ပါ</div><div class="fc-desc">ပြီးဆုံးသော ဇာတ်ညွှန်းများကို PDF format ဖြင့် export လုပ်ကာ မည်သူ့မဆို ပေးပို့နိုင်သည်</div></div>
+      </div>
+      <div class="fc-progress-wrap"><div class="fc-progress-bar" id="fcProgressBar"></div></div>
+      <div class="fc-dots" id="fcDots"></div>
+      <div class="showcase-cta">
+        <a class="btn btn-red" href="/write">✍ စတင်ရေးမည်</a>
+        <a class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);" href="/library">📚 Library ကြည့်မည်</a>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer><span class="footer-text">© 2026 CinePodma. All rights reserved.</span></footer>
 
-<div id="donateModal" class="donate-modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="donate-modal-backdrop" onclick="closeDonateModal()"></div>
-  <div class="donate-modal-card">
-    <button type="button" class="donate-modal-close" onclick="closeDonateModal()">×</button>
-    <div id="donateStepCustom" style="display:none;"><p class="donate-modal-lead">ကြိုက်သလောက် — ကျပ်ပမာဏ</p><p class="donate-modal-sub">ထောက်ပံ့လိုသော ကျပ် အရေအတွက်ကို ထည့်ပါ။</p><label class="form-label">ကျပ်</label><input type="number" class="form-input" id="donateCustomAmount" min="1" placeholder="ဥပမာ 2500"><div class="donate-step-actions" style="margin-top:18px;"><button type="button" class="btn btn-red" onclick="donateCustomContinue()">ရှေ့ဆက်မည်</button><button type="button" class="btn btn-outline" onclick="closeDonateModal()">ပိတ်မည်</button></div></div>
-    <div id="donateStepMethod" style="display:none;"><p class="donate-modal-lead" id="donateMethodTitle">ငွေပေးချေမှု</p><p class="donate-modal-sub">KPay သို့မဟုတ် Wave Money ရွေးပါ။</p><div class="donate-pay-grid"><button type="button" class="btn btn-outline" onclick="donatePickPay('KPay')">KPay</button><button type="button" class="btn btn-outline" onclick="donatePickPay('Wave')">Wave Money</button></div><div class="donate-step-actions" style="margin-top:16px;"><button type="button" class="btn btn-outline" onclick="donateBackFromMethod()">နောက်ပြန်</button></div></div>
-    <div id="donateStepQr" style="display:none;"><p class="donate-modal-lead">ငွေလွှဲ QR</p><p class="donate-qr-meta" id="donateQrMeta"></p><div class="donate-qr-wrap"><img id="donateQrImg" src="" alt="QR" width="220" height="220"></div><p class="donate-qr-hint">Wave / KPay အက်ပ်ဖြင့် စကင်ဖတ်ပါ</p><div class="donate-step-actions"><button type="button" class="btn btn-outline" onclick="donateBackToMethod()">ငွေပေးချေမှု ပြန်ရွေးမည်</button><button type="button" class="btn btn-red" onclick="closeDonateModal()">ပြီးပါပြီ</button></div></div>
-  </div>
-</div>
-
+<!-- AUTH MODAL -->
 <div class="overlay" id="authModal">
   <div class="auth-modal-card">
     <div class="auth-modal-title" id="authModalTitle">Sign Up</div>
@@ -380,68 +312,154 @@ footer{background:var(--slate-bg);border-top:1px solid var(--border);padding:20p
       Google နဲ့ ဝင်မည်
     </button>
     <div class="auth-divider">သို့မဟုတ်</div>
-    <div id="authSignupFields"><div class="auth-form-group"><label class="auth-label">အမည်</label><input class="auth-input" id="authName" type="text" placeholder="သင့်နာမည်"></div></div>
+    <div id="authSignupFields">
+      <div class="auth-form-group"><label class="auth-label">အမည်</label><input class="auth-input" id="authName" type="text" placeholder="သင့်နာမည်"></div>
+    </div>
     <div class="auth-form-group"><label class="auth-label">Email</label><input class="auth-input" id="authEmail" type="email" placeholder="email@example.com"></div>
     <div class="auth-form-group"><label class="auth-label">Password</label><input class="auth-input" id="authPassword" type="password" placeholder="အနည်းဆုံး ၆ လုံး"></div>
     <div class="auth-error" id="authError"></div>
-    <div id="authSuccess" style="display:none;color:#16A34A;font-size:12px;margin-top:4px;line-height:1.8;"></div>
+    <div id="authSuccess" style="display:none;color:#4ADE80;font-size:12px;margin-top:4px;line-height:1.8;"></div>
     <button class="btn btn-red" style="width:100%;margin-top:4px;" id="authSubmitBtn" onclick="submitAuth()">အကောင့်ဖွင့်မည်</button>
-    <div id="forgotWrap" style="display:none;text-align:center;margin-top:10px;"><a href="#" onclick="showForgot();return false;" style="font-size:12px;color:var(--slate);text-decoration:none;">Password မေ့သွားပြီလား?</a></div>
-    <div id="forgotForm" style="display:none;margin-top:12px;padding:14px;background:var(--slate-bg);border-radius:12px;"><div style="font-size:12px;color:var(--slate);margin-bottom:10px;line-height:1.8;">Email ထည့်ပါ — reset link ပို့ပေးမည်</div><div class="auth-form-group"><input class="auth-input" id="forgotEmail" type="email" placeholder="email@example.com"></div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn btn-red" style="flex:1;padding:10px;" onclick="submitForgot()">Reset Link ပို့မည်</button><button class="btn btn-outline" style="padding:10px 14px;" onclick="hideForgot()">ပိတ်</button></div></div>
+    <div id="forgotWrap" style="display:none;text-align:center;margin-top:10px;">
+      <a href="#" onclick="showForgot();return false;" style="font-size:12px;color:var(--fg2);text-decoration:none;">Password မေ့သွားပြီလား?</a>
+    </div>
+    <div id="forgotForm" style="display:none;margin-top:12px;">
+      <div>Email ထည့်ပါ — reset link ပို့ပေးမည်</div>
+      <div class="auth-form-group"><input class="auth-input" id="forgotEmail" type="email" placeholder="email@example.com"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn btn-red" style="flex:1;padding:10px;" onclick="submitForgot()">Reset Link ပို့မည်</button>
+        <button class="btn btn-ghost" style="padding:10px 14px;" onclick="hideForgot()">ပိတ်</button>
+      </div>
+    </div>
     <div class="auth-switch" id="authSwitch">အကောင့်ရှိပြီးသားလား? <a onclick="switchAuthMode('signin')">ဝင်ရောက်မည်</a></div>
-    <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate);">✕</button>
+    <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--fg2);">✕</button>
   </div>
 </div>
 
 <script>
-function toggleMenu(){var btn=document.getElementById('burgerBtn'),menu=document.getElementById('fullMenu');menu.classList.contains('open')?closeMenu():(btn.classList.add('open'),menu.classList.add('open'),document.body.style.overflow='hidden');}
-function closeMenu(){document.getElementById('burgerBtn').classList.remove('open');document.getElementById('fullMenu').classList.remove('open');var dm=document.getElementById('donateModal');if(!dm||!dm.classList.contains('open'))document.body.style.overflow='';}
-var _pages=['home','write','library','about','contact','support'];
-function showPage(id){if(typeof closeDonateModal==='function')closeDonateModal();_pages.forEach(function(p){var el=document.getElementById('page-'+p);if(!el)return;if(p===id){el.style.display=p==='home'?'flex':'block';el.classList.add('active');}else{el.style.display='none';el.classList.remove('active');}});var sc=document.getElementById('page-home-showcase');if(sc)sc.style.display=id==='home'?'':'none';window.scrollTo(0,0);if(id==='write')window.location.href='/write';}
+/* ── THEME ── */
 (function(){
-  var INTERVAL=4200;var cards=Array.from(document.querySelectorAll('.fc-card'));var total=cards.length;var current=0;var timer=null;
+  var saved=localStorage.getItem('cp-theme');
+  var theme=saved||'dark';
+  document.documentElement.setAttribute('data-theme',theme);
+  updateThemeBtn(theme);
+})();
+function updateThemeBtn(theme){
+  var btn=document.getElementById('themeBtn');
+  if(btn)btn.textContent=theme==='dark'?'☀️':'🌙';
+}
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme')||'dark';
+  var next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('cp-theme',next);
+  updateThemeBtn(next);
+}
+
+/* ── MENU ── */
+function toggleMenu(){
+  var btn=document.getElementById('burgerBtn'),menu=document.getElementById('fullMenu');
+  menu.classList.contains('open')?closeMenu():(btn.classList.add('open'),menu.classList.add('open'),document.body.style.overflow='hidden');
+}
+function closeMenu(){
+  document.getElementById('burgerBtn').classList.remove('open');
+  document.getElementById('fullMenu').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── FEATURE CAROUSEL ── */
+(function(){
+  var INTERVAL=4200;
+  var cards=Array.from(document.querySelectorAll('.fc-card'));
+  var total=cards.length;var current=0;var timer=null;
   var dotsEl=document.getElementById('fcDots');
-  cards.forEach(function(_,i){var d=document.createElement('button');d.className='fc-dot'+(i===0?' active':'');d.setAttribute('aria-label','Slide '+(i+1));d.onclick=function(){goTo(i);resetTimer();};dotsEl.appendChild(d);});
+  cards.forEach(function(_,i){
+    var d=document.createElement('button');
+    d.className='fc-dot'+(i===0?' active':'');
+    d.setAttribute('aria-label','Slide '+(i+1));
+    d.onclick=function(){goTo(i);resetTimer();};
+    dotsEl.appendChild(d);
+  });
   function updateDots(){document.querySelectorAll('.fc-dot').forEach(function(d,i){d.classList.toggle('active',i===current);});}
   var bar=document.getElementById('fcProgressBar');
   function startProgress(){if(!bar)return;bar.style.transition='none';bar.style.width='0%';setTimeout(function(){bar.style.transition='width '+INTERVAL+'ms linear';bar.style.width='100%';},30);}
-  function goTo(idx){if(idx===current)return;cards[current].classList.remove('active');cards[current].classList.add('exit');var old=current;setTimeout(function(){cards[old].classList.remove('exit');},420);current=idx;cards[current].classList.add('active');updateDots();startProgress();}
+  function goTo(idx){
+    if(idx===current)return;
+    cards[current].classList.remove('active');cards[current].classList.add('exit');
+    var old=current;setTimeout(function(){cards[old].classList.remove('exit');},420);
+    current=idx;cards[current].classList.add('active');updateDots();startProgress();
+  }
   function next(){goTo((current+1)%total);}
   function resetTimer(){clearInterval(timer);timer=setInterval(next,INTERVAL);startProgress();}
   var wrap=document.getElementById('fcWrap');
-  if(wrap){wrap.addEventListener('mouseenter',function(){clearInterval(timer);if(bar){bar.style.transition='none';}});wrap.addEventListener('mouseleave',function(){resetTimer();});var tx=0;wrap.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;clearInterval(timer);},{passive:true});wrap.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)goTo(dx<0?(current+1)%total:(current-1+total)%total);resetTimer();},{passive:true});wrap.addEventListener('click',function(e){var link=cards[current].dataset.link;if(link)window.location.href=link;});}
+  if(wrap){
+    wrap.addEventListener('mouseenter',function(){clearInterval(timer);if(bar)bar.style.transition='none';});
+    wrap.addEventListener('mouseleave',function(){resetTimer();});
+    var tx=0;
+    wrap.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;clearInterval(timer);},{passive:true});
+    wrap.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)goTo(dx<0?(current+1)%total:(current-1+total)%total);resetTimer();},{passive:true});
+    wrap.addEventListener('click',function(){var link=cards[current].dataset.link;if(link)window.location.href=link;});
+  }
   resetTimer();
 })();
-var libActiveCat='all';
-function searchLib(q){var query=q.toLowerCase().trim();document.querySelectorAll('#libGrid .lib-card').forEach(function(c){var ok=(libActiveCat==='all'||c.dataset.cat===libActiveCat)&&(!query||(c.dataset.title||'').toLowerCase().includes(query));c.style.display=ok?'':'none';});showLibEmpty();}
-function filterLib(btn,cat){libActiveCat=cat;document.querySelectorAll('.lib-filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');searchLib((document.getElementById('libSearch')||{}).value||'');}
-function showLibEmpty(){var grid=document.getElementById('libGrid');var ex=grid.querySelector('.lib-empty');if(ex)ex.remove();var vis=Array.from(grid.querySelectorAll('.lib-card')).filter(function(c){return c.style.display!=='none';});if(vis.length===0){var e=document.createElement('div');e.className='lib-empty';e.textContent='ရှာမတွေ့ပါ';grid.appendChild(e);}}
-function openPdf(title,url){document.getElementById('pdfTitle').textContent=title;var body=document.getElementById('pdfBody');body.innerHTML=url?'<iframe src="'+url+'#toolbar=1&navpanes=0" title="'+title+'"></iframe>':'<div class="pdf-placeholder"><span class="big">📄</span><span>'+title+'</span><span>PDF ဖိုင်ကို Admin တင်ပြီးမှ ဖတ်ရှုနိုင်မည်</span></div>';document.getElementById('pdfViewer').classList.add('open');document.body.style.overflow='hidden';}
-function closePdf(){document.getElementById('pdfViewer').classList.remove('open');document.getElementById('pdfBody').innerHTML='';document.body.style.overflow='';}
-function submitContact(e){e.preventDefault();alert('မက်ဆေ့ဂျ် ပို့ပြီးပါပြီ');}
-function submitScript(e){e.preventDefault();alert('ကျေးဇူးတင်ပါသည်! Admin စစ်ဆေးပြီးနောက် Library တွင် ထည့်မည်');e.target.reset();var f=document.getElementById('supportScriptFilename');if(f)f.textContent='';}
-(function(){var zone=document.getElementById('scriptDropzone');var input=document.getElementById('supportScriptFile');if(!zone||!input)return;input.addEventListener('change',function(){var fn=document.getElementById('supportScriptFilename');if(fn)fn.textContent=input.files&&input.files[0]?input.files[0].name:'';});var depth=0;zone.addEventListener('dragenter',function(e){e.preventDefault();depth++;zone.style.borderColor='var(--red)';});zone.addEventListener('dragover',function(e){e.preventDefault();});zone.addEventListener('dragleave',function(e){e.preventDefault();if(--depth<=0){depth=0;zone.style.borderColor='';}});zone.addEventListener('drop',function(e){e.preventDefault();depth=0;zone.style.borderColor='';var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f){var fn=document.getElementById('supportScriptFilename');if(fn)fn.textContent=f.name;}});})();
-var donateFlow={amount:0,label:'',fromCustom:false};
-function donateModalOpen(){var m=document.getElementById('donateModal');m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
-function closeDonateModal(){var m=document.getElementById('donateModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');['donateStepCustom','donateStepMethod','donateStepQr'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});var img=document.getElementById('donateQrImg');if(img)img.removeAttribute('src');donateFlow={amount:0,label:'',fromCustom:false};var menu=document.getElementById('fullMenu');if(!menu||!menu.classList.contains('open'))document.body.style.overflow='';}
-function openDonateCoffee(amt,label){donateFlow.amount=amt;donateFlow.label=label;donateFlow.fromCustom=false;document.getElementById('donateStepCustom').style.display='none';document.getElementById('donateStepQr').style.display='none';document.getElementById('donateStepMethod').style.display='block';document.getElementById('donateMethodTitle').textContent=label+' — ငွေပေးချေမှု ရွေးပါ';donateModalOpen();}
-function openDonateCoffeeCustom(){donateFlow.fromCustom=true;document.getElementById('donateStepMethod').style.display='none';document.getElementById('donateStepQr').style.display='none';document.getElementById('donateStepCustom').style.display='block';var inp=document.getElementById('donateCustomAmount');if(inp)inp.value='';donateModalOpen();}
-function donateCustomContinue(){var n=parseInt(document.getElementById('donateCustomAmount').value,10);if(!n||n<1){alert('ကျပ်ပမာဏကို မှန်ကန်စွာ ထည့်ပါ');return;}donateFlow.amount=n;donateFlow.label=n.toLocaleString('en-US')+' ကျပ်';document.getElementById('donateStepCustom').style.display='none';document.getElementById('donateStepMethod').style.display='block';document.getElementById('donateMethodTitle').textContent=donateFlow.label+' — ငွေပေးချေမှု ရွေးပါ';}
-function donateBackFromMethod(){if(donateFlow.fromCustom){document.getElementById('donateStepMethod').style.display='none';document.getElementById('donateStepCustom').style.display='block';}else closeDonateModal();}
-function donatePickPay(method){var url='https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=2&data='+encodeURIComponent('CinePodma|MMK:'+donateFlow.amount+'|'+method);document.getElementById('donateQrImg').src=url;document.getElementById('donateQrMeta').textContent=method+' · '+donateFlow.label;document.getElementById('donateStepMethod').style.display='none';document.getElementById('donateStepQr').style.display='block';}
-function donateBackToMethod(){document.getElementById('donateStepQr').style.display='none';document.getElementById('donateStepMethod').style.display='block';}
+
+/* ── AUTH MODAL ── */
 window._authMode='signup';
-function openAuthModal(mode){window._authMode=mode||'signup';switchAuthMode(window._authMode);document.getElementById('authEmail').value='';document.getElementById('authPassword').value='';document.getElementById('authError').textContent='';document.getElementById('authModal').classList.add('open');}
+function openAuthModal(mode){
+  window._authMode=mode||'signup';
+  switchAuthMode(window._authMode);
+  document.getElementById('authEmail').value='';
+  document.getElementById('authPassword').value='';
+  document.getElementById('authError').textContent='';
+  document.getElementById('authModal').classList.add('open');
+}
 function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
-function switchAuthMode(mode){window._authMode=mode;var isSU=mode==='signup';document.getElementById('authModalTitle').textContent=isSU?'Sign Up':'Sign In';document.getElementById('authModalSub').textContent=isSU?'CinePodma တွင် အကောင့်ဖွင့်ပါ':'CinePodma သို့ ဝင်ရောက်ပါ';document.getElementById('authSignupFields').style.display=isSU?'':'none';document.getElementById('authSubmitBtn').textContent=isSU?'အကောင့်ဖွင့်မည်':'ဝင်ရောက်မည်';document.getElementById('authSwitch').innerHTML=isSU?'အကောင့်ရှိပြီးသားလား? <a onclick="switchAuthMode(\'signin\')">ဝင်ရောက်မည်</a>':'အကောင့်မရှိသေးဘူးလား? <a onclick="switchAuthMode(\'signup\')">အကောင့်ဖွင့်မည်</a>';var fw=document.getElementById('forgotWrap');if(fw)fw.style.display=isSU?'none':'block';hideForgot();document.getElementById('authError').textContent='';var s=document.getElementById('authSuccess');if(s){s.style.display='none';s.textContent='';}}
-function showForgot(){document.getElementById('forgotForm').style.display='block';document.getElementById('forgotWrap').style.display='none';var fe=document.getElementById('forgotEmail');if(fe){fe.value=document.getElementById('authEmail').value||'';fe.focus();}}
-function hideForgot(){var ff=document.getElementById('forgotForm');if(ff)ff.style.display='none';var fw=document.getElementById('forgotWrap');if(fw&&window._authMode==='signin')fw.style.display='block';}
-async function submitForgot(){var email=document.getElementById('forgotEmail').value.trim();var err=document.getElementById('authError');var succ=document.getElementById('authSuccess');err.textContent='';if(!email){err.textContent='Email ထည့်ပါ';return;}try{var m=await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js');await m.sendPasswordResetEmail(window._auth,email);hideForgot();succ.textContent='✅ Reset link ပို့ပြီး — Email စစ်ပါ';succ.style.display='block';}catch(e){var msgs={'auth/user-not-found':'Email မတွေ့ပါ','auth/invalid-email':'Email မမှန်ပါ'};err.textContent=msgs[e.code]||e.message;}}
+function switchAuthMode(mode){
+  window._authMode=mode;var isSU=mode==='signup';
+  document.getElementById('authModalTitle').textContent=isSU?'Sign Up':'Sign In';
+  document.getElementById('authModalSub').textContent=isSU?'CinePodma တွင် အကောင့်ဖွင့်ပါ':'CinePodma သို့ ဝင်ရောက်ပါ';
+  document.getElementById('authSignupFields').style.display=isSU?'':'none';
+  document.getElementById('authSubmitBtn').textContent=isSU?'အကောင့်ဖွင့်မည်':'ဝင်ရောက်မည်';
+  document.getElementById('authSwitch').innerHTML=isSU?'အကောင့်ရှိပြီးသားလား? <a onclick="switchAuthMode(\'signin\')">ဝင်ရောက်မည်</a>':'အကောင့်မရှိသေးဘူးလား? <a onclick="switchAuthMode(\'signup\')">အကောင့်ဖွင့်မည်</a>';
+  var fw=document.getElementById('forgotWrap');if(fw)fw.style.display=isSU?'none':'block';
+  hideForgot();
+  document.getElementById('authError').textContent='';
+  var s=document.getElementById('authSuccess');if(s){s.style.display='none';s.textContent='';}
+}
+function showForgot(){
+  document.getElementById('forgotForm').style.display='block';
+  document.getElementById('forgotWrap').style.display='none';
+  var fe=document.getElementById('forgotEmail');
+  if(fe){fe.value=document.getElementById('authEmail').value||'';fe.focus();}
+}
+function hideForgot(){
+  var ff=document.getElementById('forgotForm');if(ff)ff.style.display='none';
+  var fw=document.getElementById('forgotWrap');if(fw&&window._authMode==='signin')fw.style.display='block';
+}
+async function submitForgot(){
+  var email=document.getElementById('forgotEmail').value.trim();
+  var err=document.getElementById('authError');var succ=document.getElementById('authSuccess');
+  err.textContent='';
+  if(!email){err.textContent='Email ထည့်ပါ';return;}
+  try{
+    var m=await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js');
+    await m.sendPasswordResetEmail(window._auth,email);
+    hideForgot();succ.textContent='✅ Reset link ပို့ပြီး — Email စစ်ပါ';succ.style.display='block';
+  }catch(e){
+    var msgs={'auth/user-not-found':'Email မတွေ့ပါ','auth/invalid-email':'Email မမှန်ပါ'};
+    err.textContent=msgs[e.code]||e.message;
+  }
+}
 document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeAuthModal();});
-document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var pv=document.getElementById('pdfViewer');if(pv&&pv.classList.contains('open')){closePdf();return;}var dm=document.getElementById('donateModal');if(dm&&dm.classList.contains('open')){closeDonateModal();return;}var am=document.getElementById('authModal');if(am&&am.classList.contains('open')){closeAuthModal();return;}closeMenu();});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  var am=document.getElementById('authModal');
+  if(am&&am.classList.contains('open')){closeAuthModal();return;}
+  closeMenu();
+});
 </script>
 
-<!-- FIREBASE — iOS PWA auth fix applied -->
+<!-- FIREBASE -->
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,onAuthStateChanged,updateProfile}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
@@ -454,7 +472,6 @@ const db=getFirestore(app);
 const provider=new GoogleAuthProvider();
 window._auth=auth;window._db=db;
 
-/* iOS PWA standalone redirect result */
 getRedirectResult(auth).then(function(result){
   if(result&&result.user){
     closeAuthModal();
@@ -478,7 +495,7 @@ onAuthStateChanged(auth,async function(user){
     if(!snap.exists())await setDoc(doc(db,'users',user.uid),{name:user.displayName||'',email:user.email,username:'@'+user.email.split('@')[0],bio:'',avatar:user.photoURL||'',created:new Date().toISOString()});
   }else{
     area.innerHTML='';
-    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မည်</a><button class="btn btn-outline-red" onclick="openAuthModal(\'signup\')">' + 'အကောင့်ဖွင့်မည်</button><button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်ဝင်မည်</button>';
+    if(heroRow)heroRow.innerHTML='<a class="btn btn-red" href="/write">✍ ဇာတ်လမ်းရေးမည်</a><a class="btn btn-lib" href="/library">📚 စာဖတ်မည်</a><button class="btn btn-outline-red" onclick="openAuthModal(\'signup\')">အကောင့်ဖွင့်မည်</button><button class="btn btn-ghost" onclick="openAuthModal(\'signin\')">အကောင့်ဝင်မည်</button>';
     if(guestNote)guestNote.style.display='';
   }
 });
