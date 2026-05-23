@@ -13,24 +13,27 @@
   --border:#E5E7EB;--card:#F5F5F5;--red:#DC2626;
   --font-en:'Special Elite','Courier New',monospace;
   --font-my:'Noto Sans Myanmar',sans-serif;
+  --max-w:900px;
 }
-body.dark {--bg:#1C1C1E;--fg:#F0EDE8;--fg2:#AAA;--fg3:#666;--border:#333;--card:#2A2A2A;}
-body.warm {--bg:#FAF3E0;--fg:#2C1810;--fg2:#7A5C3A;--fg3:#A08060;--border:#E2C88A;--card:#F0E4C0;}
+body.dark{--bg:#1C1C1E;--fg:#F0EDE8;--fg2:#AAA;--fg3:#666;--border:#333;--card:#2A2A2A;}
+body.warm{--bg:#FAF3E0;--fg:#2C1810;--fg2:#7A5C3A;--fg3:#A08060;--border:#E2C88A;--card:#F0E4C0;}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
 body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;transition:background .2s,color .2s;}
 
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:8px;background:var(--bg);border-bottom:1px solid var(--border);transition:background .2s,border-color .2s;}
+/* NAV — max-width like home */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:46px;background:var(--bg);border-bottom:1px solid var(--border);transition:background .2s,border-color .2s;display:flex;align-items:center;justify-content:center;}
+.nav-inner{width:100%;max-width:var(--max-w);margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:8px;}
 .brand{font-family:var(--font-en);font-size:12px;color:var(--fg);text-decoration:none;line-height:1.3;flex-shrink:0;}
 .brand span{display:block;color:var(--fg3);font-size:9px;letter-spacing:1px;}
 .nav-title{font-size:13px;font-weight:600;color:var(--fg);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px;line-height:1.4;}
 .back-btn{padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--fg2);cursor:pointer;text-decoration:none;white-space:nowrap;transition:all .15s;flex-shrink:0;line-height:1.6;}
 .back-btn:hover{background:var(--card);}
 
-/* SETTINGS BAR */
-.sbar{position:fixed;top:46px;left:0;right:0;z-index:199;height:40px;display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--bg);border-bottom:1px solid var(--border);transition:background .2s,border-color .2s;overflow:hidden;}
+/* SETTINGS BAR — max-width */
+.sbar{position:fixed;top:46px;left:0;right:0;z-index:199;height:40px;background:var(--bg);border-bottom:1px solid var(--border);transition:background .2s,border-color .2s;display:flex;align-items:center;justify-content:center;}
+.sbar-inner{width:100%;max-width:var(--max-w);margin:0 auto;padding:0 14px;display:flex;align-items:center;gap:8px;overflow:hidden;}
 .sb-av{width:24px;height:24px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;overflow:hidden;flex-shrink:0;text-decoration:none;}
 .sb-av img{width:100%;height:100%;object-fit:cover;}
 .sb-name{font-size:11px;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px;line-height:1.4;flex-shrink:0;}
@@ -47,156 +50,72 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 .fs-btn:hover{background:var(--card);}
 .fs-num{font-family:var(--font-en);font-size:10px;color:var(--fg2);min-width:20px;text-align:center;}
 
-/* READER CONTAINER */
-.reader{
-  position:fixed;
-  top:86px; /* nav(46) + sbar(40) */
-  left:0;right:0;bottom:0;
-  overflow:hidden;
-  background:var(--bg);
-  transition:background .2s;
-}
+/* READER */
+.reader{position:fixed;top:86px;left:0;right:0;bottom:0;overflow:hidden;background:var(--bg);transition:background .2s;}
 
-/* SLIDE VIEWPORT — clips to reader, no scroll */
-.slide-viewport{
-  position:absolute;top:0;left:0;right:0;bottom:0;
-  overflow:hidden;
-}
+/* SLIDE VIEWPORT */
+.slide-viewport{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;}
 
-/* SLIDE TRACK — holds all slides side by side */
-.slide-track{
-  position:absolute;top:0;left:0;bottom:0;
-  display:flex;
-  transition:transform .32s cubic-bezier(.4,0,.2,1);
-}
+/* SLIDE TRACK */
+.slide-track{position:absolute;top:0;left:0;bottom:0;display:flex;transition:transform .32s cubic-bezier(.4,0,.2,1);}
 
-/* Each SLIDE — exactly reader width, full height, internally scrollable */
-.slide{
-  flex-shrink:0;
-  position:relative;
-  overflow-y:auto;
-  overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-}
+/* SLIDE — centered content */
+.slide{flex-shrink:0;position:relative;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;align-items:center;}
 
-/* BOTTOM BAR — page number left, clap count right */
-.bottom-bar{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  height:36px;
-  display:flex;align-items:center;
-  padding:0 16px;
-  pointer-events:none;
-  z-index:195;
-}
-.pg-ind{
-  font-family:var(--font-en);font-size:10px;
-  color:var(--fg3);letter-spacing:.5px;
-  pointer-events:none;
-  flex:1;
-}
-.pg-ind.tappable{
-  pointer-events:auto;
-  cursor:pointer;
-}
+/* Centered content wrapper inside slide */
+.slide-content{width:100%;max-width:680px;padding:0;}
+
+/* BOTTOM BAR */
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:36px;display:flex;align-items:center;padding:0 16px;pointer-events:none;z-index:195;}
+.pg-ind{font-family:var(--font-en);font-size:10px;color:var(--fg3);letter-spacing:.5px;pointer-events:none;flex:1;}
+.pg-ind.tappable{pointer-events:auto;cursor:pointer;}
 .pg-ind.tappable:active{opacity:.6;}
-.clap-count{
-  font-family:var(--font-en);font-size:10px;
-  color:var(--fg3);letter-spacing:.5px;
-  display:none;align-items:center;gap:4px;
-  pointer-events:none;
-}
+.clap-count{font-family:var(--font-en);font-size:10px;color:var(--fg3);letter-spacing:.5px;display:none;align-items:center;gap:4px;pointer-events:none;}
 .clap-count.on{display:flex;}
 
-/* TOC BOTTOM SHEET */
-.toc-overlay{
-  display:none;position:fixed;inset:0;z-index:800;
-  background:rgba(0,0,0,.45);
-}
+/* TOC */
+.toc-overlay{display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.45);}
 .toc-overlay.on{display:block;}
-.toc-sheet{
-  position:fixed;bottom:0;left:0;right:0;z-index:801;
-  background:var(--bg);border-radius:20px 20px 0 0;
-  max-height:60vh;display:flex;flex-direction:column;
-  transform:translateY(100%);
-  transition:transform .32s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 -4px 24px rgba(0,0,0,.15);
-}
+.toc-sheet{position:fixed;bottom:0;left:0;right:0;z-index:801;background:var(--bg);border-radius:20px 20px 0 0;max-height:60vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 24px rgba(0,0,0,.15);}
 .toc-sheet.on{transform:translateY(0);}
-.toc-handle{
-  width:36px;height:4px;border-radius:2px;
-  background:var(--border);margin:12px auto 4px;flex-shrink:0;
-}
-.toc-title{
-  font-size:11px;font-weight:600;color:var(--fg3);
-  text-align:center;letter-spacing:.5px;
-  padding:4px 0 12px;flex-shrink:0;
-  font-family:var(--font-en);text-transform:uppercase;
-}
-.toc-list{
-  flex:1;overflow-y:auto;padding:0 0 32px;
-  scrollbar-width:thin;
-}
-.toc-item{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 20px;cursor:pointer;
-  border:none;background:transparent;width:100%;text-align:left;
-  transition:background .1s;
-}
+.toc-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 4px;flex-shrink:0;}
+.toc-title{font-size:11px;font-weight:600;color:var(--fg3);text-align:center;letter-spacing:.5px;padding:4px 0 12px;flex-shrink:0;font-family:var(--font-en);text-transform:uppercase;}
+.toc-list{flex:1;overflow-y:auto;padding:0 0 32px;scrollbar-width:thin;}
+.toc-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;transition:background .1s;}
 .toc-item:hover,.toc-item:active{background:var(--card);}
 .toc-item.h2{padding-left:36px;}
-.toc-num{
-  font-family:var(--font-en);font-size:10px;
-  color:var(--fg3);min-width:32px;flex-shrink:0;
-}
+.toc-num{font-family:var(--font-en);font-size:10px;color:var(--fg3);min-width:32px;flex-shrink:0;}
 .toc-name{font-size:14px;color:var(--fg);line-height:1.6;flex:1;}
 
 /* COVER slide */
-.cover-slide-inner{
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  min-height:100%;
-  padding:32px 28px;
-  text-align:center;
-}
+.cover-slide-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 28px;text-align:center;width:100%;max-width:680px;}
 .cover-title{font-size:22px;font-weight:700;color:var(--fg);line-height:1.8;margin-bottom:16px;}
 .cover-hr{width:40px;height:1px;background:var(--fg);margin:0 auto 16px;}
 .cover-by{font-family:var(--font-en);font-size:10px;color:var(--fg3);letter-spacing:1px;margin-bottom:6px;}
 .cover-auth{font-size:15px;font-weight:600;color:var(--fg);line-height:1.8;}
 .cover-draft{font-size:11px;color:var(--fg3);margin-top:24px;font-family:var(--font-en);letter-spacing:.5px;}
 
-/* SECTION slide (logline / synopsis / treatment) */
-.sec-slide-inner{padding:24px 22px 40px;}
-.sec-lbl{
-  font-family:var(--font-en);font-size:9px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--fg3);margin-bottom:14px;
-  display:flex;align-items:center;gap:8px;
-}
+/* SECTION slide */
+.sec-slide-inner{padding:24px 22px 40px;width:100%;max-width:680px;}
+.sec-lbl{font-family:var(--font-en);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--fg3);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
-.sec-txt{font-size:15px;line-height:2.1;color:var(--fg);white-space:pre-wrap;word-break:break-word;}
+/* sec-txt font-size controlled by JS via fontSize var */
+.sec-txt{line-height:2.1;color:var(--fg);white-space:pre-wrap;word-break:break-word;}
 
 /* SCREENPLAY slide */
-.sp-slide-inner{padding:20px 18px 48px;font-family:'Courier New',Courier,monospace;}
-.sp-pg-label{
-  font-family:'Courier New',Courier,monospace;
-  font-size:9px;color:var(--fg3);
-  text-align:right;margin-bottom:12px;letter-spacing:.5px;
-}
+.sp-slide-inner{padding:20px 18px 48px;font-family:'Courier New',Courier,monospace;width:100%;max-width:680px;}
+.sp-pg-label{font-family:'Courier New',Courier,monospace;font-size:9px;color:var(--fg3);text-align:right;margin-bottom:12px;letter-spacing:.5px;}
+.sp-scene{font-weight:bold;text-transform:uppercase;margin-top:14px;margin-bottom:2px;color:var(--fg);line-height:1.8;word-break:break-word;}
+.sp-action{line-height:1.9;color:var(--fg);margin-bottom:2px;word-break:break-word;}
+.sp-char{font-weight:bold;text-transform:uppercase;padding-left:32%;margin-top:10px;color:var(--fg);line-height:1.8;word-break:break-word;}
+.sp-paren{padding-left:20%;padding-right:20%;color:var(--fg2);line-height:1.8;word-break:break-word;}
+.sp-dial{padding-left:14%;padding-right:8%;color:var(--fg);line-height:1.9;margin-bottom:2px;word-break:break-word;}
+.sp-trans{font-weight:bold;text-transform:uppercase;text-align:right;margin-top:10px;color:var(--fg2);line-height:1.8;}
 
-/* Screenplay element types */
-.sp-scene {font-size:13px;font-weight:bold;text-transform:uppercase;margin-top:14px;margin-bottom:2px;color:var(--fg);line-height:1.8;word-break:break-word;}
-.sp-action{font-size:13px;line-height:1.9;color:var(--fg);margin-bottom:2px;word-break:break-word;}
-.sp-char  {font-size:13px;font-weight:bold;text-transform:uppercase;padding-left:32%;margin-top:10px;color:var(--fg);line-height:1.8;word-break:break-word;}
-.sp-paren {font-size:12px;padding-left:20%;padding-right:20%;color:var(--fg2);line-height:1.8;word-break:break-word;}
-.sp-dial  {font-size:13px;padding-left:14%;padding-right:8%;color:var(--fg);line-height:1.9;margin-bottom:2px;word-break:break-word;}
-.sp-trans {font-size:12px;font-weight:bold;text-transform:uppercase;text-align:right;margin-top:10px;color:var(--fg2);line-height:1.8;}
-
-/* CLAP FAB — default grey, red only when clapped */
-/* CLAP COUNT (display only, no button) */
 .clap-icon{font-size:12px;line-height:1;}
 .clap-n{font-size:10px;font-family:var(--font-en);line-height:1;}
 
-/* LOADING / NOT FOUND */
+/* LOADING */
 .loading{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--fg2);font-size:14px;}
 .spinner{width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -206,11 +125,9 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 .nf-sub{font-size:13px;color:var(--fg2);line-height:1.8;}
 .btn-h{display:inline-flex;padding:10px 20px;border-radius:10px;background:var(--red);color:#fff;text-decoration:none;font-size:13px;font-weight:600;}
 
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);background:rgba(0,0,0,.85);color:#fff;font-family:var(--font-my);font-size:12px;line-height:1.8;padding:8px 16px;border-radius:10px;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
 .toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
 
-/* tap zones — invisible, left/right 35% of screen */
 .tap-prev,.tap-next{position:fixed;top:86px;bottom:0;z-index:100;width:30%;cursor:pointer;}
 .tap-prev{left:0;}
 .tap-next{right:0;}
@@ -224,41 +141,40 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 </head>
 <body class="light">
 
-<!-- NAV -->
 <nav class="nav" id="topNav">
-  <a class="brand" href="/home">cine<br><span>podma</span></a>
-  <div class="nav-title" id="navTitle">ဖွင့်နေသည်...</div>
-  <a class="back-btn" href="javascript:history.back()">← ပြန်</a>
+  <div class="nav-inner">
+    <a class="brand" href="/home">cine<br><span>podma</span></a>
+    <div class="nav-title" id="navTitle">ဖွင့်နေသည်...</div>
+    <a class="back-btn" href="javascript:history.back()">← ပြန်</a>
+  </div>
 </nav>
 
-<!-- SETTINGS BAR -->
 <div class="sbar" id="sbar">
-  <a class="sb-av" id="sbAv" href="/home">👤</a>
-  <span class="sb-name" id="sbName">—</span>
-  <span class="sb-badge" id="sbGenre">—</span>
-  <div class="sb-space"></div>
-  <div class="sb-sep"></div>
-  <button class="th-btn tl act" id="thL" onclick="setTheme('light')"></button>
-  <button class="th-btn td"     id="thD" onclick="setTheme('dark')"></button>
-  <button class="th-btn tw"     id="thW" onclick="setTheme('warm')"></button>
-  <div class="sb-sep"></div>
-  <div class="fs-wrap">
-    <button class="fs-btn" onclick="chFS(-1)">−</button>
-    <span class="fs-num" id="fsNum">14</span>
-    <button class="fs-btn" onclick="chFS(1)">+</button>
+  <div class="sbar-inner">
+    <a class="sb-av" id="sbAv" href="/home">👤</a>
+    <span class="sb-name" id="sbName">—</span>
+    <span class="sb-badge" id="sbGenre">—</span>
+    <div class="sb-space"></div>
+    <div class="sb-sep"></div>
+    <button class="th-btn tl act" id="thL" onclick="setTheme('light')"></button>
+    <button class="th-btn td"     id="thD" onclick="setTheme('dark')"></button>
+    <button class="th-btn tw"     id="thW" onclick="setTheme('warm')"></button>
+    <div class="sb-sep"></div>
+    <div class="fs-wrap">
+      <button class="fs-btn" onclick="chFS(-1)">−</button>
+      <span class="fs-num" id="fsNum">15</span>
+      <button class="fs-btn" onclick="chFS(1)">+</button>
+    </div>
   </div>
 </div>
 
-<!-- READER -->
 <div class="reader" id="reader">
   <div class="loading"><div class="spinner"></div><span>ဖွင့်နေသည်...</span></div>
 </div>
 
-<!-- TAP ZONES -->
 <div class="tap-prev" id="tapPrev" onclick="prevSlide()"></div>
 <div class="tap-next" id="tapNext" onclick="nextSlide()"></div>
 
-<!-- BOTTOM BAR: page indicator left, clap count right -->
 <div class="bottom-bar" id="bottomBar">
   <div class="pg-ind" id="pgInd"></div>
   <div class="clap-count" id="clapCount">
@@ -269,7 +185,6 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 
 <div class="toast" id="toast"></div>
 
-<!-- TOC BOTTOM SHEET (story only) -->
 <div class="toc-overlay" id="tocOverlay" onclick="closeTOC()"></div>
 <div class="toc-sheet" id="tocSheet">
   <div class="toc-handle"></div>
@@ -278,622 +193,276 @@ body{font-family:var(--font-my);background:var(--bg);color:var(--fg);-webkit-fon
 </div>
 
 <script>
-/* ===== THEME / FONT ===== */
-var fontSize = 14;
+var fontSize = 15;
 
-function setTheme(t) {
-  document.body.className = t;
-  ['L','D','W'].forEach(function(x,i){
-    document.getElementById('th'+x).classList.toggle('act', ['light','dark','warm'][i]===t);
-  });
-  var bg = getBg();
-  document.getElementById('topNav').style.background = bg;
-  document.getElementById('sbar').style.background   = bg;
-  /* ① Update browser bar color — remove+readd for iOS Safari live update */
-  var oldMeta = document.querySelector('meta[name="theme-color"]');
-  if (oldMeta) oldMeta.parentNode.removeChild(oldMeta);
-  var meta = document.createElement('meta');
-  meta.name = 'theme-color';
-  meta.content = bg;
-  document.head.appendChild(meta);
-  /* Update TOC sheet background to match theme */
-  var tocSheet = document.getElementById('tocSheet');
-  if (tocSheet) tocSheet.style.background = bg;
-  /* Update bottom bar background */
-  var bottomBar = document.getElementById('bottomBar');
-  if (bottomBar) bottomBar.style.background = bg;
-  try { localStorage.setItem('cp_theme', t); } catch(e) {}
-  if (window._onSettingChange) window._onSettingChange();
+function setTheme(t){
+  document.body.className=t;
+  ['L','D','W'].forEach(function(x,i){document.getElementById('th'+x).classList.toggle('act',['light','dark','warm'][i]===t);});
+  var bg=getBg();
+  ['topNav','sbar'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=bg;});
+  var oldMeta=document.querySelector('meta[name="theme-color"]');
+  if(oldMeta)oldMeta.parentNode.removeChild(oldMeta);
+  var meta=document.createElement('meta');meta.name='theme-color';meta.content=bg;document.head.appendChild(meta);
+  var ts=document.getElementById('tocSheet');if(ts)ts.style.background=bg;
+  var bb=document.getElementById('bottomBar');if(bb)bb.style.background=bg;
+  try{localStorage.setItem('cp_theme',t);}catch(e){}
+  if(window._onSettingChange)window._onSettingChange();
 }
 
-function chFS(d) {
-  fontSize = Math.min(20, Math.max(11, fontSize + d));
-  document.getElementById('fsNum').textContent = fontSize;
-  try { localStorage.setItem('cp_fs', fontSize); } catch(e) {}
-  if (window._onSettingChange) window._onSettingChange();
+function chFS(d){
+  fontSize=Math.min(22,Math.max(11,fontSize+d));
+  document.getElementById('fsNum').textContent=fontSize;
+  try{localStorage.setItem('cp_fs',fontSize);}catch(e){}
+  if(window._onSettingChange)window._onSettingChange();
 }
 
-function getFg() {
-  var t = document.body.className;
-  if (t==='dark') return '#F0EDE8';
-  if (t==='warm') return '#2C1810';
-  return '#111111';
-}
-function getBg() {
-  var t = document.body.className;
-  if (t==='dark') return '#1C1C1E';
-  if (t==='warm') return '#FAF3E0';
-  return '#FFFFFF';
-}
+function getFg(){var t=document.body.className;return t==='dark'?'#F0EDE8':t==='warm'?'#2C1810':'#111111';}
+function getBg(){var t=document.body.className;return t==='dark'?'#1C1C1E':t==='warm'?'#FAF3E0':'#FFFFFF';}
 
-/* restore settings */
-try {
-  var _t = localStorage.getItem('cp_theme') || 'light';
-  setTheme(_t); /* also sets theme-color meta */
-  var _f = parseInt(localStorage.getItem('cp_fs')) || 14;
-  fontSize = _f;
-  document.getElementById('fsNum').textContent = _f;
-} catch(e) {}
+try{
+  var _t=localStorage.getItem('cp_theme')||'light';setTheme(_t);
+  var _f=parseInt(localStorage.getItem('cp_fs'))||15;fontSize=_f;document.getElementById('fsNum').textContent=_f;
+}catch(e){}
 
-function toast(m) {
-  var t = document.getElementById('toast');
-  t.textContent = m; t.classList.add('on');
-  setTimeout(function(){ t.classList.remove('on'); }, 2500);
-}
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function openTOC(){document.getElementById('tocOverlay').classList.add('on');document.getElementById('tocSheet').classList.add('on');}
+function closeTOC(){document.getElementById('tocOverlay').classList.remove('on');document.getElementById('tocSheet').classList.remove('on');}
 
-function openTOC() {
-  document.getElementById('tocOverlay').classList.add('on');
-  document.getElementById('tocSheet').classList.add('on');
-}
-function closeTOC() {
-  document.getElementById('tocOverlay').classList.remove('on');
-  document.getElementById('tocSheet').classList.remove('on');
+/* SLIDE ENGINE */
+var slides=[],curSlide=0,trackEl=null;
+
+function buildSlideTrack(){
+  var reader=document.getElementById('reader');
+  var W=reader.clientWidth;
+  reader.innerHTML='<div class="slide-viewport" id="svp"><div class="slide-track" id="strack"></div></div>';
+  trackEl=document.getElementById('strack');slides=[];return W;
 }
 
-/* ===== SLIDE ENGINE ===== */
-var slides     = []; /* array of DOM elements (.slide) */
-var curSlide   = 0;
-var trackEl    = null;
-
-function buildSlideTrack() {
-  var reader = document.getElementById('reader');
-  var W = reader.clientWidth;
-
-  reader.innerHTML =
-    '<div class="slide-viewport" id="svp">'+
-      '<div class="slide-track" id="strack"></div>'+
-    '</div>';
-
-  trackEl = document.getElementById('strack');
-  slides  = [];
-  return W;
+function addSlide(innerHtml){
+  var reader=document.getElementById('reader');var W=reader.clientWidth;
+  var s=document.createElement('div');s.className='slide';
+  s.style.width=W+'px';s.style.height='100%';
+  var sw=document.createElement('div');sw.className='slide-content';
+  sw.innerHTML=innerHtml;s.appendChild(sw);
+  trackEl.appendChild(s);slides.push(s);
+  trackEl.style.width=(slides.length*W)+'px';return s;
 }
 
-function addSlide(innerHtml) {
-  var reader = document.getElementById('reader');
-  var W = reader.clientWidth;
-  var s = document.createElement('div');
-  s.className = 'slide';
-  s.style.width  = W + 'px';
-  s.style.height = '100%';
-  s.innerHTML = innerHtml;
-  trackEl.appendChild(s);
-  slides.push(s);
-  /* update track width */
-  trackEl.style.width = (slides.length * W) + 'px';
-  return s;
-}
-
-function goSlide(n, instant) {
-  var reader = document.getElementById('reader');
-  var W = reader.clientWidth;
-  curSlide = Math.max(0, Math.min(n, slides.length - 1));
-  var x = curSlide * W;
-  if (trackEl) {
-    trackEl.style.transition = instant ? 'none' : 'transform .32s cubic-bezier(.4,0,.2,1)';
-    trackEl.style.transform  = 'translateX(' + (-x) + 'px)';
-  }
+function goSlide(n,instant){
+  var reader=document.getElementById('reader');var W=reader.clientWidth;
+  curSlide=Math.max(0,Math.min(n,slides.length-1));
+  var x=curSlide*W;
+  if(trackEl){trackEl.style.transition=instant?'none':'transform .32s cubic-bezier(.4,0,.2,1)';trackEl.style.transform='translateX('+(-x)+'px)';}
   updateInd();
-  try { localStorage.setItem('cprd_sl_' + window._docId, curSlide); } catch(e) {}
+  try{localStorage.setItem('cprd_sl_'+window._docId,curSlide);}catch(e){}
 }
 
-function prevSlide() { goSlide(curSlide - 1); }
-function nextSlide() { goSlide(curSlide + 1); }
+function prevSlide(){goSlide(curSlide-1);}
+function nextSlide(){goSlide(curSlide+1);}
 
-function updateInd() {
-  var ind = document.getElementById('pgInd');
-  if (!ind) return;
-  if (slides.length <= 1) { ind.textContent = ''; return; }
-  ind.textContent = (curSlide + 1) + ' / ' + slides.length;
+function updateInd(){
+  var ind=document.getElementById('pgInd');if(!ind)return;
+  if(slides.length<=1){ind.textContent='';return;}
+  ind.textContent=(curSlide+1)+' / '+slides.length;
 }
 
-/* swipe */
-function initSwipe() {
-  var reader = document.getElementById('reader');
-  var sx = 0, sy = 0, dragging = false;
-  reader.addEventListener('touchstart', function(e){
-    sx = e.touches[0].clientX;
-    sy = e.touches[0].clientY;
-    dragging = false;
-  }, {passive:true});
-  reader.addEventListener('touchmove', function(e){
-    if (Math.abs(e.touches[0].clientX - sx) > 8) dragging = true;
-  }, {passive:true});
-  reader.addEventListener('touchend', function(e){
-    var dx = e.changedTouches[0].clientX - sx;
-    var dy = e.changedTouches[0].clientY - sy;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (dx < 0) nextSlide(); else prevSlide();
-    }
-  }, {passive:true});
-  document.addEventListener('keydown', function(e){
-    if (e.key==='ArrowRight'||e.key==='ArrowDown') nextSlide();
-    if (e.key==='ArrowLeft' ||e.key==='ArrowUp')   prevSlide();
+function initSwipe(){
+  var reader=document.getElementById('reader');var sx=0,sy=0;
+  reader.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  reader.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;var dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){if(dx<0)nextSlide();else prevSlide();}
+  },{passive:true});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();
   });
 }
 </script>
 
 <script type="module">
-import { initializeApp }  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
-import { getAuth, onAuthStateChanged }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
+import{initializeApp}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import{getFirestore,doc,getDoc}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+import{getAuth,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js';
 
-const app = initializeApp({
-  apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-  authDomain:"cinepodma.firebaseapp.com", projectId:"cinepodma",
-  storageBucket:"cinepodma.firebasestorage.app",
-  messagingSenderId:"587916526322",
-  appId:"1:587916526322:web:d00775311fb92fa1c8466b"
-});
-const db   = getFirestore(app);
-const auth = getAuth(app);
+const app=initializeApp({apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",storageBucket:"cinepodma.firebasestorage.app",messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"});
+const db=getFirestore(app);const auth=getAuth(app);
 
-var docId    = new URLSearchParams(window.location.search).get('id');
-window._docId = docId;
-var docData  = null, authorData = {}, currentUser = null, isClapped = false;
+var docId=new URLSearchParams(window.location.search).get('id');
+window._docId=docId;
+var docData=null,authorData={},currentUser=null;
 
-var genreMap = {
-  novel:'ဝတ္ထု', short:'ဝတ္ထုတို', essay:'ဆောင်းပါး', poem:'ကဗျာ',
-  feature:'ဇာတ်ညွှန်း', shortfilm:'ဇာတ်ညွှန်းတို', series:'စီးရီး'
-};
+var genreMap={novel:'ဝတ္ထု',short:'ဝတ္ထုတို',essay:'ဆောင်းပါး',poem:'ကဗျာ',feature:'ဇာတ်ညွှန်း',shortfilm:'ဇာတ်ညွှန်းတို',series:'စီးရီး'};
 
-onAuthStateChanged(auth, function(u){
-  currentUser = u;
-  if (!docId) { showNF('Doc ID မပါပါ'); return; }
-  loadDoc();
-});
+onAuthStateChanged(auth,function(u){currentUser=u;if(!docId){showNF('Doc ID မပါပါ');return;}loadDoc();});
 
-async function loadDoc() {
-  try {
-    var s = await getDoc(doc(db,'docs',docId));
-    if (!s.exists()) { showNF('Doc မတွေ့ပါ'); return; }
-    docData = s.data();
-    var own = currentUser && currentUser.uid === docData.uid;
-    if (docData.privacy !== 'public' && !own) { showNF('🔒 Private — ဖတ်ခွင့် မရပါ'); return; }
-    try { var a = await getDoc(doc(db,'users',docData.uid)); authorData = a.exists() ? a.data() : {}; } catch(e) {}
-    if (currentUser) {
-      try { var c = await getDoc(doc(db,'docClaps',docId,'users',currentUser.uid)); isClapped = c.exists(); } catch(e) {}
-    }
+async function loadDoc(){
+  try{
+    var s=await getDoc(doc(db,'docs',docId));
+    if(!s.exists()){showNF('Doc မတွေ့ပါ');return;}
+    docData=s.data();
+    var own=currentUser&&currentUser.uid===docData.uid;
+    if(docData.privacy!=='public'&&!own){showNF('🔒 Private — ဖတ်ခွင့် မရပါ');return;}
+    try{var a=await getDoc(doc(db,'users',docData.uid));authorData=a.exists()?a.data():{};}catch(e){}
     initUI();
-    if (docData.type === 'story') initStory();
+    if(docData.type==='story')initStory();
     else initScreenplay();
-  } catch(e) { showNF('ဖတ်မရပါ — ' + e.message); }
+  }catch(e){showNF('ဖတ်မရပါ — '+e.message);}
 }
 
-/* ===== UI ===== */
-function initUI() {
-  document.title = (docData.title||'Untitled') + ' — CinePodma';
-  document.getElementById('navTitle').textContent = docData.title || 'Untitled';
-  var gl = docData.genreLabel || genreMap[docData.genre] || (docData.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
-  document.getElementById('sbGenre').textContent = gl;
-  var av = document.getElementById('sbAv');
-  av.href = '/profile?uid=' + (docData.uid||'');
-  if (authorData.avatar) av.innerHTML = '<img src="'+esc(authorData.avatar)+'" alt="">';
-  document.getElementById('sbName').textContent = authorData.name || docData.authorName || '—';
-  /* Show clap count (display only — no button) */
-  var cc = document.getElementById('clapCount');
-  var cn = document.getElementById('clapN');
-  if (cc) cc.classList.add('on');
-  if (cn) cn.textContent = docData.clapCount || 0;
+function initUI(){
+  document.title=(docData.title||'Untitled')+' — CinePodma';
+  document.getElementById('navTitle').textContent=docData.title||'Untitled';
+  var gl=docData.genreLabel||genreMap[docData.genre]||(docData.type==='story'?'ဝတ္ထု':'ဇာတ်ညွှန်း');
+  document.getElementById('sbGenre').textContent=gl;
+  var av=document.getElementById('sbAv');
+  av.href='/profile?uid='+(docData.uid||'');
+  if(authorData.avatar)av.innerHTML='<img src="'+esc(authorData.avatar)+'" alt="">';
+  document.getElementById('sbName').textContent=authorData.name||docData.authorName||'—';
+  var cc=document.getElementById('clapCount');var cn=document.getElementById('clapN');
+  if(cc)cc.classList.add('on');if(cn)cn.textContent=docData.clapCount||0;
 }
 
-/* ===== STORY (epub column pagination) ===== */
-function initStory() {
-  var div = document.createElement('div');
-  div.innerHTML = docData.story || '<p>Content မရှိပါ</p>';
-
-  /* Collect block-level nodes */
-  var blocks = [];
-  function walk(node) {
-    if (node.nodeType === 3 && node.textContent.trim()) {
-      blocks.push('<p>' + esc(node.textContent.trim()) + '</p>');
-    } else if (node.nodeType === 1) {
-      var tag = node.tagName.toLowerCase();
-      if (['p','h1','h2','h3','blockquote','div'].includes(tag)) {
-        blocks.push(node.outerHTML || '<p>' + esc(node.textContent) + '</p>');
-      } else { node.childNodes.forEach(walk); }
+/* STORY */
+function initStory(){
+  var div=document.createElement('div');div.innerHTML=docData.story||'<p>Content မရှိပါ</p>';
+  var blocks=[];
+  function walk(node){
+    if(node.nodeType===3&&node.textContent.trim()){blocks.push('<p>'+esc(node.textContent.trim())+'</p>');}
+    else if(node.nodeType===1){
+      var tag=node.tagName.toLowerCase();
+      if(['p','h1','h2','h3','blockquote','div'].includes(tag)){blocks.push(node.outerHTML||'<p>'+esc(node.textContent)+'</p>');}
+      else{node.childNodes.forEach(walk);}
     }
   }
   div.childNodes.forEach(walk);
-  if (!blocks.length) blocks = ['<p>Content မရှိပါ</p>'];
+  if(!blocks.length)blocks=['<p>Content မရှိပါ</p>'];
+  var allParas=blocks.map(function(h){return h.replace(/\bcolor\s*:[^;"}]+(;|(?="))/gi,'');});
+  var headings=[],totalPg=1,curPg=0,sliderEl=null,indEl=null,overlayEl=null,listenersAttached=false;
 
-  /* Strip only color, keep text-align and other styles */
-  var allParas = blocks.map(function(h){
-    return h.replace(/\bcolor\s*:[^;"}]+(;|(?="))/gi, '');
-  });
-
-  /* Track headings for TOC: {text, pageIdx, tag} */
-  var headings = [];
-
-  /* State shared between build() calls */
-  var totalPg = 1;
-  var curPg   = 0;
-  var sliderEl = null;
-  var indEl    = null;
-
-  /* Single set of event listeners — attached once to fixed overlay */
-  var overlayEl = null;
-  var listenersAttached = false;
-
-  function goStoryPage(dir) {
-    curPg = Math.max(0, Math.min(totalPg-1, curPg+dir));
-    if (sliderEl) {
-      var W = document.getElementById('reader').clientWidth;
-      sliderEl.style.transition = 'transform .32s cubic-bezier(.4,0,.2,1)';
-      sliderEl.style.transform  = 'translateX('+(-curPg*W)+'px)';
-    }
-    var ind = document.getElementById('pgInd');
-    if (ind) ind.textContent = totalPg>1 ? 'p.'+(curPg+1)+' / '+totalPg : '';
-    try { localStorage.setItem('cprd_'+docId, curPg); } catch(e) {}
+  function goStoryPage(dir){
+    curPg=Math.max(0,Math.min(totalPg-1,curPg+dir));
+    if(sliderEl){var W=document.getElementById('reader').clientWidth;sliderEl.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';sliderEl.style.transform='translateX('+(-curPg*W)+'px)';}
+    var ind=document.getElementById('pgInd');if(ind)ind.textContent=totalPg>1?'p.'+(curPg+1)+' / '+totalPg:'';
+    try{localStorage.setItem('cprd_'+docId,curPg);}catch(e){}
   }
+  function goToPage(pgIdx){curPg=Math.max(0,Math.min(totalPg-1,pgIdx));if(sliderEl){var W=document.getElementById('reader').clientWidth;sliderEl.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';sliderEl.style.transform='translateX('+(-curPg*W)+'px)';}if(indEl)indEl.textContent=totalPg>1?'p.'+(curPg+1)+' / '+totalPg:'';try{localStorage.setItem('cprd_'+docId,curPg);}catch(e){}closeTOC();}
 
-  function goToPage(pgIdx) {
-    curPg = Math.max(0, Math.min(totalPg-1, pgIdx));
-    if (sliderEl) {
-      var W = document.getElementById('reader').clientWidth;
-      sliderEl.style.transition = 'transform .32s cubic-bezier(.4,0,.2,1)';
-      sliderEl.style.transform  = 'translateX('+(-curPg*W)+'px)';
-    }
-    if (indEl) indEl.textContent = totalPg>1 ? 'p.'+(curPg+1)+' / '+totalPg : '';
-    try { localStorage.setItem('cprd_'+docId, curPg); } catch(e) {}
-    closeTOC();
-  }
-
-  function attachListeners() {
-    if (listenersAttached) return;
-    listenersAttached = true;
-
-    /* Hide screenplay tap zones — story uses its own overlay */
-    var tp = document.getElementById('tapPrev');
-    var tn = document.getElementById('tapNext');
-    if (tp) tp.style.display = 'none';
-    if (tn) tn.style.display = 'none';
-
-    /* Fixed overlay — z-index 200 (above tap zones 100, below clap fab 300) */
-    overlayEl = document.createElement('div');
-    overlayEl.id = 'storyTapOverlay';
-    overlayEl.style.cssText =
-      'position:fixed;top:86px;left:0;right:0;bottom:60px;z-index:190;touch-action:pan-y;';
+  function attachListeners(){
+    if(listenersAttached)return;listenersAttached=true;
+    var tp=document.getElementById('tapPrev');var tn=document.getElementById('tapNext');
+    if(tp)tp.style.display='none';if(tn)tn.style.display='none';
+    overlayEl=document.createElement('div');overlayEl.id='storyTapOverlay';
+    overlayEl.style.cssText='position:fixed;top:86px;left:0;right:0;bottom:60px;z-index:190;touch-action:pan-y;';
     document.body.appendChild(overlayEl);
-
-    var sx=0, sy=0, moved=false, touchHandled=false;
-
-    overlayEl.addEventListener('touchstart', function(e){
-      sx=e.touches[0].clientX; sy=e.touches[0].clientY;
-      moved=false; touchHandled=false;
-    }, {passive:true});
-
-    overlayEl.addEventListener('touchmove', function(e){
-      if (Math.abs(e.touches[0].clientX-sx) > 8) moved=true;
-    }, {passive:true});
-
-    overlayEl.addEventListener('touchend', function(e){
-      touchHandled=true; /* block subsequent click event */
-      var dx=e.changedTouches[0].clientX-sx;
-      var dy=e.changedTouches[0].clientY-sy;
-      if (Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>40) {
-        goStoryPage(dx<0?1:-1);
-      } else if (!moved) {
-        var x=e.changedTouches[0].clientX, w=window.innerWidth;
-        if (x < w*0.3) goStoryPage(-1);
-        else if (x > w*0.7) goStoryPage(1);
-      }
-    }, {passive:true});
-
-    overlayEl.addEventListener('click', function(e){
-      if (touchHandled) { touchHandled=false; return; } /* already handled by touchend */
-      var x=e.clientX, w=window.innerWidth;
-      if (x < w*0.3) goStoryPage(-1);
-      else if (x > w*0.7) goStoryPage(1);
-    });
-
-    document.addEventListener('keydown', function(e){
-      if(e.key==='ArrowRight'||e.key==='ArrowDown') goStoryPage(1);
-      if(e.key==='ArrowLeft'||e.key==='ArrowUp')    goStoryPage(-1);
-    });
-
-    /* pg-ind tappable → open TOC */
-    var pgIndEl = document.getElementById('pgInd');
-    if (pgIndEl) {
-      pgIndEl.classList.add('tappable');
-      pgIndEl.addEventListener('click', function(e){
-        e.stopPropagation();
-        buildTOC();
-        openTOC();
-      });
-    }
+    var sx=0,sy=0,moved=false,touchHandled=false;
+    overlayEl.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;moved=false;touchHandled=false;},{passive:true});
+    overlayEl.addEventListener('touchmove',function(e){if(Math.abs(e.touches[0].clientX-sx)>8)moved=true;},{passive:true});
+    overlayEl.addEventListener('touchend',function(e){touchHandled=true;var dx=e.changedTouches[0].clientX-sx;var dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){goStoryPage(dx<0?1:-1);}else if(!moved){var x=e.changedTouches[0].clientX,w=window.innerWidth;if(x<w*0.3)goStoryPage(-1);else if(x>w*0.7)goStoryPage(1);}},{passive:true});
+    overlayEl.addEventListener('click',function(e){if(touchHandled){touchHandled=false;return;}var x=e.clientX,w=window.innerWidth;if(x<w*0.3)goStoryPage(-1);else if(x>w*0.7)goStoryPage(1);});
+    document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown')goStoryPage(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goStoryPage(-1);});
+    var pgIndEl=document.getElementById('pgInd');
+    if(pgIndEl){pgIndEl.classList.add('tappable');pgIndEl.addEventListener('click',function(e){e.stopPropagation();buildTOC();openTOC();});}
   }
 
-  function buildTOC() {
-    var list = document.getElementById('tocList');
-    if (!list) return;
-    if (!headings.length) {
-      list.innerHTML = '<div style="padding:24px;text-align:center;font-size:13px;color:var(--fg3);line-height:1.8;">Heading (H1/H2) မရှိသောကြောင့်<br>မာတိကာ မပြနိုင်ပါ</div>';
-    } else {
-      var html = '';
-      headings.forEach(function(h){
-        html += '<button class="toc-item '+h.tag+'" onclick="(function(){window.goToPage('+h.pageIdx+');})()">'
-              + '<span class="toc-num">p.'+(h.pageIdx+1)+'</span>'
-              + '<span class="toc-name">'+esc(h.text)+'</span></button>';
-      });
-      list.innerHTML = html;
-    }
+  function buildTOC(){
+    var list=document.getElementById('tocList');if(!list)return;
+    if(!headings.length){list.innerHTML='<div style="padding:24px;text-align:center;font-size:13px;color:var(--fg3);line-height:1.8;">Heading (H1/H2) မရှိသောကြောင့်<br>မာတိကာ မပြနိုင်ပါ</div>';}
+    else{var html='';headings.forEach(function(h){html+='<button class="toc-item '+h.tag+'" onclick="(function(){window.goToPage('+h.pageIdx+');})()">'+'<span class="toc-num">p.'+(h.pageIdx+1)+'</span>'+'<span class="toc-name">'+esc(h.text)+'</span></button>';});list.innerHTML=html;}
   }
 
-  function build() {
-    var reader = document.getElementById('reader');
-    if (!reader || reader.clientWidth===0 || reader.clientHeight===0) {
-      setTimeout(build, 60); return;
-    }
-    var W   = reader.clientWidth;
-    var H   = reader.clientHeight;
-    var PAD = 22;
-    var fg  = getFg();
-    var bg  = getBg();
-    var fs  = fontSize;
-    /* save page before rebuild */
-    var savedPg = curPg;
-
-    reader.style.background = bg;
-
-    var titleHtml = docData.title
-      ? '<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;'
-        +'margin-bottom:18px;padding-bottom:14px;'
-        +'border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+';">'
-        +esc(docData.title)+'</div>'
-      : '';
-
-    /* Style each block */
-    var styledParas = allParas.map(function(h){
-      var tag = (h.match(/^<(\w+)/) || [])[1] || 'p';
-      var extra = 'color:'+fg+';';
-      if (tag==='h1') extra += 'font-size:'+(fs+6)+'px;font-weight:700;line-height:1.6;margin-bottom:14px;margin-top:24px;';
-      else if (tag==='h2') extra += 'font-size:'+(fs+3)+'px;font-weight:700;line-height:1.6;margin-bottom:10px;margin-top:20px;';
-      else extra += 'font-size:'+fs+'px;line-height:2.1;margin-bottom:10px;';
-      if (/style\s*=\s*"/i.test(h)) return h.replace(/style\s*=\s*"/i,'style="'+extra);
+  function build(){
+    var reader=document.getElementById('reader');
+    if(!reader||reader.clientWidth===0||reader.clientHeight===0){setTimeout(build,60);return;}
+    var W=reader.clientWidth;var H=reader.clientHeight;var PAD=22;
+    var fg=getFg();var bg=getBg();var fs=fontSize;var savedPg=curPg;
+    reader.style.background=bg;
+    var titleHtml=docData.title?'<div style="font-size:'+(fs+4)+'px;font-weight:700;line-height:1.6;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(128,128,128,.2);color:'+fg+';">'+esc(docData.title)+'</div>':'';
+    var styledParas=allParas.map(function(h){
+      var tag=(h.match(/^<(\w+)/)||[])[1]||'p';var extra='color:'+fg+';';
+      if(tag==='h1')extra+='font-size:'+(fs+6)+'px;font-weight:700;line-height:1.6;margin-bottom:14px;margin-top:24px;';
+      else if(tag==='h2')extra+='font-size:'+(fs+3)+'px;font-weight:700;line-height:1.6;margin-bottom:10px;margin-top:20px;';
+      else extra+='font-size:'+fs+'px;line-height:2.1;margin-bottom:10px;';
+      if(/style\s*=\s*"/i.test(h))return h.replace(/style\s*=\s*"/i,'style="'+extra);
       return h.replace(/^<(\w+)/,'<$1 style="'+extra+'"');
     });
-
-    reader.innerHTML =
-      '<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s;">'
-        +'<div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;">'
-          +'<div id="epubCol" style="height:'+H+'px;padding:'+PAD+'px '+PAD+'px '+(PAD+20)+'px;'
-            +'font-size:'+fs+'px;line-height:2.1;color:'+fg+';'
-            +'column-width:'+(W-PAD*2)+'px;column-gap:'+(PAD*2)+'px;column-fill:auto;'
-            +'overflow:hidden;word-break:break-word;box-sizing:border-box;'
-            +'pointer-events:none;user-select:none;">'
-            +titleHtml+styledParas.join('')
-          +'</div>'
-        +'</div>'
-      +'</div>';
-
+    /* Use 640px column width for centered readable text */
+    var colW=Math.min(W-PAD*2,640);
+    reader.innerHTML='<div id="epubWrap" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:0;transition:opacity .2s;"><div id="epubSlider" style="position:absolute;top:0;left:0;height:100%;display:flex;"><div id="epubCol" style="height:'+H+'px;padding:'+PAD+'px '+PAD+'px '+(PAD+20)+'px;font-size:'+fs+'px;line-height:2.1;color:'+fg+';column-width:'+colW+'px;column-gap:'+(PAD*2)+'px;column-fill:auto;overflow:hidden;word-break:break-word;box-sizing:border-box;pointer-events:none;user-select:none;">'+titleHtml+styledParas.join('')+'</div></div></div>';
     setTimeout(function(){
-      var col    = document.getElementById('epubCol');
-      var slider = document.getElementById('epubSlider');
-      var wrap   = document.getElementById('epubWrap');
-      if (!col||!slider||!wrap) return;
-
-      var sw = col.scrollWidth;
-      totalPg = Math.max(1, Math.round(sw/W));
-      col.style.width    = (totalPg*W)+'px';
-      slider.style.width = (totalPg*W)+'px';
-
-      sliderEl = slider;
-      indEl    = document.getElementById('pgInd');
-
-      /* ② Scan headings for TOC — use getBoundingClientRect for accurate column position */
-      headings = [];
-      var colRect = col.getBoundingClientRect();
-      col.querySelectorAll('h1,h2').forEach(function(el){
-        var elRect   = el.getBoundingClientRect();
-        /* offset from left edge of epubCol in screen coords */
-        var elOffset = elRect.left - colRect.left;
-        var pgIdx    = Math.max(0, Math.floor(elOffset / W));
-        var txt      = el.textContent.trim();
-        if (txt) headings.push({text:txt, tag:el.tagName.toLowerCase(), pageIdx:pgIdx});
-      });
-
-      curPg = Math.min(savedPg, totalPg-1);
-      slider.style.transition = 'none';
-      slider.style.transform  = 'translateX('+(-curPg*W)+'px)';
-
-      if (indEl) indEl.textContent = totalPg>1 ? 'p.'+(curPg+1)+' / '+totalPg : '';
-
-      requestAnimationFrame(function(){
-        wrap.style.opacity = '1';
-      });
-
-      attachListeners(); /* idempotent */
-      try { localStorage.setItem('cprd_'+docId, curPg); } catch(e) {}
-    }, 150);
+      var col=document.getElementById('epubCol');var slider=document.getElementById('epubSlider');var wrap=document.getElementById('epubWrap');
+      if(!col||!slider||!wrap)return;
+      var sw=col.scrollWidth;totalPg=Math.max(1,Math.round(sw/W));
+      col.style.width=(totalPg*W)+'px';slider.style.width=(totalPg*W)+'px';
+      sliderEl=slider;indEl=document.getElementById('pgInd');
+      headings=[];var colRect=col.getBoundingClientRect();
+      col.querySelectorAll('h1,h2').forEach(function(el){var elRect=el.getBoundingClientRect();var elOffset=elRect.left-colRect.left;var pgIdx=Math.max(0,Math.floor(elOffset/W));var txt=el.textContent.trim();if(txt)headings.push({text:txt,tag:el.tagName.toLowerCase(),pageIdx:pgIdx});});
+      curPg=Math.min(savedPg,totalPg-1);slider.style.transition='none';slider.style.transform='translateX('+(-curPg*W)+'px)';
+      if(indEl)indEl.textContent=totalPg>1?'p.'+(curPg+1)+' / '+totalPg:'';
+      requestAnimationFrame(function(){wrap.style.opacity='1';});
+      attachListeners();try{localStorage.setItem('cprd_'+docId,curPg);}catch(e){}
+    },150);
   }
-
-  /* Expose goToPage globally for TOC buttons */
-  window.goToPage = goToPage;
-
-  try { curPg = parseInt(localStorage.getItem('cprd_'+docId))||0; } catch(e){ curPg=0; }
-  curSlide = curPg;
+  window.goToPage=goToPage;
+  try{curPg=parseInt(localStorage.getItem('cprd_'+docId))||0;}catch(e){curPg=0;}
+  curSlide=curPg;
   document.fonts.ready.then(build);
-  window._onSettingChange = function(){ build(); };
+  window._onSettingChange=function(){build();};
 }
 
-/* ===== SCREENPLAY SLIDE-BY-SLIDE ===== */
-function initScreenplay() {
-  /* tap zones visible */
-  document.getElementById('tapPrev').style.display = '';
-  document.getElementById('tapNext').style.display = '';
+/* SCREENPLAY */
+function initScreenplay(){
+  document.getElementById('tapPrev').style.display='';
+  document.getElementById('tapNext').style.display='';
+  var W=buildSlideTrack();
 
-  var W = buildSlideTrack();
+  /* Cover */
+  addSlide('<div class="cover-slide-inner"><div class="cover-title" style="font-size:'+fontSize+'px;">'+esc(docData.title||'')+'</div><div class="cover-hr"></div><div class="cover-by">Written by</div><div class="cover-auth" style="font-size:'+(fontSize-1)+'px;">'+esc(docData.author||docData.authorName||'')+'</div>'+(docData.draft?'<div class="cover-draft">'+esc(docData.draft)+'</div>':'')+'</div>');
 
-  /* ── COVER slide ── */
-  addSlide(
-    '<div class="cover-slide-inner">'+
-      '<div class="cover-title">'+esc(docData.title||'')+'</div>'+
-      '<div class="cover-hr"></div>'+
-      '<div class="cover-by">Written by</div>'+
-      '<div class="cover-auth">'+esc(docData.author||docData.authorName||'')+'</div>'+
-      (docData.draft?'<div class="cover-draft">'+esc(docData.draft)+'</div>':'')+
-    '</div>'
-  );
+  /* Logline */
+  if(docData.logline&&docData.logline.trim()){addSlide('<div class="sec-slide-inner"><div class="sec-lbl">Logline</div><div class="sec-txt" style="font-size:'+fontSize+'px;">'+esc(docData.logline)+'</div></div>');}
 
-  /* ── LOGLINE slide ── */
-  if (docData.logline && docData.logline.trim()) {
-    addSlide(
-      '<div class="sec-slide-inner">'+
-        '<div class="sec-lbl">Logline</div>'+
-        '<div class="sec-txt">'+esc(docData.logline)+'</div>'+
-      '</div>'
-    );
-  }
+  /* Synopsis */
+  if(docData.synopsis&&docData.synopsis.trim()){addSlide('<div class="sec-slide-inner"><div class="sec-lbl">Synopsis</div><div class="sec-txt" style="font-size:'+fontSize+'px;">'+esc(docData.synopsis)+'</div></div>');}
 
-  /* ── SYNOPSIS slide ── */
-  if (docData.synopsis && docData.synopsis.trim()) {
-    addSlide(
-      '<div class="sec-slide-inner">'+
-        '<div class="sec-lbl">Synopsis</div>'+
-        '<div class="sec-txt">'+esc(docData.synopsis)+'</div>'+
-      '</div>'
-    );
-  }
+  /* Treatment */
+  if(docData.treatment&&docData.treatment.trim()){addSlide('<div class="sec-slide-inner"><div class="sec-lbl">Treatment</div><div class="sec-txt" style="font-size:'+fontSize+'px;">'+esc(docData.treatment)+'</div></div>');}
 
-  /* ── TREATMENT slide ── */
-  if (docData.treatment && docData.treatment.trim()) {
-    addSlide(
-      '<div class="sec-slide-inner">'+
-        '<div class="sec-lbl">Treatment</div>'+
-        '<div class="sec-txt">'+esc(docData.treatment)+'</div>'+
-      '</div>'
-    );
-  }
-
-  /* ── SCREENPLAY — reflow into A4-proportioned pages ── */
-  if (docData.screenplay && docData.screenplay.length) {
-
-    /*
-      Reflow strategy:
-      - Render all elements into a hidden off-screen measure div
-      - Read each element's offsetHeight
-      - Group elements into pages where cumulative height ≤ PAGE_H
-      - Build one slide per page group
-    */
-
-    var PAGE_H = 780; /* px — approx A4 usable at mobile scale */
-    var spEls  = docData.screenplay.filter(function(e){ return !!elCls(e.type); });
-
-    /* measure div */
-    var mhost = document.createElement('div');
-    var spFs = fontSize; /* capture current font size */
-    mhost.style.cssText =
-      'position:fixed;top:-9999px;left:0;width:'+(W-36)+'px;'+
-      'visibility:hidden;pointer-events:none;font-family:Courier New,Courier,monospace;font-size:'+spFs+'px;';
+  /* Screenplay pages */
+  if(docData.screenplay&&docData.screenplay.length){
+    var spEls=docData.screenplay.filter(function(e){return !!elCls(e.type);});
+    var mhost=document.createElement('div');var spFs=fontSize;
+    mhost.style.cssText='position:fixed;top:-9999px;left:0;width:'+(Math.min(W,640)-36)+'px;visibility:hidden;pointer-events:none;font-family:Courier New,Courier,monospace;font-size:'+spFs+'px;';
     document.body.appendChild(mhost);
-
-    var elDivs = spEls.map(function(el){
-      var d = document.createElement('div');
-      d.className = elCls(el.type);
-      d.style.fontSize = spFs+'px';
-      d.textContent = el.text || '';
-      mhost.appendChild(d);
-      return d;
-    });
-
-    /* force layout */
+    var elDivs=spEls.map(function(el){var d=document.createElement('div');d.className=elCls(el.type);d.style.fontSize=spFs+'px';d.textContent=el.text||'';mhost.appendChild(d);return d;});
     void mhost.offsetHeight;
-
-    var heights = elDivs.map(function(d){ return Math.max(d.offsetHeight, spFs*1.9); });
+    var heights=elDivs.map(function(d){return Math.max(d.offsetHeight,spFs*1.9);});
     document.body.removeChild(mhost);
-
-    /* group into pages */
-    var PAGE_H_DYN = Math.floor(780 * (spFs / 13)); /* scale page height with font */
-    var pageGroups = [];
-    var curGroup   = [];
-    var usedH      = 0;
-
-    spEls.forEach(function(el, i){
-      var h = heights[i];
-      if (usedH + h > PAGE_H_DYN && curGroup.length > 0) {
-        pageGroups.push(curGroup);
-        curGroup = [];
-        usedH    = 0;
-      }
-      curGroup.push(i);
-      usedH += h;
-    });
-    if (curGroup.length) pageGroups.push(curGroup);
-    if (!pageGroups.length) pageGroups = [[]];
-
-    /* build one slide per page */
-    pageGroups.forEach(function(group, pi){
-      var html = '<div class="sp-slide-inner" style="font-size:'+spFs+'px;">';
-      html += '<div class="sp-pg-label">p. '+(pi+1)+' / '+pageGroups.length+'</div>';
-      group.forEach(function(i){
-        var el = spEls[i];
-        var x  = esc(el.text || '');
-        var cls= elCls(el.type);
-        html += '<div class="'+cls+'" style="font-size:'+spFs+'px;">'+x+'</div>';
-      });
-      html += '</div>';
-      addSlide(html);
+    var PAGE_H_DYN=Math.floor(780*(spFs/13));var pageGroups=[],curGroup=[],usedH=0;
+    spEls.forEach(function(el,i){var h=heights[i];if(usedH+h>PAGE_H_DYN&&curGroup.length>0){pageGroups.push(curGroup);curGroup=[];usedH=0;}curGroup.push(i);usedH+=h;});
+    if(curGroup.length)pageGroups.push(curGroup);if(!pageGroups.length)pageGroups=[[]];
+    pageGroups.forEach(function(group,pi){
+      var html='<div class="sp-slide-inner" style="font-size:'+spFs+'px;"><div class="sp-pg-label">p. '+(pi+1)+' / '+pageGroups.length+'</div>';
+      group.forEach(function(i){var el=spEls[i];html+='<div class="'+elCls(el.type)+'" style="font-size:'+spFs+'px;">'+esc(el.text||'')+'</div>';});
+      html+='</div>';addSlide(html);
     });
   }
 
-  /* restore saved slide */
-  var saved = 0;
-  try { saved = parseInt(localStorage.getItem('cprd_sl_'+docId))||0; } catch(e) {}
-  goSlide(Math.min(saved, slides.length-1), true);
+  var saved=0;try{saved=parseInt(localStorage.getItem('cprd_sl_'+docId))||0;}catch(e){}
+  goSlide(Math.min(saved,slides.length-1),true);
+  initSwipe();updateInd();
 
-  initSwipe();
-  updateInd();
-
-  /* font size change → rebuild screenplay slides */
-  window._onSettingChange = function() {
-    var savedIdx = curSlide;
-    /* re-init */
-    document.getElementById('reader').innerHTML =
-      '<div class="loading"><div class="spinner"></div><span>ပြန်ဆောက်နေသည်...</span></div>';
-    setTimeout(function(){
-      trackEl = null; slides = []; curSlide = savedIdx;
-      initScreenplay();
-    }, 50);
+  window._onSettingChange=function(){
+    var savedIdx=curSlide;
+    document.getElementById('reader').innerHTML='<div class="loading"><div class="spinner"></div><span>ပြန်ဆောက်နေသည်...</span></div>';
+    setTimeout(function(){trackEl=null;slides=[];curSlide=savedIdx;initScreenplay();},50);
   };
 }
 
-function elCls(type) {
-  var map = {scene:'sp-scene',action:'sp-action',char:'sp-char',paren:'sp-paren',dial:'sp-dial',trans:'sp-trans'};
-  return map[type] || 'sp-action';
-}
+function elCls(type){var map={scene:'sp-scene',action:'sp-action',char:'sp-char',paren:'sp-paren',dial:'sp-dial',trans:'sp-trans'};return map[type]||'sp-action';}
 
-/* ===== NOT FOUND ===== */
-function showNF(m) {
-  document.getElementById('reader').innerHTML =
-    '<div class="not-found"><div class="nf-icon">🔒</div>'+
-    '<div class="nf-title">'+m+'</div>'+
-    '<div class="nf-sub">ဤ doc ကို ဖတ်ခွင့် မရပါ</div>'+
-    '<a class="btn-h" href="/home">← Home</a></div>';
-}
+function showNF(m){document.getElementById('reader').innerHTML='<div class="not-found"><div class="nf-icon">🔒</div><div class="nf-title">'+m+'</div><div class="nf-sub">ဤ doc ကို ဖတ်ခွင့် မရပါ</div><a class="btn-h" href="/home">← Home</a></div>';}
 </script>
 </body>
 </html>
