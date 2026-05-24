@@ -912,13 +912,13 @@ async function cloudSave(){
 
 /* ===== AUTO SAVE ===== */
 function autoSave(){
+  _docDirty=true;
   setSv('unsaved');clearTimeout(autoT);
   autoT=setTimeout(function(){
     var data=collect();try{localStorage.setItem('cp_'+docId,JSON.stringify(data));}catch(e){}
-    if(currentUser&&window._db){cloudSave().then(function(){setSv('ok');}).catch(function(){setSv('local');});}else{setSv('local');}
+    if(currentUser&&window._db){cloudSave().then(function(){setSv('ok');_docDirty=false;}).catch(function(){setSv('local');_docDirty=false;});}else{setSv('local');_docDirty=false;}
   },2000);
 }
-window.addEventListener('beforeunload',function(){clearTimeout(autoT);});
 
 /* ===== KEYBOARD TOOLBAR LIFT ===== */
 (function(){
@@ -1165,12 +1165,28 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 document.addEventListener('click',function(e){['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(function(id){var el=document.getElementById(id);if(el&&e.target===el)closeM(id);});});
 document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();openSaveModal();}if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='z'){e.preventDefault();doUndo();}if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.shiftKey&&e.key==='z'))){e.preventDefault();doRedo();}if(e.key==='Escape'){['mSave','mShare','mCollab','mAuth','mGenre','mPDF'].forEach(closeM);}});
 
+/* ===== BEFOREUNLOAD WARNING ===== */
+var _docDirty=false;
+window.addEventListener('beforeunload',function(e){
+  if(!_docDirty)return;
+  if(document.getElementById('ed').style.display==='none')return;
+  try{localStorage.setItem('cp_'+docId,JSON.stringify(collect()));}catch(x){}
+  var msg='ရေးထားသောစာများ မသိမ်းဆည်းရသေးပါ။ ထွက်မည်လား?';
+  e.preventDefault();e.returnValue=msg;return msg;
+});
+
 /* ===== ON LOAD ===== */
 window.addEventListener('DOMContentLoaded',function(){
-  var p=new URLSearchParams(window.location.search);var id=p.get('id');if(!id)return;docId=id;
+  var p=new URLSearchParams(window.location.search);
+  var id=p.get('id');if(!id)return;
+  docId=id;window._pendingDocId=id;
   var raw=localStorage.getItem('cp_'+id)||localStorage.getItem('cp_doc_'+id);
-  if(raw){try{var data=JSON.parse(raw);restoreDoc(data);}catch(e){console.error('localStorage restore error',e);}}
-  window._pendingDocId=id;
+  if(raw){
+    try{
+      var data=JSON.parse(raw);
+      if(data&&data.type){restoreDoc(data);return;}
+    }catch(e){console.error('localStorage restore error',e);}
+  }
 });
 </script>
 
