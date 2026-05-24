@@ -462,13 +462,36 @@ function doPrintFromData(data){
     +".sp-trans{font-family:'Courier New',monospace;font-size:11pt;font-weight:700;text-align:right;margin-top:10pt;}"
     +"@media print{body{margin:0;}.page{margin:0;box-shadow:none;}}";
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(data.title||'Screenplay')+'</title><style>'+css+'</style></head><body>'+h+'</body></html>';
-  var win=window.open('','_blank','width=900,height=700');
-  if(!win){toast('Popup blocked — browser settings စစ်ပါ');return;}
-  win.document.write(html);win.document.close();
-  win.onload=function(){setTimeout(function(){win.focus();win.print();},800);};
-  setTimeout(function(){if(!win.closed){win.focus();win.print();}},1200);
+
+  /* ── 4. Print via hidden iframe (no popup needed) ── */
+  var iframeId = 'cp-print-frame';
+  var old = document.getElementById(iframeId);
+  if(old) old.remove();
+
+  var iframe = document.createElement('iframe');
+  iframe.id = iframeId;
+  iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;opacity:0;pointer-events:none;';
+  document.body.appendChild(iframe);
+
+  var idoc = iframe.contentDocument || iframe.contentWindow.document;
+  idoc.open(); idoc.write(html); idoc.close();
+
+  /* Wait for fonts then print */
+  iframe.onload = function(){
+    setTimeout(function(){
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }, 800);
+  };
+  setTimeout(function(){
+    if(iframe.contentWindow){
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }
+  }, 1200);
   toast('🖨 Print dialog ဖွင့်နေသည်...');
 }
+
 
 
 </script>
