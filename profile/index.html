@@ -332,8 +332,9 @@ window.closeDocClappersPopup=function(){document.getElementById('docClappersPopu
 
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
-  ['editModal','clappersPopup','clappingPopup','docClappersPopup','pdfModal'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('open');});
+  ['editModal','clappersPopup','clappingPopup','docClappersPopup'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('open');});
   document.getElementById('docDetailPopup').classList.remove('on');
+  document.getElementById('pdfModal').classList.remove('on');
   document.body.style.overflow='';
 });
 
@@ -346,10 +347,11 @@ window.switchProfileTab=function(tab,btn){
 };
 
 /* ── PDF EXPORT ── */
-var _pdfTargetDocId = null;
+/* _pdfTargetDocId — shared between regular script and module via window */
+window._pdfTargetDocId = null;
 
 window._exportPDF = function(docId){
-  _pdfTargetDocId = docId;
+  window._pdfTargetDocId = docId;
   document.getElementById('pdfWmText').value = '';
   document.getElementById('pdfModal').classList.add('on');
 };
@@ -358,22 +360,17 @@ window.closePdfModal = function(){
 };
 window.confirmPdfExport = function(){
   var wm = document.getElementById('pdfWmText').value.trim();
-  closePdfModal();
-  if(!_pdfTargetDocId){ toast('❌ Doc မရှိပါ'); return; }
-  var s = scripts.find(function(x){ return x.id===_pdfTargetDocId; });
-  if(!s){ toast('❌ Doc မရှိပါ'); return; }
+  window.closePdfModal();
+  var docId = window._pdfTargetDocId;
+  if(!docId){ toast('❌ Doc မရှိပါ'); return; }
+  /* _getDocFn is set by the module after Firebase initialises */
+  if(!window._getDocFn){ toast('❌ Firebase မချိတ်ရသေးပါ'); return; }
   toast('PDF data ဆွဲနေသည်...');
-  /* Load full doc data from Firestore to get screenplay/logline/etc */
-  window._loadAndBuildPDF(s, wm);
-};
-
-window._loadAndBuildPDF = function(s, wm){
-  /* We need the full doc from Firestore (profile card only has summary) */
-  window._getDocFn(window._dbRef, 'docs', s.id).then(function(snap){
-    if(!snap.exists()){ toast('❌ Doc data မရပါ'); return; }
+  window._getDocFn(docId).then(function(snap){
+    if(!snap || !snap.exists()){ toast('❌ Doc data မရပါ'); return; }
     var d = snap.data();
     var pdfData = {
-      title:      d.title     || s.title || 'Untitled',
+      title:      d.title     || 'Untitled',
       author:     d.author    || d.authorName || '',
       draft:      d.draft     || '',
       logline:    d.logline   || '',
@@ -383,7 +380,7 @@ window._loadAndBuildPDF = function(s, wm){
       watermark:  wm
     };
     loadJsPDFThenBuild(pdfData);
-  }).catch(function(e){ toast('❌ '+e.message); });
+  }).catch(function(e){ toast('❌ ' + e.message); });
 };
 
 function loadJsPDFThenBuild(pdfData){
@@ -474,9 +471,9 @@ import{getStorage,ref,uploadBytes,getDownloadURL}from'https://www.gstatic.com/fi
 const app=initializeApp({apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",storageBucket:"cinepodma.firebasestorage.app",messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"});
 const auth=getAuth(app);const db=getFirestore(app);const storage=getStorage(app);
 
-/* Expose Firestore helpers for PDF export */
+/* Expose Firestore doc fetcher — takes only docId, db is closed over */
 window._dbRef=db;
-window._getDocFn=function(db,col,id){ return getDoc(doc(db,col,id)); };
+window._getDocFn=function(docId){ return getDoc(doc(db,'docs',docId)); };
 
 var currentUser=null,currentProfile={},scripts=[],clappedDocs=[],clappedPrivacy='public';
 var initialized=false,myClaps={},profileUid=null,isOwner=false;
