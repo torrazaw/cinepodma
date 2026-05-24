@@ -397,69 +397,343 @@ function loadJsPDFThenBuild(pdfData){
   }
 }
 
-function buildPDF(jsPDF,data){
-  var PW=210,PH=297,ML=25.4,MR=25.4,MT=25.4,MB=25.4,CW=PW-ML-MR;
-  var doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
-  var pgNum=0,pageY=MT;
-  var SCENE_NUM_W=8;
-  function newPage(skipNum){
-    if(pgNum>0)doc.addPage();pgNum++;pageY=MT;
-    if(data.watermark){doc.saveGraphicsState();doc.setGState(new doc.GState({opacity:0.06}));doc.setFontSize(32);doc.setFont('helvetica','bold');doc.setTextColor(0,0,0);doc.text(data.watermark,PW/2,PH/2,{align:'center',angle:35});doc.restoreGraphicsState();}
-    if(!skipNum&&pgNum>1){doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(160,160,160);doc.text(String(pgNum-1),PW-MR,PH-10,{align:'right'});doc.setTextColor(0,0,0);}
+/* ============================================================
+   CinePodma — Canvas-based PDF Engine
+   Myanmar Unicode fully supported via browser font rendering.
+   
+   Strategy:
+   - Each A4 page = one <canvas> at 794×1123px (96dpi equivalent)
+   - Draw all text/layout using Canvas 2D API (browser handles fonts)
+   - Convert each canvas to JPEG dataURL
+   - Insert images into jsPDF one per page
+   
+   Usage: buildPDF(jsPDF, data)  — same signature as before
+   ============================================================ */
+
+function buildPDF(jsPDF, data) {
+
+  /* ── Constants (px at 96dpi, A4 = 210×297mm) ── */
+  var DPI    = 96;
+  var MM2PX  = DPI / 25.4;          /* 1mm = 3.7795px */
+  var PW_MM  = 210, PH_MM  = 297;
+  var PW     = Math.round(PW_MM  * MM2PX);  /* 794 */
+  var PH     = Math.round(PH_MM  * MM2PX);  /* 1123 */
+  var ML     = Math.round(25.4   * MM2PX);  /* 96  */
+  var MR     = Math.round(25.4   * MM2PX);
+  var MT     = Math.round(25.4   * MM2PX);
+  var MB     = Math.round(25.4   * MM2PX);
+  var CW     = PW - ML - MR;               /* content width px */
+
+  /* Font sizes in px (CSS px, same as canvas px at 96dpi) */
+  var F_TITLE   = 28;
+  var F_AUTHOR  = 18;
+  var F_DRAFT   = 13;
+  var F_LABEL   = 11;
+  var F_BODY    = 15;
+  var F_SP      = 14;   /* screenplay */
+  var F_PGNUM   = 11;
+
+  var LINE_BODY = F_BODY * 2.0;
+  var LINE_SP   = F_SP   * 1.9;
+
+  /* ── Canvas pool ── */
+  var canvases = [];
+  var ctx = null;
+  var curY = MT;
+
+  function newCanvas() {
+    var c = document.createElement('canvas');
+    c.width  = PW;
+    c.height = PH;
+    ctx = c.getContext('2d');
+    /* White background */
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, PW, PH);
+    canvases.push(c);
+    curY = MT;
+    /* Watermark */
+    if (data.watermark) {
+      ctx.save();
+      ctx.globalAlpha = 0.06;
+      ctx.font = 'bold 42px "Noto Sans Myanmar", "Courier New", sans-serif';
+      ctx.fillStyle = '#000000';
+      ctx.translate(PW/2, PH/2);
+      ctx.rotate(-35 * Math.PI / 180);
+      ctx.textAlign = 'center';
+      ctx.fillText(data.watermark, 0, 0);
+      ctx.restore();
+    }
+    /* Page number (not on cover = canvas[0]) */
+    if (canvases.length > 1) {
+      ctx.save();
+      ctx.font = F_PGNUM + 'px "Courier New", monospace';
+      ctx.fillStyle = '#AAAAAA';
+      ctx.textAlign = 'right';
+      ctx.fillText(String(canvases.length - 1), PW - MR, PH - MB + 20);
+      ctx.restore();
+    }
   }
-  function remainingH(){return PH-MB-pageY;}
-  function writeLines(lines,x,lineH){lines.forEach(function(ln){if(remainingH()<lineH)newPage();doc.text(ln,x,pageY);pageY+=lineH;});}
-  function sectionHeader(label){doc.setFont('courier','normal');doc.setFontSize(7.5);doc.setTextColor(160,160,160);doc.text(label.toUpperCase(),ML,pageY);pageY+=3;doc.setDrawColor(220,220,220);doc.setLineWidth(0.2);doc.line(ML,pageY,ML+CW,pageY);pageY+=6;doc.setTextColor(0,0,0);doc.setDrawColor(0,0,0);}
-  function split(text,font,style,size,maxW){doc.setFont(font,style);doc.setFontSize(size);return doc.splitTextToSize(text,maxW);}
-  /* COVER */
-  newPage(true);var coverY=PH/2-20;
-  var titleLines=split(data.title||'Untitled','courier','bold',20,CW);
-  doc.setFont('courier','bold');doc.setFontSize(20);doc.setTextColor(0,0,0);
-  var titleH=titleLines.length*10;titleLines.forEach(function(ln,i){doc.text(ln,PW/2,coverY+i*10,{align:'center'});});coverY+=titleH+10;
-  doc.setLineWidth(0.4);doc.setDrawColor(0);doc.line(PW/2-14,coverY,PW/2+14,coverY);coverY+=9;
-  doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(130,130,130);doc.text('Written by',PW/2,coverY,{align:'center'});coverY+=6;
-  if(data.author){doc.setFont('courier','bold');doc.setFontSize(12);doc.setTextColor(0,0,0);doc.text(data.author,PW/2,coverY,{align:'center'});coverY+=7;}
-  if(data.draft){doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(160,160,160);doc.text(data.draft,PW/2,coverY+8,{align:'center'});}
-  /* LOGLINE */
-  if(data.logline){newPage();sectionHeader('Logline');var ll=split(data.logline,'courier','normal',11,CW);doc.setFont('courier','normal');doc.setFontSize(11);writeLines(ll,ML,6.5);}
-  /* SYNOPSIS */
-  if(data.synopsis){newPage();sectionHeader('Synopsis');var sl=split(data.synopsis,'courier','normal',10.5,CW);doc.setFont('courier','normal');doc.setFontSize(10.5);writeLines(sl,ML,6.2);}
-  /* TREATMENT */
-  if(data.treatment){newPage();sectionHeader('Treatment');var tl=split(data.treatment,'courier','normal',10.5,CW);doc.setFont('courier','normal');doc.setFontSize(10.5);writeLines(tl,ML,6.2);}
-  /* SCREENPLAY */
-  if(data.screenplay&&data.screenplay.length>0){
-    newPage();var SP_LH=5.5;var sceneCount=0;
-    data.screenplay.forEach(function(el){
-      var txt=el.text;if(!txt)return;
-      var font='courier',style='normal',gapBefore=0,upper=false,alignRight=false,x=ML,maxW=CW;
-      switch(el.type){
-        case 'scene':  style='bold';upper=true;gapBefore=8;sceneCount++;break;
-        case 'action': x=ML+SCENE_NUM_W;maxW=CW-SCENE_NUM_W;gapBefore=1;break;
-        case 'char':   x=ML+SCENE_NUM_W+CW*0.30;maxW=CW-SCENE_NUM_W-CW*0.30;gapBefore=5;upper=true;break;
-        case 'paren':  x=ML+SCENE_NUM_W+CW*0.22;maxW=CW-SCENE_NUM_W-CW*0.44;break;
-        case 'dial':   x=ML+SCENE_NUM_W+CW*0.16;maxW=CW-SCENE_NUM_W-CW*0.30;break;
-        case 'trans':  alignRight=true;upper=true;style='bold';gapBefore=5;break;
-      }
-      if(upper)txt=txt.toUpperCase();
-      doc.setFont(font,style);doc.setFontSize(10);
-      if(el.type==='scene'){
-        var scLines=doc.splitTextToSize(txt,CW-SCENE_NUM_W);
-        var bH=scLines.length*SP_LH+gapBefore;
-        if(remainingH()<bH+SP_LH)newPage();
-        pageY+=gapBefore;doc.text(sceneCount+'.',ML,pageY);
-        scLines.forEach(function(ln){doc.text(ln,ML+SCENE_NUM_W,pageY);pageY+=SP_LH;});
+
+  function remaining() { return PH - MB - curY; }
+
+  function ensureSpace(need) {
+    if (remaining() < need) newCanvas();
+  }
+
+  /* Wrap text to fit maxW, returns array of lines */
+  function wrapText(text, font, maxW) {
+    ctx.font = font;
+    var words = text.split(' ');
+    var lines = [];
+    var cur   = '';
+    words.forEach(function(w) {
+      var test = cur ? cur + ' ' + w : w;
+      if (ctx.measureText(test).width > maxW && cur) {
+        lines.push(cur);
+        cur = w;
       } else {
-        var lines=doc.splitTextToSize(txt,maxW);var bH2=lines.length*SP_LH+gapBefore;
-        if(remainingH()<bH2+SP_LH)newPage();pageY+=gapBefore;
-        if(alignRight){lines.forEach(function(ln){if(remainingH()<SP_LH)newPage();doc.text(ln,ML+CW,pageY,{align:'right'});pageY+=SP_LH;});}
-        else{lines.forEach(function(ln){if(remainingH()<SP_LH)newPage();doc.text(ln,x,pageY);pageY+=SP_LH;});}
+        cur = test;
+      }
+    });
+    if (cur) lines.push(cur);
+    return lines.length ? lines : [''];
+  }
+
+  /* Draw text block, auto page-break */
+  function drawText(text, x, font, lineH, color, align) {
+    if (!text) return;
+    color = color || '#000000';
+    align = align || 'left';
+    var maxW = (align === 'right') ? CW : (PW - MR - x);
+    var lines = wrapText(text, font, maxW);
+    lines.forEach(function(ln) {
+      ensureSpace(lineH);
+      ctx.font  = font;
+      ctx.fillStyle = color;
+      ctx.textAlign = align;
+      var drawX = align === 'right' ? (PW - MR) : x;
+      ctx.fillText(ln, drawX, curY + lineH * 0.75);
+      curY += lineH;
+    });
+  }
+
+  /* Section divider line */
+  function drawRule(y, color, w) {
+    ctx.strokeStyle = color || '#E5E7EB';
+    ctx.lineWidth   = w || 1;
+    ctx.beginPath();
+    ctx.moveTo(ML, y);
+    ctx.lineTo(ML + CW, y);
+    ctx.stroke();
+  }
+
+  function drawSectionHeader(label) {
+    ensureSpace(32);
+    var font = '11px "Courier New", monospace';
+    ctx.font = font;
+    ctx.fillStyle = '#AAAAAA';
+    ctx.textAlign = 'left';
+    ctx.fillText(label.toUpperCase(), ML, curY + 10);
+    curY += 14;
+    drawRule(curY, '#DDDDDD', 0.5);
+    curY += 10;
+  }
+
+  /* ── PAGE 1: COVER ── */
+  newCanvas();
+
+  var coverY = PH / 2 - 60;
+
+  /* Title */
+  var titleFont = 'bold ' + F_TITLE + 'px "Courier New", monospace';
+  ctx.font = titleFont;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#000000';
+  var titleLines = wrapText(data.title || 'Untitled', titleFont, CW);
+  titleLines.forEach(function(ln) {
+    ctx.fillText(ln, PW/2, coverY);
+    coverY += F_TITLE * 1.4;
+  });
+  coverY += 16;
+
+  /* Rule */
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth   = 1;
+  ctx.beginPath();
+  ctx.moveTo(PW/2 - 56, coverY);
+  ctx.lineTo(PW/2 + 56, coverY);
+  ctx.stroke();
+  coverY += 24;
+
+  /* Written by */
+  ctx.font = '12px "Courier New", monospace';
+  ctx.fillStyle = '#888888';
+  ctx.textAlign = 'center';
+  ctx.fillText('Written by', PW/2, coverY);
+  coverY += 22;
+
+  /* Author */
+  if (data.author) {
+    ctx.font = 'bold ' + F_AUTHOR + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.fillText(data.author, PW/2, coverY);
+    coverY += 28;
+  }
+
+  /* Draft */
+  if (data.draft) {
+    ctx.font = F_DRAFT + 'px "Courier New", monospace';
+    ctx.fillStyle = '#AAAAAA';
+    ctx.textAlign = 'center';
+    ctx.fillText(data.draft, PW/2, coverY + 16);
+  }
+
+  /* ── LOGLINE ── */
+  if (data.logline && data.logline.trim()) {
+    newCanvas();
+    drawSectionHeader('Logline');
+    var logFont = F_BODY + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
+    data.logline.split('\n').forEach(function(para) {
+      if (para.trim()) drawText(para, ML, logFont, LINE_BODY, '#000000');
+      else curY += LINE_BODY * 0.5;
+    });
+  }
+
+  /* ── SYNOPSIS ── */
+  if (data.synopsis && data.synopsis.trim()) {
+    newCanvas();
+    drawSectionHeader('Synopsis');
+    var synFont = F_BODY + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
+    data.synopsis.split('\n').forEach(function(para) {
+      if (para.trim()) drawText(para, ML, synFont, LINE_BODY, '#000000');
+      else curY += LINE_BODY * 0.5;
+    });
+  }
+
+  /* ── TREATMENT ── */
+  if (data.treatment && data.treatment.trim()) {
+    newCanvas();
+    drawSectionHeader('Treatment');
+    var trFont = F_BODY + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
+    data.treatment.split('\n').forEach(function(para) {
+      if (para.trim()) drawText(para, ML, trFont, LINE_BODY, '#000000');
+      else curY += LINE_BODY * 0.5;
+    });
+  }
+
+  /* ── SCREENPLAY ── */
+  if (data.screenplay && data.screenplay.length > 0) {
+    newCanvas();
+    var sceneCount = 0;
+    var SNUMW = 32; /* scene number column width px */
+
+    data.screenplay.forEach(function(el) {
+      var txt = el.text;
+      if (!txt || !txt.trim()) return;
+
+      var font, lineH, x, maxW, color, upper, gapBefore, alignRight;
+      font      = F_SP + 'px "Noto Sans Myanmar","Courier New",sans-serif';
+      lineH     = LINE_SP;
+      x         = ML + SNUMW;
+      maxW      = CW  - SNUMW;
+      color     = '#000000';
+      upper     = false;
+      gapBefore = 0;
+      alignRight= false;
+
+      switch (el.type) {
+        case 'scene':
+          font      = 'bold ' + F_SP + 'px "Courier New",monospace';
+          upper     = true;
+          gapBefore = 18;
+          sceneCount++;
+          break;
+        case 'action':
+          /* same x/maxW as scene text — aligned */
+          gapBefore = 2;
+          break;
+        case 'char':
+          x         = ML + SNUMW + Math.round(CW * 0.30);
+          maxW      = CW - SNUMW - Math.round(CW * 0.30);
+          font      = 'bold ' + F_SP + 'px "Noto Sans Myanmar","Courier New",sans-serif';
+          upper     = true;
+          gapBefore = 12;
+          break;
+        case 'paren':
+          x         = ML + SNUMW + Math.round(CW * 0.20);
+          maxW      = CW - SNUMW - Math.round(CW * 0.40);
+          color     = '#333333';
+          break;
+        case 'dial':
+          x         = ML + SNUMW + Math.round(CW * 0.12);
+          maxW      = CW - SNUMW - Math.round(CW * 0.24);
+          break;
+        case 'trans':
+          alignRight= true;
+          font      = 'bold ' + F_SP + 'px "Courier New",monospace';
+          upper     = true;
+          gapBefore = 12;
+          break;
+      }
+
+      if (upper) txt = txt.toUpperCase();
+
+      /* gap before block */
+      if (gapBefore > 0) {
+        ensureSpace(gapBefore + lineH);
+        curY += gapBefore;
+      }
+
+      if (el.type === 'scene') {
+        /* scene number left, scene text indented */
+        var sceneLines = wrapText(txt, font, maxW);
+        ensureSpace(sceneLines.length * lineH + 4);
+        ctx.font = font;
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.fillText(sceneCount + '.', ML, curY + lineH * 0.75);
+        sceneLines.forEach(function(ln) {
+          ensureSpace(lineH);
+          ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'left';
+          ctx.fillText(ln, x, curY + lineH * 0.75);
+          curY += lineH;
+        });
+      } else if (alignRight) {
+        var trLines = wrapText(txt, font, CW);
+        trLines.forEach(function(ln) {
+          ensureSpace(lineH);
+          ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'right';
+          ctx.fillText(ln, PW - MR, curY + lineH * 0.75);
+          curY += lineH;
+        });
+      } else {
+        var bodyLines = wrapText(txt, font, maxW);
+        bodyLines.forEach(function(ln) {
+          ensureSpace(lineH);
+          ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'left';
+          ctx.fillText(ln, x, curY + lineH * 0.75);
+          curY += lineH;
+        });
       }
     });
   }
-  var fname=(data.title||'screenplay').replace(/[^\w\u1000-\u109F\s]/g,'').trim().replace(/\s+/g,'_')||'screenplay';
-  doc.save(fname+'.pdf');
-  toast('PDF ဒေါင်းပြီး ✅  ('+pgNum+' pages)');
+
+  /* ── Assemble PDF ── */
+  var pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+  canvases.forEach(function(c, i) {
+    if (i > 0) pdf.addPage();
+    var imgData = c.toDataURL('image/jpeg', 0.92);
+    pdf.addImage(imgData, 'JPEG', 0, 0, PW_MM, PH_MM);
+  });
+
+  var fname = (data.title || 'screenplay')
+    .replace(/[^\w\u1000-\u109F\s]/g, '')
+    .trim().replace(/\s+/g, '_') || 'screenplay';
+  pdf.save(fname + '.pdf');
+  toast('PDF ဒေါင်းပြီး ✅  (' + canvases.length + ' pages)');
 }
+
 </script>
 
 <script type="module">
