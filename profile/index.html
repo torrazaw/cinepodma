@@ -51,7 +51,7 @@ main{flex:1;padding-top:73px;max-width:960px;margin:0 auto;width:100%;padding-le
 .script-stat-item{font-size:12px;color:var(--fg2);line-height:1.6;}
 .script-stat-item strong{color:var(--fg);font-weight:700;}
 .script-stat-sep{color:var(--border);font-size:12px;}
-.profile-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.profile-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
 .profile-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;}
 .profile-tab{padding:12px 20px;border:none;background:transparent;font-family:var(--font-my);font-size:14px;color:var(--fg2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;line-height:1.6;white-space:nowrap;}
 .profile-tab:hover{color:var(--fg);}
@@ -183,13 +183,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:18px 32p
           <span class="clap-label">Clapping</span>
         </div>
       </div>
-      <div class="script-stats">
-        <span class="script-stat-item"><strong id="statScripts">0</strong> Scripts</span>
-        <span class="script-stat-sep">·</span>
-        <span class="script-stat-item"><strong id="statDrafts">0</strong> Drafts</span>
-        <span class="script-stat-sep">·</span>
-        <span class="script-stat-item"><strong id="statComplete">0</strong> Complete</span>
-      </div>
       <div class="profile-actions" id="profileActions"></div>
     </div>
   </div>
@@ -201,7 +194,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:18px 32p
 
   <div id="tabDocsContent">
     <div class="section-header">
-      <div class="section-title"><span id="scriptsHeader">Docs</span><span class="section-divider"></span></div>
+      <div class="section-title"><span id="statScripts">0</span> <span id="scriptsHeader">Docs</span><span class="section-divider"></span></div>
       <div id="newScriptBtn"></div>
     </div>
     <div class="scripts-grid" id="scriptsGrid"></div>
@@ -693,8 +686,6 @@ function buildProfileCard(s){
 function renderScripts(){
   var grid=document.getElementById('scriptsGrid');
   document.getElementById('statScripts').textContent=scripts.length;
-  document.getElementById('statDrafts').textContent=scripts.filter(function(s){return s.status==='draft';}).length;
-  document.getElementById('statComplete').textContent=scripts.filter(function(s){return s.status==='complete';}).length;
   if(scripts.length===0&&!isOwner){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><span class="icon">📝</span>Public doc မရှိသေးပါ</div>';return;}
   grid.innerHTML='';
   scripts.forEach(function(s){grid.appendChild(buildProfileCard(s));});
