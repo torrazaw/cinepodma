@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="my" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,188 +7,85 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --white:    #FFFFFF;
-  --black:    #0A0A0A;
-  --slate:    #6B7280;
-  --slate-lt: #9CA3AF;
-  --slate-bg: #F3F4F6;
-  --red:      #DC2626;
-  --border:   #E5E7EB;
-  --font-en:  'Special Elite', 'Courier New', monospace;
-  --font-my:  'Noto Sans Myanmar', sans-serif;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: var(--font-my);
-  background: var(--white);
-  color: var(--black);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Loading */
-.state {
-  text-align: center;
-  display: none;
-}
-.state.active { display: block; }
-
-.spinner {
-  width: 32px; height: 32px;
-  border: 2px solid var(--border);
-  border-top-color: var(--black);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  margin: 0 auto 16px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.state-title {
-  font-family: var(--font-en);
-  font-size: 13px;
-  letter-spacing: 0.5px;
-  color: var(--slate);
-  margin-bottom: 6px;
-}
-
-/* 404 state */
-.big-num {
-  font-family: var(--font-en);
-  font-size: 80px;
-  color: var(--black);
-  line-height: 1;
-  margin-bottom: 12px;
-  letter-spacing: -2px;
-}
-.not-found-msg {
-  font-size: 15px;
-  color: var(--slate);
-  line-height: 1.8;
-  margin-bottom: 24px;
-}
-.btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: none; cursor: pointer;
-  font-family: var(--font-my);
-  font-size: 13px; font-weight: 600;
-  line-height: 1.6;
-  transition: all 0.15s;
-  text-decoration: none;
-}
-.btn-red { background: var(--red); color: var(--white); }
-.btn-red:hover { opacity: 0.9; }
-.btn-ghost {
-  background: transparent;
-  color: var(--slate);
-  border: 1px solid var(--border);
-  margin-left: 8px;
-}
-.btn-ghost:hover { background: var(--slate-bg); color: var(--black); }
-
-.brand {
-  font-family: var(--font-en);
-  font-size: 13px;
-  color: var(--black);
-  text-decoration: none;
-  line-height: 1.3;
-  display: block;
-  margin-bottom: 32px;
-}
-.brand span { display: block; color: var(--slate); font-size: 11px; letter-spacing: 1px; }
+:root{--font-en:'Special Elite','Courier New',monospace;--font-my:'Noto Sans Myanmar',sans-serif;--red:#DC2626;}
+[data-theme="light"]{--bg:#FFFFFF;--fg:#0A0A0A;--fg2:#6B7280;--bg2:#F3F4F6;--border:#E5E7EB;}
+[data-theme="dark"]{--bg:#0D0D0D;--fg:#F0F0F0;--fg2:#9CA3AF;--bg2:#1A1A1A;--border:#2A2A2A;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-my);background:var(--bg);color:var(--fg);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s;}
+.state{text-align:center;display:none;}
+.state.active{display:block;}
+.spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--fg);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.state-title{font-family:var(--font-en);font-size:13px;letter-spacing:0.5px;color:var(--fg2);margin-bottom:6px;}
+.big-num{font-family:var(--font-en);font-size:80px;color:var(--fg);line-height:1;margin-bottom:12px;letter-spacing:-2px;}
+.not-found-msg{font-size:15px;color:var(--fg2);line-height:1.8;margin-bottom:24px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font-my);font-size:13px;font-weight:600;line-height:1.6;transition:all 0.15s;text-decoration:none;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{opacity:.9;}
+.btn-ghost{background:transparent;color:var(--fg2);border:1px solid var(--border);margin-left:8px;}
+.btn-ghost:hover{background:var(--bg2);color:var(--fg);}
+.brand{font-family:var(--font-en);font-size:13px;color:var(--fg);text-decoration:none;line-height:1.3;display:block;margin-bottom:32px;}
+.brand span{display:block;color:var(--fg2);font-size:11px;letter-spacing:1px;}
+.theme-btn{position:fixed;top:18px;right:18px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .18s;}
+.theme-btn:hover{background:var(--fg);color:var(--bg);}
 </style>
 </head>
 <body>
 
+<button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️</button>
+
 <a class="brand" href="/">cine<br><span>podma</span></a>
 
-<!-- Loading state -->
 <div class="state active" id="stateLoading">
   <div class="spinner"></div>
   <div class="state-title" id="loadingMsg">ရှာဖွေနေသည်...</div>
 </div>
 
-<!-- 404 state -->
 <div class="state" id="state404">
   <div class="big-num">404</div>
-  <div class="not-found-msg" id="notFoundMsg">
-    ဤစာမျက်နှာ မတွေ့ပါ
-  </div>
+  <div class="not-found-msg" id="notFoundMsg">ဤစာမျက်နှာ မတွေ့ပါ</div>
   <div>
     <a class="btn btn-red" href="/">Home သို့ပြန်မည်</a>
     <a class="btn btn-ghost" href="javascript:history.back()">← ပြန်သွားမည်</a>
   </div>
 </div>
 
+<script>
+(function(){
+  var t=localStorage.getItem('cp-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  updateThemeBtn(t);
+})();
+function updateThemeBtn(t){var b=document.getElementById('themeBtn');if(b)b.textContent=t==='dark'?'☀️':'🌙';}
+function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme')||'dark';var next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('cp-theme',next);updateThemeBtn(next);}
+</script>
+
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
-import { getFirestore, doc, getDoc }
-  from 'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
+import{initializeApp}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js';
+import{getFirestore,doc,getDoc}from'https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js';
 
-const firebaseConfig = {
-  apiKey:            "AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",
-  authDomain:        "cinepodma.firebaseapp.com",
-  projectId:         "cinepodma",
-  storageBucket:     "cinepodma.firebasestorage.app",
-  messagingSenderId: "587916526322",
-  appId:             "1:587916526322:web:d00775311fb92fa1c8466b"
-};
+const app=initializeApp({apiKey:"AIzaSyB_fBWLeXjzTjWLQyZjz0SmRfzIpJTtfYw",authDomain:"cinepodma.firebaseapp.com",projectId:"cinepodma",storageBucket:"cinepodma.firebasestorage.app",messagingSenderId:"587916526322",appId:"1:587916526322:web:d00775311fb92fa1c8466b"});
+const db=getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+function showState(id){document.querySelectorAll('.state').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
 
-function showState(id) {
-  document.querySelectorAll('.state').forEach(function(s) {
-    s.classList.remove('active');
-  });
-  document.getElementById(id).classList.add('active');
-}
-
-async function handleRoute() {
-  var path = window.location.pathname;
-  console.log('404 path:', path);
-
-  /* ── @username route ── */
-  var usernameMatch = path.match(/\/@([a-z0-9_]+)/i);
-  console.log('usernameMatch:', usernameMatch);
-
-  if (usernameMatch) {
-    var username = usernameMatch[1].toLowerCase();
-    document.getElementById('loadingMsg').textContent = '@' + username + ' ရှာဖွေနေသည်...';
+async function handleRoute(){
+  var path=window.location.pathname;
+  var usernameMatch=path.match(/\/@([a-z0-9_]+)/i);
+  if(usernameMatch){
+    var username=usernameMatch[1].toLowerCase();
+    document.getElementById('loadingMsg').textContent='@'+username+' ရှာဖွေနေသည်...';
     showState('stateLoading');
-
-    try {
-      var snap = await getDoc(doc(db, 'usernames', username));
-      if (snap.exists()) {
-        var uid = snap.data().uid;
-        /* relative redirect — works on any hosting path */
-        window.location.replace('/profile?uid=' + uid);
-      } else {
-        /* username not found */
-        document.getElementById('notFoundMsg').innerHTML =
-          '<strong>@' + username + '</strong> ဆိုတဲ့ အကောင့် မတွေ့ပါ';
-        showState('state404');
-      }
-    } catch(e) {
-      document.getElementById('notFoundMsg').textContent = 'ချိတ်ဆက်မှု မအောင်မြင်ပါ — နောက်မှ ထပ်ကြိုးစားပါ';
-      showState('state404');
-    }
+    try{
+      var snap=await getDoc(doc(db,'usernames',username));
+      if(snap.exists()){window.location.replace('/profile?uid='+snap.data().uid);}
+      else{document.getElementById('notFoundMsg').innerHTML='<strong>@'+username+'</strong> ဆိုတဲ့ အကောင့် မတွေ့ပါ';showState('state404');}
+    }catch(e){document.getElementById('notFoundMsg').textContent='ချိတ်ဆက်မှု မအောင်မြင်ပါ — နောက်မှ ထပ်ကြိုးစားပါ';showState('state404');}
     return;
   }
-
-  /* ── regular 404 ── */
-  document.getElementById('notFoundMsg').textContent =
-    '"' + path + '" ဆိုတဲ့ စာမျက်နှာ မတွေ့ပါ';
+  document.getElementById('notFoundMsg').textContent='"'+path+'" ဆိုတဲ့ စာမျက်နှာ မတွေ့ပါ';
   showState('state404');
 }
-
 handleRoute();
 </script>
 </body>
