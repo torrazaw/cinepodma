@@ -686,8 +686,7 @@ async function renderActions(){
     if(currentUser){ try{ var cs=await getDoc(doc(db,'clappers',profileUid,'users',currentUser.uid)); clapped=cs.exists(); }catch(e){} }
     el.innerHTML=
       '<button class="btn btn-red btn-sm" id="clapBtn" onclick="toggleClap()">'+(clapped?'👏 Clapped':'👏 Clap')+'</button>'
-      +'<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>'
-      +'<a class="btn btn-ghost btn-sm" href="/podmates">👥 Podmates</a>';
+      +'<button class="btn btn-ghost btn-sm" onclick="copyProfileLink()">🔗 Link ကူးမည်</button>';
     newBtn.innerHTML='';
   }
 }
