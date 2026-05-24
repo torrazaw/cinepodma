@@ -1022,370 +1022,223 @@ function openShareM(){var el=document.getElementById('sUrl');if(el)el.textConten
 function cpLink(){var el=document.getElementById('sUrl');if(!el)return;navigator.clipboard.writeText(el.textContent).then(function(){toast('🔗 Link ကူးပြီး');}).catch(function(){toast('Copy မရပါ — manually ကူးပါ');});}
 function invC(){var emailEl=document.getElementById('clEmail');var e=(emailEl?emailEl.value:'').trim();if(!e)return;var l=document.getElementById('clList');if(!l)return;var i=document.createElement('div');i.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;margin-bottom:8px;';i.innerHTML='<div style="width:30px;height:30px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✉</div><div style="flex:1;line-height:1.6;">'+esc(e)+'</div><span style="font-family:var(--font-en);font-size:10px;color:var(--fg2);letter-spacing:.5px;">INVITED</span>';l.appendChild(i);emailEl.value='';toast('✅ ဖိတ်ကြားချက် ပို့ပြီး');}
 
-/* ===== PDF EXPORT ===== */
+/* ===== PDF EXPORT — Browser Print ===== */
 function downloadPDF(){if(docType==='story'){toast('Story PDF မထုတ်ပါ');return;}openM('mPDF');}
-function confirmPDF(){var wmEl=document.getElementById('wmText');var wm=wmEl?wmEl.value.trim():'';closeM('mPDF');doPrint(wm);}
+function confirmPDF(){
+  var wmEl=document.getElementById('wmText');
+  var wm=wmEl?wmEl.value.trim():'';
+  closeM('mPDF');
+  doPrint(wm);
+}
+
 function doPrint(wm){
-  toast('PDF ဆောက်နေသည်...');
+  /* ── 1. Collect data ── */
   var title=(document.getElementById('docTitle')||{}).value||'';
   var cvTitle=(document.getElementById('cvTitle')||{}).value||title;
   var cvAuth=(document.getElementById('cvAuth')||{}).value||'';
   var cvDraft=(document.getElementById('cvDraft')||{}).value||'';
+
   var logEl=document.getElementById('loglineTa');
   var logline=logEl?(logEl.innerText||logEl.textContent||'').trim():'';
+
   if(!tabPages['synopsis'])buildSecPage('synopsis');
   if(!tabPages['treatment'])buildSecPage('treatment');
   var synEl=document.getElementById('synopsisEd');
   var synopsis=synEl?(synEl.tagName==='TEXTAREA'?synEl.value:(synEl.innerText||synEl.textContent||'')).trim():'';
   var trEl=document.getElementById('treatmentEd');
   var treatment=trEl?(trEl.tagName==='TEXTAREA'?trEl.value:(trEl.innerText||trEl.textContent||'')).trim():'';
-  var spEls=els.map(function(e){return{type:e.type,text:(e.ce?e.ce.textContent:'').trim()};}).filter(function(e){return e.text;});
-  function generate(){
-    var jsPDF=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
-    if(!jsPDF){toast('jsPDF ရပါသေးတယ် — နောက်တစ်ခါ ကြိုးစားပါ');return;}
-    try{buildPDF(jsPDF,{title:cvTitle,author:cvAuth,draft:cvDraft,logline:logline,synopsis:synopsis,treatment:treatment,screenplay:spEls,watermark:wm});}
-    catch(err){console.error('PDF build error:',err);toast('PDF error: '+err.message);}
-  }
-  if(window.jspdf||window.jsPDF){generate();return;}
-  var existing=document.getElementById('jspdfScript');
-  if(!existing){var s=document.createElement('script');s.id='jspdfScript';s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=generate;s.onerror=function(){toast('jsPDF load မရပါ — internet စစ်ပါ');};document.head.appendChild(s);}
-  else{var tries=0;var poll=setInterval(function(){tries++;if(window.jspdf||window.jsPDF){clearInterval(poll);generate();}else if(tries>40){clearInterval(poll);toast('jsPDF timeout');}},100);}
-}
-/* ============================================================
-   CinePodma — Canvas-based PDF Engine
-   Myanmar Unicode fully supported via browser font rendering.
-   
-   Strategy:
-   - Each A4 page = one <canvas> at 794×1123px (96dpi equivalent)
-   - Draw all text/layout using Canvas 2D API (browser handles fonts)
-   - Convert each canvas to JPEG dataURL
-   - Insert images into jsPDF one per page
-   
-   Usage: buildPDF(jsPDF, data)  — same signature as before
-   ============================================================ */
 
-function buildPDF(jsPDF, data) {
+  var spEls=els.map(function(e){
+    return{type:e.type,text:(e.ce?e.ce.textContent:'').trim()};
+  }).filter(function(e){return e.text;});
 
-  /* ── Constants (px at 96dpi, A4 = 210×297mm) ── */
-  var DPI    = 96;
-  var MM2PX  = DPI / 25.4;          /* 1mm = 3.7795px */
-  var PW_MM  = 210, PH_MM  = 297;
-  var PW     = Math.round(PW_MM  * MM2PX);  /* 794 */
-  var PH     = Math.round(PH_MM  * MM2PX);  /* 1123 */
-  var ML     = Math.round(25.4   * MM2PX);  /* 96  */
-  var MR     = Math.round(25.4   * MM2PX);
-  var MT     = Math.round(25.4   * MM2PX);
-  var MB     = Math.round(25.4   * MM2PX);
-  var CW     = PW - ML - MR;               /* content width px */
+  /* ── 2. Build print HTML ── */
+  var h='';
 
-  /* Font sizes in px (CSS px, same as canvas px at 96dpi) */
-  var F_TITLE   = 28;
-  var F_AUTHOR  = 18;
-  var F_DRAFT   = 13;
-  var F_LABEL   = 11;
-  var F_BODY    = 15;
-  var F_SP      = 14;   /* screenplay */
-  var F_PGNUM   = 11;
+  /* Helper: escape HTML */
+  function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-  var LINE_BODY = F_BODY * 2.0;
-  var LINE_SP   = F_SP   * 1.9;
-
-  /* ── Canvas pool ── */
-  var canvases = [];
-  var ctx = null;
-  var curY = MT;
-
-  function newCanvas() {
-    var c = document.createElement('canvas');
-    c.width  = PW;
-    c.height = PH;
-    ctx = c.getContext('2d');
-    /* White background */
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, PW, PH);
-    canvases.push(c);
-    curY = MT;
-    /* Watermark */
-    if (data.watermark) {
-      ctx.save();
-      ctx.globalAlpha = 0.06;
-      ctx.font = 'bold 42px "Noto Sans Myanmar", "Courier New", sans-serif';
-      ctx.fillStyle = '#000000';
-      ctx.translate(PW/2, PH/2);
-      ctx.rotate(-35 * Math.PI / 180);
-      ctx.textAlign = 'center';
-      ctx.fillText(data.watermark, 0, 0);
-      ctx.restore();
-    }
-    /* Page number (not on cover = canvas[0]) */
-    if (canvases.length > 1) {
-      ctx.save();
-      ctx.font = F_PGNUM + 'px "Courier New", monospace';
-      ctx.fillStyle = '#AAAAAA';
-      ctx.textAlign = 'right';
-      ctx.fillText(String(canvases.length - 1), PW - MR, PH - MB + 20);
-      ctx.restore();
-    }
+  /* Watermark overlay (CSS) */
+  var wmCss='';
+  var wmHtml='';
+  if(wm){
+    wmCss='.wm{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:52pt;color:rgba(0,0,0,0.05);font-weight:900;white-space:nowrap;pointer-events:none;z-index:0;font-family:"Courier New",monospace;}';
+    wmHtml='<div class="wm">'+esc(wm)+'</div>';
   }
 
-  function remaining() { return PH - MB - curY; }
-
-  function ensureSpace(need) {
-    if (remaining() < need) newCanvas();
-  }
-
-  /* Wrap text to fit maxW, returns array of lines */
-  function wrapText(text, font, maxW) {
-    ctx.font = font;
-    var words = text.split(' ');
-    var lines = [];
-    var cur   = '';
-    words.forEach(function(w) {
-      var test = cur ? cur + ' ' + w : w;
-      if (ctx.measureText(test).width > maxW && cur) {
-        lines.push(cur);
-        cur = w;
-      } else {
-        cur = test;
-      }
-    });
-    if (cur) lines.push(cur);
-    return lines.length ? lines : [''];
-  }
-
-  /* Draw text block, auto page-break */
-  function drawText(text, x, font, lineH, color, align) {
-    if (!text) return;
-    color = color || '#000000';
-    align = align || 'left';
-    var maxW = (align === 'right') ? CW : (PW - MR - x);
-    var lines = wrapText(text, font, maxW);
-    lines.forEach(function(ln) {
-      ensureSpace(lineH);
-      ctx.font  = font;
-      ctx.fillStyle = color;
-      ctx.textAlign = align;
-      var drawX = align === 'right' ? (PW - MR) : x;
-      ctx.fillText(ln, drawX, curY + lineH * 0.75);
-      curY += lineH;
-    });
-  }
-
-  /* Section divider line */
-  function drawRule(y, color, w) {
-    ctx.strokeStyle = color || '#E5E7EB';
-    ctx.lineWidth   = w || 1;
-    ctx.beginPath();
-    ctx.moveTo(ML, y);
-    ctx.lineTo(ML + CW, y);
-    ctx.stroke();
-  }
-
-  function drawSectionHeader(label) {
-    ensureSpace(32);
-    var font = '11px "Courier New", monospace';
-    ctx.font = font;
-    ctx.fillStyle = '#AAAAAA';
-    ctx.textAlign = 'left';
-    ctx.fillText(label.toUpperCase(), ML, curY + 10);
-    curY += 14;
-    drawRule(curY, '#DDDDDD', 0.5);
-    curY += 10;
-  }
-
-  /* ── PAGE 1: COVER ── */
-  newCanvas();
-
-  var coverY = PH / 2 - 60;
-
-  /* Title */
-  var titleFont = 'bold ' + F_TITLE + 'px "Courier New", monospace';
-  ctx.font = titleFont;
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#000000';
-  var titleLines = wrapText(data.title || 'Untitled', titleFont, CW);
-  titleLines.forEach(function(ln) {
-    ctx.fillText(ln, PW/2, coverY);
-    coverY += F_TITLE * 1.4;
-  });
-  coverY += 16;
-
-  /* Rule */
-  ctx.strokeStyle = '#000000';
-  ctx.lineWidth   = 1;
-  ctx.beginPath();
-  ctx.moveTo(PW/2 - 56, coverY);
-  ctx.lineTo(PW/2 + 56, coverY);
-  ctx.stroke();
-  coverY += 24;
-
-  /* Written by */
-  ctx.font = '12px "Courier New", monospace';
-  ctx.fillStyle = '#888888';
-  ctx.textAlign = 'center';
-  ctx.fillText('Written by', PW/2, coverY);
-  coverY += 22;
-
-  /* Author */
-  if (data.author) {
-    ctx.font = 'bold ' + F_AUTHOR + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
-    ctx.fillStyle = '#000000';
-    ctx.textAlign = 'center';
-    ctx.fillText(data.author, PW/2, coverY);
-    coverY += 28;
-  }
-
-  /* Draft */
-  if (data.draft) {
-    ctx.font = F_DRAFT + 'px "Courier New", monospace';
-    ctx.fillStyle = '#AAAAAA';
-    ctx.textAlign = 'center';
-    ctx.fillText(data.draft, PW/2, coverY + 16);
-  }
+  /* ── COVER ── */
+  h+='<div class="page cover">';
+  h+=wmHtml;
+  h+='<div class="cover-inner">';
+  h+='<div class="cover-title">'+esc(cvTitle||'Untitled')+'</div>';
+  h+='<div class="cover-rule"></div>';
+  h+='<div class="cover-by">Written by</div>';
+  h+='<div class="cover-author">'+esc(cvAuth)+'</div>';
+  if(cvDraft) h+='<div class="cover-draft">'+esc(cvDraft)+'</div>';
+  h+='</div></div>';
 
   /* ── LOGLINE ── */
-  if (data.logline && data.logline.trim()) {
-    newCanvas();
-    drawSectionHeader('Logline');
-    var logFont = F_BODY + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
-    data.logline.split('\n').forEach(function(para) {
-      if (para.trim()) drawText(para, ML, logFont, LINE_BODY, '#000000');
-      else curY += LINE_BODY * 0.5;
-    });
+  if(logline){
+    h+='<div class="page sec-page">';
+    h+=wmHtml;
+    h+='<div class="sec-label">Logline</div><div class="sec-rule"></div>';
+    h+='<div class="sec-body">'+esc(logline).replace(/\n/g,'<br>')+'</div>';
+    h+='</div>';
   }
 
   /* ── SYNOPSIS ── */
-  if (data.synopsis && data.synopsis.trim()) {
-    newCanvas();
-    drawSectionHeader('Synopsis');
-    var synFont = F_BODY + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
-    data.synopsis.split('\n').forEach(function(para) {
-      if (para.trim()) drawText(para, ML, synFont, LINE_BODY, '#000000');
-      else curY += LINE_BODY * 0.5;
-    });
+  if(synopsis){
+    h+='<div class="page sec-page">';
+    h+=wmHtml;
+    h+='<div class="sec-label">Synopsis</div><div class="sec-rule"></div>';
+    h+='<div class="sec-body">'+esc(synopsis).replace(/\n/g,'<br>')+'</div>';
+    h+='</div>';
   }
 
   /* ── TREATMENT ── */
-  if (data.treatment && data.treatment.trim()) {
-    newCanvas();
-    drawSectionHeader('Treatment');
-    var trFont = F_BODY + 'px "Noto Sans Myanmar", "Courier New", sans-serif';
-    data.treatment.split('\n').forEach(function(para) {
-      if (para.trim()) drawText(para, ML, trFont, LINE_BODY, '#000000');
-      else curY += LINE_BODY * 0.5;
-    });
+  if(treatment){
+    h+='<div class="page sec-page">';
+    h+=wmHtml;
+    h+='<div class="sec-label">Treatment</div><div class="sec-rule"></div>';
+    h+='<div class="sec-body">'+esc(treatment).replace(/\n/g,'<br>')+'</div>';
+    h+='</div>';
   }
 
   /* ── SCREENPLAY ── */
-  if (data.screenplay && data.screenplay.length > 0) {
-    newCanvas();
-    var sceneCount = 0;
-    var SNUMW = 32; /* scene number column width px */
-
-    data.screenplay.forEach(function(el) {
-      var txt = el.text;
-      if (!txt || !txt.trim()) return;
-
-      var font, lineH, x, maxW, color, upper, gapBefore, alignRight;
-      font      = F_SP + 'px "Noto Sans Myanmar","Courier New",sans-serif';
-      lineH     = LINE_SP;
-      x         = ML + SNUMW;
-      maxW      = CW  - SNUMW;
-      color     = '#000000';
-      upper     = false;
-      gapBefore = 0;
-      alignRight= false;
-
-      switch (el.type) {
+  if(spEls.length>0){
+    var spHtml='';
+    var sceneCount=0;
+    spEls.forEach(function(el){
+      var t=esc(el.text);
+      switch(el.type){
         case 'scene':
-          font      = 'bold ' + F_SP + 'px "Courier New",monospace';
-          upper     = true;
-          gapBefore = 18;
           sceneCount++;
+          spHtml+='<div class="sp-scene"><span class="sp-snum">'+sceneCount+'.</span><span class="sp-sheading">'+t.toUpperCase()+'</span></div>';
           break;
         case 'action':
-          /* same x/maxW as scene text — aligned */
-          gapBefore = 2;
+          spHtml+='<div class="sp-action">'+t+'</div>';
           break;
         case 'char':
-          x         = ML + SNUMW + Math.round(CW * 0.30);
-          maxW      = CW - SNUMW - Math.round(CW * 0.30);
-          font      = 'bold ' + F_SP + 'px "Noto Sans Myanmar","Courier New",sans-serif';
-          upper     = true;
-          gapBefore = 12;
+          spHtml+='<div class="sp-char">'+t.toUpperCase()+'</div>';
           break;
         case 'paren':
-          x         = ML + SNUMW + Math.round(CW * 0.20);
-          maxW      = CW - SNUMW - Math.round(CW * 0.40);
-          color     = '#333333';
+          spHtml+='<div class="sp-paren">('+t+')</div>';
           break;
         case 'dial':
-          x         = ML + SNUMW + Math.round(CW * 0.12);
-          maxW      = CW - SNUMW - Math.round(CW * 0.24);
+          spHtml+='<div class="sp-dial">'+t+'</div>';
           break;
         case 'trans':
-          alignRight= true;
-          font      = 'bold ' + F_SP + 'px "Courier New",monospace';
-          upper     = true;
-          gapBefore = 12;
+          spHtml+='<div class="sp-trans">'+t.toUpperCase()+'</div>';
           break;
       }
-
-      if (upper) txt = txt.toUpperCase();
-
-      /* gap before block */
-      if (gapBefore > 0) {
-        ensureSpace(gapBefore + lineH);
-        curY += gapBefore;
-      }
-
-      if (el.type === 'scene') {
-        /* scene number left, scene text indented */
-        var sceneLines = wrapText(txt, font, maxW);
-        ensureSpace(sceneLines.length * lineH + 4);
-        ctx.font = font;
-        ctx.fillStyle = color;
-        ctx.textAlign = 'left';
-        ctx.fillText(sceneCount + '.', ML, curY + lineH * 0.75);
-        sceneLines.forEach(function(ln) {
-          ensureSpace(lineH);
-          ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'left';
-          ctx.fillText(ln, x, curY + lineH * 0.75);
-          curY += lineH;
-        });
-      } else if (alignRight) {
-        var trLines = wrapText(txt, font, CW);
-        trLines.forEach(function(ln) {
-          ensureSpace(lineH);
-          ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'right';
-          ctx.fillText(ln, PW - MR, curY + lineH * 0.75);
-          curY += lineH;
-        });
-      } else {
-        var bodyLines = wrapText(txt, font, maxW);
-        bodyLines.forEach(function(ln) {
-          ensureSpace(lineH);
-          ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'left';
-          ctx.fillText(ln, x, curY + lineH * 0.75);
-          curY += lineH;
-        });
-      }
     });
+    h+='<div class="page sp-page">';
+    h+=wmHtml;
+    h+=spHtml;
+    h+='</div>';
   }
 
-  /* ── Assemble PDF ── */
-  var pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-  canvases.forEach(function(c, i) {
-    if (i > 0) pdf.addPage();
-    var imgData = c.toDataURL('image/jpeg', 0.92);
-    pdf.addImage(imgData, 'JPEG', 0, 0, PW_MM, PH_MM);
-  });
+  /* ── 3. Full print document ── */
+  var css=`
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;700&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#fff;font-family:'Noto Sans Myanmar','Courier New',monospace;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    `+wmCss+`
+    /* A4 page */
+    .page{
+      width:210mm;min-height:297mm;
+      padding:25.4mm;
+      position:relative;
+      page-break-after:always;
+      background:#fff;
+    }
+    /* COVER */
+    .cover{display:flex;align-items:center;justify-content:center;}
+    .cover-inner{text-align:center;width:100%;}
+    .cover-title{
+      font-family:'Courier New',monospace;
+      font-size:24pt;font-weight:700;
+      line-height:1.4;margin-bottom:18pt;
+    }
+    .cover-rule{width:48pt;height:1pt;background:#000;margin:0 auto 18pt;}
+    .cover-by{font-family:'Courier New',monospace;font-size:9pt;color:#888;letter-spacing:1pt;margin-bottom:6pt;}
+    .cover-author{
+      font-family:'Noto Sans Myanmar','Courier New',monospace;
+      font-size:14pt;font-weight:700;margin-bottom:6pt;
+    }
+    .cover-draft{font-family:'Courier New',monospace;font-size:9pt;color:#AAA;margin-top:24pt;}
+    /* SECTION PAGES */
+    .sec-page{}
+    .sec-label{
+      font-family:'Courier New',monospace;
+      font-size:8pt;letter-spacing:3pt;text-transform:uppercase;
+      color:#AAA;margin-bottom:4pt;
+    }
+    .sec-rule{width:100%;height:0.5pt;background:#DDD;margin-bottom:14pt;}
+    .sec-body{
+      font-family:'Noto Sans Myanmar','Courier New',monospace;
+      font-size:12pt;line-height:2.0;color:#000;
+    }
+    /* SCREENPLAY */
+    .sp-page{}
+    .sp-scene{display:flex;align-items:baseline;gap:0;margin-top:18pt;margin-bottom:2pt;}
+    .sp-snum{font-family:'Courier New',monospace;font-size:11pt;font-weight:700;width:24pt;flex-shrink:0;}
+    .sp-sheading{font-family:'Courier New',monospace;font-size:11pt;font-weight:700;flex:1;}
+    .sp-action{
+      font-family:'Noto Sans Myanmar','Courier New',monospace;
+      font-size:11pt;line-height:1.9;
+      padding-left:24pt;margin-top:4pt;
+    }
+    .sp-char{
+      font-family:'Noto Sans Myanmar','Courier New',monospace;
+      font-size:11pt;font-weight:700;
+      text-align:center;margin-top:12pt;margin-bottom:0;
+    }
+    .sp-paren{
+      font-family:'Noto Sans Myanmar','Courier New',monospace;
+      font-size:11pt;line-height:1.8;
+      padding-left:30%;padding-right:30%;text-align:center;
+    }
+    .sp-dial{
+      font-family:'Noto Sans Myanmar','Courier New',monospace;
+      font-size:11pt;line-height:1.9;
+      padding-left:20%;padding-right:20%;
+    }
+    .sp-trans{
+      font-family:'Courier New',monospace;
+      font-size:11pt;font-weight:700;
+      text-align:right;margin-top:10pt;
+    }
+    /* Print media */
+    @media print{
+      body{margin:0;}
+      .page{margin:0;box-shadow:none;}
+    }
+  `;
 
-  var fname = (data.title || 'screenplay')
-    .replace(/[^\w\u1000-\u109F\s]/g, '')
-    .trim().replace(/\s+/g, '_') || 'screenplay';
-  pdf.save(fname + '.pdf');
-  toast('PDF ဒေါင်းပြီး ✅  (' + canvases.length + ' pages)');
+  var html='<!DOCTYPE html><html><head>'
+    +'<meta charset="UTF-8">'
+    +'<title>'+esc(cvTitle||'Screenplay')+'</title>'
+    +'<style>'+css+'</style>'
+    +'</head><body>'+h+'</body></html>';
+
+  /* ── 4. Open print window ── */
+  var win=window.open('','_blank','width=900,height=700');
+  if(!win){toast('Popup blocked — browser settings စစ်ပါ');return;}
+  win.document.write(html);
+  win.document.close();
+  /* Wait for fonts to load then print */
+  win.onload=function(){
+    setTimeout(function(){
+      win.focus();
+      win.print();
+    },800);
+  };
+  /* Fallback if onload already fired */
+  setTimeout(function(){
+    if(!win.closed){win.focus();win.print();}
+  },1200);
+  toast('🖨 Print dialog ဖွင့်နေသည်...');
 }
 
 
